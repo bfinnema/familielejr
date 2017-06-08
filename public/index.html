@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Familielejr</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="js/libs/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="stylesheets/sticky-footer-navbar.css" rel="stylesheet">
+
+  </head>
+
+  <body ng-app="familielejr">
+
+    <div class="container">
+
+        <div ng-view></div>
+        
+    </div><!-- /.container -->
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">Familielejr &copy; 2017</p>
+      </div>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/libs/jquery-3.2.1.min.js"></script>
+    <script src="js/libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="js/libs/bower_components/angular/angular.min.js"></script>
+    <script src="js/libs/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="app.js"></script>
+    <script src="services.js"></script>
+    <script src="controllers/root.controller.js"></script>
+    <script src="controllers/login.controller.js"></script>
+    <script src="controllers/content.controller.js"></script>
+    <script src="controllers/indhold.controller.js"></script>
+    <script src="controllers/logout.controller.js"></script>
+  </body>
+</html>

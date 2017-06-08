@@ -1,7 +1,7 @@
 {
-  "name": "node-todo-api",
+  "name": "familielejr",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hjemmeside for familierne Flensburg og Finnemanns familielejr",
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
