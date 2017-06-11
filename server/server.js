@@ -118,20 +118,49 @@ app.post('/users', (req, res) => {
   user.save().then(() => {
     return user.generateAuthToken();
   }).then((token) => {
-    res.header('x-auth', token).send(user);
+    res.header('x-auth', token).json(user);
   }).catch((e) => {
     res.status(400).send(e);
-  })
+  });
 });
+/*
+app.post('/users/me/password1', authenticate, (req, res) => {
+  console.log(`New password: ${req.body.newpassword}`);
+  user = req.user;
+  user.password = req.body.newpassword;
+  user.save().then(() => {
+    res.json(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  });
+})
+*/
+// Change password
+app.post('/users/me/password', authenticate, (req, res) => {
+  console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}`);
+  authedUser = req.user;
+  User.findByCredentials(req.user.email, req.body.password).then((user) => {
+    user.removeToken(req.token).then(() => {
+      user.password = req.body.newpassword;
+      user.save().then(() => {
+        return user.generateAuthToken();
+      }).then((token) => {
+        res.header('x-auth', token).json(user);
+      });
+    });
+  }).catch((e) => {
+    res.status(400).send();
+  });
+})
 
+// Check logged in user
 app.get('/users/me', authenticate, (req, res) => {
   res.json(req.user);
 });
 
 app.post('/users/login', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
-  // console.log(`From req: Email: ${req.body.email}, Password: ${req.body.password}`);
-  // console.log(`From pick: Email: ${body.email}, Password: ${body.password}`);
+
   User.findByCredentials(body.email, body.password).then((user) => {
     return user.generateAuthToken().then((token) => {
       res.header('x-auth', token).json(user);

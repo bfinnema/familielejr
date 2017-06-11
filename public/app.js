@@ -22,10 +22,40 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'registerCtrl',
             access: {restricted: false}
         }).
+        when('/changepassword', {
+            templateUrl: 'views/changepassword.view.html',
+            controller: 'changepwdCtrl',
+            access: {restricted: true}
+        }).
         when('/logout', {
             templateUrl: 'views/logout.view.html',
             controller: 'logoutCtrl',
             access: {restricted: true}
+        }).
+        when('/profile', {
+            templateUrl: 'views/profile.view.html',
+            controller: 'profileCtrl',
+            access: {restricted: false}
+        }).
+        when('/profilechanges', {
+            templateUrl: 'views/profilechanges.view.html',
+            controller: 'profilechangesCtrl',
+            access: {restricted: false}
+        }).
+        when('/familytree', {
+            templateUrl: 'views/familytree.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: false}
+        }).
+        when('/photoalbum', {
+            templateUrl: 'views/photoalbum.view.html',
+            controller: 'photoalbumCtrl',
+            access: {restricted: false}
+        }).
+        when('/photoupload', {
+            templateUrl: 'views/photoupload.view.html',
+            controller: 'photouploadCtrl',
+            access: {restricted: false}
         }).
         when('/content', {
             templateUrl: 'views/content.view.html',
