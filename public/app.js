@@ -1,4 +1,12 @@
-var familielejr = angular.module('familielejr', ['ngRoute']);
+var familielejr = angular.module('familielejr', ['ngRoute', 'uiGmapgoogle-maps']);
+
+familielejr.config(['uiGmapGoogleMapApiProvider', function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        key: 'AIzaSyCaMYDW9iGzjm-30DhtenRYrJ_lTipnRzE',
+        v: '3', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization'
+    });
+}]);
 
 familielejr.config(['$routeProvider', function($routeProvider){
     $routeProvider.
@@ -27,6 +35,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'changepwdCtrl',
             access: {restricted: true}
         }).
+        when('/profile_edit', {
+            templateUrl: 'views/profile_edit.view.html',
+            controller: 'profileeditCtrl',
+            access: {restricted: true}
+        }).
         when('/logout', {
             templateUrl: 'views/logout.view.html',
             controller: 'logoutCtrl',
@@ -35,27 +48,37 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/profile', {
             templateUrl: 'views/profile.view.html',
             controller: 'profileCtrl',
-            access: {restricted: false}
+            access: {restricted: true}
         }).
-        when('/profilechanges', {
-            templateUrl: 'views/profilechanges.view.html',
-            controller: 'profilechangesCtrl',
-            access: {restricted: false}
+        when('/eventregistration', {
+            templateUrl: 'views/eventreg.view.html',
+            controller: 'eventregCtrl',
+            access: {restricted: true}
         }).
         when('/familytree', {
             templateUrl: 'views/familytree.view.html',
             controller: 'familytreeCtrl',
-            access: {restricted: false}
+            access: {restricted: true}
+        }).
+        when('/about', {
+            templateUrl: 'views/about.view.html',
+            controller: 'aboutCtrl',
+            access: {restricted: true}
+        }).
+        when('/campmap', {
+            templateUrl: 'views/campmap.view.html',
+            controller: 'campmapCtrl',
+            access: {restricted: true}
         }).
         when('/photoalbum', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',
-            access: {restricted: false}
+            access: {restricted: true}
         }).
         when('/photoupload', {
             templateUrl: 'views/photoupload.view.html',
             controller: 'photouploadCtrl',
-            access: {restricted: false}
+            access: {restricted: true}
         }).
         when('/content', {
             templateUrl: 'views/content.view.html',

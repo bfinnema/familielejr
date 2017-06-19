@@ -46,4 +46,48 @@ function ($q, $timeout, $http) {
         });
     };
 
+}])
+.factory('AddressService', [function() {
+
+    $scope.countries = [
+        {"name": "Danmark"},
+        {"name": "Sverige"},
+        {"name": "Tyskland"},
+        {"name": "Norge"},
+        {"name": "Finland"},
+        {"name": "Holland"},
+        {"name": "Belgien"},
+        {"name": "Spanien"},
+        {"name": "Italien"},
+        {"name": "Frankrig"},
+        {"name": "Grækenland"},
+        {"name": "Polen"},
+        {"name": "USA"}
+    ];
+    
+    $scope.directions = [
+        {"dir": "th."},
+        {"dir": "tv."},
+        {"dir": "mf."}
+    ];
+    
+    $scope.floors = [
+        {"floor": "st."},
+        {"floor": "1."},
+        {"floor": "2."},
+        {"floor": "3."},
+        {"floor": "4."},
+        {"floor": "5."},
+        {"floor": "6."},
+        {"floor": "7."},
+        {"floor": "8."},
+        {"floor": "9."},
+        {"floor": "10."},
+        {"floor": "11."},
+        {"floor": "12."},
+        {"floor": "13."},
+        {"floor": "14."},
+        {"floor": "15."}
+    ];
+
 }]);

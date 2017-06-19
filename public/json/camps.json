@@ -1,0 +1,24 @@
+[
+    {
+        "id": 0,
+        "coords": {
+            "latitude": 55.1993697,
+            "longitude": 11.5146273
+        },
+        "name": "Bisseruplejren",
+        "address": "Gammel Strandvej 135, 4243 Rude",
+        "years": "2015, 2017",
+        "website": "http://www.bisseruplejren.dk/"
+    },
+    {
+        "id": 1,
+        "coords": {
+            "latitude": 55.3846357,
+            "longitude": 9.6199201
+        },
+        "name": "Grænseborgen",
+        "address": "Vargårdevej 86, 6094 Hejls",
+        "years": "2010, 2016",
+        "website": "http://www.graenseborgen.dk/"
+    }
+]

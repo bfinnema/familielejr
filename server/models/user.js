@@ -5,11 +5,33 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
 var UserSchema = new mongoose.Schema({
+  name: {
+    firstname: {type: String, required: true},
+    middlename: {type: String},
+    surname: {type: String, required: true}
+  },
+  address: {
+    street: {type: String},
+    houseno: {type: Number},
+    floor: {type: String},
+    direction: {type: String},
+    zip: {type: String},
+    town: {type: String},
+    country: {type: String}
+  },
+  phone: {
+    type: String
+  },
+  participation: {
+    years: [{
+      year: {type: Number}
+    }]
+  },
   email: {
     type: String,
     required: true,
     trim: true,
-    minlength: 1,
+    minlength: 5,
     unique: true,
     validate: {
       validator: validator.isEmail,
@@ -37,7 +59,7 @@ UserSchema.methods.toJSON = function () {
   var user = this;
   var userObject = user.toObject();
 
-  return _.pick(userObject, ['_id', 'email']);
+  return _.pick(userObject, ['_id', 'email', 'name', 'address', 'phone']);
 };
 
 UserSchema.methods.generateAuthToken = function () {

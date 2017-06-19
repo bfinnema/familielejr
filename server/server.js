@@ -112,7 +112,9 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 // POST /users
 app.post('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password']);
+  var body = _.pick(req.body, ['email', 'password', 'name', 'address', 'phone']);
+  console.log(`Email: ${body.email}, password: ${body.password}`);
+  console.log(`Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`)
   var user = new User(body);
 
   user.save().then(() => {
@@ -121,6 +123,26 @@ app.post('/users', (req, res) => {
     res.header('x-auth', token).json(user);
   }).catch((e) => {
     res.status(400).send(e);
+  });
+});
+
+app.patch('/users/me/edit/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['email', 'name', 'address', 'phone']);
+  User.findById(id).then((user) => {
+    user.removeToken(req.token).then(() => {
+      user.email = body.email;
+      user.name = body.name;
+      user.address = body.address;
+      user.phone = body.phone;
+      user.save().then(() => {
+        return user.generateAuthToken();
+      }).then((token) => {
+        res.header('x-auth', token).json(user);
+      });
+    });
+  }).catch((e) => {
+    res.status(400).send();
   });
 });
 /*
@@ -138,7 +160,6 @@ app.post('/users/me/password1', authenticate, (req, res) => {
 // Change password
 app.post('/users/me/password', authenticate, (req, res) => {
   console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}`);
-  authedUser = req.user;
   User.findByCredentials(req.user.email, req.body.password).then((user) => {
     user.removeToken(req.token).then(() => {
       user.password = req.body.newpassword;
@@ -155,6 +176,8 @@ app.post('/users/me/password', authenticate, (req, res) => {
 
 // Check logged in user
 app.get('/users/me', authenticate, (req, res) => {
+  // console.log('In server, user: '+req.user);
+  // console.log(`In server: ${req.user.name.firstname}`);
   res.json(req.user);
 });
 

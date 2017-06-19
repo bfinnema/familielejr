@@ -74,4 +74,22 @@
     </div>
 </nav>
 
-<h1>This is the content</h1>
+<div class="page-header">
+    <h1>OMRÅDE og MATRIKLER</h1>
+</div>
+<br>
+<div class="row">
+    <div class="angular-google-map-container col-md-8">
+        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
+            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
+                <div>{{ wincontent }}</div>
+            </ui-gmap-window>
+            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
+        </ui-gmap-google-map>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#history').addClass('active');
+    $('#campmap').addClass('active');
+</script>
