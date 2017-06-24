@@ -90,6 +90,8 @@
         </div>
         <div class="row">
             <div class="form-group col-md-3">
+                <label>Hemmelighed</label>
+                <input type="text" class="form-control" ng-model="secret" name="secret" placeholder="Hemmelighed" required>
             </div>
             <div class="form-group col-md-3">
                 <label for="repeatPassword">Gentag kodeord</label>
@@ -172,7 +174,7 @@
                 inputPassword: {
                     minlength: 8,
                     maxlength: 12,
-                    equalTo: '[name="repeatnewPassword"]'
+                    equalTo: '[name="repeatPassword"]'
                 },
                 repeatPassword: {
                     minlength: 8,

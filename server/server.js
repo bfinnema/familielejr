@@ -5,11 +5,15 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
+const multiparty = require('connect-multiparty');
+const fs = require('fs');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {Photo} = require('./models/photo');
 var {authenticate} = require('./middleware/authenticate');
+multipartyMiddleware = multiparty();
 
 const publicPath = path.join(__dirname, '../public');
 var app = express();
@@ -112,18 +116,24 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 // POST /users
 app.post('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password', 'name', 'address', 'phone']);
+  var body = _.pick(req.body, ['email', 'password', 'name', 'address', 'phone', 'secret']);
   console.log(`Email: ${body.email}, password: ${body.password}`);
-  console.log(`Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`)
-  var user = new User(body);
+  console.log(`Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
+  console.log(`Secret: ${body.secret}`);
+  if (body.secret == process.env.REGISTRATION_SECRET) {
+    console.log('Secret approved.');
+    var user = new User(body);
 
-  user.save().then(() => {
-    return user.generateAuthToken();
-  }).then((token) => {
-    res.header('x-auth', token).json(user);
-  }).catch((e) => {
-    res.status(400).send(e);
-  });
+    user.save().then(() => {
+      return user.generateAuthToken();
+    }).then((token) => {
+      res.header('x-auth', token).json(user);
+    }).catch((e) => {
+      res.status(400).send(e);
+    });
+  } else {
+    res.status(401).send();
+  };
 });
 
 app.patch('/users/me/edit/:id', authenticate, (req, res) => {
@@ -199,6 +209,61 @@ app.delete('/users/me/token', authenticate, (req, res) => {
   }, () => {
     res.status(400).send();
   });
+});
+
+app.post('/upload/photo', multipartyMiddleware, (req, res) => {
+  console.log('Uploading Photos...');
+  var file = req.files.file;
+  console.log(file.name);
+  console.log(file.type);
+  console.log(file.size);
+  // get the temporary location of the file
+  var tmp_path = req.files.file.path;
+  console.log(tmp_path);
+  // set where the file should actually exists - in this case it is in the "images" directory
+  var target_path = __dirname + '/../public/images/' + req.body.year + '/' + req.files.file.name;
+  var path = __dirname + '/../public/images/' + req.body.year;
+  console.log(target_path);
+  console.log(path);
+  // move the file from the temporary location to the intended location
+  if (fs.existsSync(path)) {
+
+    Photo.findOne({
+      filename: file.name
+    }).then((photo) => {
+      if (!photo) {
+        console.log('New photo! Not found in db');
+        var photo = new Photo({
+          _creator: req.body.user,
+          year: req.body.year,
+          filename: file.name
+        });
+
+        photo.save().then((doc) => {
+          res.send(doc);
+        }, (e) => {
+          res.status(400).send(e);
+        });
+        fs.rename(tmp_path, target_path, function(err) {
+          if (err) throw err;
+        }, () => {
+          res.status(400).send();
+        });
+      } else {
+        console.log('Photo already in db');
+        res.status(409).send({photo});
+      };
+      fs.unlink(tmp_path, function(err) {
+        if (err) throw err;
+      });
+    }).catch((e) => {
+      res.status(400).send();
+    });
+    
+    // res.send('File uploaded to: ' + target_path + ' - ' + req.files.file.size + ' bytes');
+  } else {
+    res.status(400).send();
+  };
 });
 
 app.listen(port, () => {

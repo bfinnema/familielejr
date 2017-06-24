@@ -65,7 +65,8 @@ angular.module('familielejr')
             password: $scope.inputPassword,
             name: name,
 			address: addr,
-            phone: $scope.phone
+            phone: $scope.phone,
+            secret: $scope.secret
 		};
 
         $http.post('/users', data).then(function(response) {
@@ -76,6 +77,9 @@ angular.module('familielejr')
             localStorage.familielejrUserId = response.data._id;
             $location.path('/indhold');
             $scope.isLoggedIn = true;
+        }, function errorCallback(response) {
+            console.log(`getUserStatus: ${response.status}`);
+            alert('Indtastede du korrekt hemmelighed?');
         });
 
     };

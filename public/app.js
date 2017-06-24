@@ -1,4 +1,4 @@
-var familielejr = angular.module('familielejr', ['ngRoute', 'uiGmapgoogle-maps']);
+var familielejr = angular.module('familielejr', ['ngRoute', 'uiGmapgoogle-maps', 'ngFileUpload']);
 
 familielejr.config(['uiGmapGoogleMapApiProvider', function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -70,7 +70,7 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'campmapCtrl',
             access: {restricted: true}
         }).
-        when('/photoalbum', {
+        when('/photoalbum/:year', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',
             access: {restricted: true}
