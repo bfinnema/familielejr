@@ -81,7 +81,7 @@
         <fieldset>
         <!--<legend>Upload on form submit</legend>-->
         <div class="row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-4">
                 <label>Hvilket år blev fotografiet taget?</label>
                 <select class="form-control" ng-model="year" name="year" required>
                     <option ng-repeat="year in years" value="{{year.year}}">{{year.year}}</option>
@@ -118,7 +118,7 @@
         </div>
         <div class="row">
             <div class="form-group col-md-4">
-                <span ng-show="picFile.result">Upload Successful</span>
+                <span ng-show="picFile.result">{{successMsg}}</span>
                 <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
             </div>
         </div>

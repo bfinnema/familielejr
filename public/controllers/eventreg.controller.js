@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('eventregCtrl', ['$scope', '$http', '$location', '$window', 'AuthService', function($scope, $http, $location, $window, AuthService) {
+.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -23,37 +23,100 @@ angular.module('familielejr')
     $scope.departuredays = [
         {"departureday": "Søndag"},
         {"departureday": "Lørdag formiddag"},
-        {"departureday": "Lørdag eftermiddag"}
+        {"departureday": "Lørdag eftermiddag"},
+        {"departureday": "Lørdag efter aftensmad"},
+        {"departureday": "Jeg tager aldrig hjem!!"}
     ];
-    
-    $scope.lineid = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    $scope.regname = ["","","","","","","","","",""];
-    $scope.ag = ["","","","","","","","","",""];
-    $scope.arrivalday = ["","","","","","","","","",""];
-    $scope.atime = ["","","","","","","","","",""];
-    $scope.departureday = ["","","","","","","","","",""];
-    $scope.dtime = ["","","","","","","","","",""];
-    var numRegLines = 0;
-    $scope.nil = 0;
-    $scope.reglineBtnShow = [false,true,false,false,false,false,false,false,false,false];
-    $scope.reglineShow = [true,false,false,false,false,false,false,false,false,false];
-    console.log(`reglineShow: ${$scope.reglineShow}`);
-    
-    $scope.showRegLine = function() {
-        console.log("Entering showRegLine. numRegLines: "+numRegLines);
-        if ($scope.regname[numRegLines] && $scope.ag[numRegLines] && $scope.arrivalday[numRegLines]) {
-            console.log("numRegLines: "+numRegLines);
-            console.log("Name: "+$scope.regname[numRegLines]);
-            console.log("Agegroup: "+$scope.ag[numRegLines]+", Arrivaldate: "+$scope.arrivalday[numRegLines]);
-            numRegLines = numRegLines + 1;
-            $scope.nil = $scope.nil + 1;
-            $scope.reglineShow[numRegLines] = true;
-            $scope.reglineBtnShow[numRegLines] = false;
-            $scope.reglineBtnShow[numRegLines+1] = true;
+
+    $http({
+        method: 'GET',
+        url: 'eventreg',
+        headers: {
+            'x-auth': localStorage.userToken
         }
-        else {
-            $window.alert("Du har ikke udfyldt linien endnu");
+    }).then(function(response) {
+        console.log(`Status: ${response.status}`);
+        console.log(response.data);
+        $scope.registrations = response.data;
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+
+    $scope.errorHappened = false;
+    
+    $scope.addEventreg = function() {
+        console.log(`Name: ${$scope.regname}`)
+        var eventreg = {
+            name: $scope.regname,
+            agegroup: $scope.agegroup,
+            arrivalday: $scope.arrivalday,
+            arrivaltime: $scope.arrivaltime,
+            departureday: $scope.departureday,
+            departuretime: $scope.departuretime
         };
+        console.log(eventreg);
+
+        $http({
+            method: 'POST',
+            url: 'eventreg',
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: eventreg
+        }).then(function(response) {
+            console.log(`Status: ${response.status}`);
+            console.log(response.data._id);
+            $scope.errorHappened = false;
+            $location.path('/eventregistration');
+            $route.reload();
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+            $scope.errorHappened = true;
+        });
     };
 
-}]);
+    $scope.removeReg = function(registration) {
+        if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
+            $http({
+                method: 'DELETE',
+                url: 'eventreg/'+registration._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: eventreg
+            }).then(function(response) {
+                console.log(`Status: ${response.status}`);
+                console.log(response.data._id);
+                $scope.errorHappened = false;
+                $location.path('/eventregistration');
+                $route.reload();
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+                $scope.errorHappened = true;
+            });
+        }
+    };
+
+}])
+
+.controller('eventregallCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+        };
+    });
+
+    $http({
+        method: 'GET',
+        url: 'eventregall'
+    }).then(function(response) {
+        console.log(`Status: ${response.status}`);
+        console.log(response.data);
+        $scope.registrations = response.data;
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+
+}])

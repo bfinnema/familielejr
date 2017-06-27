@@ -12,6 +12,7 @@ var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 var {Photo} = require('./models/photo');
+var {Eventreg} = require('./models/eventreg');
 var {authenticate} = require('./middleware/authenticate');
 multipartyMiddleware = multiparty();
 
@@ -23,6 +24,64 @@ app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 
+app.post('/eventreg', authenticate, (req, res) => {
+  var eventreg = new Eventreg({
+    name: req.body.name,
+    agegroup: req.body.agegroup,
+    arrivalday: req.body.arrivalday,
+    arrivaltime: req.body.arrivaltime,
+    departureday: req.body.departureday,
+    departuretime: req.body.departuretime,
+    _creator: req.user._id
+  });
+
+  eventreg.save().then ((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+})
+
+app.get('/eventreg', authenticate, (req, res) => {
+  Eventreg.find({
+    _creator: req.user._id
+  }).then((eventregs) => {
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/eventregall', (req, res) => {
+  Eventreg.find({}).then((eventregs) => {
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.delete('/eventreg/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Eventreg.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((eventreg) => {
+    if (!eventreg) {
+      return res.status(404).send();
+    }
+
+    res.json(eventreg);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+// Todo Section
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
     text: req.body.text,
@@ -155,18 +214,7 @@ app.patch('/users/me/edit/:id', authenticate, (req, res) => {
     res.status(400).send();
   });
 });
-/*
-app.post('/users/me/password1', authenticate, (req, res) => {
-  console.log(`New password: ${req.body.newpassword}`);
-  user = req.user;
-  user.password = req.body.newpassword;
-  user.save().then(() => {
-    res.json(user);
-  }).catch((e) => {
-    res.status(400).send(e);
-  });
-})
-*/
+
 // Change password
 app.post('/users/me/password', authenticate, (req, res) => {
   console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}`);
@@ -186,8 +234,6 @@ app.post('/users/me/password', authenticate, (req, res) => {
 
 // Check logged in user
 app.get('/users/me', authenticate, (req, res) => {
-  // console.log('In server, user: '+req.user);
-  // console.log(`In server: ${req.user.name.firstname}`);
   res.json(req.user);
 });
 
@@ -211,12 +257,9 @@ app.delete('/users/me/token', authenticate, (req, res) => {
   });
 });
 
-app.post('/upload/photo', multipartyMiddleware, (req, res) => {
-  console.log('Uploading Photos...');
+// Photos
+app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
   var file = req.files.file;
-  console.log(file.name);
-  console.log(file.type);
-  console.log(file.size);
   // get the temporary location of the file
   var tmp_path = req.files.file.path;
   console.log(tmp_path);
@@ -232,11 +275,15 @@ app.post('/upload/photo', multipartyMiddleware, (req, res) => {
       filename: file.name
     }).then((photo) => {
       if (!photo) {
-        console.log('New photo! Not found in db');
+        var uploader = req.user.name.firstname;
+        if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
+        uploader = uploader + ' ' + req.user.name.surname
         var photo = new Photo({
           _creator: req.body.user,
           year: req.body.year,
-          filename: file.name
+          filename: file.name,
+          path: 'images/' + req.body.year + '/',
+          uploader: uploader
         });
 
         photo.save().then((doc) => {
@@ -252,10 +299,10 @@ app.post('/upload/photo', multipartyMiddleware, (req, res) => {
       } else {
         console.log('Photo already in db');
         res.status(409).send({photo});
+        fs.unlink(tmp_path, function(err) {
+          if (err) throw err;
+        });
       };
-      fs.unlink(tmp_path, function(err) {
-        if (err) throw err;
-      });
     }).catch((e) => {
       res.status(400).send();
     });
@@ -265,6 +312,28 @@ app.post('/upload/photo', multipartyMiddleware, (req, res) => {
     res.status(400).send();
   };
 });
+
+app.get('/photos/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  Photo.find({
+    year: year
+  }).then((photos) => {
+    res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+})
+
+app.get('/photos/me', authenticate, (req, res) => {
+  var year = req.params.year;
+  Photo.find({
+    _creator: req.user._id
+  }).then((photos) => {
+    res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+})
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

@@ -55,6 +55,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregCtrl',
             access: {restricted: true}
         }).
+        when('/eventregistrationall', {
+            templateUrl: 'views/eventregall.view.html',
+            controller: 'eventregallCtrl',
+            access: {restricted: true}
+        }).
         when('/familytree', {
             templateUrl: 'views/familytree.view.html',
             controller: 'familytreeCtrl',
@@ -71,6 +76,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             access: {restricted: true}
         }).
         when('/photoalbum/:year', {
+            templateUrl: 'views/photoalbum.view.html',
+            controller: 'photoalbumCtrl',
+            access: {restricted: true}
+        }).
+        when('/photoalbum/me', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',
             access: {restricted: true}

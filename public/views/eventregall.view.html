@@ -1,0 +1,122 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#!">Familielejr</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li id="home"><a href="#">Home</a></li>
+            <li id="about" ng-show="isLoggedIn"><a href="#!about">Om familielejren</a></li>
+            <li id="history" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Historie<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="campmap"><a href="#!campmap">Kort</a></li>
+                    <li id="camplist"><a href="#!camplist">Liste over lejre</a></li>
+                </ul>
+            </li>
+            <li id="familytree" ng-show="isLoggedIn"><a href="#!familytree">Stamtræ</a></li>
+            <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#!photos1993">1993</a></li>
+                    <li><a href="#!photos1994">1994</a></li>
+                    <li><a href="#!photos1993">1995</a></li>
+                    <li><a href="#!photos1993">1996</a></li>
+                    <li><a href="#!photos1993">1997</a></li>
+                    <li><a href="#!photos1993">1998</a></li>
+                    <li><a href="#!photos1993">1999</a></li>
+                    <li><a href="#!photos1994">2000</a></li>
+                    <li><a href="#!photos1994">2001</a></li>
+                    <li><a href="#!photos1994">2002</a></li>
+                    <li><a href="#!photos1994">2003</a></li>
+                    <li><a href="#!photos1994">2004</a></li>
+                    <li><a href="#!photos1994">2005</a></li>
+                    <li><a href="#!photos1994">2006</a></li>
+                    <li><a href="#!photos1994">2007</a></li>
+                    <li><a href="#!photos1994">2008</a></li>
+                    <li><a href="#!photos1994">2009</a></li>
+                    <li><a href="#!photos1994">2010</a></li>
+                    <li><a href="#!photos1994">2011</a></li>
+                    <li><a href="#!photos1994">2012</a></li>
+                    <li><a href="#!photos1994">2013</a></li>
+                    <li><a href="#!photos1994">2014</a></li>
+                    <li><a href="#!photos1994">2015</a></li>
+                    <li><a href="#!photos1994">2016</a></li>
+                    <li><a href="#!photos1994">2017</a></li>
+                </ul>
+            </li>
+            <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Næste Familielejr<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="nextcampinfo"><a href="#!information">Information</a></li>
+                    <li id="eventreg"><a href="#!eventregistration">Tilmelding</a></li>
+                </ul>
+            </li>
+            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Register</a></li>
+            <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
+            <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Min konto <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="logout"><a href="#!logout">Log ud</a></li>
+                    <li id="myprofile"><a href="#!profile">Min profil</a></li>
+                    <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
+                </ul>
+            </li>
+            <li><a href="#!content">Contact</a></li>
+        </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div ng-controller = "eventregallCtrl">
+    <h2>Liste over alle tilmeldte</h2>
+    <hr>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="20%">Navn</th>
+            <th width="15%">Voksen / Barn</th>
+            <th width="15%">Ankomstdag</th>
+            <th width="10%">Ankomsttidspunkt</th>
+            <th width="15%">Afgangsdag</th>
+            <th width="10%">Afgangstidspunkt</th>
+            <!--<th width="15%">Slet / Ændre</th>-->
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="registration in registrations">
+            <td>{{ registration.name }}</td>
+            <td>{{ registration.agegroup }}</td>
+            <td>{{ registration.arrivalday }}</td>
+            <td>{{ registration.arrivaltime }}</td>
+            <td>{{ registration.departureday }}</td>
+            <td>{{ registration.departuretime }}</td>
+<!--
+            <td>
+                <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" ng-click="removeReg(registration)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+            </td>
+-->
+        </tr>
+    </tbody>
+</table>
+<div ng-if="registrations == false">
+    <tr>
+        <td></td><td>Der er ikke tilmeldt nogen endnu</td>
+    </tr>
+</div>
+
+<script type="text/javascript">
+    $('#nextcamp').addClass('active');
+    $('#eventreg').addClass('active');
+</script>

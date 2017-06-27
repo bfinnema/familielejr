@@ -6,12 +6,19 @@ var PhotoSchema = new mongoose.Schema({
     required: true
   },
   year: {
-      type: String,
-      required:true
+    type: String,
+    required: true
   },
   filename: {
-      type: String,
-      required:true
+    type: String,
+    required: true
+  },
+  path: {
+    type: String,
+    required: true
+  },
+  uploader: {
+    type: String
   }
 });
 
