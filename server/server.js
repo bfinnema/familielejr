@@ -291,11 +291,33 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
         }, (e) => {
           res.status(400).send(e);
         });
+
+        // Read the file
+        fs.readFile(tmp_path, function (err, data) {
+          if (err) throw err;
+          console.log('File read!');
+
+          // Write the file
+          fs.writeFile(target_path, data, function (err) {
+            if (err) throw err;
+            // res.write('File uploaded and moved!');
+            // res.end();
+            console.log('File written!');
+          });
+
+          // Delete the file
+          fs.unlink(tmp_path, function (err) {
+            if (err) throw err;
+            console.log('File deleted!');
+          });
+        });
+/*
         fs.rename(tmp_path, target_path, function(err) {
           if (err) throw err;
         }, () => {
           res.status(400).send();
         });
+*/        
       } else {
         console.log('Photo already in db');
         res.status(409).send({photo});
