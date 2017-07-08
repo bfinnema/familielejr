@@ -7,11 +7,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#!">Familielejr</a>
+        <a class="navbar-brand home" href="#!home">Familielejr</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li id="home"><a href="#">Home</a></li>
             <li id="about" ng-show="isLoggedIn"><a href="#!about">Om familielejren</a></li>
             <li id="history" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Historie<span class="caret"></span></a>
@@ -50,13 +49,13 @@
                     <li><a href="#!photoalbum/2015">2015</a></li>
                     <li><a href="#!photoalbum/2016">2016</a></li>
                     <li><a href="#!photoalbum/2017">2017</a></li>
-                    <li><a href="#!photoalbum/me">Mine billeder</a></li>
+                    <li><a href="#!myphotoalbum">Mine billeder</a></li>
                 </ul>
             </li>
             <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Næste Familielejr<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li id="nextcampinfo"><a href="#!information">Information</a></li>
+                    <li id="nextcampinfo"><a href="#!eventinfo">Information</a></li>
                     <li id="eventreg"><a href="#!eventregistration">Tilmelding</a></li>
                     <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
@@ -71,7 +70,7 @@
                     <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
                 </ul>
             </li>
-            <li><a href="#!content">Contact</a></li>
+            <li><a href="#!content">Kontakt</a></li>
         </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -80,32 +79,37 @@
 <div class="page-header">
     <h1>Billeder, {{ year }}</h1>
 </div>
-<div class="row">
-    <div class="col-md-3">
-    </div>
-    <div class="col-md-1">
-        <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
-    </div>
-    <div class="col-md-4">
-    </div>
-    <div class="col-md-1">
-        <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
-    </div>
-    <div class="col-md-3">
-    </div>
-</div>
-<div class="row">
-    <img class="img-responsive" src="{{mainImage}}">
-</div>
-<div class="row">
-    <h3>Uploaded af {{uploadedBy}}</h3>
-</div>
-<div class="row">
-    <div ng-repeat="image in images">
+<div ng-if="images.length > 0">
+    <div class="row">
+        <div class="col-md-3">
+        </div>
         <div class="col-md-1">
-            <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+            <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
+        </div>
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-1">
+            <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
+        </div>
+        <div class="col-md-3">
         </div>
     </div>
+    <div class="row">
+        <img class="img-responsive" src="{{mainImage}}">
+    </div>
+    <div class="row">
+        <h3>Uploaded af {{mainImageObj.uploader}}</h3>
+    </div>
+    <div class="row">
+        <div ng-repeat="image in images">
+            <div class="col-md-1">
+                <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-if="images == false">
+    <h3>Der er ikke nogen billeder fra {{ year }} endnu. Har du nogen at lægge op?</h3>
 </div>
 
 <script type="text/javascript">

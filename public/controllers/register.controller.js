@@ -75,7 +75,7 @@ angular.module('familielejr')
             // console.log(response.data._id, response.data.email);
             localStorage.userToken = response.headers()['x-auth'];
             localStorage.familielejrUserId = response.data._id;
-            $location.path('/indhold');
+            $location.path('/home');
             $scope.isLoggedIn = true;
         }, function errorCallback(response) {
             console.log(`getUserStatus: ${response.status}`);

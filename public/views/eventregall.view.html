@@ -7,11 +7,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#!">Familielejr</a>
+        <a class="navbar-brand home" href="#!home">Familielejr</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li id="home"><a href="#">Home</a></li>
             <li id="about" ng-show="isLoggedIn"><a href="#!about">Om familielejren</a></li>
             <li id="history" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Historie<span class="caret"></span></a>
@@ -24,38 +23,41 @@
             <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#!photos1993">1993</a></li>
-                    <li><a href="#!photos1994">1994</a></li>
-                    <li><a href="#!photos1993">1995</a></li>
-                    <li><a href="#!photos1993">1996</a></li>
-                    <li><a href="#!photos1993">1997</a></li>
-                    <li><a href="#!photos1993">1998</a></li>
-                    <li><a href="#!photos1993">1999</a></li>
-                    <li><a href="#!photos1994">2000</a></li>
-                    <li><a href="#!photos1994">2001</a></li>
-                    <li><a href="#!photos1994">2002</a></li>
-                    <li><a href="#!photos1994">2003</a></li>
-                    <li><a href="#!photos1994">2004</a></li>
-                    <li><a href="#!photos1994">2005</a></li>
-                    <li><a href="#!photos1994">2006</a></li>
-                    <li><a href="#!photos1994">2007</a></li>
-                    <li><a href="#!photos1994">2008</a></li>
-                    <li><a href="#!photos1994">2009</a></li>
-                    <li><a href="#!photos1994">2010</a></li>
-                    <li><a href="#!photos1994">2011</a></li>
-                    <li><a href="#!photos1994">2012</a></li>
-                    <li><a href="#!photos1994">2013</a></li>
-                    <li><a href="#!photos1994">2014</a></li>
-                    <li><a href="#!photos1994">2015</a></li>
-                    <li><a href="#!photos1994">2016</a></li>
-                    <li><a href="#!photos1994">2017</a></li>
+                    <li><a href="#!photoupload">Upload af billeder</a></li>
+                    <li><a href="#!photoalbum/1993">1993</a></li>
+                    <li><a href="#!photoalbum/1994">1994</a></li>
+                    <li><a href="#!photoalbum/1995">1995</a></li>
+                    <li><a href="#!photoalbum/1996">1996</a></li>
+                    <li><a href="#!photoalbum/1997">1997</a></li>
+                    <li><a href="#!photoalbum/1998">1998</a></li>
+                    <li><a href="#!photoalbum/1999">1999</a></li>
+                    <li><a href="#!photoalbum/2000">2000</a></li>
+                    <li><a href="#!photoalbum/2001">2001</a></li>
+                    <li><a href="#!photoalbum/2002">2002</a></li>
+                    <li><a href="#!photoalbum/2003">2003</a></li>
+                    <li><a href="#!photoalbum/2004">2004</a></li>
+                    <li><a href="#!photoalbum/2005">2005</a></li>
+                    <li><a href="#!photoalbum/2006">2006</a></li>
+                    <li><a href="#!photoalbum/2007">2007</a></li>
+                    <li><a href="#!photoalbum/2008">2008</a></li>
+                    <li><a href="#!photoalbum/2009">2009</a></li>
+                    <li><a href="#!photoalbum/2010">2010</a></li>
+                    <li><a href="#!photoalbum/2011">2011</a></li>
+                    <li><a href="#!photoalbum/2012">2012</a></li>
+                    <li><a href="#!photoalbum/2013">2013</a></li>
+                    <li><a href="#!photoalbum/2014">2014</a></li>
+                    <li><a href="#!photoalbum/2015">2015</a></li>
+                    <li><a href="#!photoalbum/2016">2016</a></li>
+                    <li><a href="#!photoalbum/2017">2017</a></li>
+                    <li><a href="#!myphotoalbum">Mine billeder</a></li>
                 </ul>
             </li>
             <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Næste Familielejr<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li id="nextcampinfo"><a href="#!information">Information</a></li>
+                    <li id="nextcampinfo"><a href="#!eventinfo">Information</a></li>
                     <li id="eventreg"><a href="#!eventregistration">Tilmelding</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
             </li>
             <li id="register" ng-show="!isLoggedIn"><a href="#!register">Register</a></li>
@@ -68,7 +70,7 @@
                     <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
                 </ul>
             </li>
-            <li><a href="#!content">Contact</a></li>
+            <li><a href="#!content">Kontakt</a></li>
         </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -86,6 +88,7 @@
             <th width="10%">Ankomsttidspunkt</th>
             <th width="15%">Afgangsdag</th>
             <th width="10%">Afgangstidspunkt</th>
+            <th width="15%">Tilmeldt af</th>
             <!--<th width="15%">Slet / Ændre</th>-->
         </tr>
     </thead>
@@ -94,9 +97,10 @@
             <td>{{ registration.name }}</td>
             <td>{{ registration.agegroup }}</td>
             <td>{{ registration.arrivalday }}</td>
-            <td>{{ registration.arrivaltime }}</td>
+            <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
             <td>{{ registration.departureday }}</td>
-            <td>{{ registration.departuretime }}</td>
+            <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+            <td>{{ registration.registeree }}</td>
 <!--
             <td>
                 <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
@@ -118,5 +122,5 @@
 
 <script type="text/javascript">
     $('#nextcamp').addClass('active');
-    $('#eventreg').addClass('active');
+    $('#eventregall').addClass('active');
 </script>

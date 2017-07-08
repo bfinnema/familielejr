@@ -76,22 +76,62 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Hvor var vi og hvornår?</h1>
+<div class="blog-header">
+    <h1 class="blog-title">Stamtræ</h1>
+    <p class="lead blog-description">Dødde klanen</p>
 </div>
-<br>
-<div class="row">
-    <div class="campmap angular-google-map-container col-md-8">
-        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
-            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
-                <div>{{ wincontent }}</div>
-            </ui-gmap-window>
-            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
-        </ui-gmap-google-map>
-    </div>
+
+<div class="tree">
+	<ul>
+		<li>
+			<a href="#!familytree">Niels Flensburg<br>Anna Flensburg</a>
+			<ul>
+				<li>
+					<a href="#!familytree">Dødde<br>Anders Christian Larsen?</a>
+					<ul>
+						<li>
+							<a href="#!familytree">Helle Flensburg Larsen</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Pernille Marie<br>Konradsen</a>
+								</li>
+								<li>
+									<a href="#!familytree">Morten Konradsen</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Torben Larsen<br>Britta Larsen</a>
+							<ul>
+								<li>
+									<a href="#!familytree">??</a>
+								</li>
+								<li>
+									<a href="#!familytree">Camilla Flensburg<br>Larsen</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Hans ??<br>??</a>
+							<ul>
+								<li>
+									<a href="#!familytree">??</a>
+								</li>
+								<li>
+									<a href="#!familytree">??</a>
+								</li>
+								<li>
+									<a href="#!familytree">??</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript">
-    $('#history').addClass('active');
-    $('#campmap').addClass('active');
+    $('#familytree').addClass('active');
 </script>

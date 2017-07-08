@@ -87,7 +87,7 @@ angular.module('familielejr')
     };
 
     $scope.profileEdit = function() {
-        console.log(`inputEmail: ${$scope.user.email}`);
+        console.log(`Firstname: ${$scope.user.name.firstname}`);
 
         var name = {
             firstname: $scope.user.name.firstname,
@@ -106,7 +106,6 @@ angular.module('familielejr')
         };
         
 		var data = {
-            email: $scope.user.email,
             name: name,
 			address: addr,
             phone: $scope.user.phone

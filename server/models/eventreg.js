@@ -24,6 +24,10 @@ var EventregSchema = new mongoose.Schema({
     _creator: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
+    },
+    registeree: {
+        type: String,
+        required: true
     }
 });
 

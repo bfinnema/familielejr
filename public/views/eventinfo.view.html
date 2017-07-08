@@ -76,12 +76,53 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Hvor var vi og hvornår?</h1>
+<div class="blog-header">
+    <h1 class="blog-title">{{invitation.headline}}</h1>
+    <!--<p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>-->
 </div>
-<br>
+<hr>
 <div class="row">
-    <div class="campmap angular-google-map-container col-md-8">
+    <div class="col-sm-6">
+        <div class="well well-sm">
+            <h4>I år skal vi være i {{invitation.camp}}. Adressen er:</h4>
+            <ul style="list-style-type:none">
+                <li>{{invitation.address.street}}</li>
+                <li>{{invitation.address.zip}}, {{invitation.address.town}}</li>
+            </ul>
+        </div>
+        <div class="well well-sm">
+            <h4>Datoer og tidspunkter:</h4>
+            <p>{{invitation.startdate.weekday}} den {{invitation.startdate.day}}. {{invitation.startdate.month}} kl. {{invitation.startdate.time}} til {{invitation.enddate.weekday}} den {{invitation.enddate.day}}. {{invitation.enddate.month}} kl. {{invitation.enddate.time}} </p>
+        </div>
+        <div class="well well-sm">
+            <h4>Tilmelding:</h4>
+            <p>Senest {{invitation.registration.deadline}} til {{invitation.registration.receiver}}.</p>
+            <ul style="list-style-type:none">
+                <li>Email: {{invitation.registration.email}}</li>
+                <li>Telefon: {{invitation.registration.phone}}</li>
+            </ul>
+            <p><a class="btn btn-success" href="#!eventregistration">Eller tilmeld her på siden</a></p>
+        </div>
+        <div class="well well-sm">
+            <h4>Medbring:</h4>
+            <p>{{invitation.bring}}</p>
+        </div>
+        <div class="well well-sm">
+            <h4>Pris:</h4>
+            <ul style="list-style-type:none">
+                <li>Per voksen, per dag: {{invitation.price.adult}} kr.</li>
+                <li>Per barn, per dag: {{invitation.price.child}} kr.</li>
+            </ul>
+            <p>Betalingsmuligheder:</p>
+            <ul style="list-style-type:none">
+                <li ng-if="invitation.price.meansofpayment.cash">{{invitation.price.paymentinfo.cash}}</li>
+                <li ng-if="invitation.price.meansofpayment.mobilepay">Mobilepay til: {{invitation.price.paymentinfo.mobilepay}}</li>
+                <li ng-if="invitation.price.meansofpayment.bankaccount">Overførsel til bankkonto: {{invitation.price.paymentinfo.bankaccount.regno}} {{invitation.price.paymentinfo.bankaccount.account}}</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="eventinfo angular-google-map-container col-md-6">
         <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
             <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
                 <div>{{ wincontent }}</div>
@@ -89,9 +130,10 @@
             <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
         </ui-gmap-google-map>
     </div>
-</div>
+
+</div><!-- /.row -->
 
 <script type="text/javascript">
-    $('#history').addClass('active');
-    $('#campmap').addClass('active');
+    $('#nextcamp').addClass('active');
+    $('#nextcampinfo').addClass('active');
 </script>

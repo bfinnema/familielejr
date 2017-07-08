@@ -76,22 +76,73 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Hvor var vi og hvornår?</h1>
+<div class="blog-header">
+    <h1 class="blog-title">Stamtræ</h1>
+    <p class="lead blog-description">Inger klanen</p>
 </div>
-<br>
-<div class="row">
-    <div class="campmap angular-google-map-container col-md-8">
-        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
-            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
-                <div>{{ wincontent }}</div>
-            </ui-gmap-window>
-            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
-        </ui-gmap-google-map>
-    </div>
+
+<div class="tree">
+	<ul>
+		<li>
+			<a href="#!familytree">Niels Flensburg<br>Anna Flensburg</a>
+			<ul>
+				<li>
+					<a href="#!familytree">Inger Finnemann<br>Olav Finnemann, 02-11-1936 - 08-01-2004</a>
+					<ul>
+						<li>
+							<a href="#!familytree">Bo Finnemann</a><br>
+							<a href="#!familytree">Britt Finnemann</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Martin Finnemann</a>
+								</li>
+								<li>
+									<a href="#!familytree">Anders Finnemann</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Morten Finnemann<br>Mats Knutsson</a>
+						</li>
+						<li>
+							<a href="#!familytree">Jesper Finnemann</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Julie Evers<br>Finnemann</a>
+								</li>
+								<li>
+									<a href="#!familytree">Stine Evers<br>Finnemann</a>
+								</li>
+								<li>
+									<a href="#!familytree">Jeppe Evers<br>Finnemann</a>
+								</li>
+								<li>
+									<a href="#!familytree">Anna Evers<br>Finnemann</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Lene Finnemann Olesen</a><br>
+							<a href="#!familytree">Søren Overgård Olesen</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Mathilde Overgård<br>Olesen</a>
+								</li>
+								<li>
+									<a href="#!familytree">Lea Overgård<br>Olesen</a>
+								</li>
+								<li>
+									<a href="#!familytree">Ida Overgård<br>Olesen</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript">
-    $('#history').addClass('active');
-    $('#campmap').addClass('active');
+    $('#familytree').addClass('active');
 </script>

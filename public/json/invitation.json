@@ -1,0 +1,58 @@
+{
+    "headline": "Invitation til familielejr",
+    "year": 2017,
+    "startdate": {
+        "time": "15.00",
+        "weekday": "Fredag",
+        "day": 18,
+        "month": "august",
+        "year": 2017
+    },
+    "enddate": {
+        "time": "12.00",
+        "weekday": "søndag",
+        "day": 20,
+        "month": "august",
+        "year": 2017
+    },
+    "organizers": [
+        {"name": "Rasmus Andersen"},
+        {"name": "Tante grøn"}
+    ],
+    "camp": "Bisseruplejren",
+    "address": {
+        "street": "Gammel Strandvej 135",
+        "zip": "4243",
+        "town": "Rude"
+    },
+    "location": {
+        "longitude": 55.198711,
+        "latitude": 11.516227
+    },
+    "text1": "Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.",
+    "text2": "Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.",
+    "bring": "Klankage, sengetøj",
+    "price": {
+        "adult": 180,
+        "child": 100,
+        "meansofpayment": {
+            "cash": true,
+            "mobilepay": true,
+            "bankaccount": false
+        },
+        "paymentinfo": {
+            "cash": "Kontant afregning på lejren",
+            "mobilepay": "12345678",
+            "bankaccount": {
+                "regno": "1234",
+                "account": "1234567890"
+            }
+        }
+    },
+    "registration": {
+        "receiver": "Rasmus",
+        "email": "rasmus@hej.dk",
+        "phone": "12345678",
+        "deadline": "Den 10. august"
+    }
+}

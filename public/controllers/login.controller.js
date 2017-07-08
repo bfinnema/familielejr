@@ -11,7 +11,7 @@ angular.module('familielejr')
         $http.post('/users/login', data).then(function(response) {
             localStorage.userToken = response.headers()['x-auth'];
             localStorage.familielejrUserId = response.data._id;
-            $location.path('/content');
+            $location.path('/home');
             $scope.isLoggedIn = true;
         }, function errorCallback(response) {
             console.log(`getUserStatus: ${response.status}`);

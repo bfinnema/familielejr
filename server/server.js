@@ -25,6 +25,9 @@ app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 
 app.post('/eventreg', authenticate, (req, res) => {
+  var registeree = req.user.name.firstname;
+  if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
+  registeree = registeree + ' ' + req.user.name.surname
   var eventreg = new Eventreg({
     name: req.body.name,
     agegroup: req.body.agegroup,
@@ -32,7 +35,8 @@ app.post('/eventreg', authenticate, (req, res) => {
     arrivaltime: req.body.arrivaltime,
     departureday: req.body.departureday,
     departuretime: req.body.departuretime,
-    _creator: req.user._id
+    _creator: req.user._id,
+    registeree: registeree
   });
 
   eventreg.save().then ((doc) => {
@@ -197,10 +201,9 @@ app.post('/users', (req, res) => {
 
 app.patch('/users/me/edit/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['email', 'name', 'address', 'phone']);
+  var body = _.pick(req.body, ['name', 'address', 'phone']);
   User.findById(id).then((user) => {
     user.removeToken(req.token).then(() => {
-      user.email = body.email;
       user.name = body.name;
       user.address = body.address;
       user.phone = body.phone;
@@ -346,7 +349,7 @@ app.get('/photos/:year', authenticate, (req, res) => {
   });
 })
 
-app.get('/photos/me', authenticate, (req, res) => {
+app.get('/myphotos', authenticate, (req, res) => {
   var year = req.params.year;
   Photo.find({
     _creator: req.user._id
@@ -356,6 +359,31 @@ app.get('/photos/me', authenticate, (req, res) => {
     res.status(400).send(e);
   });
 })
+
+app.delete('/photos/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Photo.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((photo) => {
+    if (!photo) {
+      return res.status(404).send();
+    }
+
+    fs.unlink(__dirname + '/../public/' + photo.path+photo.filename, function(err) {
+      if (err) throw err;
+    });
+    console.log(`Image ${photo.filename} removed`);
+    res.json(photo);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

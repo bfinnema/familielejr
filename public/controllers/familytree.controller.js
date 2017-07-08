@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('indholdCtrl', ['$scope', '$http', '$location', 'AuthService', function($scope, $http, $location, AuthService) {
+.controller('familytreeCtrl', ['$scope', 'AuthService', function($scope, AuthService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -9,4 +9,4 @@ angular.module('familielejr')
         };
     });
     
-}]);
+}])

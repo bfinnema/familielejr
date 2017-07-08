@@ -60,8 +60,38 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregallCtrl',
             access: {restricted: true}
         }).
+        when('/eventinfo', {
+            templateUrl: 'views/eventinfo.view.html',
+            controller: 'eventinfoCtrl',
+            access: {restricted: true}
+        }).
         when('/familytree', {
             templateUrl: 'views/familytree.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreechristian', {
+            templateUrl: 'views/familytreechristian.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreedodde', {
+            templateUrl: 'views/familytreedodde.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreegrethe', {
+            templateUrl: 'views/familytreegrethe.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreeinger', {
+            templateUrl: 'views/familytreeinger.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreehans', {
+            templateUrl: 'views/familytreehans.view.html',
             controller: 'familytreeCtrl',
             access: {restricted: true}
         }).
@@ -80,9 +110,9 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
-        when('/photoalbum/me', {
-            templateUrl: 'views/photoalbum.view.html',
-            controller: 'photoalbumCtrl',
+        when('/myphotoalbum', {
+            templateUrl: 'views/myphotoalbum.view.html',
+            controller: 'myphotoalbumCtrl',
             access: {restricted: true}
         }).
         when('/photoupload', {

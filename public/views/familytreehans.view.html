@@ -76,22 +76,57 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Hvor var vi og hvornår?</h1>
+<div class="blog-header">
+    <h1 class="blog-title">Stamtræ</h1>
+    <p class="lead blog-description">Hans klanen</p>
 </div>
-<br>
-<div class="row">
-    <div class="campmap angular-google-map-container col-md-8">
-        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
-            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
-                <div>{{ wincontent }}</div>
-            </ui-gmap-window>
-            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
-        </ui-gmap-google-map>
-    </div>
+
+<div class="tree">
+	<ul>
+		<li>
+			<a href="#!familytree">Niels Flensburg<br>Anna Flensburg</a>
+			<ul>
+				<li>
+					<a href="#!familytree">Hans Flensburg<br>Elly Flensburg</a>
+					<ul>
+						<li>
+							<a href="#!familytree">Hanne Flensburg<br>Jens Bay Clausen</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Philip Clausen</a>
+								</li>
+								<li>
+									<a href="#!familytree">Oscar Clausen</a>
+								</li>
+								<li>
+									<a href="#!familytree">??</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Lis Flensburg<br>Danny Flensburg</a>
+							<ul>
+								<li>
+									<a href="#!familytree">Mads Flensburg</a>
+								</li>
+								<li>
+									<a href="#!familytree">Stine Flensburg</a>
+								</li>
+								<li>
+									<a href="#!familytree">Rikke Flensburg</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="#!familytree">Niels Flensburg</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript">
-    $('#history').addClass('active');
-    $('#campmap').addClass('active');
+    $('#familytree').addClass('active');
 </script>

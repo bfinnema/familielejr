@@ -77,21 +77,50 @@
 </nav>
 
 <div class="page-header">
-    <h1>Hvor var vi og hvornår?</h1>
+    <h1>Mine Billeder</h1>
+</div>
+<div ng-if="images.length > 0">
+    <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-1">
+            <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
+        </div>
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-1">
+            <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+    <div class="row">
+        <img class="img-responsive" src="{{mainImage}}">
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="actions">
+                <a href="#" class="btn btn-danger" ng-click="removeImage(mainImageObj)">Slet billedet</a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <p>{{mainImageObj.filename}} uploaded af {{mainImageObj.uploader}}.  Fra {{mainImageObj.year}}</p>
+        </div>
+    </div>
+</div>
+<div ng-if="images == false">
+    <h3>Du har ikke uploaded nogen billeder endnu.</h3>
 </div>
 <br>
 <div class="row">
-    <div class="campmap angular-google-map-container col-md-8">
-        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
-            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
-                <div>{{ wincontent }}</div>
-            </ui-gmap-window>
-            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
-        </ui-gmap-google-map>
+    <div ng-repeat="image in images">
+        <div class="col-md-1">
+            <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+        </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    $('#history').addClass('active');
-    $('#campmap').addClass('active');
+    $('#photoalbum').addClass('active');
 </script>
