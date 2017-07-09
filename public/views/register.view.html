@@ -77,27 +77,37 @@
 </nav>
 
 <div ng-controller = "registerCtrl">
-    <form name="form-register" class="form-register" id="form-register" ng-submit="registerUser()">
+    <form name="formRegister" class="formRegister" id="formRegister" ng-submit="registerUser()" novalidate>
         <h2 class="form-signin-heading">Registrering</h2>
         <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
         <div class="row">
             <div class="form-group col-md-3">
                 <label for="inputEmail">Email adresse</label>
                 <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required autofocus>
+                <i ng-show="formRegister.inputEmail.$error.email">Indtast korrekt email format. </i>
+                <i ng-show="formRegister.inputEmail.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-3">
                 <label for="inputPassword">Kodeord</label>
-                <input type="password" id="inputPassword" ng-model="inputPassword" class="form-control" placeholder="Kodeord" required>
+                <input type="password" id="inputPassword" name="inputPassword" ng-model="inputPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Kodeord" required>
+                <i ng-show="formRegister.inputPassword.$error.minlength">Mindst 8 karakterer. </i>
+                <i ng-show="formRegister.inputPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="formRegister.inputPassword.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-3">
                 <label>Hemmelighed</label>
                 <input type="text" class="form-control" ng-model="secret" name="secret" placeholder="Hemmelighed" required>
+                <i ng-show="formRegister.secret.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-3">
                 <label for="repeatPassword">Gentag kodeord</label>
-                <input type="password" id="repeatPassword" name="repeatPassword" ng-model="repeatPassword" class="form-control" placeholder="Gentag kodeord" required>
+                <input type="password" id="repeatPassword" name="repeatPassword" ng-model="repeatPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Gentag kodeord" required>
+                <i ng-show="formRegister.repeatPassword.$error.minlength">Mindste længde: 8 karakterer. </i>
+                <i ng-show="formRegister.repeatPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="formRegister.repeatPassword.$error.required">Skal indtastes. </i>
+                <i class="notidentical hidden"><br>De to kodeord er ikke identiske</i>
             </div>
         </div>
         <h3 class="form-signin-heading">Navn</h3>
@@ -105,6 +115,7 @@
             <div class="form-group col-md-2">
                 <label>Fornavn</label>
                 <input type="text" class="form-control" ng-model="firstname" name="firstname" placeholder="Fornavn" required>
+                <i ng-show="formRegister.firstname.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-2">
                 <label>Mellemnavn</label>
@@ -113,6 +124,7 @@
             <div class="form-group col-md-3">
                 <label>Efternavn</label>
                 <input type="text" class="form-control" ng-model="surname" name="surname" placeholder="Efternavn" required>
+                <i ng-show="formRegister.surname.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <h3 class="form-signin-heading">Adresse</h3>
@@ -163,41 +175,24 @@
         <br>
         <div class="row">
             <div class="form-group col-md-4">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Registrér</button>
+                <button ng-disabled="formRegister.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
             </div>
         </div>
     </form>
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#form-register').validate({
-            rules: {
-                inputPassword: {
-                    minlength: 8,
-                    maxlength: 12,
-                    equalTo: '[name="repeatPassword"]'
-                },
-                repeatPassword: {
-                    minlength: 8,
-                    maxlength: 12
-                }
-            },
-            messages: {
-                inputPassword: {
-                    minlength: 'Kodeord er mindst 8 karakterer.',
-                    maxlength: 'Kodeord er maksimalt 12 karakterer lange.',
-                    equalTo: 'Tag dig sammen. De skal være ens.'
-                },
-                repeatPassword: {
-                    minlength: 'Kodeord er mindst 8 karakterer.',
-                    maxlength: 'Kodeord er maksimalt 12 karakterer lange.'
-                }
-            }
-        });
-
-    });
-</script>
-<script type="text/javascript">
     $('#register').addClass('active');
+
+    $('#repeatPassword').change(function() {
+        console.log('Repeat-password changed');
+        if ($('#inputPassword').val() != $('#repeatPassword').val()) {
+            console.log('They are different');
+            $('.notidentical').removeClass('hidden');
+        } else {
+            console.log('They are identical');
+            $('.notidentical').addClass('hidden');
+        };
+    });
+
 </script>

@@ -179,12 +179,12 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 // POST /users
 app.post('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password', 'name', 'address', 'phone', 'secret']);
+  var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'name', 'address', 'phone', 'secret']);
   console.log(`Email: ${body.email}, password: ${body.password}`);
   console.log(`Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
-  console.log(`Secret: ${body.secret}`);
-  if (body.secret == process.env.REGISTRATION_SECRET) {
-    console.log('Secret approved.');
+  console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}`);
+  if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
+    console.log('Secret approved and passwords equal.');
     var user = new User(body);
 
     user.save().then(() => {
@@ -220,19 +220,23 @@ app.patch('/users/me/edit/:id', authenticate, (req, res) => {
 
 // Change password
 app.post('/users/me/password', authenticate, (req, res) => {
-  console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}`);
-  User.findByCredentials(req.user.email, req.body.password).then((user) => {
-    user.removeToken(req.token).then(() => {
-      user.password = req.body.newpassword;
-      user.save().then(() => {
-        return user.generateAuthToken();
-      }).then((token) => {
-        res.header('x-auth', token).json(user);
+  console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
+  if (req.body.newpassword == req.body.confirmnpwd) {
+    User.findByCredentials(req.user.email, req.body.password).then((user) => {
+      user.removeToken(req.token).then(() => {
+        user.password = req.body.newpassword;
+        user.save().then(() => {
+          return user.generateAuthToken();
+        }).then((token) => {
+          res.header('x-auth', token).json(user);
+        });
       });
+    }).catch((e) => {
+      res.status(400).send();
     });
-  }).catch((e) => {
-    res.status(400).send();
-  });
+  } else {
+    res.status(401).send();
+  };
 })
 
 // Check logged in user

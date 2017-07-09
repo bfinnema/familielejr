@@ -15,7 +15,8 @@ angular.module('familielejr')
 
         var data = {
             password: $scope.currentPassword,
-            newpassword: $scope.newPassword
+            newpassword: $scope.newPassword,
+            confirmnpwd: $scope.repeatnewPassword
         };
 
         $http({
@@ -31,7 +32,13 @@ angular.module('familielejr')
             $scope.isLoggedIn = true;
         }, function errorCallback(response) {
             console.log(`getUserStatus: ${response.status}`);
-            alert('Indtastede du korrekt kodeord?');
+            if (response.status == 400) {
+                alert('Indtastede du korrekt kodeord?');
+            } else if (response.status == 401) {
+                alert('Kodeord og gentaget kodeord skal være ens');
+            } else {
+                alert('Noget gik galt');
+            };
         });
 
     };

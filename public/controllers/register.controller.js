@@ -63,6 +63,7 @@ angular.module('familielejr')
 		var data = {
             email: $scope.inputEmail,
             password: $scope.inputPassword,
+            confirmpwd: $scope.repeatPassword,
             name: name,
 			address: addr,
             phone: $scope.phone,
@@ -79,9 +80,36 @@ angular.module('familielejr')
             $scope.isLoggedIn = true;
         }, function errorCallback(response) {
             console.log(`getUserStatus: ${response.status}`);
-            alert('Indtastede du korrekt hemmelighed?');
+            alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
         });
 
     };
 
-}]);
+}])
+/*
+.directive('passwordVerify', function () {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attr, mCtrl) {
+
+            // watch own value and re-validate on change
+            scope.$watch(attrs.ngModel, function() {
+            validate();
+            });
+
+            // observe the other value and re-validate on change
+            attrs.$observe('passwordVerify', function(val) {
+            validate();
+            });
+
+            var validate = function() {
+                // values
+                var val1 = ngModel.$viewValue;
+                var val2 = attrs.passwordVerify;
+
+                // set validity
+                ngModel.$setValidity('passwordVerify', val1 === val2);
+            };
+        }
+    }
+})*/
