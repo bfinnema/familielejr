@@ -6,7 +6,7 @@ var InvitationSchema = new mongoose.Schema({
         required: true
     },
     year: {
-        type: String,
+        type: Number,
         required: true
     },
     headline: {

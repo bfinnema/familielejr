@@ -46,7 +46,7 @@ app.post('/eventreg', authenticate, (req, res) => {
   }, (e) => {
     res.status(400).send(e);
   });
-})
+});
 
 app.get('/eventreg', authenticate, (req, res) => {
   Eventreg.find({
@@ -409,11 +409,11 @@ app.post('/invitations', authenticate, (req, res) => {
     organizers: req.body.organizers,
     _creator: req.user._id
   });
-  console.log(`Headline: ${req.body.headline}`);
 
   invitation.save().then((doc) => {
     res.send(doc);
   }, (e) => {
+    console.log('POST invitation error');
     res.status(400).send(e);
   });
 });

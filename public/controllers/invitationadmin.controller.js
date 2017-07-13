@@ -49,7 +49,7 @@ angular.module('familielejr')
             if ($scope.invitation.organizers[3]) {$scope.organizer4 = $scope.invitation.organizers[3].name;};
             if ($scope.invitation.organizers[4]) {$scope.organizer5 = $scope.invitation.organizers[4].name;};
         } else {
-            // console.log('Invitation does not exist');
+            console.log('Invitation does not exist');
             $scope.invMessage = "Du opretter en ny invitation for " + invyear + ".";
             $http.get('../json/invitation.json').then(function(response) {
                 $scope.invitation = response.data;
@@ -112,8 +112,8 @@ angular.module('familielejr')
             text1: $scope.invitation.text1,
             camp: $scope.invitation.camp,
 			address: addr,
-            startdate: $scope.startdate,
-            starttime: $scope.starttime,
+            startdate: $scope.startdateView,
+            starttime: $scope.starttimeView,
             enddate: $scope.enddateView,
             endtime: $scope.endtimeView,
             registration: registration,
@@ -204,9 +204,6 @@ angular.module('familielejr')
         if ($scope.organizer4) {organizers.push({"name": $scope.organizer4});};
         if ($scope.organizer5) {organizers.push({"name": $scope.organizer5});};
 
-        console.log(`First organizer: ${organizers[0].name}`);
-        console.log(`Second organizer: ${organizers[1].name}`);
-        
 		var data = {
             year: $scope.year,
             camp: $scope.camp,
@@ -281,9 +278,6 @@ angular.module('familielejr')
         if ($scope.organizer4) {organizers.push({"name": $scope.organizer4});};
         if ($scope.organizer5) {organizers.push({"name": $scope.organizer5});};
 
-        console.log(`First organizer: ${organizers[0].name}`);
-        console.log(`Second organizer: ${organizers[1].name}`);
-        
 		var data = {
             year: $scope.camp.year,
             camp: $scope.camp.camp,

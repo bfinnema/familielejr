@@ -95,11 +95,11 @@
     </div>
 </nav>
 
-<div class="blog-header">
-    <h1 class="blog-title">{{invitation.headline}}, {{invitation.year}}</h1>
-</div>
-<hr>
 <div ng-if="invitationExists" class="row">
+    <div class="blog-header">
+        <h1 class="blog-title">{{invitation.headline}}, {{invitation.year}}</h1>
+    </div>
+    <hr>
     <div class="col-sm-6">
         <div class="well well-sm">
             <h4>I år skal vi være i {{invitation.camp}}. Adressen er:</h4>
@@ -163,7 +163,7 @@
 </div><!-- /.row -->
 
 <div ng-if="!invitationExists" class="row">
-    <h1 class="blog-title">Der er ikke nogen invitation for {{invitation.year}}</h1>
+    <h1 class="blog-title">Der er ikke nogen invitation for {{invyear}}</h1>
 </div>
 
 <script type="text/javascript">
