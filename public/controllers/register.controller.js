@@ -64,6 +64,7 @@ angular.module('familielejr')
             email: $scope.inputEmail,
             password: $scope.inputPassword,
             confirmpwd: $scope.repeatPassword,
+            role: 2, // by default the registrant is ordinary user.
             name: name,
 			address: addr,
             phone: $scope.phone,
@@ -86,30 +87,3 @@ angular.module('familielejr')
     };
 
 }])
-/*
-.directive('passwordVerify', function () {
-    return {
-        require: 'ngModel',
-        link: function(scope, element, attr, mCtrl) {
-
-            // watch own value and re-validate on change
-            scope.$watch(attrs.ngModel, function() {
-            validate();
-            });
-
-            // observe the other value and re-validate on change
-            attrs.$observe('passwordVerify', function(val) {
-            validate();
-            });
-
-            var validate = function() {
-                // values
-                var val1 = ngModel.$viewValue;
-                var val2 = attrs.passwordVerify;
-
-                // set validity
-                ngModel.$setValidity('passwordVerify', val1 === val2);
-            };
-        }
-    }
-})*/

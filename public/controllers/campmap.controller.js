@@ -7,6 +7,7 @@ angular.module('familielejr')
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
             $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
         };
     });
 

@@ -70,6 +70,8 @@ angular.module('familielejr')
         if (response.data._id === localStorage.familielejrUserId) {
             $scope.isLoggedIn = true;
             $scope.user = response.data;
+            $scope.role = response.data.role;
+            // console.log(`Role: ${$scope.role}`);
             // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}`);
         } else {
             alert('Something fishy...');

@@ -95,37 +95,125 @@
     </div>
 </nav>
 
-<div class="row" ng-controller = "loginCtrl">
-    <form name="form-login" class="form-login" ng-submit="loginUser()">
-        <div class="text-center">
-            <h2 class="form-signin-heading">Log ind</h2>
-        </div>
+<div ng-controller = "futurecampsCtrl">
+    <h2>Liste over fremtidige lejre</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="10%">År</th>
+                <th width="25%">Lejr</th>
+                <th width="15%">Startdato</th>
+                <th width="15%">Slutdato</th>
+                <th width="25%">Arrangører</th>
+                <th width="10%">Ændre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="camp in camps">
+                <td>{{ camp.year }}</td>
+                <td>{{ camp.camp }}, {{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</td>
+                <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                <td><i ng-repeat="organizer in camp.organizers">{{organizer.name}}, </i></td>
+                <td>
+                    <a class="btn btn-primary" href="#!futurecamps/edit/{{camp._id}}">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="camps == false">
+    <tr>
+        <td></td><td>Der er ikke nogen fremtidige lejre endnu</td>
+    </tr>
+</div>
+<hr>
+<div>
+    <form name="formFuturecamp" ng-submit="generateFuturecamp()" novalidate>
+        <h2 class="form-signin-heading">Opret ny lejr</h2>
         <div class="row">
-            <div class="col-md-offset-4 col-md-4">
-                <label for="inputEmail" class="sr-only">Email adresse</label>
-                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email address" required autofocus>
+            <div class="col-md-8">
+                <p>Her kan du som arrangør oprette en ny, fremtidig lejr</p>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-offset-4 col-md-4">
-                <label for="inputPassword" class="sr-only">Kodeord</label>
-                <input type="password" id="inputPassword" ng-model="inputPassword" class="form-control" placeholder="Password" required>
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="text" id="year" class="form-control" ng-model="year" placeholder="År" required>
             </div>
         </div>
-        <div class="col-md-offset-4 checkbox">
-        <label>
-            <input type="checkbox" ng-model="rememberme" value="remember-me"> Remember me
-        </label>
+        <h3 class="form-signin-heading">Detaljer om lejren</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Lejrens navn</label>
+                <input type="text" class="form-control" ng-model="camp" name="camp" placeholder="Lejrnavn">
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-offset-4 col-md-4">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Log ind</button>
+            <div class="form-group col-md-3">
+                <label>Gade</label>
+                <input type="text" class="form-control" ng-model="street" name="street" placeholder="Gadenavn">
             </div>
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" class="form-control" ng-model="zip" name="zip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" class="form-control" ng-model="town" name="town" placeholder="By">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Startdato</label>
+                <input type="date" class="form-control" ng-model="startdate" name="startdate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Slutdato</label>
+                <input type="date" class="form-control" ng-model="enddate" name="enddate">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Arrangører</h3>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 1</label>
+                <input type="text" id="organizer1" class="form-control" ng-model="organizer1">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 2</label>
+                <input type="text" id="organizer2" class="form-control" ng-model="organizer2">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 3</label>
+                <input type="text" id="organizer3" class="form-control" ng-model="organizer3">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 4</label>
+                <input type="text" id="organizer4" class="form-control" ng-model="organizer4">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 5</label>
+                <input type="text" id="organizer5" class="form-control" ng-model="organizer5">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formFuturecamp.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Opret lejr</button>
+            </div>
+<!-- 
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" href="#!futurecamps">Fortryd</a>
+            </div>
+ -->            
         </div>
     </form>
-</div>
 
 <script type="text/javascript">
-    $('#login').addClass('active');
-    $('#myaccount').addClass('active');
+    $('#organizer').addClass('active');
+    $('#futurecamps').addClass('active');
 </script>

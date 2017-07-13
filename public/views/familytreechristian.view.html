@@ -60,7 +60,7 @@
                     <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
             </li>
-            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Register</a></li>
+            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Registrer</a></li>
             <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
             <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Min konto <span class="caret"></span></a>
@@ -68,6 +68,25 @@
                     <li id="logout"><a href="#!logout">Log ud</a></li>
                     <li id="myprofile"><a href="#!profile">Min profil</a></li>
                     <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
+                </ul>
+            </li>
+            <li id="organizer" ng-show="isLoggedIn && role < 2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
+                    <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
+                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="todolist"><a href="#!todolist">Huskelister</a></li>
+                    <li id="finances"><a href="#!finances">Økonomi</a></li>
+                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                </ul>
+            </li>
+            <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
+                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
+                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
                 </ul>
             </li>
             <li><a href="#!content">Kontakt</a></li>
@@ -90,16 +109,21 @@
 					<a href="#!familytree">Christian Flensburg<br>Lis Flensburg</a>
 					<ul>
 						<li>
-							<a href="#!familytree">Britta</a>
+							<a href="#!familytree">Britta Flensburg</a>
 							<ul>
 								<li>
 									<a href="#!familytree">Laila Flensburg<br>Jørgensen</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#!familytree">Frederikke<br>Flensburg Koustrup</a>
+                                        </li>
+                                        <li>
+                                            <a href="#!familytree">William Flensburg<br>Koustrup</a>
+                                        </li>
+                                    </ul>
 								</li>
 								<li>
-									<a href="#!familytree">k<br>Frederikke<br>Flensburg Koustrup ??</a>
-								</li>
-								<li>
-									<a href="#!familytree">h<br>William Flensburg<br>Koustrup ??</a>
+									<a href="#!familytree">Brian<br>Flensburg</a>
 								</li>
 							</ul>
 						</li>

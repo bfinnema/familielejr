@@ -13,6 +13,8 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 var {Photo} = require('./models/photo');
 var {Eventreg} = require('./models/eventreg');
+var {Invitation} = require('./models/invitation');
+var {Futurecamp} = require('./models/futurecamp');
 var {authenticate} = require('./middleware/authenticate');
 multipartyMiddleware = multiparty();
 
@@ -179,10 +181,9 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 // POST /users
 app.post('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'name', 'address', 'phone', 'secret']);
-  console.log(`Email: ${body.email}, password: ${body.password}`);
-  console.log(`Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
-  console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}`);
+  var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret']);
+  // console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
+  // console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
   if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
     console.log('Secret approved and passwords equal.');
     var user = new User(body);
@@ -326,7 +327,7 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
         });
 */        
       } else {
-        console.log('Photo already in db');
+        // console.log('Photo already in db');
         res.status(409).send({photo});
         fs.unlink(tmp_path, function(err) {
           if (err) throw err;
@@ -387,6 +388,143 @@ app.delete('/photos/:id', authenticate, (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   });
+});
+
+// Invitations
+app.post('/invitations', authenticate, (req, res) => {
+  var invitation = new Invitation({
+    headline: req.body.headline,
+    year: req.body.year,
+    text1: req.body.text1,
+    camp: req.body.camp,
+    address: req.body.address,
+    startdate: req.body.startdate,
+    starttime: req.body.starttime,
+    enddate: req.body.enddate,
+    endtime: req.body.endtime,
+    registration: req.body.registration,
+    bring: req.body.bring,
+    payment: req.body.payment,
+    text2: req.body.text2,
+    organizers: req.body.organizers,
+    _creator: req.user._id
+  });
+  console.log(`Headline: ${req.body.headline}`);
+
+  invitation.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/invitations/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  Invitation.findOne({
+    year: year
+  }).then((invitation) => {
+    res.json(invitation);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/invitations', authenticate, (req, res) => {
+  Invitation.find({}).then((invitations) => {
+    res.json(invitations);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.patch('/invitations/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['headline', 'year', 'text1', 'camp', 'address', 'startdate', 'starttime', 'enddate', 'endtime', 'registration', 'bring', 'payment', 'text2', 'organizers']);
+
+  if (!ObjectID.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  }
+
+  Invitation.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((invitation) => {
+    if (!invitation) {
+      console.log(`Invitation not found`);
+      return res.status(404).send();
+    }
+
+    res.send({invitation});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
+// Future camps
+app.post('/futurecamps', authenticate, (req, res) => {
+  var futurecamp = new Futurecamp({
+    year: req.body.year,
+    camp: req.body.camp,
+    address: req.body.address,
+    startdate: req.body.startdate,
+    enddate: req.body.enddate,
+    organizers: req.body.organizers,
+    _creator: req.user._id
+  });
+
+  futurecamp.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/futurecamps', authenticate, (req, res) => {
+  Futurecamp.find({}).then((futurecamps) => {
+    res.json(futurecamps);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/futurecamps/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Futurecamp.findOne({
+    _id: id,
+    _creator: req.user._id
+  }).then((futurecamp) => {
+    if (!futurecamp) {
+      return res.status(404).send();
+    }
+
+    res.send({futurecamp});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/futurecamps/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['year', 'camp', 'address', 'startdate', 'enddate', 'organizers']);
+
+  if (!ObjectID.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  }
+
+  Futurecamp.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((futurecamp) => {
+    if (!futurecamp) {
+      console.log(`Futurecamp not found`);
+      return res.status(404).send();
+    }
+
+    res.send({futurecamp});
+  }).catch((e) => {
+    res.status(400).send();
+  })
 });
 
 app.listen(port, () => {

@@ -6,6 +6,7 @@ angular.module('familielejr')
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
             $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
         };
     });
 
@@ -105,6 +106,7 @@ angular.module('familielejr')
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
             $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
         };
     });
 
@@ -112,8 +114,8 @@ angular.module('familielejr')
         method: 'GET',
         url: 'eventregall'
     }).then(function(response) {
-        console.log(`Status: ${response.status}`);
-        console.log(response.data);
+        // console.log(`Status: ${response.status}`);
+        // console.log(response.data);
         $scope.registrations = response.data;
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
@@ -127,13 +129,64 @@ angular.module('familielejr')
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
             $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
         };
     });
-
+/*
     $http.get('../json/invitation.json').then(function(response) {
         $scope.invitation = response.data;
-        console.log(`Headline: ${$scope.invitation.headline}`);
-        console.log($scope.invitation);
+        // console.log(`Headline: ${$scope.invitation.headline}`);
+    });
+*/
+    var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
+    var days = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"];
+
+    var currentyear = (new Date()).getFullYear();
+    var now = new Date();
+    var demarc = new Date(currentyear,8,1);
+    var invyear = currentyear;
+    if (now > demarc) {
+        invyear += 1
+    };
+    $scope.invyear = invyear;
+    // console.log(`Invyear: ${invyear}`);
+    var invitationExists = false;
+    $scope.invitationExists = invitationExists;
+
+    $http({
+        method: 'GET',
+        url: '/invitations/'+invyear,
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        console.log(`Success. Status: ${response.status}`);
+        if (response.data) {
+            invitationExists = true;
+            $scope.invitationExists = invitationExists;
+            $scope.invitation = response.data;
+            var sd = new Date($scope.invitation.startdate);
+            $scope.startday = days[sd.getDay()];
+            $scope.startdate = sd.getDate();
+            $scope.startmonth = months[sd.getMonth()];
+            var ed = new Date($scope.invitation.enddate);
+            $scope.endday = days[ed.getDay()];
+            $scope.enddate = ed.getDate();
+            $scope.endmonth = months[ed.getMonth()];
+            var dl = new Date($scope.invitation.registration.deadline);
+            $scope.deadlineday = days[dl.getDay()];
+            $scope.deadlinedate = dl.getDate();
+            $scope.deadlinemonth = months[dl.getMonth()];
+            $scope.organizer1 = $scope.invitation.organizers[0].name;
+            if ($scope.invitation.organizers[1]) {$scope.organizer2 = $scope.invitation.organizers[1].name;};
+            if ($scope.invitation.organizers[2]) {$scope.organizer3 = $scope.invitation.organizers[2].name;};
+            if ($scope.invitation.organizers[3]) {$scope.organizer4 = $scope.invitation.organizers[3].name;};
+            if ($scope.invitation.organizers[4]) {$scope.organizer5 = $scope.invitation.organizers[4].name;};
+        } else {
+            console.log('Invitation does not exist');
+        };
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
     });
 
     uiGmapGoogleMapApi.then(function (maps) {
@@ -165,12 +218,8 @@ angular.module('familielejr')
 
     $scope.wincontent = "Hello";
     $scope.onClick = function (name, address, years, website) {
-        //$scope.windowOptions.show = !$scope.windowOptions.show;
         $scope.windowOptions.show = true;
-        //console.log('$scope.windowOptions.show: ', $scope.windowOptions.show);
-        //console.log('Adressen er: ' + address +' Matrikel: ' + matrikel);
         $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
-        //console.log('wincontent: ' + $scope.wincontent);
     };
 
     $scope.closeClick = function () {

@@ -4,10 +4,12 @@ function ($q, $timeout, $http) {
 
     // create user variable
     var user = null;
+    var role = 2;
 
     // return available functions for use in the controllers
     return ({
         isLoggedIn: isLoggedIn,
+        userRole: userRole,
         getUserStatus: getUserStatus
     });
 
@@ -17,7 +19,15 @@ function ($q, $timeout, $http) {
         } else {
             return false;
         }
-    }
+    };
+
+    function userRole() {
+        if(user) {
+            return role;
+        } else {
+            return 400;
+        }
+    };
 
     function getUserStatus() {
         var token;
@@ -34,9 +44,11 @@ function ($q, $timeout, $http) {
             }
         }).then(function(response) {
             console.log(`getUserStatus: ${response.status}`);
-            console.log(response.data._id, response.data.email);
+            console.log(response.data._id, response.data.email, response.data.role);
             if (response.data._id === localStorage.familielejrUserId) {
                 user = true;
+                role = response.data.role;
+                console.log(`Role: ${role}`);
             } else {
                 user = false;
             };

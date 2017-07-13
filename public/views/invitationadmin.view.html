@@ -1,0 +1,283 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand home" href="#!home">Familielejr</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li id="about" ng-show="isLoggedIn"><a href="#!about">Om familielejren</a></li>
+            <li id="history" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Historie<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="campmap"><a href="#!campmap">Kort</a></li>
+                    <li id="camplist"><a href="#!camplist">Liste over lejre</a></li>
+                </ul>
+            </li>
+            <li id="familytree" ng-show="isLoggedIn"><a href="#!familytree">Stamtræ</a></li>
+            <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#!photoupload">Upload af billeder</a></li>
+                    <li><a href="#!photoalbum/1993">1993</a></li>
+                    <li><a href="#!photoalbum/1994">1994</a></li>
+                    <li><a href="#!photoalbum/1995">1995</a></li>
+                    <li><a href="#!photoalbum/1996">1996</a></li>
+                    <li><a href="#!photoalbum/1997">1997</a></li>
+                    <li><a href="#!photoalbum/1998">1998</a></li>
+                    <li><a href="#!photoalbum/1999">1999</a></li>
+                    <li><a href="#!photoalbum/2000">2000</a></li>
+                    <li><a href="#!photoalbum/2001">2001</a></li>
+                    <li><a href="#!photoalbum/2002">2002</a></li>
+                    <li><a href="#!photoalbum/2003">2003</a></li>
+                    <li><a href="#!photoalbum/2004">2004</a></li>
+                    <li><a href="#!photoalbum/2005">2005</a></li>
+                    <li><a href="#!photoalbum/2006">2006</a></li>
+                    <li><a href="#!photoalbum/2007">2007</a></li>
+                    <li><a href="#!photoalbum/2008">2008</a></li>
+                    <li><a href="#!photoalbum/2009">2009</a></li>
+                    <li><a href="#!photoalbum/2010">2010</a></li>
+                    <li><a href="#!photoalbum/2011">2011</a></li>
+                    <li><a href="#!photoalbum/2012">2012</a></li>
+                    <li><a href="#!photoalbum/2013">2013</a></li>
+                    <li><a href="#!photoalbum/2014">2014</a></li>
+                    <li><a href="#!photoalbum/2015">2015</a></li>
+                    <li><a href="#!photoalbum/2016">2016</a></li>
+                    <li><a href="#!photoalbum/2017">2017</a></li>
+                    <li><a href="#!myphotoalbum">Mine billeder</a></li>
+                </ul>
+            </li>
+            <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Næste Familielejr<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="nextcampinfo"><a href="#!eventinfo">Information</a></li>
+                    <li id="eventreg"><a href="#!eventregistration">Tilmelding</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
+                </ul>
+            </li>
+            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Registrer</a></li>
+            <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
+            <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Min konto <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="logout"><a href="#!logout">Log ud</a></li>
+                    <li id="myprofile"><a href="#!profile">Min profil</a></li>
+                    <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
+                </ul>
+            </li>
+            <li id="organizer" ng-show="isLoggedIn && role < 2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
+                    <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
+                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="todolist"><a href="#!todolist">Huskelister</a></li>
+                    <li id="finances"><a href="#!finances">Økonomi</a></li>
+                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                </ul>
+            </li>
+            <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
+                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
+                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
+                </ul>
+            </li>
+            <li><a href="#!content">Kontakt</a></li>
+        </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div ng-controller="invitationadminCtrl">
+    <form name="formInvitationEdit" ng-submit="generateInvitation()" novalidate>
+        <h2 class="form-signin-heading">Opsætning af invitation</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du som arrangør lave en invitation baseret på et antal standard felter. Der er også mulighed for en indledende og en afsluttende blok med fritekst</p>
+                <p>{{invMessage}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="headline">Overskrift</label>
+                <input type="text" id="headline" class="form-control" ng-model="invitation.headline" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="text" id="year" class="form-control" ng-model="invitation.year" disabled required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Eventuel indledende tekst</h3>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <textarea class="form-control" ng-model="invitation.text1" name="text1" rows="3"></textarea>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Detaljer om lejren</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Lejrens navn</label>
+                <input type="text" class="form-control" ng-model="invitation.camp" name="camp" placeholder="Lejrnavn" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Gade</label>
+                <input type="text" class="form-control" ng-model="invitation.address.street" name="street" placeholder="Gadenavn" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" class="form-control" ng-model="invitation.address.zip" name="zip" placeholder="Postnummer" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" class="form-control" ng-model="invitation.address.town" name="town" placeholder="By" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Startdato</label>
+                <input type="date" class="form-control" ng-model="startdateView" name="startdate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Tid</label>
+                <input type="time" class="form-control" ng-model="starttimeView" name="starttime">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Slutdato</label>
+                <input type="date" class="form-control" ng-model="enddateView" name="enddate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Tid</label>
+                <input type="time" class="form-control" ng-model="endtimeView" name="endtime">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Tilmelding</h3>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Tilmeld til</label>
+                <input type="text" class="form-control" ng-model="invitation.registration.receiver" name="regreceiver" placeholder="Modtager" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Email</label>
+                <input type="email" class="form-control" ng-model="invitation.registration.email" name="regemail" placeholder="Email adresse" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Telefon</label>
+                <input type="text" class="form-control" ng-model="invitation.registration.phone" name="regphone" placeholder="Telefonnummer" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Tilmeldingsfrist</label>
+                <input type="date" class="form-control" ng-model="deadlinedateView" name="deadline">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Medbring</h3>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Liste over ting, det anbefales folk at medbringe:</label>
+                <input type="text" class="form-control" ng-model="invitation.bring" name="bring" placeholder="Modtager">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Betaling</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Pris per voksen:</label>
+                <input type="number" class="form-control" ng-model="invitation.payment.adult" name="priceadult" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Pris per barn:</label>
+                <input type="number" class="form-control" ng-model="invitation.payment.child" name="pricechild" required>
+            </div>
+        </div>
+        <h4 class="form-signin-heading">Betalingsmuligheder</h4>
+        <div class="row">
+            <div class="checkbox col-md-2">
+                <label>
+                    <input type="checkbox" ng-model="mobilepay" name="mobilepay">Mobilepay?
+                </label>
+            </div>
+            <div class="form-group col-md-4" ng-if="mobilepay">
+                <label>Mobilepay telefonnummer</label>
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.mobilepay" name="mobpayphone" placeholder="Telefonnummer">
+            </div>
+        </div>
+        <div class="row">
+            <div class="checkbox col-md-2">
+                <label>
+                    <input type="checkbox" ng-model="bankpay" name="bankpay">Bankoverførsel?
+                </label>
+            </div>
+            <div class="form-group col-md-2" ng-if="bankpay">
+                <label>Reg. no.</label>
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.regno" name="regno" placeholder="Reg. nummer">
+            </div>
+            <div class="form-group col-md-2" ng-if="bankpay">
+                <label>Konto</label>
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.account" name="account" placeholder="Konto nummer">
+            </div>
+        </div>
+        <div class="row">
+            <div class="checkbox col-md-2">
+                <label>
+                    <input type="checkbox" ng-model="cash" name="cash">Kontant afregning på lejren?
+                </label>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Eventuelle afsluttende bemærkninger</h3>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <!--<input type="textarea" class="form-control" ng-model="invitation.text2" name="text2" placeholder="Eventuelle afsluttende bemærkninger">-->
+                <textarea class="form-control" ng-model="invitation.text2" name="text2" rows="3"></textarea>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Arrangører</h3>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 1</label>
+                <input type="text" id="organizer1" class="form-control" ng-model="organizer1" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 2</label>
+                <input type="text" id="organizer2" class="form-control" ng-model="organizer2">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 3</label>
+                <input type="text" id="organizer3" class="form-control" ng-model="organizer3">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 4</label>
+                <input type="text" id="organizer4" class="form-control" ng-model="organizer4">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="headline">Arrangør 5</label>
+                <input type="text" id="organizer5" class="form-control" ng-model="organizer5">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formInvitationEdit.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send invitationen</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" href="#!eventinfo">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $('#organizer').addClass('active');
+    $('#invitationadmin').addClass('active');
+</script>

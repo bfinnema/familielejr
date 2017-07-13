@@ -60,7 +60,7 @@
                     <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
             </li>
-            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Register</a></li>
+            <li id="register" ng-show="!isLoggedIn"><a href="#!register">Registrer</a></li>
             <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
             <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Min konto <span class="caret"></span></a>
@@ -70,6 +70,25 @@
                     <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
                 </ul>
             </li>
+            <li id="organizer" ng-show="isLoggedIn && role < 2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
+                    <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
+                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="todolist"><a href="#!todolist">Huskelister</a></li>
+                    <li id="finances"><a href="#!finances">Økonomi</a></li>
+                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                </ul>
+            </li>
+            <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
+                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
+                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
+                </ul>
+            </li>
             <li><a href="#!content">Kontakt</a></li>
         </ul>
         </div><!--/.nav-collapse -->
@@ -77,11 +96,10 @@
 </nav>
 
 <div class="blog-header">
-    <h1 class="blog-title">{{invitation.headline}}</h1>
-    <!--<p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>-->
+    <h1 class="blog-title">{{invitation.headline}}, {{invitation.year}}</h1>
 </div>
 <hr>
-<div class="row">
+<div ng-if="invitationExists" class="row">
     <div class="col-sm-6">
         <div class="well well-sm">
             <h4>I år skal vi være i {{invitation.camp}}. Adressen er:</h4>
@@ -90,13 +108,16 @@
                 <li>{{invitation.address.zip}}, {{invitation.address.town}}</li>
             </ul>
         </div>
+        <div ng-if="invitation.text1" class="well well-sm">
+            <p>{{invitation.text1}}</p>
+        </div>
         <div class="well well-sm">
             <h4>Datoer og tidspunkter:</h4>
-            <p>{{invitation.startdate.weekday}} den {{invitation.startdate.day}}. {{invitation.startdate.month}} kl. {{invitation.startdate.time}} til {{invitation.enddate.weekday}} den {{invitation.enddate.day}}. {{invitation.enddate.month}} kl. {{invitation.enddate.time}} </p>
+            <p>{{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}</p>
         </div>
         <div class="well well-sm">
             <h4>Tilmelding:</h4>
-            <p>Senest {{invitation.registration.deadline}} til {{invitation.registration.receiver}}.</p>
+            <p>Senest {{deadlineday}} den {{deadlinedate}}. {{deadlinemonth}} til {{invitation.registration.receiver}}.</p>
             <ul style="list-style-type:none">
                 <li>Email: {{invitation.registration.email}}</li>
                 <li>Telefon: {{invitation.registration.phone}}</li>
@@ -110,15 +131,23 @@
         <div class="well well-sm">
             <h4>Pris:</h4>
             <ul style="list-style-type:none">
-                <li>Per voksen, per dag: {{invitation.price.adult}} kr.</li>
-                <li>Per barn, per dag: {{invitation.price.child}} kr.</li>
+                <li>Per voksen, per dag: {{invitation.payment.adult}} kr.</li>
+                <li>Per barn, per dag: {{invitation.payment.child}} kr.</li>
             </ul>
             <p>Betalingsmuligheder:</p>
             <ul style="list-style-type:none">
-                <li ng-if="invitation.price.meansofpayment.cash">{{invitation.price.paymentinfo.cash}}</li>
-                <li ng-if="invitation.price.meansofpayment.mobilepay">Mobilepay til: {{invitation.price.paymentinfo.mobilepay}}</li>
-                <li ng-if="invitation.price.meansofpayment.bankaccount">Overførsel til bankkonto: {{invitation.price.paymentinfo.bankaccount.regno}} {{invitation.price.paymentinfo.bankaccount.account}}</li>
+                <li ng-if="invitation.payment.meansofpayment.cash">{{invitation.payment.paymentinfo.cash}}</li>
+                <li ng-if="invitation.payment.meansofpayment.mobilepay">Mobilepay til: {{invitation.payment.paymentinfo.mobilepay}}</li>
+                <li ng-if="invitation.payment.meansofpayment.bankaccount">Overførsel til bankkonto: {{invitation.payment.paymentinfo.bankaccount.regno}} {{invitation.payment.paymentinfo.bankaccount.account}}</li>
             </ul>
+        </div>
+        <div ng-if="invitation.text2" class="well well-sm">
+            <p>{{invitation.text2}}</p>
+        </div>
+        <div class="well well-sm">
+            <h4>Mange hilsener fra arrangørerne:</h4>
+            <i ng-repeat="organizer in invitation.organizers">{{organizer.name}}, </i>
+            <!-- <i>{{organizer1}}</i><i ng-if="organizer2"> ,{{organizer2}}</i><i ng-if="organizer3">, {{organizer3}}</i><i ng-if="organizer4">, {{organizer4}}</i><i ng-if="organizer5">, {{organizer5}}</i> -->
         </div>
     </div>
     
@@ -132,6 +161,10 @@
     </div>
 
 </div><!-- /.row -->
+
+<div ng-if="!invitationExists" class="row">
+    <h1 class="blog-title">Der er ikke nogen invitation for {{invitation.year}}</h1>
+</div>
 
 <script type="text/javascript">
     $('#nextcamp').addClass('active');

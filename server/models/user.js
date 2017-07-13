@@ -40,8 +40,12 @@ var UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    require: true,
+    required: true,
     minlength: 6
+  },
+  role: {
+    type: Number,  // 0: admin, 1: organizer, 2: admin
+    required: true
   },
   tokens: [{
     access: {
@@ -59,7 +63,7 @@ UserSchema.methods.toJSON = function () {
   var user = this;
   var userObject = user.toObject();
 
-  return _.pick(userObject, ['_id', 'email', 'name', 'address', 'phone']);
+  return _.pick(userObject, ['_id', 'email', 'role', 'name', 'address', 'phone']);
 };
 
 UserSchema.methods.generateAuthToken = function () {

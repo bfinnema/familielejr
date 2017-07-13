@@ -123,11 +123,21 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/content', {
             templateUrl: 'views/content.view.html',
             controller: 'contentCtrl',
-            access: {restricted: false}
+            access: {restricted: true}
         }).
-        when('/indhold', {
-            templateUrl: 'views/indhold.view.html',
-            controller: 'indholdCtrl',
+        when('/invitationadmin', {
+            templateUrl: 'views/invitationadmin.view.html',
+            controller: 'invitationadminCtrl',
+            access: {restricted: true}
+        }).
+        when('/futurecamps/edit/:id', {
+            templateUrl: 'views/futurecampedit.view.html',
+            controller: 'futurecampeditCtrl',
+            access: {restricted: true}
+        }).
+        when('/futurecamps', {
+            templateUrl: 'views/futurecamps.view.html',
+            controller: 'futurecampsCtrl',
             access: {restricted: true}
         }).
 		otherwise({redirectTo: '/'})

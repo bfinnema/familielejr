@@ -13,6 +13,7 @@ angular.module('familielejr')
             localStorage.familielejrUserId = response.data._id;
             $location.path('/home');
             $scope.isLoggedIn = true;
+            $scope.role = response.data.role;
         }, function errorCallback(response) {
             console.log(`getUserStatus: ${response.status}`);
             alert('Indtastede du korrekt kodeord?');
