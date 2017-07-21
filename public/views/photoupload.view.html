@@ -106,7 +106,7 @@
                 <select class="form-control" ng-model="year" name="year" required>
                     <option ng-repeat="year in years" value="{{year.year}}">{{year.year}}</option>
                 </select>
-                <i ng-show="photouploadForm.year.$error.required">*required</i>
+                <i ng-show="photouploadForm.year.$error.required">Skal vælges</i>
             </div>
         </div>
         <div class="row">
@@ -119,6 +119,12 @@
                 <i ng-show="photouploadForm.file.$error.maxSize">File too large 
                     {{errorFile.size / 1000000|number:1}}MB: max 20M</i>
                 <img ng-show="photouploadForm.file.$valid" ngf-thumbnail="picFile" class="thumb"> <button ng-click="picFile = null" ng-show="picFile">Remove</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Tekst til billedet (valgfrit)</label>
+                <input type="text" class="form-control" ng-model="picturetext" name="picturetext" placeholder="Tekst til billedet" required>
             </div>
         </div>
         <br>

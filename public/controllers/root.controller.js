@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('rootCtrl', ['$scope', '$http', '$location', 'AuthService', function($scope, $http, $location, AuthService) {
+.controller('rootCtrl', ['$scope', 'AuthService', function($scope, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {

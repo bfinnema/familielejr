@@ -95,72 +95,56 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Mine Billeder</h1>
-</div>
-<div ng-show="images.length > 0">
+<div>
+	<a href="#!futurecamps">Tilbage</a>
+    <h1>Familielejr i {{camp.year}}</h1>
+    <hr>
     <div class="row">
-        <img class="img-responsive" src="{{mainImage}}">
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
+        <h2>Lejr: {{camp.camp}}</h2>
+        <div class="col-md-4">
+            <h3>Adresse:</h3>
+            <p>{{camp.address.street}}
+            <p>{{user.address.zip}} {{camp.address.town}}</p>
         </div>
         <div class="col-md-4">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
-        </div>
-        <div class="col-md-3">
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="actions">
-                <a href="#" class="btn btn-danger" ng-click="removeImage(mainImageObj)">Slet billedet</a>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <p>{{mainImageObj.filename}} uploaded af {{mainImageObj.uploader}}.  Fra {{mainImageObj.year}}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <div ng-repeat="x in mainImageObj.imagetext">
-                <p>{{x.textobj.contributor}}, {{x.textobj.date | date:'dd-MM-yyyy HH:mm' : 'CET' }}: {{x.textobj.text}}</p>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <form name="formAddComment" ng-submit="addComment(mainImageObj)" novalidate>
-            <div class="row">
-                <div class="form-group col-md-8">
-                    <label>Her kan du tilføje kommentarer eller informationer til billedet</label>
-                    <input type="text" class="form-control" ng-model="mycomment" name="mycomment" placeholder="Din tilføjelse til billedet" required>
-                </div>
-                <div class="form-group col-md-2">
-                    <br>
-                    <button ng-disabled="formAddComment.$invalid" class="btn btn-primary" type="submit">Send</button>
+            <h3>Arrangører</h3>
+            <div ng-if="camp.organizers">
+                <div ng-repeat="organizer in camp.organizers">
+                    <p>{{organizer.orgname}}</p>
                 </div>
             </div>
-        </form>
-    </div>
-</div>
-<div ng-if="images == false">
-    <h3>Du har ikke uploaded nogen billeder endnu.</h3>
-</div>
-<br>
-<div class="row">
-    <div ng-repeat="image in images">
-        <div class="col-md-1">
-            <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+            <div ng-if="camp.organizers.length < 1">
+                <p>Der er kke nogen arrangører</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Datoer</h3>
+            <p>Startdato: {{camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</p>
+            <p>Slutdato: {{camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</p>
         </div>
     </div>
+    <div class="row">
+        <h2>Udvalg</h2>
+        <div ng-if="camp.committees">
+            <div class="col-md-4" ng-repeat="committee in camp.committees">
+                <h3>Navn: {{committee.name}}</h3>
+                <p>Beskrivelse: {{committee.description}}</p>
+                <h3>Deltagere:</h3>
+                <p ng-repeat="member in committee.members">{{member.membername}}</p>
+            </div>
+        </div>
+        <div ng-if="camp.committees.length < 1">
+            <p>Der er ikke oprettet nogen udvalg.</p>
+        </div>
+    </div>
+    <hr>
+	<div class="actions">
+		<a href="#!futurecamps/edit/{{camp._id}}" class="btn btn-default">Ændre lejren</a>
+		<a href="#" class="btn btn-danger" ng-click="removeCamp()">Slet lejren</a>
+	</div>
 </div>
 
 <script type="text/javascript">
-    $('#photoalbum').addClass('active');
+    $('#organizer').addClass('active');
+    $('#futurecamps').addClass('active');
 </script>

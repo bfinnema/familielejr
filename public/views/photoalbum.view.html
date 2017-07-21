@@ -98,7 +98,10 @@
 <div class="page-header">
     <h1>Billeder, {{ year }}</h1>
 </div>
-<div ng-if="images.length > 0">
+<div ng-show="imagesExist">
+    <div class="row">
+        <img class="img-responsive" src="{{mainImage}}">
+    </div>
     <div class="row">
         <div class="col-md-3">
         </div>
@@ -114,10 +117,24 @@
         </div>
     </div>
     <div class="row">
-        <img class="img-responsive" src="{{mainImage}}">
-    </div>
-    <div class="row">
         <h3>Uploaded af {{mainImageObj.uploader}}</h3>
+        <div ng-repeat="x in mainImageObj.imagetext">
+            <p>{{x.textobj.contributor}}, {{x.textobj.date | date:'dd-MM-yyyy HH:mm' : 'CET' }}: {{x.textobj.text}}</p>
+        </div>
+    </div>
+    <div>
+        <form name="formAddComment" ng-submit="addComment(mainImageObj)" novalidate>
+            <div class="row">
+                <div class="form-group col-md-8">
+                    <label>Her kan du tilføje kommentarer eller informationer til billedet</label>
+                    <input type="text" class="form-control" ng-model="mycomment" name="mycomment" placeholder="Din tilføjelse til billedet" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <br>
+                    <button ng-disabled="formAddComment.$invalid" class="btn btn-primary" type="submit">Send</button>
+                </div>
+            </div>
+        </form>
     </div>
     <div class="row">
         <div ng-repeat="image in images">
@@ -127,7 +144,7 @@
         </div>
     </div>
 </div>
-<div ng-if="images == false">
+<div ng-show="!imagesExist">
     <h3>Der er ikke nogen billeder fra {{ year }} endnu. Har du nogen at lægge op?</h3>
 </div>
 

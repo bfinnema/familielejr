@@ -23,3 +23,16 @@
         {6: "søndag"}
     ];
 
+    committees: [
+        {
+            committee: {
+                name: {type: String},
+                description: {type: String},
+                members: [
+                    {
+                        membername: {type: String}
+                    }
+                ]
+            }
+        }
+    ],

@@ -26,7 +26,18 @@ var FuturecampSchema = new mongoose.Schema({
     },
     organizers: [
         {
-            name: {type: String}
+            orgname: {type: String}
+        }
+    ],
+    committees: [
+        {
+            name: {type: String},
+            description: {type: String},
+            members: [
+                {
+                    membername: {type: String}
+                }
+            ]
         }
     ]
 });

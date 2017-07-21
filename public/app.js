@@ -135,6 +135,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'futurecampeditCtrl',
             access: {restricted: true}
         }).
+        when('/futurecamps/details/:id', {
+            templateUrl: 'views/futurecampdetails.view.html',
+            controller: 'futurecampdetailsCtrl',
+            access: {restricted: true}
+        }).
         when('/futurecamps', {
             templateUrl: 'views/futurecamps.view.html',
             controller: 'futurecampsCtrl',

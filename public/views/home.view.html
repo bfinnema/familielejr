@@ -95,97 +95,95 @@
     </div>
 </nav>
 
-<div ng-controller="homeCtrl">
-    <div class="blog-header">
-        <h1 class="blog-title">Flensburg Familielejren</h1>
-        <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
-    </div>
-    <hr>
-    <div class="row">
-
-        <div class="col-sm-8 blog-main">
-
-            <div class="blog-post">
-            <h2 class="blog-post-title">Næste Familielejr</h2>
-            <!-- <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p> -->
-
-            <p>Vi skal være i 
-                {{invitation.camp}}, {{invitation.address.street}}, {{invitation.address.zip}} {{invitation.address.town}} 
-                fra {{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}. </p>
-                <div class="col-md-4">
-                    <a class="btn btn-success" href="#!eventinfo">Mere information</a>
-                </div>
-                <div class="col-md-4">
-                    <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
-                </div>
-            </div>
-            <br>
-            <hr>
-            <br>
-            <div class="blog-post">
-            <h2 class="blog-post-title">Kommende Familielejre</h2>
-                <div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th width="10%">År</th>
-                                <th width="25%">Lejr</th>
-                                <th width="15%">Startdato</th>
-                                <th width="15%">Slutdato</th>
-                                <th width="35%">Arrangører</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="camp in camps">
-                                <td>{{ camp.year }}</td>
-                                <td>{{ camp.camp }}, {{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</td>
-                                <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
-                                <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
-                                <td><i ng-repeat="organizer in camp.organizers">{{organizer.name}}, </i></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div ng-if="camps == false">
-                    <tr>
-                        <td></td><td>Der er ikke nogen fremtidige lejre</td>
-                    </tr>
-                </div>
-            </div>
-
-        </div><!-- /.blog-main -->
-
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-            <div class="sidebar-module sidebar-module-inset">
-            <h4>Quick links</h4>
-            <!-- <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p> -->
-            </div>
-            <div class="sidebar-module">
-            <h4>Her på siden</h4>
-            <ol class="list-unstyled">
-                <li><a href="#!campmap">Historisk kort</a></li>
-                <li><a href="#!camplist">Historisk liste</a></li>
-                <li><a href="#!photoupload">Upload dine billeder</a></li>
-                <li><a href="#!myphotoalbum">Mine billeder</a></li>
-                <li><a href="#!photoalbum/2016">Fotoalbum 2016</a></li>
-                <li><a href="#!familytree">Stamtræ</a></li>
-                <li><a href="#!eventinfo">Næste familielejr</a></li>
-                <li><a href="#!eventregistration">Tilmelding</a></li>
-                <li><a href="#!profile">Min profil</a></li>
-                <li><a href="#!changepassword">Ændre kodeord</a></li>
-                <li><a href="#!logout">Log ud</a></li>
-            </ol>
-            </div>
-            <div class="sidebar-module">
-            <h4>Andre steder:</h4>
-            <ol class="list-unstyled">
-                <li><a href="https://www.facebook.com/groups/152892984738123/" target="_blank">Facebook gruppen</a></li>
-            </ol>
-            </div>
-        </div><!-- /.blog-sidebar -->
-
-    </div><!-- /.row -->
+<div class="blog-header">
+    <h1 class="blog-title">Flensburg Familielejren</h1>
+    <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
 </div>
+<hr>
+<div class="row">
+
+    <div class="col-sm-8 blog-main">
+
+        <div class="blog-post">
+        <h2 class="blog-post-title">Næste Familielejr</h2>
+        <!-- <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p> -->
+
+        <p>Vi skal være i 
+            {{invitation.camp}}, {{invitation.address.street}}, {{invitation.address.zip}} {{invitation.address.town}} 
+            fra {{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}. </p>
+            <div class="col-md-4">
+                <a class="btn btn-success" href="#!eventinfo">Mere information</a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
+            </div>
+        </div>
+        <br>
+        <hr>
+        <br>
+        <div class="blog-post">
+        <h2 class="blog-post-title">Kommende Familielejre</h2>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="10%">År</th>
+                            <th width="25%">Lejr</th>
+                            <th width="15%">Startdato</th>
+                            <th width="15%">Slutdato</th>
+                            <th width="35%">Arrangører</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="camp in camps">
+                            <td>{{ camp.year }}</td>
+                            <td>{{ camp.camp }}, {{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</td>
+                            <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                            <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                            <td><i ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div ng-if="camps == false">
+                <tr>
+                    <td></td><td>Der er ikke nogen fremtidige lejre</td>
+                </tr>
+            </div>
+        </div>
+
+    </div><!-- /.blog-main -->
+
+    <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+        <h4>Quick links</h4>
+        <!-- <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p> -->
+        </div>
+        <div class="sidebar-module">
+        <h4>Her på siden</h4>
+        <ol class="list-unstyled">
+            <li><a href="#!campmap">Historisk kort</a></li>
+            <li><a href="#!camplist">Historisk liste</a></li>
+            <li><a href="#!photoupload">Upload dine billeder</a></li>
+            <li><a href="#!myphotoalbum">Mine billeder</a></li>
+            <li><a href="#!photoalbum/2016">Fotoalbum 2016</a></li>
+            <li><a href="#!familytree">Stamtræ</a></li>
+            <li><a href="#!eventinfo">Næste familielejr</a></li>
+            <li><a href="#!eventregistration">Tilmelding</a></li>
+            <li><a href="#!profile">Min profil</a></li>
+            <li><a href="#!changepassword">Ændre kodeord</a></li>
+            <li><a href="#!logout">Log ud</a></li>
+        </ol>
+        </div>
+        <div class="sidebar-module">
+        <h4>Andre steder:</h4>
+        <ol class="list-unstyled">
+            <li><a href="https://www.facebook.com/groups/152892984738123/" target="_blank">Facebook gruppen</a></li>
+        </ol>
+        </div>
+    </div><!-- /.blog-sidebar -->
+
+</div><!-- /.row -->
 
 <script type="text/javascript">
     $('#home').addClass('active');

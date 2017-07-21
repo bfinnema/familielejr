@@ -19,7 +19,22 @@ var PhotoSchema = new mongoose.Schema({
   },
   uploader: {
     type: String
-  }
+  },
+  imagetext: [
+    {
+      textobj: {
+        date: {
+          type: Date
+        },
+        contributor: {
+          type: String
+        },
+        text: {
+          type: String
+        }
+      }
+    }
+  ]
 });
 
 var Photo = mongoose.model('Photo', PhotoSchema);

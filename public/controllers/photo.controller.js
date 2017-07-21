@@ -2,33 +2,13 @@ angular.module('familielejr')
 
 .controller('photouploadCtrl', ['$scope', 'Upload', '$timeout', 'AuthService', function ($scope, Upload, $timeout, AuthService) {
 
-    $scope.years = [
-        {"year": "1993"},
-        {"year": "1994"},
-        {"year": "1995"},
-        {"year": "1996"},
-        {"year": "1997"},
-        {"year": "1998"},
-        {"year": "1999"},
-        {"year": "2000"},
-        {"year": "2001"},
-        {"year": "2002"},
-        {"year": "2003"},
-        {"year": "2004"},
-        {"year": "2005"},
-        {"year": "2006"},
-        {"year": "2007"},
-        {"year": "2008"},
-        {"year": "2009"},
-        {"year": "2010"},
-        {"year": "2011"},
-        {"year": "2012"},
-        {"year": "2013"},
-        {"year": "2014"},
-        {"year": "2015"},
-        {"year": "2016"},
-        {"year": "2017"}
-    ];
+    var currentyear = (new Date()).getFullYear();
+    var firstyear = 1993
+    $scope.years = [];
+
+    for (y=firstyear; y<=currentyear; y++) {
+        $scope.years.push({"year": y.toString()});
+    };
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -49,6 +29,7 @@ angular.module('familielejr')
             data: {
                 year: $scope.year,
                 user: localStorage.familielejrUserId,
+                text: $scope.picturetext,
                 file: file
             },
             headers: {
@@ -63,6 +44,7 @@ angular.module('familielejr')
                 console.log(response.status);
                 $scope.picFile = null;
                 $scope.successMsg = response.data.filename + 'blev uploaded.'
+                $scope.picturetext = "";
             });
             }, function (response) {
                 if (response.status > 0) {
@@ -81,7 +63,7 @@ angular.module('familielejr')
     };
 }])
 
-.controller('photoalbumCtrl', ['$scope', '$http', '$routeParams', 'AuthService', function($scope, $http, $routeParams, AuthService) {
+.controller('photoalbumCtrl', ['$scope', '$http', '$routeParams', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $route, $location, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -94,7 +76,7 @@ angular.module('familielejr')
     var photosId = 1;
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
-    console.log(`Photos from year ${$scope.year}`)
+    //console.log(`Photos from year ${$scope.year}`)
 
     $http({
         method: 'GET',
@@ -104,15 +86,21 @@ angular.module('familielejr')
         }
     }).then(function(response) {
         console.log(`Status: ${response.status}`);
-        console.log(response.data);
         $scope.images = response.data;
-        $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
-        $scope.mainImageObj = $scope.images[0];
-        console.log(`mainImage: ${$scope.mainImage}`);
-        for (x=0; x<$scope.images.length; x++) {
-            $scope.images[x].num = x;
-            console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
-        };
+        if (!response.data[0]) {
+            // console.log('No photos for year '+$scope.year)
+            $scope.imagesExist = false;
+        } else {
+            $scope.imagesExist = true;
+            $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
+            $scope.mainImageObj = $scope.images[0];
+            // console.log(`mainImage: ${$scope.mainImage}`);
+            // console.log($scope.images[1].imagetext[0].textobj.text);
+            for (x=0; x<$scope.images.length; x++) {
+                $scope.images[x].num = x;
+                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+            };
+        }
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
@@ -121,7 +109,7 @@ angular.module('familielejr')
 		$scope.mainImage = image.path + image.filename;
         currentPhoto = image.num;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${image.num}, ${image.filename}`);
+        // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
     $scope.nextImage = function() {
@@ -131,7 +119,7 @@ angular.module('familielejr')
         else {currentPhoto = 0};
         $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
 
     $scope.prevImage = function() {
@@ -141,8 +129,27 @@ angular.module('familielejr')
         else {currentPhoto = currentPhoto - 1};
         $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
+
+    $scope.addComment = function(image) {
+        // console.log(`Comment: ${$scope.mycomment}`);
+        $http({
+            method: 'PATCH',
+            url: '/photos/'+image._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: {text: $scope.mycomment}
+        }).then(function(response) {
+            // console.log(`Status: ${response.status}`);
+            $location.path('/photoalbum/' + $scope.year);
+            $route.reload();
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
+
 }])
 
 .controller('myphotoalbumCtrl', ['$scope', '$http', '$routeParams', '$window', '$location', '$route', 'AuthService', function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
@@ -154,7 +161,7 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
-    console.log('Ny Photo Albun Controller.');
+    // console.log('My Photo Album Controller.');
 
     var photosId = 1;
     var currentPhoto = 0;
@@ -166,16 +173,21 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Status: ${response.status}`);
-        console.log(response.data);
+        // console.log(`Status: ${response.status}`);
         $scope.images = response.data;
-        $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
-        $scope.mainImageObj = $scope.images[0];
-        console.log(`mainImage: ${$scope.mainImage}`);
-        for (x=0; x<$scope.images.length; x++) {
-            $scope.images[x].num = x;
-            console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
-        };
+        if (!response.data[0]) {
+            // console.log('No photos for year '+$scope.year)
+            $scope.imagesExist = false;
+        } else {
+            $scope.imagesExist = true;
+            $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
+            $scope.mainImageObj = $scope.images[0];
+            // console.log(`mainImage: ${$scope.mainImage}`);
+            for (x=0; x<$scope.images.length; x++) {
+                $scope.images[x].num = x;
+                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+            };
+        }
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
@@ -184,7 +196,7 @@ angular.module('familielejr')
 		$scope.mainImage = image.path + image.filename;
         currentPhoto = image.num;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${image.num}, ${image.filename}`);
+        // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
     $scope.nextImage = function() {
@@ -194,7 +206,7 @@ angular.module('familielejr')
         else {currentPhoto = 0};
         $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
 
     $scope.prevImage = function() {
@@ -204,7 +216,7 @@ angular.module('familielejr')
         else {currentPhoto = currentPhoto - 1};
         $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
 
     $scope.removeImage = function(image) {
@@ -216,8 +228,8 @@ angular.module('familielejr')
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $location.path('/myphotoalbum');
                 $route.reload();
             }, function errorCallback(response) {
@@ -225,4 +237,21 @@ angular.module('familielejr')
             });
         }
     };
+
+    $scope.addComment = function(image) {
+        $http({
+            method: 'PATCH',
+            url: '/photos/'+image._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: {text: $scope.mycomment}
+        }).then(function(response) {
+            $location.path('/photoalbum/' + $scope.year);
+            $route.reload();
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
+
 }])

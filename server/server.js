@@ -267,6 +267,7 @@ app.delete('/users/me/token', authenticate, (req, res) => {
 
 // Photos
 app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
+  console.log(req.body.text);
   var file = req.files.file;
   // get the temporary location of the file
   var tmp_path = req.files.file.path;
@@ -291,7 +292,16 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
           year: req.body.year,
           filename: file.name,
           path: 'images/' + req.body.year + '/',
-          uploader: uploader
+          uploader: uploader,
+          imagetext: [
+            {
+              textobj: {
+                date: new Date(),
+                contributor: uploader,
+                text: req.body.text
+              }
+            }
+          ]
         });
 
         photo.save().then((doc) => {
@@ -390,6 +400,39 @@ app.delete('/photos/:id', authenticate, (req, res) => {
   });
 });
 
+app.patch('/photos/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`Comment: ${req.body.text}`);
+
+  if (!ObjectID.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  }
+
+  var uploader = req.user.name.firstname;
+  if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
+  uploader = uploader + ' ' + req.user.name.surname
+
+  var newtextobj = {
+    textobj: {
+      date: new Date(),
+      contributor: uploader,
+      text: req.body.text
+    }
+  };
+
+  Photo.findOneAndUpdate({_id: id}, {$push: {'imagetext': newtextobj}}, {new: true}).then((photo) => {
+    if (!photo) {
+      console.log(`Photo not found`);
+      return res.status(404).send();
+    }
+
+    res.send({photo});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
 // Invitations
 app.post('/invitations', authenticate, (req, res) => {
   var invitation = new Invitation({
@@ -467,6 +510,7 @@ app.post('/futurecamps', authenticate, (req, res) => {
     startdate: req.body.startdate,
     enddate: req.body.enddate,
     organizers: req.body.organizers,
+    committees: req.body.committees,
     _creator: req.user._id
   });
 
@@ -508,7 +552,7 @@ app.get('/futurecamps/:id', authenticate, (req, res) => {
 
 app.patch('/futurecamps/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['year', 'camp', 'address', 'startdate', 'enddate', 'organizers']);
+  var body = _.pick(req.body, ['year', 'camp', 'address', 'startdate', 'enddate', 'organizers', 'committees']);
 
   if (!ObjectID.isValid(id)) {
     console.log(`id is not valid`);
@@ -525,6 +569,27 @@ app.patch('/futurecamps/:id', authenticate, (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   })
+});
+
+app.delete('/futurecamps/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Futurecamp.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((futurecamp) => {
+    if (!futurecamp) {
+      return res.status(404).send();
+    }
+
+    res.json(futurecamp);
+  }).catch((e) => {
+    res.status(400).send();
+  });
 });
 
 app.listen(port, () => {
