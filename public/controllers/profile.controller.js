@@ -133,4 +133,4 @@ angular.module('familielejr')
         });
 
     };
-}]);
+}])

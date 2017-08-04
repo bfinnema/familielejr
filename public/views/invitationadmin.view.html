@@ -75,10 +75,10 @@
                 <ul class="dropdown-menu">
                     <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
                     <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
-                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="finances"><a href="#!finances">Økonomi</a></li>
-                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                    <li id="usersadmin"><a href="#!usersadmin">Brugere</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
@@ -107,11 +107,11 @@
         <div class="row">
             <div class="form-group col-md-4">
                 <label for="headline">Overskrift</label>
-                <input type="text" id="headline" class="form-control" ng-model="invitation.headline" required>
+                <input type="text" id="headline" class="form-control" ng-model="invitation.headline" placeholder="Invitation til familielejr" required>
             </div>
             <div class="form-group col-md-2">
                 <label for="year">År</label>
-                <input type="number" id="year" class="form-control" ng-model="invitation.year" disabled required>
+                <input type="number" id="year" class="form-control" ng-model="invyear" disabled required>
             </div>
         </div>
         <h3 class="form-signin-heading">Eventuel indledende tekst</h3>
@@ -145,21 +145,21 @@
         <div class="row">
             <div class="form-group col-md-2">
                 <label>Startdato</label>
-                <input type="date" class="form-control" ng-model="startdateView" name="startdate">
+                <input type="date" class="form-control" ng-model="startdateView" name="startdate" required>
             </div>
             <div class="form-group col-md-2">
                 <label>Tid</label>
-                <input type="time" class="form-control" ng-model="starttimeView" name="starttime">
+                <input type="time" class="form-control" ng-model="starttimeView" name="starttime" required>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-2">
                 <label>Slutdato</label>
-                <input type="date" class="form-control" ng-model="enddateView" name="enddate">
+                <input type="date" class="form-control" ng-model="enddateView" name="enddate" required>
             </div>
             <div class="form-group col-md-2">
                 <label>Tid</label>
-                <input type="time" class="form-control" ng-model="endtimeView" name="endtime">
+                <input type="time" class="form-control" ng-model="endtimeView" name="endtime" required>
             </div>
         </div>
         <h3 class="form-signin-heading">Tilmelding</h3>
@@ -186,8 +186,8 @@
         <h3 class="form-signin-heading">Medbring</h3>
         <div class="row">
             <div class="form-group col-md-8">
-                <label>Liste over ting, det anbefales folk at medbringe:</label>
-                <input type="text" class="form-control" ng-model="invitation.bring" name="bring" placeholder="Modtager">
+                <label>Liste over ting, det anbefales folk at medbringe (valgfri):</label>
+                <input type="text" class="form-control" ng-model="invitation.bring" name="bring" placeholder="Ting det anbefales at medbringe">
             </div>
         </div>
         <h3 class="form-signin-heading">Betaling</h3>
@@ -205,27 +205,27 @@
         <div class="row">
             <div class="checkbox col-md-2">
                 <label>
-                    <input type="checkbox" ng-model="mobilepay" name="mobilepay">Mobilepay?
+                    <input type="checkbox" ng-model="mobilepay" id="mobilepay">Mobilepay?
                 </label>
             </div>
-            <div class="form-group col-md-4" ng-if="mobilepay">
+            <div class="form-group col-md-4" ng-show="mobilepay">
                 <label>Mobilepay telefonnummer</label>
-                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.mobilepay" name="mobpayphone" placeholder="Telefonnummer">
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.mobilepay" id="mobpayphone" ng-required="mobilepay" placeholder="Telefonnummer">
             </div>
         </div>
         <div class="row">
             <div class="checkbox col-md-2">
                 <label>
-                    <input type="checkbox" ng-model="bankpay" name="bankpay">Bankoverførsel?
+                    <input type="checkbox" ng-model="bankpay" id="bankpay">Bankoverførsel?
                 </label>
             </div>
-            <div class="form-group col-md-2" ng-if="bankpay">
+            <div class="form-group col-md-2" ng-show="bankpay">
                 <label>Reg. no.</label>
-                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.regno" name="regno" placeholder="Reg. nummer">
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.regno" id="regno" ng-required="bankpay" placeholder="Reg. nummer">
             </div>
-            <div class="form-group col-md-2" ng-if="bankpay">
+            <div class="form-group col-md-2" ng-show="bankpay">
                 <label>Konto</label>
-                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.account" name="account" placeholder="Konto nummer">
+                <input type="text" class="form-control" ng-model="invitation.payment.paymentinfo.bankaccount.account" id="account" ng-required="bankpay" placeholder="Konto nummer">
             </div>
         </div>
         <div class="row">
@@ -238,32 +238,37 @@
         <h3 class="form-signin-heading">Eventuelle afsluttende bemærkninger</h3>
         <div class="row">
             <div class="form-group col-md-8">
-                <!--<input type="textarea" class="form-control" ng-model="invitation.text2" name="text2" placeholder="Eventuelle afsluttende bemærkninger">-->
                 <textarea class="form-control" ng-model="invitation.text2" name="text2" rows="3"></textarea>
             </div>
         </div>
         <h3 class="form-signin-heading">Arrangører</h3>
         <div class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" ng-show="organizerShow[0]">
                 <label for="headline">Arrangør 1</label>
-                <input type="text" id="organizer1" class="form-control" ng-model="organizer1" required>
+                <input type="text" class="form-control" ng-model="organizers[0]">
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" ng-show="organizerShow[1]">
                 <label for="headline">Arrangør 2</label>
-                <input type="text" id="organizer2" class="form-control" ng-model="organizer2">
+                <input type="text" class="form-control" ng-model="organizers[1]">
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" ng-show="organizerShow[2]">
                 <label for="headline">Arrangør 3</label>
-                <input type="text" id="organizer3" class="form-control" ng-model="organizer3">
+                <input type="text" class="form-control" ng-model="organizers[2]">
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" ng-show="organizerShow[3]">
                 <label for="headline">Arrangør 4</label>
-                <input type="text" id="organizer4" class="form-control" ng-model="organizer4">
+                <input type="text" class="form-control" ng-model="organizers[3]">
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" ng-show="organizerShow[4]">
                 <label for="headline">Arrangør 5</label>
-                <input type="text" id="organizer5" class="form-control" ng-model="organizer5">
+                <input type="text" class="form-control" ng-model="organizers[4]">
             </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-info" ng-show="organizerBtnShow[1]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[2]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[3]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[4]" ng-click="showOrgLine()">Tilføj arrangør</a>
         </div>
         <br>
         <div class="row">

@@ -200,6 +200,7 @@ app.post('/users', (req, res) => {
   };
 });
 
+// Change profile
 app.patch('/users/me/edit/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['name', 'address', 'phone']);
@@ -219,9 +220,26 @@ app.patch('/users/me/edit/:id', authenticate, (req, res) => {
   });
 });
 
+// Change role
+app.patch('/users/role/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['role']);
+  // console.log(`Status: ${body.role}`);
+  User.findOneAndUpdate({_id: id}, {$set: {'role': body.role}}, {new: true}).then((user) => {
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).send();
+    }
+
+    res.send({user});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
 // Change password
 app.post('/users/me/password', authenticate, (req, res) => {
-  console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
+  // console.log(`Password: ${req.body.password}, New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
   if (req.body.newpassword == req.body.confirmnpwd) {
     User.findByCredentials(req.user.email, req.body.password).then((user) => {
       user.removeToken(req.token).then(() => {
@@ -265,23 +283,77 @@ app.delete('/users/me/token', authenticate, (req, res) => {
   });
 });
 
+app.get('/users', authenticate, (req, res) => {
+  if (req.user.role < 2) {
+    User.find({}).then((users) => {
+      res.json(users);
+    }, (e) => {
+      res.status(400).send(e);
+    });
+  } else {
+    res.status(401).send();
+  };
+});
+
+app.delete('/users/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(id);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+    // console.log('ID not accepted');
+  };
+
+  if (req.user._id == id) {console.log('You cannot delete yourself');};
+
+  if (req.user.role == 0 && req.user._id != id) {
+    User.findOneAndRemove({
+      _id: id
+    }).then((user) => {
+      if (!user) {
+        return res.status(404).send();
+        // console.log('User not found');
+      }
+
+      res.json(user);
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else {
+    res.status(401).send();
+  };
+
+});
+
 // Photos
 app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
-  console.log(req.body.text);
+  // console.log(req.body.text);
   var file = req.files.file;
   // get the temporary location of the file
   var tmp_path = req.files.file.path;
-  console.log(tmp_path);
+  // console.log(tmp_path);
+  var fn = req.files.file.name;
+  var splitfn = fn.split(".");
+  var resfilename = '';
+  for (var i=0; i<splitfn.length; i++) {
+      if (i == splitfn.length-1) {
+          resfilename += splitfn[i].toLowerCase();
+      } else {
+          resfilename += splitfn[i] + '.';
+      };
+  };
+  // console.log(fn+" "+resfilename);
   // set where the file should actually exists - in this case it is in the "images" directory
-  var target_path = __dirname + '/../public/images/' + req.body.year + '/' + req.files.file.name;
+  // var target_path = __dirname + '/../public/images/' + req.body.year + '/' + req.files.file.name;
+  var target_path = __dirname + '/../public/images/' + req.body.year + '/' + resfilename;
   var path = __dirname + '/../public/images/' + req.body.year;
-  console.log(target_path);
-  console.log(path);
+  // console.log(target_path);
+  // console.log(path);
   // move the file from the temporary location to the intended location
   if (fs.existsSync(path)) {
 
     Photo.findOne({
-      filename: file.name
+      filename: resfilename
     }).then((photo) => {
       if (!photo) {
         var uploader = req.user.name.firstname;
@@ -290,7 +362,7 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
         var photo = new Photo({
           _creator: req.body.user,
           year: req.body.year,
-          filename: file.name,
+          filename: resfilename,
           path: 'images/' + req.body.year + '/',
           uploader: uploader,
           imagetext: [
@@ -313,20 +385,20 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
         // Read the file
         fs.readFile(tmp_path, function (err, data) {
           if (err) throw err;
-          console.log('File read!');
+          // console.log('File read!');
 
           // Write the file
           fs.writeFile(target_path, data, function (err) {
             if (err) throw err;
             // res.write('File uploaded and moved!');
             // res.end();
-            console.log('File written!');
+            // console.log('File written!');
           });
 
           // Delete the file
           fs.unlink(tmp_path, function (err) {
             if (err) throw err;
-            console.log('File deleted!');
+            // console.log('File deleted!');
           });
         });
 /*
@@ -489,7 +561,7 @@ app.patch('/invitations/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Invitation.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((invitation) => {
+  Invitation.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((invitation) => {
     if (!invitation) {
       console.log(`Invitation not found`);
       return res.status(404).send();
@@ -531,14 +603,30 @@ app.get('/futurecamps', authenticate, (req, res) => {
 
 app.get('/futurecamps/:id', authenticate, (req, res) => {
   var id = req.params.id;
+  console.log('This is the findById section');
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
+    console.log('Invalid Id');
   }
 
+  Futurecamp.findById(id).then((futurecamp) => {
+    if (!futurecamp) {
+      return res.status(404).send();
+    }
+
+    res.send({futurecamp});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/futurecamps/year/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  console.log('This is the find by Year section');
+
   Futurecamp.findOne({
-    _id: id,
-    _creator: req.user._id
+    year: year
   }).then((futurecamp) => {
     if (!futurecamp) {
       return res.status(404).send();

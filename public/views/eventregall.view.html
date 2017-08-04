@@ -75,10 +75,10 @@
                 <ul class="dropdown-menu">
                     <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
                     <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
-                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="finances"><a href="#!finances">Økonomi</a></li>
-                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                    <li id="usersadmin"><a href="#!usersadmin">Brugere</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
@@ -95,44 +95,86 @@
     </div>
 </nav>
 
-<div ng-controller = "eventregallCtrl">
-    <h2>Liste over alle tilmeldte</h2>
+<div ng-show="role != 2">
+    <h2>Oversigt over deltagelse</h2>
     <hr>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th width="20%">Navn</th>
-            <th width="15%">Voksen / Barn</th>
-            <th width="15%">Ankomstdag</th>
-            <th width="10%">Ankomsttidspunkt</th>
-            <th width="15%">Afgangsdag</th>
-            <th width="10%">Afgangstidspunkt</th>
-            <th width="15%">Tilmeldt af</th>
-            <!--<th width="15%">Slet / Ændre</th>-->
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat="registration in registrations">
-            <td>{{ registration.name }}</td>
-            <td>{{ registration.agegroup }}</td>
-            <td>{{ registration.arrivalday }}</td>
-            <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
-            <td>{{ registration.departureday }}</td>
-            <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
-            <td>{{ registration.registeree }}</td>
-<!--
-            <td>
-                <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
-                    <i class="glyphicon glyphicon-edit"></i>
-                </a>
-                <a class="btn btn-primary" ng-click="removeReg(registration)">
-                    <i class="glyphicon glyphicon-trash"></i>
-                </a>
-            </td>
--->
-        </tr>
-    </tbody>
-</table>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="25%"></th>
+                <th width="25%">Fredag</th>
+                <th width="25%">Lørdag</th>
+                <th width="25%">Søndag</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Morgenmad</td>
+                <td></td>
+                <td>Voksne: {{breakfasts[0][0]}}, Børn: {{breakfasts[1][0]}}</td>
+                <td>Voksne: {{breakfasts[0][1]}}, Børn: {{breakfasts[1][1]}}</td>
+            </tr>
+            <tr>
+                <td>Frokost</td>
+                <td></td>
+                <td>Voksne: {{lunchs[0][0]}}, Børn: {{lunchs[1][0]}}</td>
+                <td>Voksne: {{lunchs[0][1]}}, Børn: {{lunchs[1][1]}}</td>
+            </tr>
+            <tr>
+                <td>Aftensmad</td>
+                <td>Voksne: {{dinners[0][0]}}, Børn: {{dinners[1][0]}}</td>
+                <td>Voksne: {{dinners[0][1]}}, Børn: {{dinners[1][1]}}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Antal tilmeldte</td>
+                <td>Voksne: {{friday[0]}}, Børn: {{friday[1]}}</td>
+                <td>Voksne: {{saturday[0]}}, Børn: {{saturday[1]}}</td>
+                <td>Voksne: {{sunday[0]}}, Børn: {{sunday[1]}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr>
+<div>
+    <h2>Liste over alle tilmeldte ({{registrations.length}})</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="20%">Navn</th>
+                <th width="15%">Voksen / Barn</th>
+                <th width="15%">Ankomstdag</th>
+                <th width="10%">Ankomsttidspunkt</th>
+                <th width="15%">Afgangsdag</th>
+                <th width="10%">Afgangstidspunkt</th>
+                <th width="15%">Tilmeldt af</th>
+                <!--<th width="15%">Slet / Ændre</th>-->
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="registration in registrations">
+                <td>{{ registration.name }}</td>
+                <td>{{ registration.agegroup }}</td>
+                <td>{{ registration.arrivalday }}</td>
+                <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.departureday }}</td>
+                <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.registeree }}</td>
+    <!--
+                <td>
+                    <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="removeReg(registration)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+    -->
+            </tr>
+        </tbody>
+    </table>
+</div>
 <div ng-if="registrations == false">
     <tr>
         <td></td><td>Der er ikke tilmeldt nogen endnu</td>

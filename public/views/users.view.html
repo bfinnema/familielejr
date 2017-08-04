@@ -95,84 +95,79 @@
     </div>
 </nav>
 
-<div class="blog-header">
-    <h1 class="blog-title">Stamtræ</h1>
-    <p class="lead blog-description">Christian Klanen</p>
+<div>
+    <h2>Liste over brugere</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="15%">Navn</th>
+                <th width="25%">Adresse</th>
+                <th width="20%">email</th>
+                <th width="10%">Telefon</th>
+                <th width="10%">Rolle</th>
+                <th ng-if="role == 0" width="10%">Ændre / Slet</th>
+                <th ng-if="role == 0" width="10%">Ændre rolle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in users">
+                <td>{{ user.name.firstname }} {{ user.name.middlename }} {{ user.name.surname }} </td>
+                <td><span>{{user.address.street}} {{user.address.houseno}}</span>
+                    <span ng-show="!user.address.floor">, </span>
+                    <span ng-show="user.address.floor">, {{user.address.floor}}</span>
+                    <span ng-show="user.address.direction">{{user.address.direction}}</span>
+                    <span>{{user.address.zip}} {{user.address.town}}</span>
+                </td>
+                <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                <td>{{ user.phone }}</td>
+                <td>
+                    <span ng-show="user.role == 0">Administrator</span>
+                    <span ng-show="user.role == 1">Arrangør</span>
+                    <span ng-show="user.role == 2">Bruger</span>
+                </td>
+                <td ng-show="role == 0">
+                    <a class="btn btn-primary" href="#!users/edit/{{user._id}}">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="removeUser(user._id)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+                <td ng-show="role == 0">
+                    <a ng-show="user.role != 2" class="btn btn-primary" ng-click="changeRole(user._id, 2, user.name.firstname)">
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </a>
+                    <a ng-show="user.role != 1" class="btn btn-primary" ng-click="changeRole(user._id, 1, user.name.firstname)">
+                        <i class="glyphicon glyphicon-paperclip"></i>
+                    </a>
+                    <a ng-show="user.role != 0" class="btn btn-primary" ng-click="changeRole(user._id, 0, user.name.firstname)">
+                        <i class="glyphicon glyphicon-wrench"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-
-<div class="tree">
-	<ul>
-		<li>
-			<a href="#!familytree">Niels Flensburg<br>Anna Flensburg</a>
-			<ul>
-				<li>
-					<a href="#!familytree">Christian Flensburg<br>Lis Flensburg</a>
-					<ul>
-						<li>
-							<a href="#!familytree">Britta Flensburg</a>
-							<ul>
-								<li>
-									<a href="#!familytree">Laila Flensburg<br>Jørgensen</a>
-                                    <ul>
-                                        <li>
-                                            <a href="#!familytree">Frederikke<br>Flensburg Koustrup</a>
-                                        </li>
-                                        <li>
-                                            <a href="#!familytree">William Flensburg<br>Koustrup</a>
-                                        </li>
-                                    </ul>
-								</li>
-								<li>
-									<a href="#!familytree">Brian<br>Flensburg</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="#!familytree">Aage Thygesen Flensburg<br>Karen Østergaard</a>
-							<ul>
-								<li>
-									<a href="#!familytree">Rasmus Andersen</a>
-								</li>
-								<li>
-									<a href="#!familytree">Louise Andersen<br>Daniel Michael<br>Jensen</a>
-								</li>
-								<li>
-									<a href="#!familytree">Thomas Andersen ??</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="#!familytree">Jeanette Flensburg<br>Steen Flensburg</a>
-							<ul>
-								<li>
-									<a href="#!familytree">??</a>
-								</li>
-								<li>
-									<a href="#!familytree">Tobias Flensburg<br>Stubman<br>Sanne Maria<br>Flensburg Stubman</a>
-                                    <ul>
-                                        <li>
-                                            <a href="#!familytree">??</a>
-                                        </li>
-                                        <li>
-                                            <a href="#!familytree">??</a>
-                                        </li>
-                                        <li>
-                                            <a href="#!familytree">??</a>
-                                        </li>
-                                    </ul>
-								</li>
-								<li>
-									<a href="#!familytree">??</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</li>
-	</ul>
+<div>
+    <p>Tegnforklaring: 
+        <i class="glyphicon glyphicon-edit"></i> Ændre brugerdetaljer. 
+        <i class="glyphicon glyphicon-trash"></i> Slet brugeren. 
+        <i class="glyphicon glyphicon-info-sign"></i> Ændre rolle til bruger. 
+        <i class="glyphicon glyphicon-paperclip"></i> Ændre rolle til arrangør. 
+        <i class="glyphicon glyphicon-wrench"></i> Ændre rolle til administrator.
+    </p>
+</div>
+<hr>
+<div>
+    <h2><a href="mailto:{{allEmails}}">Send email til alle brugere</a></h2>
+    <p>Denne link åbner et nyt email i dit favorit email program</p>
+    <br>
+    <h3>Liste over alle email adresser. Kan kopieres over i "Til" feltet i dit email program, hvis linken ovenfor ikke virker for dig.</h3>
+    <p>{{allEmails}}</p>
 </div>
 
 <script type="text/javascript">
-    $('#familytree').addClass('active');
+    $('#admin').addClass('active');
+    $('#usersadmin').addClass('active');
 </script>

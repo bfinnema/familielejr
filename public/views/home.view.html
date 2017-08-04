@@ -75,10 +75,10 @@
                 <ul class="dropdown-menu">
                     <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
                     <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
-                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="finances"><a href="#!finances">Økonomi</a></li>
-                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                    <li id="usersadmin"><a href="#!usersadmin">Brugere</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
@@ -105,17 +105,22 @@
     <div class="col-sm-8 blog-main">
 
         <div class="blog-post">
-        <h2 class="blog-post-title">Næste Familielejr</h2>
-        <!-- <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p> -->
-
-        <p>Vi skal være i 
-            {{invitation.camp}}, {{invitation.address.street}}, {{invitation.address.zip}} {{invitation.address.town}} 
-            fra {{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}. </p>
-            <div class="col-md-4">
-                <a class="btn btn-success" href="#!eventinfo">Mere information</a>
+            <h2 class="blog-post-title">Næste Familielejr</h2>
+            <!-- <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p> -->
+            <div ng-show="invitationExists">
+                <p>Vi skal være i 
+                {{invitation.camp}}, {{invitation.address.street}}, {{invitation.address.zip}} {{invitation.address.town}} 
+                fra {{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}.
+                </p>
+                <div class="col-md-4">
+                    <a class="btn btn-success" href="#!eventinfo">Mere information</a>
+                </div>
+                <div class="col-md-4">
+                    <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
+                </div>
             </div>
-            <div class="col-md-4">
-                <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
+            <div ng-show="!invitationExists">
+                <p>Invitation til næste lejr er ikke udsendt endnu</p>
             </div>
         </div>
         <br>

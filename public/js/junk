@@ -36,3 +36,30 @@
             }
         }
     ],
+
+    function requireMobpayDetails() {
+        console.log('Entered requireMobpayDetails');
+        var mobpay = document.getElementById("mobilepay").checked;
+        console.log(mobpay);
+        if (mobpay) {
+            // $('#mobpayphone').attr("required", true);
+            document.getElementById("mobpayphone").required = true;
+            console.log('Mobilpay phone number required');
+            console.log(document.getElementById("mobpayphone").required);
+        } else {
+            // $('#mobpayphone').attr("required", false);
+            document.getElementById("mobpayphone").required = false;
+            console.log('Mobilpay phone number not required');
+            console.log(document.getElementById("mobpayphone").required);
+        };
+    };
+    function requireBankpayDetails() {
+        var bankpay = document.getElementById("bankpay").checked;
+        if (bankpay) {
+            $('#regno').attr("required", true);
+            $('#account').attr("required", true);
+        } else {
+            $('#regno').attr("required", false);
+            $('#account').attr("required", false);
+        };
+    };

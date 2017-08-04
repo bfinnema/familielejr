@@ -24,12 +24,14 @@ angular.module('familielejr')
     $scope.uploadPic = function(file) {
         $scope.errorMsg = '';
         $scope.successMsg = '';
+        var picturetext = 'Familielejr '+$scope.year;
+        if ($scope.picturetext) {picturetext = $scope.picturetext;};
         file.upload = Upload.upload({
             url: '/photos/upload',
             data: {
                 year: $scope.year,
                 user: localStorage.familielejrUserId,
-                text: $scope.picturetext,
+                text: picturetext,
                 file: file
             },
             headers: {

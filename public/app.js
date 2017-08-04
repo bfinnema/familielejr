@@ -50,6 +50,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'profileCtrl',
             access: {restricted: true}
         }).
+        when('/usersadmin', {
+            templateUrl: 'views/users.view.html',
+            controller: 'usersCtrl',
+            access: {restricted: true}
+        }).
         when('/eventregistration', {
             templateUrl: 'views/eventreg.view.html',
             controller: 'eventregCtrl',

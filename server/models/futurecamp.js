@@ -7,7 +7,8 @@ var FuturecampSchema = new mongoose.Schema({
     },
     year: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     },
     camp: {
         type: String,

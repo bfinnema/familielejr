@@ -22,7 +22,8 @@ angular.module('familielejr')
     ];
     
     $scope.departuredays = [
-        {"departureday": "Søndag"},
+        {"departureday": "Søndag efter frokost"},
+        {"departureday": "Søndag efter morgenmad"},
         {"departureday": "Lørdag formiddag"},
         {"departureday": "Lørdag eftermiddag"},
         {"departureday": "Lørdag efter aftensmad"},
@@ -95,7 +96,7 @@ angular.module('familielejr')
                 console.log(`Status: ${response.status}`);
                 $scope.errorHappened = true;
             });
-        }
+        };
     };
 
 }])
@@ -117,173 +118,95 @@ angular.module('familielejr')
         // console.log(`Status: ${response.status}`);
         // console.log(response.data);
         $scope.registrations = response.data;
+        $scope.dinners = [[0,0],[0,0]];
+        $scope.breakfasts = [[0,0],[0,0]];
+        $scope.lunchs = [[0,0],[0,0]];
+        $scope.friday = [0,0];
+        $scope.saturday = [0,0];
+        $scope.sunday = [0,0];
+        for (var i=0; i<$scope.registrations.length; i++) {
+            console.log($scope.registrations[i].name);
+            if ($scope.registrations[i].agegroup == "Voksen") {ag = 0;} else {ag = 1;};
+            if ($scope.registrations[i].arrivalday == "Fredag") {
+                $scope.dinners[ag][0] += 1;
+                $scope.friday[ag] += 1;
+                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][0] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.lunchs[ag][1] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][0] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][0] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
+                    $scope.breakfasts[ag][0] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag formiddag") {
+                    $scope.breakfasts[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                };
+            } else if ($scope.registrations[i].arrivalday == "Lørdag formiddag") {
+                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.lunchs[ag][1] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
+                    $scope.lunchs[ag][0] += 1;
+                    $scope.saturday[ag] += 1;
+                };
+            } else if ($scope.registrations[i].arrivalday == "Lørdag eftermiddag") {
+                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.lunchs[ag][1] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.breakfasts[ag][1] += 1;
+                    $scope.saturday[ag] += 1;
+                    $scope.sunday[ag] += 1;
+                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                    $scope.dinners[ag][1] += 1;
+                    $scope.saturday[ag] += 1;
+                };
+            };
+        }
+        console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
+        console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);
+        console.log(`Voksne. Frokost lørdag: ${$scope.lunchs[0][0]}, søndag: ${$scope.lunchs[0][1]}`);
+        console.log(`Børn. Aftensmad fredag: ${$scope.dinners[1][0]}, lørdag: ${$scope.dinners[1][1]}`);
+        console.log(`Børn. Morgenmad lørdag: ${$scope.breakfasts[1][0]}, søndag: ${$scope.breakfasts[1][1]}`);
+        console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
 
 }])
 
-.controller('eventinfoCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService) {
-
-    $scope.isLoggedIn = false;
-    AuthService.getUserStatus().then(function() {
-        if (AuthService.isLoggedIn()) {
-            $scope.isLoggedIn = true;
-            $scope.role = AuthService.userRole();
-        };
-    });
-/*
-    $http.get('../json/invitation.json').then(function(response) {
-        $scope.invitation = response.data;
-        // console.log(`Headline: ${$scope.invitation.headline}`);
-    });
-*/
-    var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
-    var days = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"];
-
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var invyear = currentyear;
-    if (now > demarc) {
-        invyear += 1
-    };
-    $scope.invyear = invyear;
-    // console.log(`Invyear: ${invyear}`);
-    var invitationExists = false;
-    $scope.invitationExists = invitationExists;
-
-    $http({
-        method: 'GET',
-        url: '/invitations/'+invyear,
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
-        if (response.data) {
-            invitationExists = true;
-            $scope.invitationExists = invitationExists;
-            $scope.invitation = response.data;
-            var sd = new Date($scope.invitation.startdate);
-            $scope.startday = days[sd.getDay()];
-            $scope.startdate = sd.getDate();
-            $scope.startmonth = months[sd.getMonth()];
-            var ed = new Date($scope.invitation.enddate);
-            $scope.endday = days[ed.getDay()];
-            $scope.enddate = ed.getDate();
-            $scope.endmonth = months[ed.getMonth()];
-            var dl = new Date($scope.invitation.registration.deadline);
-            $scope.deadlineday = days[dl.getDay()];
-            $scope.deadlinedate = dl.getDate();
-            $scope.deadlinemonth = months[dl.getMonth()];
-            $scope.organizer1 = $scope.invitation.organizers[0].name;
-            if ($scope.invitation.organizers[1]) {$scope.organizer2 = $scope.invitation.organizers[1].name;};
-            if ($scope.invitation.organizers[2]) {$scope.organizer3 = $scope.invitation.organizers[2].name;};
-            if ($scope.invitation.organizers[3]) {$scope.organizer4 = $scope.invitation.organizers[3].name;};
-            if ($scope.invitation.organizers[4]) {$scope.organizer5 = $scope.invitation.organizers[4].name;};
-        } else {
-            console.log('Invitation does not exist');
-        };
-    }, function errorCallback(response) {
-        console.log(`Error. Status: ${response.status}`);
-    });
-
-    uiGmapGoogleMapApi.then(function (maps) {
-        console.log('Google Maps loaded');
-        // maps.visualRefresh = true;
-        $scope.map = {
-            center: {
-                latitude: 55.199039,
-                longitude: 11.514155
-            },
-            zoom: 16,
-            pan: 1,
-            options: $scope.mapOptions,
-            control: {},
-            events: {
-                tilesloaded: function (maps, eventName, args) {},
-                dragend: function (maps, eventName, args) {},
-                zoom_changed: function (maps, eventName, args) {}
-            }
-        };
-        console.log($scope.map); 
-
-        $scope.googlemap = {};
-    });
-
-    $scope.windowOptions = {
-        show: true
-    };
-
-    $scope.wincontent = "Hello";
-    $scope.onClick = function (name, address, years, website) {
-        $scope.windowOptions.show = true;
-        $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
-    };
-
-    $scope.closeClick = function () {
-        $scope.windowOptions.show = true;
-    };
-
-    $scope.title = "Window Title!";
-
-    uiGmapIsReady.promise() // if no value is put in promise() it defaults to promise(1)
-    .then(function (instances) {
-        console.log(instances[0].map); // get the current map
-    })
-        .then(function () {
-        $scope.addMarkerClickFunction($scope.markers);
-    });
-
-    $scope.markers = [
-        {
-            "id": 1,
-            "coords": {
-                "latitude": 55.1993697,
-                "longitude": 11.5146273
-            },
-            "name": "Bisseruplejren",
-            "address": "Gammel Strandvej 135, 4243 Rude",
-            "years": "2015, 2017",
-            "website": "http://www.bisseruplejren.dk/"
-        }
-    ];
-
-    $scope.addMarkerClickFunction = function (markersArray) {
-        angular.forEach(markersArray, function (value, key) {
-            value.onClick = function () {
-                $scope.onClick(value.name, value.address, value.years, value.website);
-                $scope.MapOptions.markers.selected = value;
-            };
-        });
-    };
-
-    $scope.MapOptions = {
-        minZoom: 15,
-        zoomControl: false,
-        draggable: true,
-        navigationControl: false,
-        mapTypeControl: false,
-        scaleControl: false,
-        streetViewControl: false,
-        disableDoubleClickZoom: false,
-        keyboardShortcuts: true,
-        markers: {
-            selected: {}
-        },
-        styles: [{
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{
-                visibility: "off"
-            }]
-        }, {
-            featureType: "transit",
-            elementType: "all",
-            stylers: [{
-                visibility: "off"
-            }]
-        }],
-    };
-}])

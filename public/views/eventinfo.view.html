@@ -75,10 +75,10 @@
                 <ul class="dropdown-menu">
                     <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
                     <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
-                    <li id="registrationadmin"><a href="#!registrationadmin">Administrer tilmeldinger</a></li>
+                    <li id="eventregall"><a href="#!eventregistrationall">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="finances"><a href="#!finances">Økonomi</a></li>
-                    <li id="userlist"><a href="#!userlist">Brugere</a></li>
+                    <li id="usersadmin"><a href="#!usersadmin">Brugere</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
@@ -103,12 +103,9 @@
     <div class="col-sm-6">
         <div class="well well-sm">
             <h4>I år skal vi være i {{invitation.camp}}. Adressen er:</h4>
-            <ul style="list-style-type:none">
-                <li>{{invitation.address.street}}</li>
-                <li>{{invitation.address.zip}}, {{invitation.address.town}}</li>
-            </ul>
+            <p>{{invitation.address.street}}, {{invitation.address.zip}} {{invitation.address.town}}</p>
         </div>
-        <div ng-if="invitation.text1" class="well well-sm">
+        <div ng-show="invitation.text1" class="well well-sm">
             <p>{{invitation.text1}}</p>
         </div>
         <div class="well well-sm">
@@ -117,14 +114,13 @@
         </div>
         <div class="well well-sm">
             <h4>Tilmelding:</h4>
-            <p>Senest {{deadlineday}} den {{deadlinedate}}. {{deadlinemonth}} til {{invitation.registration.receiver}}.</p>
             <ul style="list-style-type:none">
-                <li>Email: {{invitation.registration.email}}</li>
-                <li>Telefon: {{invitation.registration.phone}}</li>
+                <li>Senest {{deadlineday}} den {{deadlinedate}}. {{deadlinemonth}} til {{invitation.registration.receiver}}.</li>
+                <li>Email: {{invitation.registration.email}}, Telefon: {{invitation.registration.phone}}</li>
             </ul>
             <p><a class="btn btn-success" href="#!eventregistration">Eller tilmeld her på siden</a></p>
         </div>
-        <div class="well well-sm">
+        <div class="well well-sm" ng-show="invitation.bring">
             <h4>Medbring:</h4>
             <p>{{invitation.bring}}</p>
         </div>
@@ -136,18 +132,19 @@
             </ul>
             <p>Betalingsmuligheder:</p>
             <ul style="list-style-type:none">
-                <li ng-if="invitation.payment.meansofpayment.cash">{{invitation.payment.paymentinfo.cash}}</li>
-                <li ng-if="invitation.payment.meansofpayment.mobilepay">Mobilepay til: {{invitation.payment.paymentinfo.mobilepay}}</li>
-                <li ng-if="invitation.payment.meansofpayment.bankaccount">Overførsel til bankkonto: {{invitation.payment.paymentinfo.bankaccount.regno}} {{invitation.payment.paymentinfo.bankaccount.account}}</li>
+                <li ng-show="invitation.payment.meansofpayment.cash">{{invitation.payment.paymentinfo.cash}}</li>
+                <li ng-show="invitation.payment.meansofpayment.mobilepay">Mobilepay til: {{invitation.payment.paymentinfo.mobilepay}}</li>
+                <li ng-show="invitation.payment.meansofpayment.bankpay">Overførsel til bankkonto: {{invitation.payment.paymentinfo.bankaccount.regno}} {{invitation.payment.paymentinfo.bankaccount.account}}</li>
             </ul>
         </div>
-        <div ng-if="invitation.text2" class="well well-sm">
+        <div ng-show="invitation.text2" class="well well-sm">
             <p>{{invitation.text2}}</p>
         </div>
         <div class="well well-sm">
             <h4>Mange hilsener fra arrangørerne:</h4>
-            <i ng-repeat="organizer in invitation.organizers">{{organizer.name}}, </i>
-            <!-- <i>{{organizer1}}</i><i ng-if="organizer2"> ,{{organizer2}}</i><i ng-if="organizer3">, {{organizer3}}</i><i ng-if="organizer4">, {{organizer4}}</i><i ng-if="organizer5">, {{organizer5}}</i> -->
+            <ul style="list-style-type:none">
+                <li ng-repeat="organizer in invitation.organizers">{{organizer.name}}</li>
+            </ul>
         </div>
     </div>
     
