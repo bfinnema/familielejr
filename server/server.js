@@ -90,6 +90,7 @@ app.delete('/eventreg/:id', authenticate, (req, res) => {
 // Todo Section
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
+    category: req.body.category,
     text: req.body.text,
     _creator: req.user._id
   });
@@ -102,10 +103,8 @@ app.post('/todos', authenticate, (req, res) => {
 });
 
 app.get('/todos', authenticate, (req, res) => {
-  Todo.find({
-    _creator: req.user._id
-  }).then((todos) => {
-    res.send({todos});
+  Todo.find({}).then((todos) => {
+    res.json(todos);
   }, (e) => {
     res.status(400).send(e);
   });
@@ -119,8 +118,7 @@ app.get('/todos/:id', authenticate, (req, res) => {
   }
 
   Todo.findOne({
-    _id: id,
-    _creator: req.user._id
+    _id: id
   }).then((todo) => {
     if (!todo) {
       return res.status(404).send();
@@ -140,14 +138,13 @@ app.delete('/todos/:id', authenticate, (req, res) => {
   }
 
   Todo.findOneAndRemove({
-    _id: id,
-    _creator: req.user._id
+    _id: id
   }).then((todo) => {
     if (!todo) {
       return res.status(404).send();
     }
 
-    res.send({todo});
+    res.json(todo);
   }).catch((e) => {
     res.status(400).send();
   });
@@ -155,7 +152,13 @@ app.delete('/todos/:id', authenticate, (req, res) => {
 
 app.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['text', 'completed']);
+  var body = _.pick(req.body, ['category', 'text', 'completed']);
+  // console.log(`Patching tod, category: ${body.category}, Text: ${body.text}, Completed? ${body.completed}`);
+
+  var uploader = req.user.name.firstname;
+  if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
+  uploader = uploader + ' ' + req.user.name.surname;
+  body.completedBy = uploader;
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
@@ -166,14 +169,15 @@ app.patch('/todos/:id', authenticate, (req, res) => {
   } else {
     body.completed = false;
     body.completedAt = null;
+    body.completedBy = null;
   }
 
-  Todo.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((todo) => {
+  Todo.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((todo) => {
     if (!todo) {
       return res.status(404).send();
     }
 
-    res.send({todo});
+    res.json(todo);
   }).catch((e) => {
     res.status(400).send();
   })
@@ -358,7 +362,7 @@ app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
       if (!photo) {
         var uploader = req.user.name.firstname;
         if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
-        uploader = uploader + ' ' + req.user.name.surname
+        uploader = uploader + ' ' + req.user.name.surname;
         var photo = new Photo({
           _creator: req.body.user,
           year: req.body.year,
@@ -483,7 +487,7 @@ app.patch('/photos/:id', authenticate, (req, res) => {
 
   var uploader = req.user.name.firstname;
   if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
-  uploader = uploader + ' ' + req.user.name.surname
+  uploader = uploader + ' ' + req.user.name.surname;
 
   var newtextobj = {
     textobj: {

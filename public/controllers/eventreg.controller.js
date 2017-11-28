@@ -47,7 +47,7 @@ angular.module('familielejr')
     $scope.errorHappened = false;
     
     $scope.addEventreg = function() {
-        console.log(`Name: ${$scope.regname}`)
+        // console.log(`Name: ${$scope.regname}`)
         var eventreg = {
             name: $scope.regname,
             agegroup: $scope.agegroup,
@@ -56,7 +56,6 @@ angular.module('familielejr')
             departureday: $scope.departureday,
             departuretime: $scope.departuretime
         };
-        console.log(eventreg);
 
         $http({
             method: 'POST',

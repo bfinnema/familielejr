@@ -95,103 +95,105 @@
     </div>
 </nav>
 
-<div>
-    <h2>Tilmelding til næste lejr</h2>
-    <hr>
-    <div class="row">
-        <div class="form-group col-md-5">
-            <p ng-show="errorHappened"> Der skete en fejl. Prøv igen.</p>
-        </div>
-    </div>
-    <form name="eventregForm" ng-submit="addEventreg()">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label>Navn</label>
-                <input type="text" class="form-control" ng-model="regname" name="regname" placeholder="Navn" required>
-                <i ng-show="eventregForm.regname.$error.required">*Skal udfyldes</i>
-            </div>
-            <div class="form-group col-md-4">
-                <label>Barn / Voksen</label>
-                <select class="form-control" ng-model="agegroup" name="agegroup" required>
-                    <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
-                </select>
-                <i ng-show="eventregForm.agegroup.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-2">
-                <label>Ankomstdag</label>
-                <select class="form-control" ng-model="arrivalday" name="arrivalday" required>
-                    <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
-                </select>
-                <i ng-show="eventregForm.arrivalday.$error.required">*Skal udfyldes</i>
-            </div>
-            <div class="form-group col-md-2">
-                <label>Ca. tid</label>
-                <input type="time" class="form-control" ng-model="arrivaltime" name="arrivaltime">
-            </div>
-            <div class="form-group col-md-2">
-                <label>Afgangsdag</label>
-                <select class="form-control" ng-model="departureday" name="departureday" required>
-                    <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
-                </select>
-                <i ng-show="eventregForm.departureday.$error.required">*Skal udfyldes</i>
-            </div>
-            <div class="form-group col-md-2">
-                <label>Ca. tid</label>
-                <input type="time" class="form-control" ng-model="departuretime" name="departuretime">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Tilmeld</button>
-            </div>
-            <div class="col-md-2">
-                <a class="btn btn-warning btn-lg btn-block" href="#!">Afbryd</a>
-            </div>
-        </div>
-    </form>
-</div>
-<hr>
-<h3 class="heading">Du har tilmeldt:</h3>
+<h2 class="heading">Huskeliste til inspiration</h2>
+<p>Med denne huskeliste kan man overføre erfaring til nye arrangører ved at oprette nye punkter til listen. Og arrangørerne kan bruge listen til at holde styr på, hvad der er gjort.</p>
 <table class="table table-striped">
     <thead>
         <tr>
-            <th width="20%">Navn</th>
-            <th width="15%">Voksen / Barn</th>
-            <th width="15%">Ankomstdag</th>
-            <th width="10%">Ankomsttidspunkt</th>
-            <th width="15%">Afgangsdag</th>
-            <th width="10%">Afgangstidspunkt</th>
-            <th width="15%">Ændre / Slet</th>
+            <th width="8%">Udført?</th>
+            <th width="14%">Kategori</th>
+            <th width="40%">Beskrivelse</th>
+            <th width="15%">Udført af</th>
+            <th width="13%">Dato</th>
+            <th width="10%">Slet / Ændre</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="registration in registrations">
-            <td>{{ registration.name }}</td>
-            <td>{{ registration.agegroup }}</td>
-            <td>{{ registration.arrivalday }}</td>
-            <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
-            <td>{{ registration.departureday }}</td>
-            <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+        <tr ng-repeat="todo in todos">
             <td>
-                <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
+                <input type="checkbox" ng-model="todo.completed" id="completed" ng-change="completionStatus(todo)">
+            </td>
+            <td>{{ todo.category }}</td>
+            <td>{{ todo.text }}</td>
+            <td>{{ todo.completedBy }}</td>
+            <td>{{ todo.completedAt | date:'dd-MM-yyyy HH:mm' : 'CET' }}</td>
+            <td>
+                <a class="btn btn-primary" ng-click="editTodoToggle(todo)">
                     <i class="glyphicon glyphicon-edit"></i>
                 </a>
-                <a class="btn btn-primary" ng-click="removeReg(registration)">
+                <a class="btn btn-primary" ng-click="removeTodo(todo)">
                     <i class="glyphicon glyphicon-trash"></i>
                 </a>
             </td>
         </tr>
     </tbody>
 </table>
-<div ng-if="registrations == false">
-    <tr>
-        <td></td><td>Du har ikke tilmeldt nogen endnu</td>
-    </tr>
+<hr>
+<div ng-show="newTodo">
+    <h2>Indtast nyt punkt til huskelisten {{newTodo}} </h2>
+    <form name="newTodoForm" ng-submit="addTodo()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="category" name="category" required>
+                    <option ng-repeat="category in categories" value="{{category.category}}">{{category.category}}</option>
+                </select>
+                <i ng-show="newTodoForm.category.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="text" name="text" rows="3" placeholder="Beskrivelse" required></textarea>
+                <i ng-show="newTodoForm.text.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newTodoForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newTodoToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editTodo">
+    <h2>Ændre et punkt til huskelisten {{editTodo}} </h2>
+    <form name="editTodoForm" ng-submit="todoEdit()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="editCategory" name="editCategory" required>
+                    <option ng-repeat="category in categories" value="{{category.category}}">{{category.category}}</option>
+                </select>
+                <i ng-show="editTodoForm.editCategory.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="editText" name="editText" rows="3" placeholder="Beskrivelse" required></textarea>
+                <i ng-show="editTodoForm.editText.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editTodoForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editTodoToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newTodo && !editTodo">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newTodoToggle()">Indtast nyt punkt til huskelisten</a>
+    </div>
 </div>
 
 <script type="text/javascript">
-    $('#nextcamp').addClass('active');
-    $('#eventreg').addClass('active');
+    $('#organizer').addClass('active');
+    $('#todolist').addClass('active');
 </script>

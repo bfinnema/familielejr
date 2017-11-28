@@ -150,6 +150,16 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'futurecampsCtrl',
             access: {restricted: true}
         }).
+        when('/todolist', {
+            templateUrl: 'views/todolist.view.html',
+            controller: 'todolistCtrl',
+            access: {restricted: true}
+        }).
+        when('/finances', {
+            templateUrl: 'views/finances.view.html',
+            controller: 'financesCtrl',
+            access: {restricted: true}
+        }).
 		otherwise({redirectTo: '/'})
 }]);
 
