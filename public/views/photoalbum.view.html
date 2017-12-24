@@ -136,13 +136,15 @@
             </div>
         </form>
     </div>
+
     <div class="row">
         <div ng-repeat="image in images">
             <div class="col-md-1">
-                <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+                <img class="img-thumbnail" ng-src="{{image.signedRequest}}" ng-click="setImage(image)">
             </div>
         </div>
     </div>
+    
 </div>
 <div ng-show="!imagesExist">
     <h3>Der er ikke nogen billeder fra {{ year }} endnu. Har du nogen at lægge op?</h3>

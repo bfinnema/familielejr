@@ -110,6 +110,16 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'campmapCtrl',
             access: {restricted: true}
         }).
+        when('/photos/:id', {
+            templateUrl: 'views/photoalbum.view.html',
+            controller: 'photoalbumCtrl',
+            access: {restricted: true}
+        }).
+        when('/deletephoto/:id', {
+            templateUrl: 'views/myphotoalbum.view.html',
+            controller: 'photoalbumCtrl',
+            access: {restricted: true}
+        }).
         when('/photoalbum/:year', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',

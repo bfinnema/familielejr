@@ -11,17 +11,20 @@ angular.module('familielejr')
     });
 
     var currentyear = (new Date()).getFullYear();
+    
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
     var invyear = currentyear;
+    var pastyear = currentyear - 1;
     if (now > demarc) {
-        invyear += 1
+        invyear += 1;
+        pastyear += 1;
     };
     console.log(`Invyear: ${invyear}`);
 
     $http({
         method: 'GET',
-        url: '/futurecamps',
+        url: '/futurecamps/gtyear/' + pastyear,
         headers: {
             'x-auth': localStorage.userToken
         }

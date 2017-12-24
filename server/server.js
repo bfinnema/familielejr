@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 const multiparty = require('connect-multiparty');
 const fs = require('fs');
+const aws = require('aws-sdk');
+// const S3 = require('aws-sdk/clients/s3');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -17,6 +19,8 @@ var {Invitation} = require('./models/invitation');
 var {Futurecamp} = require('./models/futurecamp');
 var {authenticate} = require('./middleware/authenticate');
 multipartyMiddleware = multiparty();
+aws.config.region = 'eu-west-2';
+const S3_BUCKET = process.env.S3_BUCKET;
 
 const publicPath = path.join(__dirname, '../public');
 var app = express();
@@ -26,6 +30,105 @@ app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 
+// Get signed url for S3 operations
+app.get('/sign-s3', (req, res) => {
+  const s3 = new aws.S3();
+  const fileName = req.query['file_name'];
+  const fileType = req.query['file_type'];
+  const folder = req.query['folder'];
+  const operation = req.query['operation'];
+  
+  // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
+  // console.log(process.env.AWS_ACCESS_KEY_ID);
+  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
+  const albumPhotosKey = encodeURIComponent(folder) + '/';
+  const s3Params = {
+    Bucket: S3_BUCKET,
+    Key: albumPhotosKey + fileName,
+    Expires: 60,
+    ContentType: fileType,
+    ACL: 'public-read'
+  };
+
+  s3.getSignedUrl(operation, s3Params, (err, data) => {
+    if(err){
+      console.log(err);
+      return res.end();
+    }
+    const returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
+
+app.get('/sign-s3-getimage', (req, res) => {
+  const s3 = new aws.S3();
+  const fileName = req.query['file_name'];
+  const fileType = req.query['file_type'];
+  const folder = req.query['folder'];
+  const operation = req.query['operation'];
+  
+  // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
+  // console.log(process.env.AWS_ACCESS_KEY_ID);
+  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
+
+  const albumPhotosKey = encodeURIComponent(folder) + '/';
+  const s3Params = {
+    Bucket: S3_BUCKET,
+    Key: albumPhotosKey + fileName,
+    Expires: 1800
+  };
+
+  s3.getSignedUrl(operation, s3Params, (err, data) => {
+    if(err){
+      console.log(err);
+      return res.end();
+    }
+    const returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
+
+app.get('/sign-s3-deleteimage', (req, res) => {
+  const s3 = new aws.S3();
+  const fileName = req.query['file_name'];
+  const fileType = req.query['file_type'];
+  const folder = req.query['folder'];
+  const operation = req.query['operation'];
+  
+  // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
+  // console.log(process.env.AWS_ACCESS_KEY_ID);
+  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
+
+  const albumPhotosKey = encodeURIComponent(folder) + '/';
+  const s3Params = {
+    Bucket: S3_BUCKET,
+    Key: albumPhotosKey + fileName,
+    Expires: 60
+  };
+
+  s3.getSignedUrl(operation, s3Params, (err, data) => {
+    if(err){
+      console.log(err);
+      return res.end();
+    }
+    const returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
+
+// Event Registration section
 app.post('/eventreg', authenticate, (req, res) => {
   var registeree = req.user.name.firstname;
   if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
@@ -330,103 +433,52 @@ app.delete('/users/:id', authenticate, (req, res) => {
 });
 
 // Photos
-app.post('/photos/upload', authenticate, multipartyMiddleware, (req, res) => {
-  // console.log(req.body.text);
-  var file = req.files.file;
-  // get the temporary location of the file
-  var tmp_path = req.files.file.path;
-  // console.log(tmp_path);
-  var fn = req.files.file.name;
-  var splitfn = fn.split(".");
-  var resfilename = '';
-  for (var i=0; i<splitfn.length; i++) {
-      if (i == splitfn.length-1) {
-          resfilename += splitfn[i].toLowerCase();
-      } else {
-          resfilename += splitfn[i] + '.';
-      };
-  };
-  // console.log(fn+" "+resfilename);
-  // set where the file should actually exists - in this case it is in the "images" directory
-  // var target_path = __dirname + '/../public/images/' + req.body.year + '/' + req.files.file.name;
-  var target_path = __dirname + '/../public/images/' + req.body.year + '/' + resfilename;
-  var path = __dirname + '/../public/images/' + req.body.year;
-  // console.log(target_path);
-  // console.log(path);
-  // move the file from the temporary location to the intended location
-  if (fs.existsSync(path)) {
+app.post('/photos/upload', authenticate, (req, res) => {
+  console.log(req.body.text);
+  var fn = req.body.filename;
 
-    Photo.findOne({
-      filename: resfilename
-    }).then((photo) => {
-      if (!photo) {
-        var uploader = req.user.name.firstname;
-        if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
-        uploader = uploader + ' ' + req.user.name.surname;
-        var photo = new Photo({
-          _creator: req.body.user,
-          year: req.body.year,
-          filename: resfilename,
-          path: 'images/' + req.body.year + '/',
-          uploader: uploader,
-          imagetext: [
-            {
-              textobj: {
-                date: new Date(),
-                contributor: uploader,
-                text: req.body.text
-              }
+  Photo.findOne({
+    filename: fn
+  }).then((photo) => {
+    if (!photo) {
+      var uploader = req.user.name.firstname;
+      if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
+      uploader = uploader + ' ' + req.user.name.surname;
+      var photo = new Photo({
+        _creator: req.body.user,
+        year: req.body.year,
+        filename: fn,
+        filetype: req.body.filetype,
+        path: 'images/' + req.body.year + '/',
+        uploader: uploader,
+        imagetext: [
+          {
+            textobj: {
+              date: new Date(),
+              contributor: uploader,
+              text: req.body.text
             }
-          ]
-        });
+          }
+        ]
+      });
 
-        photo.save().then((doc) => {
-          res.send(doc);
-        }, (e) => {
-          res.status(400).send(e);
-        });
+      photo.save().then((doc) => {
+        res.send(doc);
+      }, (e) => {
+        res.status(400).send(e);
+      });
 
-        // Read the file
-        fs.readFile(tmp_path, function (err, data) {
-          if (err) throw err;
-          // console.log('File read!');
-
-          // Write the file
-          fs.writeFile(target_path, data, function (err) {
-            if (err) throw err;
-            // res.write('File uploaded and moved!');
-            // res.end();
-            // console.log('File written!');
-          });
-
-          // Delete the file
-          fs.unlink(tmp_path, function (err) {
-            if (err) throw err;
-            // console.log('File deleted!');
-          });
-        });
-/*
-        fs.rename(tmp_path, target_path, function(err) {
-          if (err) throw err;
-        }, () => {
-          res.status(400).send();
-        });
-*/        
-      } else {
-        // console.log('Photo already in db');
-        res.status(409).send({photo});
-        fs.unlink(tmp_path, function(err) {
-          if (err) throw err;
-        });
-      };
-    }).catch((e) => {
-      res.status(400).send();
-    });
-    
-    // res.send('File uploaded to: ' + target_path + ' - ' + req.files.file.size + ' bytes');
-  } else {
+    } else {
+      console.log('Photo already in db');
+      res.status(409).send({photo});
+      fs.unlink(tmp_path, function(err) {
+        if (err) throw err;
+      });
+    };
+  }).catch((e) => {
     res.status(400).send();
-  };
+  });
+    
 });
 
 app.get('/photos/:year', authenticate, (req, res) => {
@@ -451,7 +503,7 @@ app.get('/myphotos', authenticate, (req, res) => {
   });
 })
 
-app.delete('/photos/:id', authenticate, (req, res) => {
+app.delete('/deletephoto/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
   if (!ObjectID.isValid(id)) {
@@ -466,9 +518,6 @@ app.delete('/photos/:id', authenticate, (req, res) => {
       return res.status(404).send();
     }
 
-    fs.unlink(__dirname + '/../public/' + photo.path+photo.filename, function(err) {
-      if (err) throw err;
-    });
     console.log(`Image ${photo.filename} removed`);
     res.json(photo);
   }).catch((e) => {
@@ -605,6 +654,15 @@ app.get('/futurecamps', authenticate, (req, res) => {
   });
 });
 
+app.get('/futurecamps/gtyear/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  Futurecamp.find({'year':{'$gt':year}}).then((futurecamps) => {
+    res.json(futurecamps);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 app.get('/futurecamps/:id', authenticate, (req, res) => {
   var id = req.params.id;
   console.log('This is the findById section');
@@ -689,3 +747,30 @@ app.listen(port, () => {
 });
 
 module.exports = {app};
+
+/* 
+app.delete('/photos/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Photo.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((photo) => {
+    if (!photo) {
+      return res.status(404).send();
+    }
+
+    fs.unlink(__dirname + '/../public/' + photo.path+photo.filename, function(err) {
+      if (err) throw err;
+    });
+    console.log(`Image ${photo.filename} removed`);
+    res.json(photo);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+ */

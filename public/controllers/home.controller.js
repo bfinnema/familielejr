@@ -17,8 +17,10 @@ angular.module('familielejr')
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
     var invyear = currentyear;
+    var pastyear = currentyear - 1;
     if (now > demarc) {
-        invyear += 1
+        invyear += 1;
+        pastyear += 1;
     };
     $scope.invyear = invyear;
     // console.log(`Invyear: ${invyear}`);
@@ -63,7 +65,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/futurecamps',
+        url: '/futurecamps/gtyear/' + pastyear,
         headers: {
             'x-auth': localStorage.userToken
         }

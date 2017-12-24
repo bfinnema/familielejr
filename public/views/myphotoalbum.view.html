@@ -156,7 +156,7 @@
 <div class="row">
     <div ng-repeat="image in images">
         <div class="col-md-1">
-            <img class="img-thumbnail" ng-src="{{image.path+image.filename}}" ng-click="setImage(image)">
+            <img class="img-thumbnail" ng-src="{{image.signedRequest}}" ng-click="setImage(image)">
         </div>
     </div>
 </div>

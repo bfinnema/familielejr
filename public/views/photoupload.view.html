@@ -113,11 +113,11 @@
             <div class="form-group col-md-4">
                 <label>Fotografi:</label>
                 <input type="file" ngf-select ng-model="picFile" name="file"    
-                        accept="image/*" ngf-max-size="20MB" required
+                        accept="image/*" ngf-max-size="10MB" required
                         ngf-model-invalid="errorFile">
                 <i ng-show="photouploadForm.file.$error.required">*required</i><br>
-                <i ng-show="photouploadForm.file.$error.maxSize">File too large 
-                    {{errorFile.size / 1000000|number:1}}MB: max 20M</i>
+                <i ng-show="photouploadForm.file.$error.maxSize">Filen er for stor 
+                    {{errorFile.size / 1000000|number:1}}MB: max 10MB</i>
                 <img ng-show="photouploadForm.file.$valid" ngf-thumbnail="picFile" class="thumb"> <button ng-click="picFile = null" ng-show="picFile">Remove</button>
             </div>
         </div>
@@ -131,16 +131,22 @@
         <div class="row">
             <div class="form-group col-md-4">
                 <button btn btn-default ng-disabled="!photouploadForm.$valid" 
-                        ng-click="uploadPic(picFile)">Send</button>
+                    ng-click="uploadPicture(picFile)">Send</button>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-4">
-                <span class="progress" ng-show="picFile.progress >= 0">
-                    <div style="width:{{picFile.progress}}%" 
-                        ng-bind="picFile.progress + '%'"></div>
-                </span>
+                <span >{{successMsg}}</span>
+                <span class="err">{{errorMsg}}</span>
             </div>
+        </div>
+        <div class="row">
+        <div class="form-group col-md-4">
+            <span class="progress" ng-show="picFile.progress >= 0">
+                <div style="width:{{picFile.progress}}%" 
+                    ng-bind="picFile.progress + '%'"></div>
+            </span>
+        </div>
         </div>
         <div class="row">
             <div class="form-group col-md-4">
