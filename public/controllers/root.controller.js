@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('rootCtrl', ['$scope', 'AuthService', function($scope, AuthService) {
+.controller('rootCtrl', ['$scope', '$location', 'AuthService', function($scope, $location, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -9,5 +9,9 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
+
+    if ($scope.isLoggedIn) {
+        $location.path('/home');
+    }
 
 }]);

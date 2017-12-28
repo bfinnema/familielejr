@@ -110,6 +110,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'campmapCtrl',
             access: {restricted: true}
         }).
+        when('/camplist', {
+            templateUrl: 'views/camplist.view.html',
+            controller: 'camplistCtrl',
+            access: {restricted: true}
+        }).
         when('/photos/:id', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',
@@ -177,6 +182,8 @@ familielejr.run(function($rootScope, $location, $route, AuthService) {
     $rootScope.$on('$routeChangeStart', function(event, next, current) {
         AuthService.getUserStatus()
             .then(function() {
+                // var n = JSON.stringify(next);
+                // console.log(`Next: ${n}`);
                 if (next.access.restricted && !AuthService.isLoggedIn()) {
                     $location.path('/login');
                     $route.reload();

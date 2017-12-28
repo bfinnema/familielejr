@@ -94,67 +94,31 @@
     </div>
 </nav>
 
-<div class="page-header">
-    <h1>Billeder, {{ year }}</h1>
-</div>
-<div ng-show="imagesExist">
-    <div class="row">
-        <img class="img-responsive" src="{{mainImage}}">
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
-        </div>
-        <div class="col-md-4">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
-        </div>
-        <div class="col-md-3">
-        </div>
-    </div>
-    <div class="row">
-        <h3>Uploaded af {{mainImageObj.uploader}}</h3>
-        <div ng-repeat="x in mainImageObj.imagetext">
-            <p>{{x.textobj.contributor}}, {{x.textobj.date | date:'dd-MM-yyyy HH:mm' : 'CET' }}: {{x.textobj.text}}</p>
-        </div>
-    </div>
-    <div>
-        <form name="formAddComment" ng-submit="addComment(mainImageObj)" novalidate>
-            <div class="row">
-                <div class="form-group col-md-8">
-                    <label>Her kan du tilføje kommentarer eller informationer til billedet</label>
-                    <input type="text" class="form-control" ng-model="mycomment" name="mycomment" placeholder="Din tilføjelse til billedet" required>
-                </div>
-                <div class="form-group col-md-2">
-                    <br>
-                    <button ng-disabled="formAddComment.$invalid" class="btn btn-primary" type="submit">Send</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <hr>
-    <div class="col-md-2" ng-show="role == 0">
-        <div class="actions">
-            <a href="#" class="btn btn-danger" ng-click="removeImage(mainImageObj)">Slet billedet</a>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div ng-repeat="image in images">
-            <div class="col-md-1">
-                <img class="img-thumbnail" ng-src="{{image.signedRequest}}" ng-click="setImage(image)">
-            </div>
-        </div>
-    </div>
-    
-</div>
-<div ng-show="!imagesExist">
-    <h3>Der er ikke nogen billeder fra {{ year }} endnu. Har du nogen at lægge op?</h3>
-</div>
+<h2 class="heading">Liste over lejrskoler</h2>
+<p>Denne liste er ikke komplet. Hvis I kan huske, hvor vi har været de år, der ikke er med i listen, 
+    så skriv til bo_finnemann@hotmail.com</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="8%">År</th>
+            <th width="14%">Lejr</th>
+            <th width="35%">Adresse</th>
+            <th width="30%">Hjemmeside</th>
+            <th width="13%">Kort</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="camp in camps">
+            <td>{{ camp.year }}</td>
+            <td>{{ camp.name }}</td>
+            <td>{{ camp.address }}</td>
+            <td><a href="{{camp.website}}" target="#">{{ camp.website }}</a></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 
 <script type="text/javascript">
-    $('#photoalbum').addClass('active');
+    $('#history').addClass('active');
+    $('#camplist').addClass('active');
 </script>

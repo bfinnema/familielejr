@@ -11,12 +11,12 @@ angular.module('familielejr')
     });
 
     var currentyear = (new Date()).getFullYear();
-    
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
+    var lastDateOfYear = new Date(currentyear,11,31);
     var invyear = currentyear;
     var pastyear = currentyear - 1;
-    if (now > demarc) {
+    if (now > demarc && lastDateOfYear >= now) {
         invyear += 1;
         pastyear += 1;
     };

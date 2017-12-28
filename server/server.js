@@ -5,7 +5,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
-const multiparty = require('connect-multiparty');
+// const multiparty = require('connect-multiparty');
 const fs = require('fs');
 const aws = require('aws-sdk');
 // const S3 = require('aws-sdk/clients/s3');
@@ -18,7 +18,7 @@ var {Eventreg} = require('./models/eventreg');
 var {Invitation} = require('./models/invitation');
 var {Futurecamp} = require('./models/futurecamp');
 var {authenticate} = require('./middleware/authenticate');
-multipartyMiddleware = multiparty();
+// multipartyMiddleware = multiparty();
 aws.config.region = 'eu-west-2';
 const S3_BUCKET = process.env.S3_BUCKET;
 
@@ -71,10 +71,6 @@ app.get('/sign-s3-getimage', (req, res) => {
   const folder = req.query['folder'];
   const operation = req.query['operation'];
   
-  // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
-  // console.log(process.env.AWS_ACCESS_KEY_ID);
-  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
-
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
@@ -103,10 +99,6 @@ app.get('/sign-s3-deleteimage', (req, res) => {
   const folder = req.query['folder'];
   const operation = req.query['operation'];
   
-  // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
-  // console.log(process.env.AWS_ACCESS_KEY_ID);
-  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
-
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
@@ -136,6 +128,7 @@ app.post('/eventreg', authenticate, (req, res) => {
   var eventreg = new Eventreg({
     name: req.body.name,
     agegroup: req.body.agegroup,
+    year: req.body.year,
     arrivalday: req.body.arrivalday,
     arrivaltime: req.body.arrivaltime,
     departureday: req.body.departureday,
@@ -151,6 +144,7 @@ app.post('/eventreg', authenticate, (req, res) => {
   });
 });
 
+// Get all event registrations for all years submitted by a specific member
 app.get('/eventreg', authenticate, (req, res) => {
   Eventreg.find({
     _creator: req.user._id
@@ -161,6 +155,20 @@ app.get('/eventreg', authenticate, (req, res) => {
   });
 });
 
+// Get all event registrations for one year submitted by a specific member
+app.get('/eventreg/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  Eventreg.find({
+    _creator: req.user._id,
+    year: year
+  }).then((eventregs) => {
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// Get all event registrations for all years
 app.get('/eventregall', (req, res) => {
   Eventreg.find({}).then((eventregs) => {
     res.json(eventregs);
@@ -169,6 +177,17 @@ app.get('/eventregall', (req, res) => {
   });
 });
 
+// Get all event registrations for one year
+app.get('/eventregall/:year', (req, res) => {
+  var year = req.params.year;
+  Eventreg.find({year: year}).then((eventregs) => {
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// The creator of an event registration deletes the registration
 app.delete('/eventreg/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
@@ -188,6 +207,32 @@ app.delete('/eventreg/:id', authenticate, (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   });
+});
+
+// The admin or organizer deletes the registration
+app.delete('/admineventreg/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  if (req.user.role < 2) {
+    Eventreg.findOneAndRemove({
+      _id: id
+    }).then((eventreg) => {
+      if (!eventreg) {
+        return res.status(404).send();
+      }
+  
+      res.json(eventreg);
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else {
+    res.status(401).send();
+  };
+
 });
 
 // Todo Section
@@ -402,6 +447,15 @@ app.get('/users', authenticate, (req, res) => {
   };
 });
 
+app.get('/userscount', (req, res) => {
+  User.find({}).count().then((count) => {
+    // console.log(`Number of users: ${count}`);
+    res.json(count);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 app.delete('/users/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(id);
@@ -523,6 +577,32 @@ app.delete('/deletephoto/:id', authenticate, (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   });
+});
+
+app.delete('/admindeletephoto/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  if (req.user.role == 0) {
+    Photo.findOneAndRemove({
+      _id: id
+    }).then((photo) => {
+      if (!photo) {
+        return res.status(404).send();
+      }
+  
+      console.log(`Image ${photo.filename} removed`);
+      res.json(photo);
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else {
+    res.status(401).send();
+  };
+
 });
 
 app.patch('/photos/:id', authenticate, (req, res) => {

@@ -233,12 +233,14 @@ angular.module('familielejr')
     var currentyear = (new Date()).getFullYear();
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
+    var lastDateOfYear = new Date(currentyear,11,31);
     var invyear = currentyear;
-    if (now > demarc) {
-        invyear += 1
+    var pastyear = currentyear - 1;
+    if (now > demarc && lastDateOfYear >= now) {
+        invyear += 1;
+        pastyear += 1;
     };
-    $scope.invyear = invyear;
-    // console.log(`Invyear: ${invyear}`);
+    console.log(`Invyear: ${invyear}`);
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
 

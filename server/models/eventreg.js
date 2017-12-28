@@ -9,6 +9,10 @@ var EventregSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    year: {
+        type: Number,
+        required: true
+    },
     arrivalday: {
         type: String
     },

@@ -84,9 +84,8 @@
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
-                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
-                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
+                        <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
+                        <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
                 </ul>
             </li>
             <li><a href="#!content">Kontakt</a></li>
@@ -96,6 +95,10 @@
 </nav>
 
 <div ng-controller = "registerCtrl">
+    <div class="row alert alert-danger" ng-show="!registrationAllowed">
+        <h2>NOGET ER GALT. DER ER FOR MANGE BRUGERE. VI TRÆKKER NØDBREMSEN. DU KAN IKKE REGISTRERE DIG.</h2>
+        <br>
+    </div>
     <form name="formRegister" class="formRegister" id="formRegister" ng-submit="registerUser()" novalidate>
         <h2 class="form-signin-heading">Registrering</h2>
         <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
@@ -194,7 +197,7 @@
         <br>
         <div class="row">
             <div class="form-group col-md-4">
-                <button ng-disabled="formRegister.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
+                <button ng-disabled="formRegister.$invalid || !registrationAllowed" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
             </div>
         </div>
     </form>

@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
 .controller('campmapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
-    console.log('This is the maps controller');
+    // console.log('This is the maps controller');
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -12,7 +12,7 @@ angular.module('familielejr')
     });
 
     uiGmapGoogleMapApi.then(function (maps) {
-        console.log('Google Maps loaded');
+        // console.log('Google Maps loaded');
         // maps.visualRefresh = true;
         $scope.map = {
             center: {
@@ -29,7 +29,7 @@ angular.module('familielejr')
                 zoom_changed: function (maps, eventName, args) {}
             }
         };
-        console.log($scope.map); 
+        // console.log($scope.map); 
 
         $scope.googlemap = {};
     });
@@ -109,7 +109,7 @@ angular.module('familielejr')
             },
             "name": "Grænseborgen",
             "address": "Vargårdevej 86, 6094 Hejls",
-            "years": "2010, 2016",
+            "years": "2006, 2016",
             "website": "http://www.graenseborgen.dk/"
         },
         {
@@ -161,4 +161,29 @@ angular.module('familielejr')
             }]
         }],
     };
+}])
+
+.controller('camplistCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+    
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
+        };
+    });
+
+    $http({
+        method: 'GET',
+        url: 'json/camps.json',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        // console.log(`Success. Status: ${response.status}`);
+        $scope.camps = response.data;
+        // console.log($scope.todos[0]);
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
+    });
 }]);

@@ -85,8 +85,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
-                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
-                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
+                    <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
                 </ul>
             </li>
             <li><a href="#!content">Kontakt</a></li>
@@ -96,11 +95,18 @@
 </nav>
 
 <div>
-    <h2>Tilmelding til næste lejr</h2>
+    <h2>Tilmelding til næste lejr i {{ invitationyear }}</h2>
     <hr>
-    <div class="row">
+    <div class="row" ng-show="errorHappened">
         <div class="form-group col-md-5">
-            <p ng-show="errorHappened"> Der skete en fejl. Prøv igen.</p>
+            <p> Der skete en fejl. Prøv igen.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-8">
+            <p>Her kan du tilmelde dig og andre til den kommende familielejr. Der er ikke nogen 
+                forbindelse mellem registrering på hjemmesiden og tilmelding, udover at du skal være 
+                registreret og logget ind for at tilmelde nogen.</p>
         </div>
     </div>
     <form name="eventregForm" ng-submit="addEventreg()">
@@ -153,17 +159,17 @@
     </form>
 </div>
 <hr>
-<h3 class="heading">Du har tilmeldt:</h3>
+<h3 class="heading">Til familielejren 2018, har du tilmeldt:</h3>
 <table class="table table-striped">
     <thead>
         <tr>
             <th width="20%">Navn</th>
             <th width="15%">Voksen / Barn</th>
             <th width="15%">Ankomstdag</th>
-            <th width="10%">Ankomsttidspunkt</th>
+            <th width="15%">Ankomsttidspunkt</th>
             <th width="15%">Afgangsdag</th>
-            <th width="10%">Afgangstidspunkt</th>
-            <th width="15%">Ændre / Slet</th>
+            <th width="15%">Afgangstidspunkt</th>
+            <th width="5%">Slet</th>
         </tr>
     </thead>
     <tbody>
@@ -175,9 +181,11 @@
             <td>{{ registration.departureday }}</td>
             <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
             <td>
+<!-- 
                 <a class="btn btn-primary" href="#!eventreg/edit/{{registration._id}}">
                     <i class="glyphicon glyphicon-edit"></i>
                 </a>
+ -->                
                 <a class="btn btn-primary" ng-click="removeReg(registration)">
                     <i class="glyphicon glyphicon-trash"></i>
                 </a>

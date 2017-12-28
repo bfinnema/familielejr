@@ -68,3 +68,6 @@
 "MONGODB_URI": "mongodb://localhost:27017/Familielejr",
 mongodb://lejradmin:Jufle8803Rud@ds151452.mlab.com:51452/familielejr
 mongodb://lejradmin:Jufle8803Rud@ds017584.mlab.com:17584/familielejr
+
+// In package.json
+    // "connect-multiparty": "^2.0.0",

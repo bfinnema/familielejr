@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', 'Upload', '$timeout', 'AuthService', function ($scope, $http, $route, $window, Upload, $timeout, AuthService) {
+.controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', function ($scope, $http, $route, $window, $timeout, AuthService) {
 
     var currentyear = (new Date()).getFullYear();
     var firstyear = 1993
@@ -82,7 +82,7 @@ angular.module('familielejr')
 
 }])
 
-.controller('photoalbumCtrl', ['$scope', '$http', '$routeParams', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $route, $location, AuthService) {
+.controller('photoalbumCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -171,6 +171,46 @@ angular.module('familielejr')
             getImage(currentPhoto);
         };
         // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+    };
+
+    $scope.removeImage = function(image) {
+        if ($window.confirm('Bekræft venligst at du vil slette billedet '+image.filename) && $scope.role == 0) {
+
+            $http({
+                method: 'GET',
+                url: `/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+            }).then(function(response) {
+                console.log(response.data.signedRequest);
+
+                $http({
+                    method: 'DELETE',
+                    url: response.data.signedRequest
+                }).then(function(response) {
+                    console.log(`Status: ${response.status}`);
+                    console.log("Success!");
+                    $http({
+                        method: 'DELETE',
+                        url: '/admindeletephoto/'+image._id,
+                        headers: {
+                            'x-auth': localStorage.userToken
+                        }
+                    }).then(function(response) {
+                        console.log(`Status: ${response.status}`);
+                        console.log(response.data._id);
+                        $location.path('/photoalbum/'+$scope.year);
+                        // $route.reload();
+                    }, function errorCallback(response) {
+                        console.log(`Status: ${response.status}`);
+                    });
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                });
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        } else {
+            $location.path('/about');
+        };
     };
 
     $scope.addComment = function(image) {
@@ -318,7 +358,7 @@ angular.module('familielejr')
                     }).then(function(response) {
                         console.log(`Status: ${response.status}`);
                         console.log(response.data._id);
-                        // $location.path('/myphotoalbum');
+                        $location.path('/myphotoalbum');
                         // $route.reload();
                     }, function errorCallback(response) {
                         console.log(`Status: ${response.status}`);
@@ -329,8 +369,9 @@ angular.module('familielejr')
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
-    
-        }
+        } else {
+            $location.path('/about');
+        };
     };
 
     $scope.addComment = function(image) {
@@ -368,7 +409,8 @@ angular.module('familielejr')
     };
 }])
 
-/* 
+    
+    /* 
     $scope.uploadPicture2 = function(file) {
         console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);
         var folder = $scope.year;

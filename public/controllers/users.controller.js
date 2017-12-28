@@ -49,8 +49,27 @@ angular.module('familielejr')
         {"floor": "15."}
     ];
 
+    $scope.maxUserCount = 100;
+    $scope.registrationAllowed = false;
+
+    $http({
+        method: 'GET',
+        url: '/userscount'
+    }).then(function(response) {
+        // console.log(`Users count Status: ${response.status}`);
+        // console.log(`Users count: ${response.data}`);
+        $scope.userCount = response.data;
+        if ($scope.userCount < $scope.maxUserCount) {
+            $scope.registrationAllowed = true;
+        } else {
+            console.log("Too many users. You cannot register");
+        };
+    }, function errorCallback(response) {
+        console.log(`Users count Status: ${response.status}`);
+    });
+
     $scope.registerUser = function() {
-        console.log(`inputEmail: ${$scope.inputEmail}, inputPassword: ${$scope.inputPassword}`);
+        // console.log(`inputEmail: ${$scope.inputEmail}, inputPassword: ${$scope.inputPassword}`);
 
         var name = {
             firstname: $scope.firstname, middlename: $scope.middlename, surname: $scope.surname
@@ -64,25 +83,27 @@ angular.module('familielejr')
             email: $scope.inputEmail,
             password: $scope.inputPassword,
             confirmpwd: $scope.repeatPassword,
-            role: 2, // by default the registrant is ordinary user.
+            role: 2, // by default the registrant is an ordinary user.
             name: name,
 			address: addr,
             phone: $scope.phone,
             secret: $scope.secret
 		};
 
-        $http.post('/users', data).then(function(response) {
-            // console.log(response.headers());
-            // console.log('Status: ' + response.status);
-            // console.log(response.data._id, response.data.email);
-            localStorage.userToken = response.headers()['x-auth'];
-            localStorage.familielejrUserId = response.data._id;
-            $location.path('/home');
-            $scope.isLoggedIn = true;
-        }, function errorCallback(response) {
-            console.log(`getUserStatus: ${response.status}`);
-            alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
-        });
+        if ($scope.registrationAllowed) {
+            $http.post('/users', data).then(function(response) {
+                // console.log(response.headers());
+                // console.log('Status: ' + response.status);
+                // console.log(response.data._id, response.data.email);
+                localStorage.userToken = response.headers()['x-auth'];
+                localStorage.familielejrUserId = response.data._id;
+                $location.path('/home');
+                $scope.isLoggedIn = true;
+            }, function errorCallback(response) {
+                console.log(`getUserStatus: ${response.status}`);
+                alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
+            });
+        };
 
     };
 

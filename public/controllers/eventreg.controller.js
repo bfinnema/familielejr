@@ -10,6 +10,19 @@ angular.module('familielejr')
         };
     });
 
+    var currentyear = (new Date()).getFullYear();
+    var now = new Date();
+    var demarc = new Date(currentyear,8,1);
+    var lastDateOfYear = new Date(currentyear,11,31);
+    var invyear = currentyear;
+    var pastyear = currentyear - 1;
+    if (now > demarc && lastDateOfYear >= now) {
+        invyear += 1;
+        pastyear += 1;
+    };
+    console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    $scope.invitationyear = invyear;
+
     $scope.agegroups = [
         {"agegroup": "Barn under 12"},
         {"agegroup": "Voksen"}
@@ -32,7 +45,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: 'eventreg',
+        url: 'eventreg/' + invyear,
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -51,6 +64,7 @@ angular.module('familielejr')
         var eventreg = {
             name: $scope.regname,
             agegroup: $scope.agegroup,
+            year: invyear,
             arrivalday: $scope.arrivalday,
             arrivaltime: $scope.arrivaltime,
             departureday: $scope.departureday,
@@ -83,8 +97,7 @@ angular.module('familielejr')
                 url: 'eventreg/'+registration._id,
                 headers: {
                     'x-auth': localStorage.userToken
-                },
-                data: eventreg
+                }
             }).then(function(response) {
                 console.log(`Status: ${response.status}`);
                 console.log(response.data._id);
@@ -100,7 +113,7 @@ angular.module('familielejr')
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', 'AuthService', function($scope, $http, AuthService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', 'AuthService', function($scope, $http, $window, $location, $route, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -110,9 +123,22 @@ angular.module('familielejr')
         };
     });
 
+    var currentyear = (new Date()).getFullYear();
+    var now = new Date();
+    var demarc = new Date(currentyear,8,1);
+    var lastDateOfYear = new Date(currentyear,11,31);
+    var invyear = currentyear;
+    var pastyear = currentyear - 1;
+    if (now > demarc && lastDateOfYear >= now) {
+        invyear += 1;
+        pastyear += 1;
+    };
+    console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    $scope.invitationyear = invyear;
+
     $http({
         method: 'GET',
-        url: 'eventregall'
+        url: 'eventregall/' + invyear
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         // console.log(response.data);
@@ -124,7 +150,7 @@ angular.module('familielejr')
         $scope.saturday = [0,0];
         $scope.sunday = [0,0];
         for (var i=0; i<$scope.registrations.length; i++) {
-            console.log($scope.registrations[i].name);
+            // console.log($scope.registrations[i].name);
             if ($scope.registrations[i].agegroup == "Voksen") {ag = 0;} else {ag = 1;};
             if ($scope.registrations[i].arrivalday == "Fredag") {
                 $scope.dinners[ag][0] += 1;
@@ -197,15 +223,38 @@ angular.module('familielejr')
                 };
             };
         }
+/* 
         console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
         console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);
         console.log(`Voksne. Frokost lørdag: ${$scope.lunchs[0][0]}, søndag: ${$scope.lunchs[0][1]}`);
         console.log(`Børn. Aftensmad fredag: ${$scope.dinners[1][0]}, lørdag: ${$scope.dinners[1][1]}`);
         console.log(`Børn. Morgenmad lørdag: ${$scope.breakfasts[1][0]}, søndag: ${$scope.breakfasts[1][1]}`);
         console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
+ */        
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
+
+    $scope.adminRemoveReg = function(registration) {
+        if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
+            $http({
+                method: 'DELETE',
+                url: 'admineventreg/'+registration._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(response) {
+                console.log(`Status: ${response.status}`);
+                console.log(response.data._id);
+                $scope.errorHappened = false;
+                $location.path('/eventregistrationall');
+                $route.reload();
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+                $scope.errorHappened = true;
+            });
+        };
+    };
 
 }])
 

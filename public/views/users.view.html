@@ -85,8 +85,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
-                    <li id="photoadmin"><a href="#!photoadmin">Administrer billeder</a></li>
-                    <li id="todolistadmin"><a href="#!todolistadmin">Administrer Huskelister</a></li>
+                    <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
                 </ul>
             </li>
             <li><a href="#!content">Kontakt</a></li>
@@ -106,8 +105,8 @@
                 <th width="20%">email</th>
                 <th width="10%">Telefon</th>
                 <th width="10%">Rolle</th>
-                <th ng-if="role == 0" width="10%">Ændre / Slet</th>
-                <th ng-if="role == 0" width="10%">Ændre rolle</th>
+                <th ng-show="role == 0" width="10%">Ændre / Slet</th>
+                <th ng-show="role == 0" width="10%">Ændre rolle</th>
             </tr>
         </thead>
         <tbody>
@@ -149,7 +148,7 @@
         </tbody>
     </table>
 </div>
-<div>
+<div ng-show="role == 0">
     <p>Tegnforklaring: 
         <i class="glyphicon glyphicon-edit"></i> Ændre brugerdetaljer. 
         <i class="glyphicon glyphicon-trash"></i> Slet brugeren. 
