@@ -94,46 +94,61 @@
     </div>
 </nav>
 
-<div class="row" ng-controller = "loginCtrl">
-    <form name="form-login" class="form-login" ng-submit="loginUser()">
+<div>
+    <form name="changepwd" id="changepwd" class="changepwd" ng-submit="adminchangePwd()" novalidate>
         <div class="text-center">
-            <h2 class="form-signin-heading">Log ind</h2>
+            <h2 class="form-signin-heading">Ændre kodeord for brugeren {{ user.email }}</h2>
         </div>
         <div class="row">
             <div class="col-md-offset-4 col-md-4">
-                <label for="inputEmail" class="sr-only">Email adresse</label>
-                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email address" required autofocus>
+                <label for="newPassword">Nyt kodeord</label>
+                <input type="password" id="newPassword" name="newPassword" ng-model="newPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Nyt kodeord" required>
+                <i ng-show="changepwd.newPassword.$error.minlength">Mindst 8 karakterer. </i>
+                <i ng-show="changepwd.newPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="changepwd.newPassword.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <div class="row">
             <div class="col-md-offset-4 col-md-4">
-                <label for="inputPassword" class="sr-only">Kodeord</label>
-                <input type="password" id="inputPassword" ng-model="inputPassword" class="form-control" placeholder="Password" required>
-            </div>
-        </div>
-        <br>
-<!-- 
-        <div class="col-md-offset-4 checkbox">
-        <label>
-            <input type="checkbox" ng-model="rememberme" value="remember-me"> Remember me
-        </label>
-        </div>
- -->        
-        <div class="row">
-            <div class="col-md-offset-4 col-md-4">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Log ind</button>
+                <label for="repeatnewPassword">Gentag nyt kodeord</label>
+                <input type="password" id="repeatnewPassword" name="repeatnewPassword" ng-model="repeatnewPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Gentag nyt kodeord" required>
+                <i class="notidentical hidden">De to kodeord er ikke identiske</i>
+                <i ng-show="changepwd.repeatnewPassword.$error.minlength">Mindst 8 karakterer. </i>
+                <i ng-show="changepwd.repeatnewPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="changepwd.repeatnewPassword.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <br>
+        <br>
         <div class="row">
             <div class="col-md-offset-4 col-md-4">
-                <p>Hvis du har glemt dit kodeord, så kontakt Bo eller Morten</p>
+                <button ng-disabled="changepwd.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Ændre kodeord</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4">
+                <a href="#!usersadmin" class="btn btn-danger btn-lg btn-block">Fortryd</a>
             </div>
         </div>
     </form>
 </div>
 
 <script type="text/javascript">
-    $('#login').addClass('active');
-    $('#myaccount').addClass('active');
+
+    $('#repeatnewPassword').change(function() {
+        console.log('Repeat-password changed');
+        if ($('#newPassword').val() != $('#repeatnewPassword').val()) {
+            console.log('They are different');
+            $('.notidentical').removeClass('hidden');
+            // $('.btn').addClass('hidden');
+        } else {
+            console.log('They are identical');
+            $('.notidentical').addClass('hidden');
+            //$('.btn').removeClass('hidden');
+        };
+    });
+</script>
+
+<script type="text/javascript">
+    $('#admin').addClass('active');
 </script>

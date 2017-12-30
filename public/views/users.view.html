@@ -105,7 +105,7 @@
                 <th width="20%">email</th>
                 <th width="10%">Telefon</th>
                 <th width="10%">Rolle</th>
-                <th ng-show="role == 0" width="10%">Ændre / Slet</th>
+                <th ng-show="role == 0" width="10%">Slet / Pwd</th>
                 <th ng-show="role == 0" width="10%">Ændre rolle</th>
             </tr>
         </thead>
@@ -126,13 +126,18 @@
                     <span ng-show="user.role == 2">Bruger</span>
                 </td>
                 <td ng-show="role == 0">
+<!-- 
                     <a class="btn btn-primary" href="#!users/edit/{{user._id}}">
                         <i class="glyphicon glyphicon-edit"></i>
                     </a>
+ -->                    
                     <a class="btn btn-primary" ng-click="removeUser(user._id)">
                         <i class="glyphicon glyphicon-trash"></i>
                     </a>
-                </td>
+                    <a class="btn btn-primary" href="#!users/forgottenpassword/{{user._id}}">
+                            <i class="glyphicon glyphicon-sunglasses"></i>
+                        </a>
+                    </td>
                 <td ng-show="role == 0">
                     <a ng-show="user.role != 2" class="btn btn-primary" ng-click="changeRole(user._id, 2, user.name.firstname)">
                         <i class="glyphicon glyphicon-info-sign"></i>

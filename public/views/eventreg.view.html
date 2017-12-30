@@ -126,7 +126,7 @@
         </div>
         <div class="row">
             <div class="form-group col-md-2">
-                <label>Ankomstdag</label>
+                <label>Ankomst</label>
                 <select class="form-control" ng-model="arrivalday" name="arrivalday" required>
                     <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
                 </select>
@@ -137,7 +137,7 @@
                 <input type="time" class="form-control" ng-model="arrivaltime" name="arrivaltime">
             </div>
             <div class="form-group col-md-2">
-                <label>Afgangsdag</label>
+                <label>Afgang</label>
                 <select class="form-control" ng-model="departureday" name="departureday" required>
                     <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
                 </select>
@@ -165,9 +165,9 @@
         <tr>
             <th width="20%">Navn</th>
             <th width="15%">Voksen / Barn</th>
-            <th width="15%">Ankomstdag</th>
+            <th width="15%">Ankomst</th>
             <th width="15%">Ankomsttidspunkt</th>
-            <th width="15%">Afgangsdag</th>
+            <th width="15%">Afgang</th>
             <th width="15%">Afgangstidspunkt</th>
             <th width="5%">Slet</th>
         </tr>

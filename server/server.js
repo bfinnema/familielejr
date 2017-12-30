@@ -47,7 +47,7 @@ app.get('/sign-s3', (req, res) => {
     Key: albumPhotosKey + fileName,
     Expires: 60,
     ContentType: fileType,
-    ACL: 'public-read'
+    StorageClass: 'REDUCED_REDUNDANCY'
   };
 
   s3.getSignedUrl(operation, s3Params, (err, data) => {
@@ -410,6 +410,25 @@ app.post('/users/me/password', authenticate, (req, res) => {
   };
 })
 
+// Forgotten password
+app.post('/users/password/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
+  if (req.body.newpassword == req.body.confirmnpwd && req.user.role == 0) {
+    User.findById(id).then((user) => {
+      console.log(`Found User: ${user.email}`);
+      user.password = req.body.newpassword;
+      user.save().then((user) => {
+        res.json(user);
+      });
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else {
+    res.status(401).send();
+  };
+})
+
 // Check logged in user
 app.get('/users/me', authenticate, (req, res) => {
   res.json(req.user);
@@ -439,6 +458,20 @@ app.get('/users', authenticate, (req, res) => {
   if (req.user.role < 2) {
     User.find({}).then((users) => {
       res.json(users);
+    }, (e) => {
+      res.status(400).send(e);
+    });
+  } else {
+    res.status(401).send();
+  };
+});
+
+app.get('/users/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  if (req.user.role < 2) {
+    User.findById(id).then((user) => {
+      console.log(`Found User: ${user.email}`);
+      res.json(user);
     }, (e) => {
       res.status(400).send(e);
     });
@@ -572,7 +605,7 @@ app.delete('/deletephoto/:id', authenticate, (req, res) => {
       return res.status(404).send();
     }
 
-    console.log(`Image ${photo.filename} removed`);
+    // console.log(`Image ${photo.filename} removed`);
     res.json(photo);
   }).catch((e) => {
     res.status(400).send();

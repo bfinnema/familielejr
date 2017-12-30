@@ -241,6 +241,7 @@ angular.module('familielejr')
         pastyear += 1;
     };
     console.log(`Invyear: ${invyear}`);
+    $scope.invyear = invyear;
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
 

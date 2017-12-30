@@ -94,7 +94,6 @@ angular.module('familielejr')
 
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
-    $scope.signedRequests = [];
     //console.log(`Photos from year ${$scope.year}`)
 
     $http({
@@ -111,15 +110,13 @@ angular.module('familielejr')
             $scope.imagesExist = false;
         } else {
             $scope.imagesExist = true;
-            // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
+            // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
             $scope.mainImageObj = $scope.images[0];
             getImage(0);
             
-            // console.log($scope.images[1].imagetext[0].textobj.text);
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                $scope.signedRequests[x] = "";
-                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
             };
         }
     }, function errorCallback(response) {
@@ -129,13 +126,12 @@ angular.module('familielejr')
 	$scope.setImage = function(image){
 		// $scope.mainImage = image.path + image.filename;  // Old method
         currentPhoto = image.num;
-        $scope.mainImage = $scope.signedRequests[currentPhoto];
+        $scope.mainImage = $scope.images[currentPhoto].signedRequest;
         $scope.mainImageObj = $scope.images[currentPhoto];
         // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
     $scope.nextImage = function() {
-        $scope.signedRequests[currentPhoto] = $scope.mainImage;
 /* 
         for (sr in $scope.signedRequests) {
             console.log(`nextImage: signedRequest: ${$scope.signedRequests[sr]}`);
@@ -147,9 +143,9 @@ angular.module('familielejr')
         else {currentPhoto = 0};
         // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename; // Old method
         $scope.mainImageObj = $scope.images[currentPhoto];
-        if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.signedRequests[currentPhoto];
-            console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        if ($scope.images[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
+            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
+            // console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
         } else {
             getImage(currentPhoto);
         };
@@ -157,16 +153,15 @@ angular.module('familielejr')
     };
 
     $scope.prevImage = function() {
-        $scope.signedRequests[currentPhoto] = $scope.mainImage;
         if (currentPhoto < 1) {
             currentPhoto = $scope.images.length-1;
         }
         else {currentPhoto = currentPhoto - 1};
         // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
-        if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.signedRequests[currentPhoto];
-            console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        if ($scope.images[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
+            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
+            // console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
         } else {
             getImage(currentPhoto);
         };
@@ -186,8 +181,8 @@ angular.module('familielejr')
                     method: 'DELETE',
                     url: response.data.signedRequest
                 }).then(function(response) {
-                    console.log(`Status: ${response.status}`);
-                    console.log("Success!");
+                    // console.log(`Status: ${response.status}`);
+                    // console.log("Success!");
                     $http({
                         method: 'DELETE',
                         url: '/admindeletephoto/'+image._id,
@@ -195,8 +190,8 @@ angular.module('familielejr')
                             'x-auth': localStorage.userToken
                         }
                     }).then(function(response) {
-                        console.log(`Status: ${response.status}`);
-                        console.log(response.data._id);
+                        // console.log(`Status: ${response.status}`);
+                        // console.log(response.data._id);
                         $location.path('/photoalbum/'+$scope.year);
                         // $route.reload();
                     }, function errorCallback(response) {
@@ -261,9 +256,7 @@ angular.module('familielejr')
     });
     // console.log('My Photo Album Controller.');
 
-    // var photosId = 1;
     var currentPhoto = 0;
-    $scope.signedRequests = [];
     
     $http({
         method: 'GET',
@@ -279,12 +272,10 @@ angular.module('familielejr')
             $scope.imagesExist = false;
         } else {
             $scope.imagesExist = true;
-            // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;
             $scope.mainImageObj = $scope.images[0];
             getImage(0);
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                $scope.signedRequests[x] = "";
                 // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
             };
         };
@@ -293,24 +284,21 @@ angular.module('familielejr')
     });
 
 	$scope.setImage = function(image){
-		// $scope.mainImage = image.path + image.filename;
         currentPhoto = image.num;
-        $scope.mainImage = $scope.signedRequests[currentPhoto];
+        $scope.mainImage = $scope.images[currentPhoto].signedRequest;
         $scope.mainImageObj = $scope.images[currentPhoto];
         // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
     $scope.nextImage = function() {
-        $scope.signedRequests[currentPhoto] = $scope.mainImage;
         if (currentPhoto < $scope.images.length-1) {
             currentPhoto = currentPhoto + 1;
         }
         else {currentPhoto = 0};
-        // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
         // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
-        if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.signedRequests[currentPhoto];
+        if ($scope.images[currentPhoto].signedRequest) {
+            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
             // console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
         } else {
             getImage(currentPhoto);
@@ -318,16 +306,14 @@ angular.module('familielejr')
     };
 
     $scope.prevImage = function() {
-        $scope.signedRequests[currentPhoto] = $scope.mainImage;
         if (currentPhoto < 1) {
             currentPhoto = $scope.images.length-1;
         }
         else {currentPhoto = currentPhoto - 1};
-        // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
         $scope.mainImageObj = $scope.images[currentPhoto];
         // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
-        if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.signedRequests[currentPhoto];
+        if ($scope.images[currentPhoto].signedRequest) {
+            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
             // console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
         } else {
             getImage(currentPhoto);
@@ -356,8 +342,32 @@ angular.module('familielejr')
                             'x-auth': localStorage.userToken
                         }
                     }).then(function(response) {
-                        console.log(`Status: ${response.status}`);
-                        console.log(response.data._id);
+                        // console.log(`Status: ${response.status}`);
+                        // console.log(response.data._id);
+/*                         
+                        console.log(`Number of images: ${$scope.images.length}`);
+                        $scope.images.pop(currentPhoto);
+                        console.log(`Number of images after pop: ${$scope.images.length}`);
+                        for (z=0; z<$scope.images.length; z++) {
+                            console.log(`After pop: ${$scope.images[z].filename}`);
+                        };
+                        if ($scope.images[0]) {
+                            if (currentPhoto < 1) {
+                                currentPhoto = $scope.images.length-1;
+                            }
+                            else {currentPhoto = currentPhoto - 1};
+                            $scope.mainImageObj = $scope.images[currentPhoto];
+                            console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+                            if ($scope.images[currentPhoto].signedRequest) {
+                                $scope.mainImage = $scope.images[currentPhoto].signedRequest;
+                                console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+                            } else {
+                                getImage(currentPhoto);
+                            };
+                        } else {
+                            $location.path('/myphotoalbum');
+                        };
+ */
                         $location.path('/myphotoalbum');
                         // $route.reload();
                     }, function errorCallback(response) {

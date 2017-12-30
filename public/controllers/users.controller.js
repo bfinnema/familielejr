@@ -370,3 +370,55 @@ angular.module('familielejr')
 
 }])
 
+.controller('userpwdCtrl', ['$scope', '$http', '$location', '$routeParams', 'AuthService', function($scope, $http, $location, $routeParams, AuthService) {
+    
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
+        };
+    });
+
+    $http({
+        method: 'GET',
+        url: '/users/' + $routeParams.id,
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        console.log(`UserStatus: ${response.status}`);
+        $scope.user = response.data;
+        console.log(`User: ${$scope.user.email}`);
+    }, function errorCallback(response) {
+        console.log(`getUserStatus: ${response.status}`);
+    });
+
+    $scope.adminchangePwd = function() {
+
+        var data = {
+            newpassword: $scope.newPassword,
+            confirmnpwd: $scope.repeatnewPassword
+        };
+
+        $http({
+            method: 'POST',
+            url: '/users/password/' + $scope.user._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: data
+        }).then(function(response) {
+            $location.path('/usersadmin');
+        }, function errorCallback(response) {
+            console.log(`getUserStatus: ${response.status}`);
+            if (response.status == 401) {
+                alert('Kodeord og gentaget kodeord skal være ens');
+            } else {
+                alert('Noget gik galt');
+            };
+        });
+
+    };
+
+}])

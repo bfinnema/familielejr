@@ -55,6 +55,16 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'usersCtrl',
             access: {restricted: true}
         }).
+        when('/users/edit/:id', {
+            templateUrl: 'views/useredit.view.html',
+            controller: 'usereditCtrl',
+            access: {restricted: true}
+        }).
+        when('/users/forgottenpassword/:id', {
+            templateUrl: 'views/adminchangepwd.view.html',
+            controller: 'userpwdCtrl',
+            access: {restricted: true}
+        }).
         when('/eventregistration', {
             templateUrl: 'views/eventreg.view.html',
             controller: 'eventregCtrl',
@@ -121,8 +131,7 @@ familielejr.config(['$routeProvider', function($routeProvider){
             access: {restricted: true}
         }).
         when('/deletephoto/:id', {
-            templateUrl: 'views/myphotoalbum.view.html',
-            controller: 'photoalbumCtrl',
+            controller: 'myphotoalbumCtrl',
             access: {restricted: true}
         }).
         when('/photoalbum/:year', {
