@@ -94,40 +94,127 @@
     </div>
 </nav>
 
-<div class="row">
-    <div class="blog-header col-md-6">
-        <h1 class="blog-title">Stamtræ</h1>
-        <p class="lead blog-description">Det Flensburgske stamtræ</p>
-    </div>
-    <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytreeedit">Ændre stamtræet</a>
+<div ng-show="!newEntry && !editEntry">
+    <h2>Liste over lege</h2>
+    <p>Formålet med denne side er at beskrive alle lege, spil og anden underholdning, vi har været 
+        udsat for gennem årene eller som kunne bruges fremover. Listen kan bruges som inspiration 
+        for underholdnings-udvalgene.</p>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="15%">Navn</th>
+                <th width="15%">Oprettet / Ændret af</th>
+                <th width="15%">Ændre / Se detaljer / Slet</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="game in games">
+                <td>{{ game.name }}</td>
+                <td>{{ game.createdBy }}</td>
+                <td>
+                    <a class="btn btn-primary" ng-click="editGame(game)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="gameDetails(game)">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="deleteGame(game._id, game.name)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="games == false">
+    <tr>
+        <td></td><td>Der er ikke nogen lege endnu. Vil du oprette en?</td>
+    </tr>
+</div>
+<hr>
+<div ng-show="newEntry">
+    <form name="formGame" ng-submit="generateGame()" novalidate>
+        <h2 class="form-signin-heading">Opret en leg</h2>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="name">Navn</label>
+                <input type="text" id="name" class="form-control" ng-model="name" placeholder="Navn" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="description" name="description" rows="15" placeholder="Beskrivelse af legen. Du kan også indsætte en link til et sted på nettet, hvor der er mere information om denne leg."></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formGame.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Opret legen</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="newEntryToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row actions" ng-show="!newEntry && !editEntry">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newEntryToggle()">Indtast ny leg</a>
     </div>
 </div>
 
-<div class="tree row">
-	<ul>
-		<li>
-            <a>
-                <span ng-repeat="person in familytree.persons">
-                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
-                    <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                </span>
-            </a>
-			<ul>
-				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytree/{{l1family._family_id}}">
-                        <span ng-repeat="person in l1family.persons">
-                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
-                            <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                        </span>
-                    </a>
-                </li>
-			</ul>
-		</li>
-    </ul>
+<div ng-show="editEntry">
+    <form name="formEditGame" ng-submit="editGameSubmit()" novalidate>
+        <h2 class="form-signin-heading">Ændre en leg</h2>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="name">Navn</label>
+                <input type="text" class="form-control" ng-model="editedgame.name" name="editedgame.name" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="editedgame.description" name="editedgame.description" rows="15" placeholder="Beskrivelse af legen. Du kan også indsætte en link til et sted på nettet, hvor der er mere information om denne leg."></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formEditGame.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="editToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
 </div>
-<br>
+
+<div ng-show="viewGameDetails">
+    <hr>
+    <div class="blog-header">
+        <h2 class="blog-title">Navn: {{detailedGame.name}}</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+            <div class="blog-post">
+                <p class="blog-post-meta">Oprettet / ændret af: <a href="#">{{detailedGame.createdBy}}</a></p>
+                <h4>Beskrivelse:</h4>
+                <p>{{detailedGame.description}}</p>
+            </div><!-- /.blog-post -->
+        </div><!-- /.blog-main -->
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-4">
+            <a class="btn btn-warning btn-lg btn-block" ng-click="gameDetails(detailedGame)">Luk</a>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
-    $('#familytree').addClass('active');
+    $('#entertainment').addClass('active');
+    $('#games').addClass('active');
 </script>

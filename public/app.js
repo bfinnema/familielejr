@@ -85,6 +85,21 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'familytreeCtrl',
             access: {restricted: true}
         }).
+        when('/familytree/:_family_id', {
+            templateUrl: 'views/familytreesl.view.html',
+            controller: 'familytreeslCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreeedit', {
+            templateUrl: 'views/familytreeedit.view.html',
+            controller: 'familytreeCtrl',
+            access: {restricted: true}
+        }).
+        when('/familytreeedit/:_family_id', {
+            templateUrl: 'views/familytreesledit.view.html',
+            controller: 'familytreeslCtrl',
+            access: {restricted: true}
+        }).
         when('/familytreechristian', {
             templateUrl: 'views/familytreechristian.view.html',
             controller: 'familytreeCtrl',
@@ -177,6 +192,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/todolist', {
             templateUrl: 'views/todolist.view.html',
             controller: 'todolistCtrl',
+            access: {restricted: true}
+        }).
+        when('/games', {
+            templateUrl: 'views/games.view.html',
+            controller: 'gameCtrl',
             access: {restricted: true}
         }).
         when('/finances', {

@@ -1,0 +1,130 @@
+<div ng-show="addNamesForm || editNamesForm">
+    <hr>
+    <form name="form-addname" class="form-addname" ng-submit="addNames()">
+        <h2 class="form-signin-heading">{{ headLine }}</h2>
+        <div ng-show="newnameShow[0]">
+            <h3 class="form-signin-heading">Person 1</h3>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Fornavn</label>
+                    <input type="text" class="form-control" ng-model="firstname[0]" name="firstname[0]" placeholder="Fornavn" required autofocus>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Mellemnavn</label>
+                    <input type="text" class="form-control" ng-model="middlename[0]" name="middlename[0]" placeholder="Mellemnavn">
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Efternavn</label>
+                    <input type="text" class="form-control" ng-model="surname[0]" name="surname[0]" placeholder="Efternavn" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Født</label>
+                    <input type="date" class="form-control" ng-model="birth[0]" name="birth[0]">
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Bortgang</label>
+                    <input type="date" class="form-control" ng-model="passdate[0]" name="passdate[0]">
+                </div>
+            </div>
+        </div>
+        <div ng-show="newnameShow[1]">
+            <h3 class="form-signin-heading">Person 2</h3>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Fornavn</label>
+                    <input type="text" class="form-control" ng-model="firstname[1]" name="firstname[1]" placeholder="Fornavn" autofocus>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Mellemnavn</label>
+                    <input type="text" class="form-control" ng-model="middlename[1]" name="middlename[1]" placeholder="Mellemnavn">
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Efternavn</label>
+                    <input type="text" class="form-control" ng-model="surname[1]" name="surname[1]" placeholder="Efternavn">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Født</label>
+                    <input type="date" class="form-control" ng-model="birth[1]" name="birth[1]">
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Bortgang</label>
+                    <input type="date" class="form-control" ng-model="passdate[1]" name="passdate[1]">
+                </div>
+            </div>
+        </div>
+        <div ng-show="newnameShow[2]">
+            <h3 class="form-signin-heading">Person 3</h3>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Fornavn</label>
+                    <input type="text" class="form-control" ng-model="firstname[2]" name="firstname[2]" placeholder="Fornavn" autofocus>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Mellemnavn</label>
+                    <input type="text" class="form-control" ng-model="middlename[2]" name="middlename[2]" placeholder="Mellemnavn">
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Efternavn</label>
+                    <input type="text" class="form-control" ng-model="surname[2]" name="surname[2]" placeholder="Efternavn">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Født</label>
+                    <input type="date" class="form-control" ng-model="birth[2]" name="birth[2]">
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Bortgang</label>
+                    <input type="date" class="form-control" ng-model="passdate[2]" name="passdate[2]">
+                </div>
+            </div>
+        </div>
+        <div ng-show="newnameShow[3]">
+            <h3 class="form-signin-heading">Person 4</h3>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Fornavn</label>
+                    <input type="text" class="form-control" ng-model="firstname[3]" name="firstname[3]" placeholder="Fornavn" autofocus>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Mellemnavn</label>
+                    <input type="text" class="form-control" ng-model="middlename[3]" name="middlename[3]" placeholder="Mellemnavn">
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Efternavn</label>
+                    <input type="text" class="form-control" ng-model="surname[3]" name="surname[3]" placeholder="Efternavn">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Født</label>
+                    <input type="date" class="form-control" ng-model="birth[3]" name="birth[3]">
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Bortgang</label>
+                    <input type="date" class="form-control" ng-model="passdate[3]" name="passdate[3]">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-info" ng-show="BtnShow[0]" ng-click="showLine()">Tilføj person 1</a>
+            <a class="btn btn-info" ng-show="BtnShow[1]" ng-click="showLine()">Tilføj person 2</a>
+            <a class="btn btn-info" ng-show="BtnShow[2]" ng-click="showLine()">Tilføj person 3</a>
+            <a class="btn btn-info" ng-show="BtnShow[3]" ng-click="showLine()">Tilføj person 4</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="addSecondLevelFamily()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+

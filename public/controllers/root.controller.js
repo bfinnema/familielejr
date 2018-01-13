@@ -7,11 +7,8 @@ angular.module('familielejr')
         if (AuthService.isLoggedIn()) {
             $scope.isLoggedIn = true;
             $scope.role = AuthService.userRole();
+            $location.path('/home');
         };
     });
-
-    if ($scope.isLoggedIn) {
-        $location.path('/home');
-    }
 
 }]);

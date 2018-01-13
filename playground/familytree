@@ -1,0 +1,209 @@
+db.familytrees.insert(
+    {
+        _admin: ObjectId("596345a3fc89f0d78cbc06fd"),
+        level: 0,
+        klan: "root",
+		_parent_id: 0,
+		_family_id: 0,
+		_kid: 0,
+		"persons" : [
+			{
+				"firstname" : "Niels",
+				"surname" : "Flensburg"
+			},
+			{
+				"firstname" : "Anna",
+				"surname" : "Flensburg"
+			}
+		],
+		"secondlevel" : [
+			{
+                _family_id: 101,
+				"persons" : [
+					{
+						"firstname" : "Grethe",
+						"surname" : "Viuff"
+					},
+					{
+						"firstname" : "Peter",
+						"surname" : "Viuff"
+					}
+				]
+			},
+			{
+                _family_id: 103,
+				"persons" : [
+					{
+						"firstname" : "Inger",
+						"surname" : "Finnemann"
+					},
+					{
+						"firstname" : "Olav",
+						"surname" : "Finnemann"
+					}
+				]
+			}
+		]
+    }
+)
+
+db.familytrees.insert(
+    {
+        _admin: ObjectId("596345a3fc89f0d78cbc06fd"),
+        level: 0,
+        klan: "root",
+		_parent_id: 0,
+		_family_id: 0,
+		_kid: 0,
+		"persons" : [
+			{
+				"firstname" : "Niels",
+				"surname" : "Flensburg"
+			},
+			{
+				"firstname" : "Anna",
+				"surname" : "Flensburg"
+			}
+		]
+    }
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a4be17cedf842d5b549c1f0")},
+    {
+        $push: {
+            secondlevel: {
+                _family_id: 104,
+                persons: [{firstname: "Hans", surname: "Flensburg"},{firstname: "Elly", surname: "Flensburg"}]
+            }
+        }
+    },
+    {new: true}
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a4be17cedf842d5b549c1f0"), "secondlevel._family_id": 0},
+    {
+        $push: {
+            "secondlevel.$.thirdlevel": {
+                _family_id: 233,
+                persons: [{firstname: "Lene", surname: "Olesen"},{firstname: "Søren", surname: "Olesen"}]
+            }
+        }
+    },
+    {new: true}
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a4cdb41edf842d5b549c1f3"), "secondlevel._family_id": 233},
+    {
+        $push: {
+            "secondlevel.$.thirdlevel": {
+                _family_id: 301,
+                persons: [{firstname: "Yrsa", surname: "Finnemann"},{firstname: "Svend", surname: "Finnemann"}]
+            }
+        }
+    },
+    {new: true}
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a4cdb41edf842d5b549c1f3"), "secondlevel._family_id": 233, "secondlevel.thirdlevel._family_id": 301},
+    {
+        $push: {
+            "secondlevel.1.thirdlevel.$.fourthlevel": {
+                _flid: 401,
+                persons: [{firstname: "Jan", surname: "Finnemann"},{firstname: "Klara", surname: "Finnemann"}]
+            }
+        }
+    },
+    {new: true}
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a4be17cedf842d5b549c1f0"), "secondlevel._family_id": 2},
+    {
+        $push: {
+            "secondlevel.$.thirdlevel": {
+                _family_id: 241,
+                persons: [{firstname: "Lis", surname: "Flensburg"},{firstname: "Danny", surname: "Flensburg"}]
+            }
+        }
+    },
+    {new: true}
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a57288dedf842d5b549c1f8"), "secondlevel._family_id": 20, "secondlevel.thirdlevel._family_id": 300},
+    {
+        $set: {
+            "secondlevel.1.thirdlevel.0.persons": [{firstname: "Jan", middlename: "Bent", surname: "Viggosen"},{firstname: "Jutta", surname: "Karlsen"}]
+        }
+    }
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a57288dedf842d5b549c1f8")},
+    {
+        $set: {
+            "secondlevel.0.thirdlevel.1.persons": [{firstname: "Erling", middlename: "Bent", surname: "Viggosen"},{firstname: "Jutta", surname: "Karlsen"}]
+        }
+    }
+)
+
+db.familytrees.update(
+    {_id: ObjectId("5a57517e3cd81486c6e9ba35"), "secondlevel._family_id": 40010},
+    {
+        $pull: {
+            "secondlevel.$.thirdlevel": {"_family_id": 500100}
+        }
+    }
+)
+
+
+db.familytrees.insert(
+    {
+        _admin: ObjectId("596345a3fc89f0d78cbc06fd"),
+        level: 1,
+        klan: "Inger",
+		_kid: 103,
+		"persons" : [
+			{
+				"firstname" : "Inger",
+				"surname" : "Finnemann"
+			},
+			{
+				"firstname" : "Olav",
+				"surname" : "Finnemann"
+			}
+		],
+		"secondlevel" : [
+			{
+                _family_id: 230,
+				"persons" : [
+					{
+						"firstname" : "Bo",
+						"surname" : "Finnemann"
+					},
+					{
+						"firstname" : "Britt",
+						"surname" : "Finnemann"
+					}
+				]
+			},
+			{
+                _family_id: 233,
+				"persons" : [
+					{
+						"firstname" : "Lene",
+						"surname" : "Olesen"
+					},
+					{
+						"firstname" : "Søren",
+						"surname" : "Olesen"
+					}
+				]
+			}
+		]
+    }
+)

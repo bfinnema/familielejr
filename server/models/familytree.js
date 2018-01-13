@@ -10,37 +10,47 @@ var FamilytreeSchema = new mongoose.Schema({
     required: true
   },
   klan: {
-    type: String,
+    type: String
+  },
+  _parent_id: {
+    type: Number,
     required: true
   },
-  tree: {
-    persons: [
-      {
-        firstname: {type: String}, middlename: {type: String}, lastname: {type: String},
-        birth: {type: Date}, pass: {type: Date}
-      }
-    ],
-    secondlevel: [
-      {
-        persons: [
-          {
-            firstname: {type: String}, middlename: {type: String}, lastname: {type: String},
-            birth: {type: Date}, pass: {type: Date}
-          }
-        ],
-        thirdlevel: [
-          {
-            persons: [
-              {
-                firstname: {type: String}, middlename: {type: String}, lastname: {type: String},
-                birth: {type: Date}, pass: {type: Date}
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  _family_id: {
+    type: Number,
+    required: true
+  },
+  _kid: {
+    type: Number
+  },
+  persons: [
+    {
+      firstname: {type: String}, middlename: {type: String}, surname: {type: String},
+      birth: {type: Date}, pass: {type: Date}
+    }
+  ],
+  secondlevel: [
+    {
+      _family_id: {type: Number},
+      persons: [
+        {
+          firstname: {type: String}, middlename: {type: String}, surname: {type: String},
+          birth: {type: Date}, pass: {type: Date}
+        }
+      ],
+      thirdlevel: [
+        {
+          _family_id: {type: Number},
+          persons: [
+            {
+              firstname: {type: String}, middlename: {type: String}, surname: {type: String},
+              birth: {type: Date}, pass: {type: Date}
+            }
+          ]
+        }
+      ]
+    }
+  ]
 });
 
 var Familytree = mongoose.model('Familytree', FamilytreeSchema);

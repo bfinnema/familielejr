@@ -100,33 +100,63 @@
         <p class="lead blog-description">Det Flensburgske stamtræ</p>
     </div>
     <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytreeedit">Ændre stamtræet</a>
+        <a class="btn btn-warning btn-block" href="#!familytreeedit/{{l1family._family_id}}">Ændre stamtræet</a>
     </div>
 </div>
 
 <div class="tree row">
 	<ul>
 		<li>
-            <a>
-                <span ng-repeat="person in familytree.persons">
+            <a href="#!familytree">
+                <span ng-repeat="person in l1family.persons">
                     {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                 </span>
             </a>
 			<ul>
-				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytree/{{l1family._family_id}}">
-                        <span ng-repeat="person in l1family.persons">
+				<li ng-repeat="l2family in l1family.thirdlevel">
+                    <a ng-click="showLevel3(l2family._family_id)">
+                        <span ng-repeat="person in l2family.persons">
                             {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                         </span>
                     </a>
+					<ul>
+						<li ng-show="showL3Family == l2family._family_id" ng-repeat="l3family in L3Familytree">
+                            <a>
+                                <span ng-repeat="person in l3family.persons">
+                                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                    <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
+                                </span>
+                            </a>
+							<ul>
+								<li ng-repeat="l4family in l3family.secondlevel">
+                                    <a>
+                                        <span ng-repeat="person in l4family.persons">
+                                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                            <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
+                                        </span>
+                                    </a>
+                                    <ul>
+                                        <li ng-repeat="l5family in l4family.thirdlevel">
+                                            <a>
+                                                <span ng-repeat="person in l5family.persons">
+                                                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                                    <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
+                                                    <i>{{l5family._family_id}}</i><br>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+								</li>
+                            </ul>
+                        </li>
+					</ul>
                 </li>
 			</ul>
-		</li>
-    </ul>
+        </li>
+	</ul>
 </div>
-<br>
 
 <script type="text/javascript">
     $('#familytree').addClass('active');

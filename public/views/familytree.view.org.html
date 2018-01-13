@@ -94,39 +94,35 @@
     </div>
 </nav>
 
-<div class="row">
-    <div class="blog-header col-md-6">
-        <h1 class="blog-title">Stamtræ</h1>
-        <p class="lead blog-description">Det Flensburgske stamtræ</p>
-    </div>
-    <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytreeedit">Ændre stamtræet</a>
-    </div>
+<div class="blog-header">
+    <h1 class="blog-title">Stamtræ</h1>
+    <p class="lead blog-description">Det Flensburgske stamtræ.</p>
 </div>
 
-<div class="tree row">
+<div class="tree">
 	<ul>
 		<li>
-            <a>
-                <span ng-repeat="person in familytree.persons">
-                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
-                    <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                </span>
-            </a>
+			<a href="#!familytree">Niels Flensburg<br>Anna Flensburg</a>
 			<ul>
-				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytree/{{l1family._family_id}}">
-                        <span ng-repeat="person in l1family.persons">
-                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
-                            <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                        </span>
-                    </a>
-                </li>
+				<li>
+					<a href="#!familytreechristian">Christian Flensburg<br>Lis Flensburg</a>
+				</li>
+				<li>
+					<a href="#!familytreedodde">Dødde<br>Anders Christian</a>
+				</li>
+				<li>
+					<a href="#!familytreegrethe">Grethe Finnemann Viuff<br>Peter Finnemann Viuff</a>
+				</li>
+				<li>
+					<a href="#!familytreeinger">Inger Finnemann<br>Olav Finnemann, 02-11-1936 - 08-01-2004</a>
+				</li>
+				<li>
+					<a href="#!familytreehans">Hans Flensburg<br>Elly Flensburg</a>
+				</li>
 			</ul>
 		</li>
-    </ul>
+	</ul>
 </div>
-<br>
 
 <script type="text/javascript">
     $('#familytree').addClass('active');

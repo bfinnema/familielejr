@@ -17,6 +17,9 @@ var {Photo} = require('./models/photo');
 var {Eventreg} = require('./models/eventreg');
 var {Invitation} = require('./models/invitation');
 var {Futurecamp} = require('./models/futurecamp');
+var {Game} = require('./models/game');
+var {Familytree} = require('./models/familytree');
+var {Family} = require('./models/family');
 var {authenticate} = require('./middleware/authenticate');
 // multipartyMiddleware = multiparty();
 aws.config.region = 'eu-west-2';
@@ -798,7 +801,7 @@ app.get('/futurecamps/:id', authenticate, (req, res) => {
 
 app.get('/futurecamps/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
-  console.log('This is the find by Year section');
+  // console.log('This is the find by Year section');
 
   Futurecamp.findOne({
     year: year
@@ -854,6 +857,459 @@ app.delete('/futurecamps/:id', authenticate, (req, res) => {
     res.status(400).send();
   });
 });
+
+// Games Section
+app.post('/games', authenticate, (req, res) => {
+  var registeree = req.user.name.firstname;
+  if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
+  registeree = registeree + ' ' + req.user.name.surname
+  var game = new Game({
+    name: req.body.name,
+    description: req.body.description,
+    _creator: req.user._id,
+    createdBy: registeree
+  });
+
+  game.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/games', authenticate, (req, res) => {
+  Game.find({}).then((games) => {
+    res.json(games);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/games/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Game.findOne({
+    _id: id
+  }).then((game) => {
+    if (!game) {
+      return res.status(404).send();
+    }
+
+    res.send({game});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.delete('/games/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Game.findOneAndRemove({
+    _id: id
+  }).then((game) => {
+    if (!game) {
+      return res.status(404).send();
+    }
+
+    res.json(game);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/games/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['name', 'description']);
+  // console.log(`Patching game, category: ${body.name}, Description: ${body.description}`);
+
+  var registeree = req.user.name.firstname;
+  if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
+  registeree = registeree + ' ' + req.user.name.surname
+  body.createdBy = registeree;
+  body._creator = req.user._id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Game.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((game) => {
+    if (!game) {
+      return res.status(404).send();
+    }
+
+    res.json(game);
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
+// Family Section
+app.post('/families', authenticate, (req, res) => {
+
+  console.log(`admin_id: ${req.body._admin}, _kid: ${req.body._kid}, klan: ${req.body.klan}, parent_id: ${req.body._parent_id}, family_id: ${req.body._family_id}, ${req.body.persons[0].firstname}`);
+
+  if (!ObjectID.isValid(req.body._admin)) {
+    console.log(`Admin ID not valid: ${req.body._admin}`);
+    // return res.status(404).send();
+  }
+
+  var family = new Family({
+    _admin: req.body._admin,
+    level: req.body.level,
+    klan: req.body.klan,
+    _kid: req.body._kid,
+    _parent_id: req.body._parent_id,
+    _family_id: req.body._family_id,
+    persons: req.body.persons
+  });
+
+  family.save().then((family) => {
+    res.json(family);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/families/:level', authenticate, (req, res) => {
+  var level = req.params.level;
+  // console.log(`Klan: ${klan}`);
+
+  Family.find({
+    level: level
+  }).then((families) => {
+    if (!families) {
+      return res.status(404).send();
+    }
+
+    res.json(families);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/familiesforparent/:level', authenticate, (req, res) => {
+  var level = req.params.level;
+  // console.log(`Klan: ${klan}`);
+
+  Family.find({
+    level: level,
+    _parent_id: req.body._parent_id
+  }).then((families) => {
+    if (!families) {
+      return res.status(404).send();
+    }
+
+    res.json(families);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/familiesinklan/:level', authenticate, (req, res) => {
+  var level = req.params.level;
+  var parent_id = req.body._parent_id;
+  console.log(`Parent_id: ${parent_id}`);
+  switch (level) {
+    case 0:
+      var pattern = {"chain.l0": req.body._parent_id}
+    case 1:
+      var pattern = {"chain.l1": req.body._parent_id}
+    case 2:
+      var pattern = {"chain.l2": req.body._parent_id}
+    case 3:
+      var pattern = {"chain.l3": req.body._parent_id}
+    case 4:
+      var pattern = {"chain.l4": req.body._parent_id}
+    case 5:
+      var pattern = {"chain.l5": req.body._parent_id}
+  }
+
+  Family.find(pattern).then((families) => {
+    if (!families) {
+      return res.status(404).send();
+    }
+
+    res.json(families);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/familiescount/:level', authenticate, (req, res) => {
+  var level = req.params.level;
+  Family.find({level:level}).count().then((count) => {
+    // console.log(`Number of users: ${count}`);
+    res.json(count);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+
+// Familytree section
+app.post('/familytree', authenticate, (req, res) => {
+
+  // console.log(`admin: ${req.body._admin}, level: ${req.body.level}, parent: ${req.body._parent_id}, family: ${req.body._family_id}, klan: ${req.body.klan}, _kid: ${req.body._kid}, ${req.body.persons[0].firstname}`);
+
+  if (!ObjectID.isValid(req.body._admin)) {
+    console.log(`Admin ID not valid: ${req.body._admin}`);
+    // return res.status(404).send();
+  }
+
+  var familytree = new Familytree({
+    _admin: req.body._admin,
+    level: req.body.level,
+    klan: req.body.klan,
+    _kid: req.body._kid,
+    _parent_id: req.body._parent_id,
+    _family_id: req.body._family_id,
+    persons: req.body.persons
+  });
+
+  familytree.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/familytree', authenticate, (req, res) => {
+  Familytree.find({}).then((familytrees) => {
+    // console.log(`Familytree: ${familytrees[0]}`);
+    res.json(familytrees);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/familytree/:level', authenticate, (req, res) => {
+  var level = req.params.level;
+  // console.log(`Klan: ${klan}`);
+
+  Familytree.find({
+    level: level
+  }).then((familytrees) => {
+    if (!familytrees) {
+      return res.status(404).send();
+    }
+
+    res.json(familytrees);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/familytree_for_parent/:parent_id', authenticate, (req, res) => {
+  var _parent_id = req.params.parent_id;
+  // console.log(`Klan: ${klan}`);
+
+  Familytree.find({
+    _parent_id: _parent_id
+  }).then((familytrees) => {
+    if (!familytrees) {
+      return res.status(404).send();
+    }
+
+    res.json(familytrees);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.get('/familytreesl/:_family_id', authenticate, (req, res) => {
+  var _kid = req.params._family_id;
+  console.log(`_kid: ${_kid}`);
+
+  Familytree.findOne({
+    _kid: _kid
+  }).then((familytree) => {
+    if (!familytree) {
+      return res.status(404).send();
+    }
+
+    res.json(familytree);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/familytree/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`id: ${id}`);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Familytree.findOneAndUpdate(
+    {_id: id},
+    {
+      $push: {
+          secondlevel: {
+              _family_id: req.body._family_id,
+              persons: req.body.persons
+          }
+      }
+    },
+    {new: true}
+  ).then((familytree) => {
+    if (!familytree) {
+      return res.status(404).send();
+    }
+
+    res.json(familytree);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/familytreel2/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`id: ${id}, _parent_id: ${req.body._parent_id}`);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Familytree.findOneAndUpdate(
+    {_id: id, "secondlevel._family_id": req.body._parent_id},
+    {
+      $push: {
+        "secondlevel.$.thirdlevel": {
+          _family_id: req.body._family_id,
+          persons: req.body.persons
+        }
+      }
+    },
+    {new: true}
+  ).then((familytree) => {
+    if (!familytree) {
+      return res.status(404).send();
+    }
+
+    res.json(familytree);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/familytreeedit/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`familytreeedit, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
+  console.log(`Persons, firstname: ${req.body.persons[0].firstname}`);
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  };
+
+  var filter = JSON.parse('{"_id":"'+id+'"}');
+  var setString = '{"persons":'+JSON.stringify(req.body.persons)+'}';
+  if (req.body.level == 1 || req.body.level == 4) {
+    console.log(`Edit at level 1 or 4`);
+    filter = JSON.parse('{"_id":"'+id+'", "secondlevel._family_id":'+req.body._family_id+'}');
+    setString = '{"secondlevel.$.persons":'+JSON.stringify(req.body.persons)+'}';
+  } else if (req.body.level == 2 || req.body.level == 5) {
+    setString = '{"secondlevel.'+req.body.l1index+'.thirdlevel.'+req.body.l2index+'.persons":'+JSON.stringify(req.body.persons)+'}';
+  } else {
+    console.log(`Edit at level 0 or 3`);
+  };
+
+  console.log(`Filter ${JSON.stringify(filter)}`);
+  console.log(`setString: ${setString}`);
+  var setQuery = JSON.parse(setString);
+  var query = {$set: setQuery};
+
+  Familytree.findOneAndUpdate(
+    filter,
+    query
+  ).then((familytree) => {
+    if (!familytree) {
+      return res.status(404).send();
+    }
+
+    res.json(familytree);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.patch('/familytreedelete/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`id: ${id}`);
+  // console.log(`familytreedelete, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  if (req.body.level == 1 || req.body.level == 4) {
+    // console.log(`Delete at level 1 or 4`);
+    Familytree.findOneAndUpdate(
+      {_id: id},
+      {
+          $pull: {
+              "secondlevel": {"_family_id": req.body._family_id}
+          }
+      }
+    ).then((familytree) => {
+      if (!familytree) {
+        return res.status(404).send();
+      }
+  
+      res.json(familytree);
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else if (req.body.level == 2 || req.body.level == 5) {
+    // console.log(`Delete at level 2 or 5`);
+    Familytree.findOneAndUpdate(
+      {_id: id, "secondlevel._family_id": req.body._parent_id},
+      {
+          $pull: {
+              "secondlevel.$.thirdlevel": {"_family_id": req.body._family_id}
+          }
+      }
+    ).then((familytree) => {
+      if (!familytree) {
+        return res.status(404).send();
+      }
+  
+      res.json(familytree);
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  } else {
+    console.log(`Delete at level 0 or 3`);
+  };
+});
+
+app.delete('/familytree/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Familytree.findOneAndRemove({
+    _id: id
+  }).then((familytree) => {
+    if (!familytree) {
+      return res.status(404).send();
+    }
+
+    res.json(familytree);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

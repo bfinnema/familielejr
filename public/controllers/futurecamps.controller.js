@@ -422,7 +422,7 @@ angular.module('familielejr')
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
-        }
+        };
     };
 
 }])
