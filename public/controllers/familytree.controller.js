@@ -281,20 +281,14 @@ angular.module('familielejr')
             if ($scope.familytree.secondlevel[i]._family_id == family_id) {
                 $scope.l1family = $scope.familytree.secondlevel[i];
                 $scope.l1index = i;
-                console.log(`l1family: ${$scope.l1family.persons}, l1index: ${$scope.l1index}`);
+                // console.log(`l1family: ${$scope.l1family.persons}, l1index: ${$scope.l1index}`);
             };
         };
     }, function errorCallback(response) {
         console.log(`FamilytreeStatus: ${response.status}`);
     });
 
-    $scope.firstname = ["","","",""];
-    $scope.middlename = ["","","",""];
-    $scope.surname = ["","","",""];
-    $scope.birth = [];
-    $scope.passdate = [];
-    $scope.BtnShow = [false,true,false,false];
-    $scope.newnameShow = [true,false,false,false];
+    initForms();
     var numLines = 0;
 
     $scope.addFamily = function(level, parent_id, tree_id) {
@@ -408,15 +402,9 @@ angular.module('familielejr')
         if ($scope.editNamesForm) {
             $scope.editNamesForm = false;
         } else {
+            initForms();
             $scope.editNamesForm = true;
             $scope.headLine = "Ændringer til navne og datoer:";
-            $scope.firstname = ["","","",""];
-            $scope.middlename = ["","","",""];
-            $scope.surname = ["","","",""];
-            $scope.birth = [];
-            $scope.passdate = [];
-            $scope.BtnShow = [false,true,false,false];
-            $scope.newnameShow = [true,false,false,false];
             $scope.tree_id = $scope.familytree._id;
             $scope.parent_id = 0;
             $scope.family_id = family_id;
@@ -424,7 +412,7 @@ angular.module('familielejr')
             $scope.l2index = 0;
 
             if (level == 1) {
-                // console.log(`**** Level 1 ****`);
+                console.log(`**** Level 1 ****`);
                 var family = $scope.l1family;
                 
             } else if (level == 2) {
@@ -436,9 +424,7 @@ angular.module('familielejr')
                         var family = f;
                         $scope.l2index = j;
                         $scope.parent_id = $scope.l1family._family_id;
-                        $scope.numLines = f.persons.length;
                         // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
-                        numLines = $scope.numLines;
                     };
                 };
             } else if (level == 3) {
@@ -449,9 +435,7 @@ angular.module('familielejr')
                     if (family_id == f._family_id) {
                         var family = f;
                         $scope.tree_id = f._id;
-                        $scope.numLines = f.persons.length;
                         // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
-                        numLines = $scope.numLines;
                     };
                 };
             } else if (level == 4) {
@@ -463,9 +447,7 @@ angular.module('familielejr')
                         if (family_id == f._family_id) {
                             var family = f;
                             $scope.tree_id = $scope.L3Familytree[j]._id;
-                            $scope.numLines = f.persons.length;
                             // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
-                            numLines = $scope.numLines;
                         };
                     };
                 };
@@ -482,9 +464,7 @@ angular.module('familielejr')
                                 $scope.l2index = o;
                                 $scope.parent_id = $scope.L3Familytree[j].secondlevel[i]._family_id;
                                 $scope.tree_id = $scope.L3Familytree[j]._id;
-                                $scope.numLines = f.persons.length;
                                 // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}, l1index: ${$scope.l1index}, l2index: ${$scope.l2index}`);
-                                numLines = $scope.numLines;
                             };
                         };
                     };
@@ -493,6 +473,8 @@ angular.module('familielejr')
 
             };
             
+            $scope.numLines = family.persons.length;
+            numLines = $scope.numLines;
             for (var i=0; i<$scope.numLines; i++) {
                 $scope.newnameShow[i] = true;
                 $scope.BtnShow[i] = false;
@@ -547,7 +529,7 @@ angular.module('familielejr')
         };
 
         if ($scope.addAtLevel == 1 || $scope.addAtLevel == 4) {
-            console.log(`Add at level 4`);
+            // console.log(`Add at level 4`);
             var data = {
                 _family_id: $scope.newFamilyId,
                 persons: persons
@@ -560,7 +542,8 @@ angular.module('familielejr')
                 },
                 data: data
             }).then(function(response) {
-                $route.reload();
+                // $route.reload();
+                reestablish();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
@@ -579,12 +562,18 @@ angular.module('familielejr')
                 },
                 data: data
             }).then(function(response) {
-                $route.reload();
+                // console.log(`Added at level ${$scope.addAtLevel}`);
+                if ($scope.addAtLevel == 5) {
+                    reestablish();
+                } else {
+                    console.log(`Reloading..`);
+                    $route.reload();
+                };
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
         } else {
-            console.log(`Add at level 0 or 3`);
+            // console.log(`Add at level 0 or 3`);
             var data = {
                 _admin: "596345a3fc89f0d78cbc06fd",
                 level: $scope.addAtLevel,
@@ -602,10 +591,16 @@ angular.module('familielejr')
                 },
                 data: data
             }).then(function(response) {
-                $route.reload();
+                // $route.reload();
+                reestablish();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
+        };
+
+        function reestablish() {
+            initForms();
+            getL3Family();
         };
     };
 
@@ -641,25 +636,32 @@ angular.module('familielejr')
             },
             data: data
         }).then(function(response) {
-            $route.reload();
+            initForms();
+            if ($scope.showL3Family != 0) {
+                console.log(`There is a L3 family open. Fetch it again to show the changes.`);
+                getL3Family();
+            } else {
+                console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
+                $route.reload();
+            };
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
     };
 
     $scope.deleteFamily = function(family_id, level, id) {
-        // console.log(`ID from view: ${id}`);
+        console.log(`ID from view: ${id}`);
         $scope.parent_id = 0;
 
         if (level == 2) {
-            // console.log(`**** Level 2 ****`);
+            console.log(`**** Level 2 ****`);
             $scope.parent_id = $scope.l1family._family_id;
             for (var j=0; j<$scope.l1family.thirdlevel.length; j++) {
                 var f = $scope.l1family.thirdlevel[j];
                 // console.log(`L2. family_id in loop: ${f._family_id}`);
                 if (family_id == f._family_id) {
                     $scope.l2index = j;
-                    // console.log(`Found family_id ${f._family_id}`);
+                    console.log(`Found family_id ${f._family_id}`);
                 };
             };
         } else if (level == 5) {
@@ -708,7 +710,7 @@ angular.module('familielejr')
                     console.log(`Status: ${response.status}`);
                 });
             } else {
-                if (level == 1 || level == 2) {id = familytree._id;};
+                if (level == 1 || level == 2) {id = $scope.familytree._id;};
                 $http({
                     method: 'PATCH',
                     url: '/familytreedelete/' + id,
@@ -723,6 +725,37 @@ angular.module('familielejr')
                 });
             };
         };
+    };
+
+    function initForms() {
+        console.log(`Initiating edit Names Form and Add Names Form.`);
+        $scope.editNamesForm = false;
+        $scope.addNamesForm = false;
+        $scope.headLine = "**";
+        $scope.firstname = ["","","",""];
+        $scope.middlename = ["","","",""];
+        $scope.surname = ["","","",""];
+        $scope.birth = [];
+        $scope.passdate = [];
+        $scope.BtnShow = [false,true,false,false];
+        $scope.newnameShow = [true,false,false,false];
+    };
+
+    function getL3Family() {
+        $http({
+            method: 'GET',
+            url: '/familytree_for_parent/' + $scope.showL3Family,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(response) {
+            console.log(`L3FamilytreeStatus: ${response.status}`);
+            $scope.L3Familytree = response.data;
+            // $scope.showL3Family = parent_id;
+            console.log(`Family_id of L3 family: ${$scope.L3Familytree[0]._family_id}, showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
+        }, function errorCallback(response) {
+            console.log(`FamilytreeStatus: ${response.status}`);
+        });
     };
 
 }])

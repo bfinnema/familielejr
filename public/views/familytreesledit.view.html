@@ -125,7 +125,6 @@
                         <span ng-repeat="person in l2family.persons">
                             {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                            <i>{{l2family._family_id}}</i><br>
                         </span>
                     </a>
                     <a class="btn btn-primary" ng-click="editFamily(l2family._family_id, 2)">
@@ -140,7 +139,6 @@
                                 <span ng-repeat="person in l3family.persons">
                                     {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                                    <i>{{l3family._family_id}}</i><br>
                                 </span>
                             </a>
                             <a class="btn btn-primary" ng-click="editFamily(l3family._family_id, 3)">
@@ -155,7 +153,6 @@
                                         <span ng-repeat="person in l4family.persons">
                                             {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                                            <i>{{l4family._family_id}}</i><br>
                                         </span>
                                     </a>
                                     <a class="btn btn-primary" ng-click="editFamily(l4family._family_id, 4)">
@@ -170,7 +167,6 @@
                                                 <span ng-repeat="person in l5family.persons">
                                                     {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
                                                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
-                                                    <i>{{l5family._family_id}}</i><br>
                                                 </span>
                                             </a>
                                             <a class="btn btn-primary" ng-click="editFamily(l5family._family_id, 5)">
@@ -344,7 +340,7 @@
                 <a class="btn btn-danger btn-lg btn-block" ng-click="addFamily()">Fortryd</a>
             </div>
             <div class="col-md-4" ng-show="editNamesForm">
-                <a class="btn btn-danger btn-lg btn-block" ng-click="editSecondLevelFamily()">Fortryd ændring</a>
+                <a class="btn btn-danger btn-lg btn-block" ng-click="editFamily()">Fortryd ændring</a>
             </div>
         </div>
     </form>

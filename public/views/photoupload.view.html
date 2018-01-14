@@ -94,68 +94,102 @@
     </div>
 </nav>
 
-<div ng-controller = "photouploadCtrl">
+<div class="col-md-6">
     <h1>Upload af fotografier</h1>
+    <p>Her kan du lægge dine billeder fra familielejrene op. Vælg det år, billedet blev taget. Vælg derefter 
+        det billede, du vil lægge op, fra din computer.</p>
+    <p>Der kommer en fejlmeddellelse, hvis du forsøger at lægge et billede op, med et navn, der allerede er 
+        lagt op en gang</p>
+    <p>OBS: Vær venlig ikke at lægge alt for mange billeder op for hvert år. Tænk over, hvilke der har generel 
+        interesse for de fleste. Læg ikke flere billeder op af den samme situation. Læg ikke billeder op, som 
+        ligner billeder, andre allerede har lagt op.</p>
+    <hr>
     <form name="photouploadForm">
         <fieldset>
-        <!--<legend>Upload on form submit</legend>-->
+        <!-- <legend>Upload on form submit</legend> -->
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-8">
                 <label>Hvilket år blev fotografiet taget?</label>
-                <select class="form-control" ng-model="year" name="year" required>
+                <select class="form-control" ng-model="year" ng-change="getUploadedPhotos()" name="year" required>
                     <option ng-repeat="year in years" value="{{year.year}}">{{year.year}}</option>
                 </select>
-                <i ng-show="photouploadForm.year.$error.required">Skal vælges</i>
+                <i ng-show="photouploadForm.year.$error.required">*Skal vælges</i>
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-10">
                 <label>Fotografi:</label>
-                <input type="file" ngf-select ng-model="picFile" name="file"    
+                <input type="file" ngf-select ng-model="picFile" ng-change="checkImageReplica(picFile)" name="file"    
                         accept="image/*" ngf-max-size="10MB" required
                         ngf-model-invalid="errorFile">
-                <i ng-show="photouploadForm.file.$error.required">*required</i><br>
+                <i ng-show="photouploadForm.file.$error.required">*Skal vælges</i><br>
                 <i ng-show="photouploadForm.file.$error.maxSize">Filen er for stor 
                     {{errorFile.size / 1000000|number:1}}MB: max 10MB</i>
                 <img ng-show="photouploadForm.file.$valid" ngf-thumbnail="picFile" class="thumb"> <button ng-click="picFile = null" ng-show="picFile">Remove</button>
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-12">
                 <label>Tekst til billedet (valgfrit)</label>
                 <input type="text" class="form-control" ng-model="picturetext" name="picturetext" placeholder="Tekst til billedet">
             </div>
         </div>
         <br>
         <div class="row">
-            <div class="form-group col-md-4">
-                <button btn btn-default ng-disabled="!photouploadForm.$valid" 
+            <div class="form-group col-md-12">
+                <button btn btn-default ng-disabled="!photouploadForm.$valid || imageReplica" 
                     ng-click="uploadPicture(picFile)">Send</button>
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-4">
-                <span >{{successMsg}}</span>
-                <span class="err">{{errorMsg}}</span>
+            <div class="form-group col-md-12">
+                <span class="alert alert-info" ng-show="successMsg != ''">{{successMsg}}</span>
+                <span class="alert alert-danger" ng-show="errorMsg != ''">{{errorMsg}}</span>
             </div>
         </div>
         <div class="row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-12">
             <span class="progress" ng-show="picFile.progress >= 0">
                 <div style="width:{{picFile.progress}}%" 
                     ng-bind="picFile.progress + '%'"></div>
             </span>
         </div>
         </div>
+<!-- 
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-12">
                 <span ng-show="picFile.result">{{successMsg}}</span>
                 <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
             </div>
         </div>
+ -->        
         </fieldset>
         <br>
     </form>
+</div>
+<div class="col-md-6" ng-show="showImagesList">
+    <h3 class="heading">Billeder du allerede har uploaded, taget i {{year}}:</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="15%">Navn</th>
+                <th width="15%">Type</th>
+                <th width="70%">Første tekst</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="image in images">
+                <td>{{ image.filename }}</td>
+                <td>{{ image.filetype }}</td>
+                <td>{{ image.imagetext[0].textobj.text }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="!imagesExist">
+        <tr>
+            <td></td><td>Du har ikke uploaded nogen billeder fra {{year}} endnu</td>
+        </tr>
+    </div>
 </div>
 
 <script type="text/javascript">

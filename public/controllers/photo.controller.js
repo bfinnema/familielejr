@@ -20,6 +20,8 @@ angular.module('familielejr')
 
     $scope.errorMsg = '';
     $scope.successMsg = '';
+    $scope.showImagesList = false;
+    $scope.imageReplica = true;
 
     $scope.uploadPicture = function(file) {
         // console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);
@@ -60,12 +62,17 @@ angular.module('familielejr')
                             $scope.picFile = null;
                             $scope.picturetext = "";
                             $scope.errorMsg = "";
-                            $scope.successMsg = file.name + 'blev uploaded med stor succes.'
-                            $route.reload();
+                            $scope.successMsg = file.name + 'blev uploaded.'
+                            $scope.getUploadedPhotos();
+                            // $route.reload();
                         }, function errorCallback(response) {
                             console.log(`Status: ${response.status}`);
+                            if (response.status == 409) {
+                                $scope.errorMsg = "En anden har allerede uploaded et billede med navnet "+file.name;
+                                $scope.successMsg = '';
+                                $scope.picFile = null;
+                            };
                         });
-                
                     }
                     else{
                         $window.alert('Could not upload file.');
@@ -76,8 +83,54 @@ angular.module('familielejr')
             xhr.send(file);
 
         }, function errorCallback(response) {
+            console.log(`ErrorCallback Status: ${response.status}`);
+        });
+    };
+
+    $scope.getUploadedPhotos = function() {
+
+        $http({
+            method: 'GET',
+            url: '/myphotos/'+$scope.year,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(response) {
+            console.log(`MyphotosStatus: ${response.status}`);
+            $scope.images = response.data;
+            if (!response.data[0]) {
+                console.log('No photos for year '+$scope.year)
+                $scope.imagesExist = false;
+            } else {
+                $scope.imagesExist = true;
+                // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
+
+                for (x=0; x<$scope.images.length; x++) {
+                    $scope.images[x].num = x;
+                    console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+                };
+
+            };
+            $scope.showImagesList = true;
+        }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
+    
+    };
+
+    $scope.checkImageReplica = function(file) {
+        $scope.imageReplica = true;
+        $scope.errorMsg = '';
+        // console.log(`${file.name}`);
+        var foundReplica = false;
+        for (var i=0; i<$scope.images.length; i++) {
+            console.log(`${$scope.images[i].filename}`);
+            if ($scope.images[i].filename == file.name) {
+                foundReplica = true;
+                $scope.errorMsg = 'Du har allerede uploaded et billede med det navn';
+            };
+        };
+        if (!foundReplica) {$scope.imageReplica = false;};
     };
 
 }])
@@ -118,7 +171,7 @@ angular.module('familielejr')
                 $scope.images[x].num = x;
                 // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
             };
-        }
+        };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });

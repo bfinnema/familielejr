@@ -524,7 +524,7 @@ app.delete('/users/:id', authenticate, (req, res) => {
 
 // Photos
 app.post('/photos/upload', authenticate, (req, res) => {
-  console.log(req.body.text);
+  // console.log(req.body.text);
   var fn = req.body.filename;
 
   Photo.findOne({
@@ -583,9 +583,19 @@ app.get('/photos/:year', authenticate, (req, res) => {
 })
 
 app.get('/myphotos', authenticate, (req, res) => {
-  var year = req.params.year;
   Photo.find({
     _creator: req.user._id
+  }).then((photos) => {
+    res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+})
+
+app.get('/myphotos/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  Photo.find({
+    _creator: req.user._id, year: year
   }).then((photos) => {
     res.json(photos);
   }, (e) => {
@@ -1173,7 +1183,7 @@ app.patch('/familytree/:id', authenticate, (req, res) => {
 
 app.patch('/familytreel2/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  console.log(`id: ${id}, _parent_id: ${req.body._parent_id}`);
+  // console.log(`familytreel2. id: ${id}, _parent_id: ${req.body._parent_id}`);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
@@ -1203,8 +1213,8 @@ app.patch('/familytreel2/:id', authenticate, (req, res) => {
 
 app.patch('/familytreeedit/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  console.log(`familytreeedit, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
-  console.log(`Persons, firstname: ${req.body.persons[0].firstname}`);
+  // console.log(`familytreeedit, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
+  // console.log(`Persons, firstname: ${req.body.persons[0].firstname}`);
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   };
@@ -1212,7 +1222,7 @@ app.patch('/familytreeedit/:id', authenticate, (req, res) => {
   var filter = JSON.parse('{"_id":"'+id+'"}');
   var setString = '{"persons":'+JSON.stringify(req.body.persons)+'}';
   if (req.body.level == 1 || req.body.level == 4) {
-    console.log(`Edit at level 1 or 4`);
+    // console.log(`Edit at level 1 or 4`);
     filter = JSON.parse('{"_id":"'+id+'", "secondlevel._family_id":'+req.body._family_id+'}');
     setString = '{"secondlevel.$.persons":'+JSON.stringify(req.body.persons)+'}';
   } else if (req.body.level == 2 || req.body.level == 5) {
@@ -1221,8 +1231,8 @@ app.patch('/familytreeedit/:id', authenticate, (req, res) => {
     console.log(`Edit at level 0 or 3`);
   };
 
-  console.log(`Filter ${JSON.stringify(filter)}`);
-  console.log(`setString: ${setString}`);
+  // console.log(`Filter ${JSON.stringify(filter)}`);
+  // console.log(`setString: ${setString}`);
   var setQuery = JSON.parse(setString);
   var query = {$set: setQuery};
 
