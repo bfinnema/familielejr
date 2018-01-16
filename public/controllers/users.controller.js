@@ -54,7 +54,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/userscount'
+        url: '/users/count'
     }).then(function(response) {
         // console.log(`Users count Status: ${response.status}`);
         // console.log(`Users count: ${response.data}`);
@@ -382,7 +382,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/users/' + $routeParams.id,
+        url: '/users/user/' + $routeParams.id,
         headers: {
             'x-auth': localStorage.userToken
         }

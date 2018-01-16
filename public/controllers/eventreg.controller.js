@@ -138,7 +138,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: 'eventregall/' + invyear
+        url: 'eventreg/all/year/' + invyear
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         // console.log(response.data);
@@ -239,7 +239,7 @@ angular.module('familielejr')
         if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
             $http({
                 method: 'DELETE',
-                url: 'admineventreg/'+registration._id,
+                url: 'eventreg/admin/'+registration._id,
                 headers: {
                     'x-auth': localStorage.userToken
                 }

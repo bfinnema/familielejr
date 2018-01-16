@@ -24,7 +24,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/futurecamps/gtyear/' + pastyear,
+        url: '/futurecamps/future/' + pastyear,
         headers: {
             'x-auth': localStorage.userToken
         }

@@ -23,7 +23,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/invitations/'+invyear,
+        url: '/invitations/year/'+invyear,
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -247,7 +247,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/invitations/'+invyear,
+        url: '/invitations/year/'+invyear,
         headers: {
             'x-auth': localStorage.userToken
         }

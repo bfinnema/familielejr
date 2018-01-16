@@ -60,6 +60,12 @@
                     <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
             </li>
+            <li id="entertainment" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Underholdning<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="games"><a href="#!games">Lege og spil</a></li>
+                </ul>
+            </li>
             <li id="register" ng-show="!isLoggedIn"><a href="#!register">Registrer</a></li>
             <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
             <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
@@ -88,14 +94,14 @@
                     <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
                 </ul>
             </li>
-            <li><a href="#!content">Kontakt</a></li>
+            <li id="contact" ng-show="isLoggedIn && role == 2"><a href="#!content">Kontakt</a></li>
         </ul>
         </div><!--/.nav-collapse -->
     </div>
 </nav>
 
 <div ng-show="!newCampEntry">
-    <h2>Liste over fremtidige lejre</h2>
+    <h2>Liste over fremtidige familielejre</h2>
     <hr>
     <table class="table table-striped">
         <thead>
@@ -144,7 +150,7 @@
         <div class="row">
             <div class="form-group col-md-2">
                 <label for="year">År</label>
-                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" required>
+                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" autofocus required>
             </div>
         </div>
         <h3 class="form-signin-heading">Detaljer om lejren</h3>

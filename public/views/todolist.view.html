@@ -60,6 +60,12 @@
                     <li id="eventregall"><a href="#!eventregistrationall">Liste over alle tilmeldte</a></li>
                 </ul>
             </li>
+            <li id="entertainment" ng-show="isLoggedIn" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Underholdning<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="games"><a href="#!games">Lege og spil</a></li>
+                </ul>
+            </li>
             <li id="register" ng-show="!isLoggedIn"><a href="#!register">Registrer</a></li>
             <li id="login" ng-show="!isLoggedIn"><a href="#!login">Login</a></li>
             <li id="myaccount" ng-show="isLoggedIn" class="dropdown">
@@ -84,11 +90,11 @@
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                        <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
-                        <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
+                    <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
+                    <li id="photoadmin"><a href="#!photoalbum/2017">Administrer billeder</a></li>
                 </ul>
             </li>
-            <li><a href="#!content">Kontakt</a></li>
+            <li id="contact" ng-show="isLoggedIn && role == 2"><a href="#!content">Kontakt</a></li>
         </ul>
         </div><!--/.nav-collapse -->
     </div>

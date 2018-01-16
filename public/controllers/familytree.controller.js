@@ -16,7 +16,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/familytree/0',
+        url: '/familytrees/0',
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -169,7 +169,7 @@ angular.module('familielejr')
 
         $http({
             method: 'PATCH',
-            url: '/familytree/' + $scope.familytree._id,
+            url: '/familytrees/' + $scope.familytree._id,
             headers: {
                 'x-auth': localStorage.userToken
             },
@@ -209,7 +209,7 @@ angular.module('familielejr')
     
         $http({
             method: 'PATCH',
-            url: '/familytreeedit/' + $scope.tree_id,
+            url: '/familytrees/edit/' + $scope.tree_id,
             headers: {
                 'x-auth': localStorage.userToken
             },
@@ -236,7 +236,7 @@ angular.module('familielejr')
         if ($window.confirm('Bekræft venligst at du vil slette familie' + family_id)) {
             $http({
                 method: 'PATCH',
-                url: '/familytreedelete/' + id,
+                url: '/familytrees/delete/' + id,
                 headers: {
                     'x-auth': localStorage.userToken
                 },
@@ -268,7 +268,7 @@ angular.module('familielejr')
     
     $http({
         method: 'GET',
-        url: '/familytree/0',
+        url: '/familytrees/0',
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -311,12 +311,12 @@ angular.module('familielejr')
                 // console.log(`**** Level 3 ****`);
                 $http({
                     method: 'GET',
-                    url: '/familytree_for_parent/' + parent_id,
+                    url: '/familytrees/parent/' + parent_id,
                     headers: {
                         'x-auth': localStorage.userToken
                     }
                 }).then(function(response) {
-                    // console.log(`L3FamilytreeStatus: ${response.status}`);
+                    // console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
                     $scope.L3Familytree = response.data;
                     $scope.showL3Family = $scope.parent_id;
                     var addToFamily = $scope.L3Familytree;
@@ -380,12 +380,12 @@ angular.module('familielejr')
         } else {
             $http({
                 method: 'GET',
-                url: '/familytree_for_parent/' + parent_id,
+                url: '/familytrees/parent/' + parent_id,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                // console.log(`L3FamilytreeStatus: ${response.status}`);
+                // console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
                 $scope.L3Familytree = response.data;
                 // console.log($scope.L3Familytree);
                 $scope.showL3Family = parent_id;
@@ -536,7 +536,7 @@ angular.module('familielejr')
             };
             $http({
                 method: 'PATCH',
-                url: '/familytree/' + $scope.tree_id,
+                url: '/familytrees/' + $scope.tree_id,
                 headers: {
                     'x-auth': localStorage.userToken
                 },
@@ -556,7 +556,7 @@ angular.module('familielejr')
             console.log(`Add at level 2 or 5`);
             $http({
                 method: 'PATCH',
-                url: '/familytreel2/' + $scope.tree_id,
+                url: '/familytrees/l2/' + $scope.tree_id,
                 headers: {
                     'x-auth': localStorage.userToken
                 },
@@ -585,7 +585,7 @@ angular.module('familielejr')
             };
             $http({
                 method: 'POST',
-                url: '/familytree/',
+                url: '/familytrees/',
                 headers: {
                     'x-auth': localStorage.userToken
                 },
@@ -630,7 +630,7 @@ angular.module('familielejr')
 
         $http({
             method: 'PATCH',
-            url: '/familytreeedit/' + $scope.tree_id,
+            url: '/familytrees/edit/' + $scope.tree_id,
             headers: {
                 'x-auth': localStorage.userToken
             },
@@ -699,13 +699,19 @@ angular.module('familielejr')
                 // console.log(`**** Level 3 ****`);
                 $http({
                     method: 'DELETE',
-                    url: '/familytree/' + id,
+                    url: '/familytrees/' + id,
                     headers: {
                         'x-auth': localStorage.userToken
                     },
                     data: data
                 }).then(function(response) {
-                    $route.reload();
+                    if ($scope.showL3Family != 0) {
+                        console.log(`There is a L3 family open. Fetch it again to show the changes.`);
+                        getL3Family();
+                    } else {
+                        console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
+                        $route.reload();
+                    };
                 }, function errorCallback(response) {
                     console.log(`Status: ${response.status}`);
                 });
@@ -713,13 +719,19 @@ angular.module('familielejr')
                 if (level == 1 || level == 2) {id = $scope.familytree._id;};
                 $http({
                     method: 'PATCH',
-                    url: '/familytreedelete/' + id,
+                    url: '/familytrees/delete/' + id,
                     headers: {
                         'x-auth': localStorage.userToken
                     },
                     data: data
                 }).then(function(response) {
-                    $route.reload();
+                    if ($scope.showL3Family != 0) {
+                        console.log(`There is a L3 family open. Fetch it again to show the changes.`);
+                        getL3Family();
+                    } else {
+                        console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
+                        $route.reload();
+                    };
                 }, function errorCallback(response) {
                     console.log(`Status: ${response.status}`);
                 });
@@ -744,15 +756,15 @@ angular.module('familielejr')
     function getL3Family() {
         $http({
             method: 'GET',
-            url: '/familytree_for_parent/' + $scope.showL3Family,
+            url: '/familytrees/parent/' + $scope.showL3Family,
             headers: {
                 'x-auth': localStorage.userToken
             }
         }).then(function(response) {
-            console.log(`L3FamilytreeStatus: ${response.status}`);
+            // console.log(`L3FamilytreeStatus: ${response.status}`);
             $scope.L3Familytree = response.data;
             // $scope.showL3Family = parent_id;
-            console.log(`Family_id of L3 family: ${$scope.L3Familytree[0]._family_id}, showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
+            // console.log(`Family_id of L3 family: ${$scope.L3Familytree[0]._family_id}, showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
         }, function errorCallback(response) {
             console.log(`FamilytreeStatus: ${response.status}`);
         });

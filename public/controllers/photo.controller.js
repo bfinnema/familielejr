@@ -32,7 +32,7 @@ angular.module('familielejr')
 
         $http({
             method: 'GET',
-            url: `/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
+            url: `/photos/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log(response);
             // console.log(response.data.url);
@@ -91,7 +91,7 @@ angular.module('familielejr')
 
         $http({
             method: 'GET',
-            url: '/myphotos/'+$scope.year,
+            url: '/photos/my/'+$scope.year,
             headers: {
                 'x-auth': localStorage.userToken
             }
@@ -99,7 +99,7 @@ angular.module('familielejr')
             console.log(`MyphotosStatus: ${response.status}`);
             $scope.images = response.data;
             if (!response.data[0]) {
-                console.log('No photos for year '+$scope.year)
+                // console.log('No photos for year '+$scope.year)
                 $scope.imagesExist = false;
             } else {
                 $scope.imagesExist = true;
@@ -107,7 +107,7 @@ angular.module('familielejr')
 
                 for (x=0; x<$scope.images.length; x++) {
                     $scope.images[x].num = x;
-                    console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+                    // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
                 };
 
             };
@@ -124,7 +124,7 @@ angular.module('familielejr')
         // console.log(`${file.name}`);
         var foundReplica = false;
         for (var i=0; i<$scope.images.length; i++) {
-            console.log(`${$scope.images[i].filename}`);
+            // console.log(`${$scope.images[i].filename}`);
             if ($scope.images[i].filename == file.name) {
                 foundReplica = true;
                 $scope.errorMsg = 'Du har allerede uploaded et billede med det navn';
@@ -151,7 +151,7 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/photos/'+$routeParams.year,
+        url: '/photos/year/'+$routeParams.year,
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -226,7 +226,7 @@ angular.module('familielejr')
 
             $http({
                 method: 'GET',
-                url: `/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
             }).then(function(response) {
                 console.log(response.data.signedRequest);
 
@@ -238,7 +238,7 @@ angular.module('familielejr')
                     // console.log("Success!");
                     $http({
                         method: 'DELETE',
-                        url: '/admindeletephoto/'+image._id,
+                        url: '/photos/admindelete/'+image._id,
                         headers: {
                             'x-auth': localStorage.userToken
                         }
@@ -286,7 +286,7 @@ angular.module('familielejr')
         var folder = $scope.images[photoNum].year;
         $http({
             method: 'GET',
-            url: `/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
@@ -307,13 +307,12 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
-    // console.log('My Photo Album Controller.');
 
     var currentPhoto = 0;
     
     $http({
         method: 'GET',
-        url: '/myphotos',
+        url: '/photos/my',
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -321,7 +320,7 @@ angular.module('familielejr')
         // console.log(`Status: ${response.status}`);
         $scope.images = response.data;
         if (!response.data[0]) {
-            // console.log('No photos for year '+$scope.year)
+            // console.log('No photos for user'+localStorage.familielejrUserId);
             $scope.imagesExist = false;
         } else {
             $scope.imagesExist = true;
@@ -378,19 +377,19 @@ angular.module('familielejr')
 
             $http({
                 method: 'GET',
-                url: `/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
             }).then(function(response) {
-                console.log(response.data.signedRequest);
+                // console.log(response.data.signedRequest);
 
                 $http({
                     method: 'DELETE',
                     url: response.data.signedRequest
                 }).then(function(response) {
-                    console.log(`Status: ${response.status}`);
-                    console.log("Success!");
+                    // console.log(`Status: ${response.status}`);
+                    // console.log("Success!");
                     $http({
                         method: 'DELETE',
-                        url: '/deletephoto/'+image._id,
+                        url: '/photos/'+image._id,
                         headers: {
                             'x-auth': localStorage.userToken
                         }
@@ -460,7 +459,7 @@ angular.module('familielejr')
         var folder = $scope.images[photoNum].year;
         $http({
             method: 'GET',
-            url: `/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
