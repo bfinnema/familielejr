@@ -7,7 +7,7 @@ const router = express.Router();
 var {Eventreg} = require('../models/eventreg');
 var {authenticate} = require('../middleware/authenticate');
 
-router.post('/eventreg', authenticate, (req, res) => {
+router.post('/', authenticate, (req, res) => {
   var registeree = req.user.name.firstname;
   if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
   registeree = registeree + ' ' + req.user.name.surname

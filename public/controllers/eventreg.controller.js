@@ -45,13 +45,13 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: 'eventreg/' + invyear,
+        url: 'eventregs/' + invyear,
         headers: {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Status: ${response.status}`);
-        console.log(response.data);
+        // console.log(`Status: ${response.status}`);
+        // console.log(response.data);
         $scope.registrations = response.data;
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
@@ -73,14 +73,14 @@ angular.module('familielejr')
 
         $http({
             method: 'POST',
-            url: 'eventreg',
+            url: 'eventregs',
             headers: {
                 'x-auth': localStorage.userToken
             },
             data: eventreg
         }).then(function(response) {
-            console.log(`Status: ${response.status}`);
-            console.log(response.data._id);
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data._id);
             $scope.errorHappened = false;
             $location.path('/eventregistration');
             $route.reload();
@@ -94,13 +94,13 @@ angular.module('familielejr')
         if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
             $http({
                 method: 'DELETE',
-                url: 'eventreg/'+registration._id,
+                url: 'eventregs/'+registration._id,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $scope.errorHappened = false;
                 $location.path('/eventregistration');
                 $route.reload();
@@ -133,12 +133,12 @@ angular.module('familielejr')
         invyear += 1;
         pastyear += 1;
     };
-    console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    // console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
     $scope.invitationyear = invyear;
 
     $http({
         method: 'GET',
-        url: 'eventreg/all/year/' + invyear
+        url: 'eventregs/all/year/' + invyear
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         // console.log(response.data);
@@ -239,7 +239,7 @@ angular.module('familielejr')
         if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
             $http({
                 method: 'DELETE',
-                url: 'eventreg/admin/'+registration._id,
+                url: 'eventregs/admin/'+registration._id,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
