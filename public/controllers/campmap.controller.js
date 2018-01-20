@@ -122,6 +122,17 @@ angular.module('familielejr')
             "address": "Torø 1, 5610 Assens",
             "years": "2014",
             "website": "http://kolonierne.dk/koloni/skovhytten/"
+        },
+        {
+            "id": 5,
+            "coords": {
+                "latitude": 55.554425,
+                "longitude": 10.616398
+            },
+            "name": "Højbjerg",
+            "address": "Langøvej 272, 5390 Martofte",
+            "years": "2018",
+            "website": "http://sommerlejrfyn.dk"
         }
     ];
 

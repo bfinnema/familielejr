@@ -307,11 +307,11 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`UsersStatus: ${response.status}`);
+        // console.log(`UsersStatus: ${response.status}`);
         $scope.users = response.data;
         $scope.allEmails = "";
         for (var i=0; i<response.data.length; i++) {
-            console.log(`Email address: ${response.data[i].email}`);
+            // console.log(`Email address: ${response.data[i].email}`);
             $scope.allEmails += response.data[i].email;
             if (i+1 < response.data.length) {
                 $scope.allEmails += ", ";
@@ -330,8 +330,8 @@ angular.module('familielejr')
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $location.path('/usersadmin');
                 $route.reload();
             }, function errorCallback(response) {
@@ -387,9 +387,9 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`UserStatus: ${response.status}`);
+        // console.log(`UserStatus: ${response.status}`);
         $scope.user = response.data;
-        console.log(`User: ${$scope.user.email}`);
+        // console.log(`User: ${$scope.user.email}`);
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });
@@ -411,7 +411,7 @@ angular.module('familielejr')
         }).then(function(response) {
             $location.path('/usersadmin');
         }, function errorCallback(response) {
-            console.log(`getUserStatus: ${response.status}`);
+            // console.log(`getUserStatus: ${response.status}`);
             if (response.status == 401) {
                 alert('Kodeord og gentaget kodeord skal være ens');
             } else {

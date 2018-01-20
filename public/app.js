@@ -149,12 +149,22 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'myphotoalbumCtrl',
             access: {restricted: true}
         }).
+        when('/photooverview/:imagescope', {
+            templateUrl: 'views/photooverview.view.html',
+            controller: 'photooverviewCtrl',
+            access: {restricted: true}
+        }).
         when('/photoalbum/:year', {
             templateUrl: 'views/photoalbum.view.html',
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
         when('/myphotoalbum', {
+            templateUrl: 'views/myphotoalbum.view.html',
+            controller: 'myphotoalbumCtrl',
+            access: {restricted: true}
+        }).
+        when('/myphotoalbum/:year', {
             templateUrl: 'views/myphotoalbum.view.html',
             controller: 'myphotoalbumCtrl',
             access: {restricted: true}

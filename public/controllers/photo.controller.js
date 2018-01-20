@@ -6,7 +6,7 @@ angular.module('familielejr')
     var firstyear = 1993
     $scope.years = [];
 
-    for (y=firstyear; y<=currentyear; y++) {
+    for (var y=firstyear; y<=currentyear; y++) {
         $scope.years.push({"year": y.toString()});
     };
     
@@ -309,10 +309,21 @@ angular.module('familielejr')
     });
 
     var currentPhoto = 0;
+    $scope.year = $routeParams.year;
+    //console.log(`Photos from year ${$scope.year}`)
+    if (Number($scope.year) < 1993) {
+        $scope.headline = "Mine billeder for alle år";
+        photosurl = '/photos/my';
+        $scope.nopicturestext = "Du har ikke lagt nogen billeder op endnu. "
+    } else {
+        $scope.headline = "Mine billeder fra " + $scope.year;
+        photosurl = '/photos/my/'+$scope.year;
+        $scope.nopicturestext = "Du har ikke lagt nogen billeder fra "+$scope.year+" op endnu. "
+    };
     
     $http({
         method: 'GET',
-        url: '/photos/my',
+        url: photosurl,
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -471,7 +482,54 @@ angular.module('familielejr')
     };
 }])
 
+.controller('photooverviewCtrl', ['$scope', '$http', '$routeParams', 'AuthService', function($scope, $http, $routeParams, AuthService) {
+
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
+        };
+    });
+
+    $scope.imagescope = $routeParams.imagescope;
+    var currentyear = (new Date()).getFullYear();
+    var firstyear = 1993
+    $scope.years = [];
+    $scope.total = 0;
+    if ($routeParams.imagescope == "global") {
+        $scope.mypictures = false;
+        photosurl = '/photos/count/';
+        $scope.headline = "Billedoversigt";
+    } else {
+        $scope.mypictures = true;
+        photosurl = '/photos/my/count/';
+        $scope.headline = "Min billedoversigt";
+    };
+    console.log(`My pictures?: ${$scope.mypictures}`);
+
+    for (var y=firstyear; y<=currentyear; y++) {
+        // console.log(`Year before http: ${y}`);
+        $http({
+            method: 'GET',
+            url: photosurl+y.toString(),
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(response) {
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data);
+            $scope.years.push(response.data);
+            // console.log(`Year: ${y.toString()}, Count: ${response.data}`);
+            $scope.total += response.data.count;
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
     
+}])
+
+
     /* 
     $scope.uploadPicture2 = function(file) {
         console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);

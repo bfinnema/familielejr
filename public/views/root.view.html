@@ -23,6 +23,9 @@
             <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
                 <ul class="dropdown-menu">
+                    <li><a href="#!photooverview/global">Billedoversigt, alle billeder</a></li>
+                    <li><a href="#!photooverview/my">Billedoversigt, mine billeder</a></li>
+                    <li><a href="#!myphotoalbum/0">Alle mine billeder</a></li>
                     <li><a href="#!photoupload">Upload af billeder</a></li>
                     <li><a href="#!photoalbum/1993">1993</a></li>
                     <li><a href="#!photoalbum/1994">1994</a></li>
@@ -49,7 +52,7 @@
                     <li><a href="#!photoalbum/2015">2015</a></li>
                     <li><a href="#!photoalbum/2016">2016</a></li>
                     <li><a href="#!photoalbum/2017">2017</a></li>
-                    <li><a href="#!myphotoalbum">Mine billeder</a></li>
+                    <li><a href="#!photoalbum/2018">2018</a></li>
                 </ul>
             </li>
             <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
@@ -113,9 +116,11 @@
             <div class="row">
                 <img class="img-responsive" src="images/various/forside.png">
             </div>
-        <h2 class="blog-post-title">Anbefalet browser: Chrome</h2>
-        <p>Hvis du anvender MS Explorer eller Edge, kan der være problemer med at vise indholdet korrekt.</p>
-        <p>Siden er også i nogen grad testet med Safari, og det ser ud til at virke.</p>
+        <h4 class="blog-post-title">Sikkerhed: Check at du bruger https!</h4>
+        <p>Check at der er "https://" foran linket "familielejr.flensburg.link". Dvs. der skal stå https://familielejr.flensburg.link som link adresse.</p>
+        <h4 class="blog-post-title">Anbefalede browsere: Chrome, Safari</h4>
+        <p>Hvis du anvender MS Explorer eller Edge, kan der være problemer med at vise indholdet korrekt, afhængig af version.</p>
+        <p>Siden er også i nogen grad testet på en Android telefon med Chrome, og det ser ud til at virke.</p>
         </div><!-- /.blog-post -->
 
     </div><!-- /.blog-main -->

@@ -103,127 +103,30 @@
     </div>
 </nav>
 
-<div ng-controller = "registerCtrl">
-    <div class="row alert alert-danger" ng-show="!registrationAllowed">
-        <h2>NOGET ER GALT. DER ER FOR MANGE BRUGERE. VI TRÆKKER NØDBREMSEN. DU KAN IKKE REGISTRERE DIG.</h2>
-        <br>
+<div class="page-header">
+    <h1>{{headline}}, antal: {{total}}</h1>
+</div>
+<div class="row">
+    <div ng-repeat="year in years">
+        <div class="col-md-3">
+            <a id="images" ng-show="!mypictures" href="#!photoalbum/{{year.year}}" class="btn btn-primary btn-lg btn-block">{{year.year}}. Antal: {{year.count}}</a>
+            <a id="images" ng-show="mypictures" href="#!myphotoalbum/{{year.year}}" class="btn btn-info btn-lg btn-block">{{year.year}}. Antal: {{year.count}}</a>
+        </div>
     </div>
-    <form name="formRegister" class="formRegister" id="formRegister" ng-submit="registerUser()" novalidate>
-        <h2 class="form-signin-heading">Registrering</h2>
-        <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
-        <div class="row">
-            <div class="form-group col-md-3">
-                <label for="inputEmail">Email adresse</label>
-                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required autofocus>
-                <i ng-show="formRegister.inputEmail.$error.email">Indtast korrekt email format. </i>
-                <i ng-show="formRegister.inputEmail.$error.required">Skal indtastes. </i>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="inputPassword">Kodeord</label>
-                <input type="password" id="inputPassword" name="inputPassword" ng-model="inputPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Kodeord" required>
-                <i ng-show="formRegister.inputPassword.$error.minlength">Mindst 8 karakterer. </i>
-                <i ng-show="formRegister.inputPassword.$error.maxlength">Højst 12 karakterer. </i>
-                <i ng-show="formRegister.inputPassword.$error.required">Skal indtastes. </i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-3">
-                <label>Hemmelighed</label>
-                <input type="text" class="form-control" ng-model="secret" name="secret" placeholder="Hemmelighed" required>
-                <i ng-show="formRegister.secret.$error.required">Skal indtastes. </i>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="repeatPassword">Gentag kodeord</label>
-                <input type="password" id="repeatPassword" name="repeatPassword" ng-model="repeatPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Gentag kodeord" required>
-                <i ng-show="formRegister.repeatPassword.$error.minlength">Mindste længde: 8 karakterer. </i>
-                <i ng-show="formRegister.repeatPassword.$error.maxlength">Højst 12 karakterer. </i>
-                <i ng-show="formRegister.repeatPassword.$error.required">Skal indtastes. </i>
-                <i class="notidentical hidden"><br>De to kodeord er ikke identiske</i>
-            </div>
-        </div>
-        <h3 class="form-signin-heading">Navn</h3>
-        <div class="row">
-            <div class="form-group col-md-2">
-                <label>Fornavn</label>
-                <input type="text" class="form-control" ng-model="firstname" name="firstname" placeholder="Fornavn" required>
-                <i ng-show="formRegister.firstname.$error.required">Skal indtastes. </i>
-            </div>
-            <div class="form-group col-md-2">
-                <label>Mellemnavn</label>
-                <input type="text" class="form-control" ng-model="middlename" name="middlename" placeholder="Mellemnavn">
-            </div>
-            <div class="form-group col-md-3">
-                <label>Efternavn</label>
-                <input type="text" class="form-control" ng-model="surname" name="surname" placeholder="Efternavn" required>
-                <i ng-show="formRegister.surname.$error.required">Skal indtastes. </i>
-            </div>
-        </div>
-        <h3 class="form-signin-heading">Adresse</h3>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label>Gade</label>
-                <input type="text" class="form-control" ng-model="street" name="street" placeholder="Gade">
-            </div>
-            <div class="form-group col-md-1">
-                <label>Husnummer</label>
-                <input type="text" class="form-control" ng-model="houseno" name="houseno" placeholder="nr">
-            </div>
-            <div class="form-group col-md-1">
-                <label>Etage</label>
-                <select class="form-control" ng-model="floor" name="floor">
-                    <option ng-repeat="floor in floors" value="{{floor.floor}}">{{floor.floor}}</option>
-                </select>
-            </div>
-            <div class="form-group col-md-1">
-                <label>tv/mf/th</label>
-                <select class="form-control" ng-model="direction" name="direction">
-                    <option ng-repeat="direction in directions" value="{{direction.dir}}">{{direction.dir}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-2">
-                <label>Postnummer</label>
-                <input type="text" class="form-control" ng-model="zip" name="zip" placeholder="Postnummer">
-            </div>
-            <div class="form-group col-md-3">
-                <label>By</label>
-                <input type="text" class="form-control" ng-model="town" name="town" placeholder="By">
-            </div>
-            <div class="form-group col-md-2">
-                <label>Land</label>
-                <select class="form-control" ng-model="country" name="country">
-                    <option ng-repeat="country in countries" value="{{country.name}}">{{country.name}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-3">
-                <label>Telefon</label>
-                <input type="text" class="form-control" ng-model="phone" name="phone" placeholder="Telefonnummer">
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <button ng-disabled="formRegister.$invalid || !registrationAllowed" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
-            </div>
-        </div>
-    </form>
+</div>
+<hr>
+<div class="row">
+    <p>Klik på et år for at se fotoalbum for det år.</p>
+</div>
+<br>
+<div class="col-md-3">
+    <a href="#!photoupload" class="btn btn-success btn-lg btn-block">Læg billeder op</a>
+</div>
+<div ng-show="mypictures" class="col-md-3">
+    <a href="#!myphotoalbum/0" class="btn btn-primary btn-lg btn-block">Mine billeder for alle år</a>
 </div>
 
 <script type="text/javascript">
-    $('#register').addClass('active');
-
-    $('#repeatPassword').change(function() {
-        console.log('Repeat-password changed');
-        if ($('#inputPassword').val() != $('#repeatPassword').val()) {
-            console.log('They are different');
-            $('.notidentical').removeClass('hidden');
-        } else {
-            console.log('They are identical');
-            $('.notidentical').addClass('hidden');
-        };
-    });
-
+    $('#photoalbum').addClass('active');
+    document.getElementById("images").style.marginBottom = "5px";
 </script>

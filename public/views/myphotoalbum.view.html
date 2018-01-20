@@ -23,6 +23,9 @@
             <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
                 <ul class="dropdown-menu">
+                    <li><a href="#!photooverview/global">Billedoversigt, alle billeder</a></li>
+                    <li><a href="#!photooverview/my">Billedoversigt, mine billeder</a></li>
+                    <li><a href="#!myphotoalbum/0">Alle mine billeder</a></li>
                     <li><a href="#!photoupload">Upload af billeder</a></li>
                     <li><a href="#!photoalbum/1993">1993</a></li>
                     <li><a href="#!photoalbum/1994">1994</a></li>
@@ -49,7 +52,7 @@
                     <li><a href="#!photoalbum/2015">2015</a></li>
                     <li><a href="#!photoalbum/2016">2016</a></li>
                     <li><a href="#!photoalbum/2017">2017</a></li>
-                    <li><a href="#!myphotoalbum">Mine billeder</a></li>
+                    <li><a href="#!photoalbum/2018">2018</a></li>
                 </ul>
             </li>
             <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
@@ -101,7 +104,7 @@
 </nav>
 
 <div class="page-header">
-    <h1>Mine Billeder. Antal: {{ images.length }}</h1>
+    <h1>{{headline}}. Antal: {{ images.length }}</h1>
 </div>
 <div ng-show="images.length > 0">
     <div class="row">
@@ -155,7 +158,7 @@
     </div>
 </div>
 <div ng-if="images == false">
-    <h3>Du har ikke uploaded nogen billeder endnu.</h3>
+    <h3>{{nopicturestext}}<a href="#!photoupload"> Har du nogen at lægge op?</a></h3>
 </div>
 <br>
 <div class="row">

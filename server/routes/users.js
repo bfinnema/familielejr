@@ -52,7 +52,7 @@ router.patch('/role/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['role']);
   // console.log(`Status: ${body.role}`);
-  User.findOneAndUpdate({_id: id}, {$set: {'role': body.role}}, {new: true}).then((user) => {
+  User.findOneAndUpdate({_id: id}, {$set: {'role': body.role}}).then((user) => { // , {new: true}
     if (!user) {
       console.log('User not found');
       return res.status(404).send();

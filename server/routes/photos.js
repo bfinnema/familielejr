@@ -94,6 +94,32 @@ router.get('/my/:year', authenticate, (req, res) => {
   });
 });
 
+router.get('/my/count/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  // console.log(`My photos year ${year}, user: ${req.user._id}`);
+  Photo.find({
+    _creator: req.user._id, year: year
+  }).count().then((count) => {
+    var result = {"year":year,"count":count};
+    res.json(result);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/count/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  // console.log(`My photos year ${year}, user: ${req.user._id}`);
+  Photo.find({
+    year: year
+  }).count().then((count) => {
+    var result = {"year":year,"count":count};
+    res.json(result);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
@@ -191,7 +217,7 @@ router.get('/sign-s3', (req, res) => {
     Key: albumPhotosKey + fileName,
     Expires: 60,
     ContentType: fileType,
-    StorageClass: 'REDUCED_REDUNDANCY'
+    StorageClass: 'STANDARD_IA'
   };
 
   s3.getSignedUrl(operation, s3Params, (err, data) => {
