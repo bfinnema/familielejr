@@ -146,25 +146,19 @@
         </div>
         <h3 class="form-signin-heading">Arrangører</h3>
         <div class="row">
-            <div class="form-group col-md-3" ng-show="organizerShow[0]">
-                <label for="headline">Arrangør 1</label>
-                <input type="text" id="organizer[0]" class="form-control" ng-model="organizers[0]">
-            </div>
-            <div class="form-group col-md-3" ng-show="organizerShow[1]">
-                <label for="headline">Arrangør 2</label>
-                <input type="text" id="organizer[1]" class="form-control" ng-model="organizers[1]">
-            </div>
-            <div class="form-group col-md-3" ng-show="organizerShow[2]">
-                <label for="headline">Arrangør 3</label>
-                <input type="text" id="organizer[2]" class="form-control" ng-model="organizers[2]">
-            </div>
-            <div class="form-group col-md-3" ng-show="organizerShow[3]">
-                <label for="headline">Arrangør 4</label>
-                <input type="text" id="organizer[3]" class="form-control" ng-model="organizers[3]">
-            </div>
-            <div class="form-group col-md-3" ng-show="organizerShow[4]">
-                <label for="headline">Arrangør 5</label>
-                <input type="text" id="organizer[4]" class="form-control" ng-model="organizers[4]">
+            <div ng-repeat="z in commMemArr">
+                <div class="form-group col-md-3" ng-show="organizerShow[z]">
+                    <div class="col-md-10">
+                        <label for="headline">Arrangør {{z+1}}</label>
+                        <input type="text" class="form-control" ng-model="organizers[z]" placeholder="Navn på arrangør">
+                    </div>
+                    <div ng-show="numOrgLines > 0" class="col-md-2">
+                        <label for="headline" style="color:white;">.</label>
+                        <a class="btn btn-danger" ng-click="removeOrganizer(z)">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -175,138 +169,43 @@
         </div>
         <h3 class="form-signin-heading">Aktivitetsudvalg - der kan oprettes op til tre</h3>
         <div class="row">
-            <!-- Aktivitetsudvalg 1 -->
-            <div ng-show="committeeShow[0]">
-                <div class="row">
-                    <div class="form-group col-md-4">
-                        <label>Udvalgets navn</label>
-                        <input type="text" class="form-control" ng-model="committeeName[0]" name="committeeName[0]" placeholder="Udvalgets navn">
+            <div ng-repeat="y in commArr">
+                <div ng-show="committeeShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Udvalgets navn</label>
+                            <input type="text" class="form-control" ng-model="committeeName[y]" placeholder="Udvalgets navn">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <label>Beskrivelse</label>
-                        <!-- <input type="text" class="form-control" ng-model="committeeDesc[0]" name="committeeDesc[0]" placeholder="Beskrivelse, noter, beslutninger, m.m."> -->
-                        <textarea class="form-control" ng-model="committeeDesc[0]" name="committeeDesc[0]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="committeeDesc[y]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-4" ng-show="commMemShow[0][0]">
-                        <label>Udvalgsmedlem 1</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[0][0]" name="committeeMembers[0][0]" placeholder="Navn på udvalgsmedlem">
+                    <div class="row">
+                        <div ng-repeat="x in commMemArr">
+                            <div class="form-group col-md-3" ng-show="commMemShow[y][x]">
+                                <div class="col-md-10">
+                                    <label for="headline">Udvalgsmedlem {{x+1}}</label>
+                                    <input type="text" class="form-control" ng-model="committeeMembers[y][x]" placeholder="Navn på udvalgsmedlem">
+                                </div>
+                                <div ng-show="numCommMemLines[y]" class="col-md-2">
+                                    <label for="headline" style="color:white;">.</label>
+                                    <a class="btn btn-danger" ng-click="removeCommMem(y,x)">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[0][1]">
-                        <label>Udvalgsmedlem 2</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[0][1]" name="committeeMembers[0][1]" placeholder="Navn på udvalgsmedlem">
+                    <div class="row form-group">
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][1]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][2]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][3]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][4]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
                     </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[0][2]">
-                        <label>Udvalgsmedlem 3</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[0][2]" name="committeeMembers[0][2]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[0][3]">
-                        <label>Udvalgsmedlem 4</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[0][3]" name="committeeMembers[0][3]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[0][4]">
-                        <label>Udvalgsmedlem 5</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[0][4]" name="committeeMembers[0][4]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <a class="btn btn-info" ng-show="commMemBtnShow[0][1]" ng-click="showCommMemLine(0)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[0][2]" ng-click="showCommMemLine(0)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[0][3]" ng-click="showCommMemLine(0)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[0][4]" ng-click="showCommMemLine(0)">Tilføj udvalgsmedlem</a>
-                </div>
-            </div>
-            <hr>
-            <!-- Aktivitetsudvalg 2 -->
-            <div ng-show="committeeShow[1]">
-                <div class="row">
-                    <div class="form-group col-md-4">
-                        <label>Udvalgets navn</label>
-                        <input type="text" class="form-control" ng-model="committeeName[1]" name="committeeName[1]" placeholder="Udvalgets navn">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <label>Beskrivelse</label>
-                        <!-- <input type="text" class="form-control" ng-model="committeeDesc[1]" name="committeeDesc[1]" placeholder="Beskrivelse, noter, beslutninger, m.m."> -->
-                        <textarea class="form-control" ng-model="committeeDesc[1]" name="committeeDesc[1]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-4" ng-show="commMemShow[1][0]">
-                        <label>Udvalgsmedlem 1</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[1][0]" name="committeeMembers[1][0]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[1][1]">
-                        <label>Udvalgsmedlem 2</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[1][1]" name="committeeMembers[1][1]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[1][2]">
-                        <label>Udvalgsmedlem 3</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[1][2]" name="committeeMembers[1][2]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[1][3]">
-                        <label>Udvalgsmedlem 4</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[1][3]" name="committeeMembers[1][3]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[1][4]">
-                        <label>Udvalgsmedlem 5</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[1][4]" name="committeeMembers[1][4]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                </div>
-                <div class="row">
-                    <a class="btn btn-info form-group" ng-show="commMemBtnShow[1][1]" ng-click="showCommMemLine(1)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info form-group" ng-show="commMemBtnShow[1][2]" ng-click="showCommMemLine(1)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[1][3]" ng-click="showCommMemLine(1)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[1][4]" ng-click="showCommMemLine(1)">Tilføj udvalgsmedlem</a>
-                </div>
-            </div>
-            <hr>
-            <!-- Aktivitetsudvalg 3 -->
-            <div ng-show="committeeShow[2]">
-                <div class="row">
-                    <div class="form-group col-md-4">
-                        <label>Udvalgets navn</label>
-                        <input type="text" class="form-control" ng-model="committeeName[2]" name="committeeName[2]" placeholder="Udvalgets navn">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <label>Beskrivelse</label>
-                        <!-- <input type="text" class="form-control" ng-model="committeeDesc[2]" name="committeeDesc[2]" placeholder="Beskrivelse, noter, beslutninger, m.m."> -->
-                        <textarea class="form-control" ng-model="committeeDesc[2]" name="committeeDesc[2]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
-                    </div>
-                </div>
-                <div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[2][0]">
-                        <label>Udvalgsmedlem 1</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[2][0]" name="committeeMembers[2][0]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[2][1]">
-                        <label>Udvalgsmedlem 2</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[2][1]" name="committeeMembers[2][1]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[2][2]">
-                        <label>Udvalgsmedlem 3</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[2][2]" name="committeeMembers[2][2]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[2][3]">
-                        <label>Udvalgsmedlem 4</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[2][3]" name="committeeMembers[2][3]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                    <div class="form-group col-md-4" ng-show="commMemShow[2][4]">
-                        <label>Udvalgsmedlem 5</label>
-                        <input type="text" class="form-control" ng-model="committeeMembers[2][4]" name="committeeMembers[2][4]" placeholder="Navn på udvalgsmedlem">
-                    </div>
-                </div>
-                <div class="row">
-                    <a class="btn btn-info form-group" ng-show="commMemBtnShow[2][1]" ng-click="showCommMemLine(2)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info form-group" ng-show="commMemBtnShow[2][2]" ng-click="showCommMemLine(2)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[2][3]" ng-click="showCommMemLine(2)">Tilføj udvalgsmedlem</a>
-                    <a class="btn btn-info" ng-show="commMemBtnShow[2][4]" ng-click="showCommMemLine(2)">Tilføj udvalgsmedlem</a>
+                <hr>
                 </div>
             </div>
         </div>

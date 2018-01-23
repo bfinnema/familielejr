@@ -39,6 +39,8 @@ angular.module('familielejr')
         console.log(`Error. Status: ${response.status}`);
     });
 
+    $scope.commArr = [0,1,2];
+    $scope.commMemArr = [0,1,2,3,4];
     $scope.organizers = ["","","","",""];
     $scope.organizerBtnShow = [false,true,false,false,false];
     $scope.organizerShow = [true,false,false,false,false];
@@ -62,12 +64,14 @@ angular.module('familielejr')
     $scope.commMemBtnShow = [[false,true,false,false,false],[false,true,false,false,false],[false,true,false,false,false]];
     $scope.commMemShow = [[true,false,false,false,false],[true,false,false,false,false],[true,false,false,false,false]];
     var numCommMemLines = [0,0,0];
+    $scope.numCommMemLines = numCommMemLines;
 
     $scope.showOrgLine = function() {
         // console.log("Entering showOrgline. numOrgLines: "+numOrgLines);
         if ($scope.organizers[numOrgLines]) {
             // console.log("numOrgLines: "+numOrgLines+", Organizer: "+$scope.organizers[numOrgLines]);
             numOrgLines = numOrgLines + 1;
+            $scope.numOrgLines = numOrgLines;
             $scope.organizerShow[numOrgLines] = true;
             $scope.organizerBtnShow[numOrgLines] = false;
             $scope.organizerBtnShow[numOrgLines+1] = true;
@@ -77,6 +81,19 @@ angular.module('familielejr')
         };
     };
     
+    $scope.removeOrganizer = function(orgNum) {
+        console.log("Entering removeOrganizer. numOrgLines: "+numOrgLines);
+        for (var i=orgNum; i<numOrgLines; i++) {
+            $scope.organizers[i] = $scope.organizers[i+1];
+        };
+        $scope.organizers[numOrgLines] = "";
+        $scope.organizerShow[numOrgLines] = false;
+        $scope.organizerBtnShow[numOrgLines] = true;
+        $scope.organizerBtnShow[numOrgLines+1] = false;
+        numOrgLines -= 1;
+        $scope.numOrgLines = numOrgLines;
+    };
+
     $scope.showCommLine = function() {
         // console.log("Entering showCommLine. numCommLines: "+numCommLines);
         if (!initCommittees) {
@@ -112,10 +129,24 @@ angular.module('familielejr')
             // console.log(`commMemShow: ${$scope.commMemShow[numComm]}`);
             // console.log(`commMemBtnShow: ${$scope.commMemBtnShow[numComm]}`);
             // console.log(`numCommMemLines: ${numCommMemLines}`);
+            $scope.numCommMemLines[numComm] = numCommMemLines[numComm];
         }
         else {
             $window.alert("Du skal udfylde navnet på udvalgsmedlemmet.");
         };
+    };
+
+    $scope.removeCommMem = function(numComm, commMemNum) {
+        console.log("Entering removeCommMem. numOrgLines: "+numCommMemLines[numComm]);
+        for (var i=commMemNum; i<numCommMemLines[numComm]; i++) {
+            $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
+        };
+        $scope.committeeMembers[numComm][numCommMemLines[numComm]] = "";
+        $scope.commMemShow[numComm][numCommMemLines[numComm]] = false;
+        $scope.commMemBtnShow[numComm][numCommMemLines[numComm]] = true;
+        $scope.commMemBtnShow[numComm][numCommMemLines[numComm]+1] = false;
+        numCommMemLines[numComm] -= 1;
+        $scope.numCommMemLines[numComm] = numCommMemLines[numComm];
     };
     
     $scope.newCampEntryToggle = function() {
@@ -209,6 +240,8 @@ angular.module('familielejr')
             $scope.startdateView = new Date($scope.camp.startdate);
             $scope.enddateView = new Date($scope.camp.enddate);
 
+            $scope.commArr = [0,1,2];
+            $scope.commMemArr = [0,1,2,3,4];
             $scope.organizers = ["","","","",""];
             $scope.organizerBtnShow = [false,true,false,false,false];
             $scope.organizerShow = [true,false,false,false,false];
@@ -280,6 +313,19 @@ angular.module('familielejr')
         };
     };
     
+    $scope.removeOrganizer = function(orgNum) {
+        console.log("Entering removeOrganizer. numOrgLines: "+$scope.numOrgLines);
+        for (var i=orgNum; i<$scope.numOrgLines; i++) {
+            $scope.organizers[i] = $scope.organizers[i+1];
+        };
+        $scope.organizers[$scope.numOrgLines] = "";
+        $scope.organizerShow[$scope.numOrgLines] = false;
+        $scope.organizerBtnShow[$scope.numOrgLines] = true;
+        $scope.organizerBtnShow[$scope.numOrgLines+1] = false;
+        $scope.numOrgLines -= 1;
+        numOrgLines = $scope.numOrgLines;
+    };
+
     $scope.showCommLine = function() {
         // console.log("Entering showCommLine. numCommLines: "+$scope.numCommLines);
         if (!$scope.initCommittees) {
@@ -319,6 +365,19 @@ angular.module('familielejr')
         else {
             $window.alert("Du skal udfylde navnet på udvalgsmedlemmet.");
         };
+    };
+    
+    $scope.removeCommMem = function(numComm, commMemNum) {
+        console.log("Entering removeCommMem. numOrgLines: "+$scope.numCommMemLines[numComm]);
+        for (var i=commMemNum; i<$scope.numCommMemLines[numComm]; i++) {
+            $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
+        };
+        $scope.committeeMembers[numComm][$scope.numCommMemLines[numComm]] = "";
+        $scope.commMemShow[numComm][$scope.numCommMemLines[numComm]] = false;
+        $scope.commMemBtnShow[numComm][$scope.numCommMemLines[numComm]] = true;
+        $scope.commMemBtnShow[numComm][$scope.numCommMemLines[numComm]+1] = false;
+        $scope.numCommMemLines[numComm] -= 1;
+        numCommMemLines[numComm] = $scope.numCommMemLines[numComm];
     };
     
     $scope.editFuturecamp = function(id) {
