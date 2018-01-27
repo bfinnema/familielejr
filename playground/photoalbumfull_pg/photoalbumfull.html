@@ -9,7 +9,7 @@
     <meta name="author" content="Bo Finnemann">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Familielejr</title>
+    <title>Familielejr fotoalbum</title>
 
     <!-- Bootstrap core CSS -->
     <link href="js/libs/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,17 +23,26 @@
 
   <body ng-app="familielejr">
 
-    <div class="container">
+    <div ng-controller="photoalbumCtrl">
 
-        <div ng-view></div>
-        
-    </div><!-- /.container -->
-
-    <footer class="footer">
-      <div class="container">
-        <p class="text-muted">Familielejr &copy; 2017</p>
+      <div class="photoalbumhor-full" ng-show="mainImageObj.orientation == 0">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-responsive" src="{{mainImage}}">
+        </a>
       </div>
-    </footer>
+      <div class="photoalbumver-full" ng-show="mainImageObj.orientation == 1">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-vertical-full" src="{{mainImage}}">
+        </a>
+      </div>
+      <div class="previmage-full">
+        <h1 class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></h1>
+      </div>
+      <div class="nextimage-full">
+        <h1 class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></h1>
+      </div>
+                
+    </div><!-- ng-controller -->
 
 
     <!-- Bootstrap core JavaScript
@@ -47,28 +56,8 @@
     <script src="js/libs/bower_components/angular-route/angular-route.min.js"></script>
     <script src="js/libs/bower_components/lodash/dist/lodash.min.js"></script>
     <script src="js/libs/bower_components/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
-    <script src="js/libs/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
-    <script src="js/libs/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
-    <!-- <script src="js/libs/galleria/galleria-1.5.7.min.js"></script> -->
     <script src="app.js"></script>
     <script src="services.js"></script>
-    <!-- <script src="controllers/navbar.controller.js"></script> -->
-    <script src="controllers/root.controller.js"></script>
-    <script src="controllers/home.controller.js"></script>
-    <script src="controllers/login.controller.js"></script>
-    <script src="controllers/users.controller.js"></script>
-    <script src="controllers/content.controller.js"></script>
-    <script src="controllers/familytree.controller.js"></script>
-    <script src="controllers/campmap.controller.js"></script>
     <script src="controllers/photo.controller.js"></script>
-    <script src="controllers/about.controller.js"></script>
-    <script src="controllers/logout.controller.js"></script>
-    <script src="controllers/eventreg.controller.js"></script>
-    <script src="controllers/invitation.controller.js"></script>
-    <script src="controllers/futurecamps.controller.js"></script>
-    <script src="controllers/todolist.controller.js"></script>
-    <script src="controllers/finances.controller.js"></script>
-    <script src="controllers/game.controller.js"></script>
-    <!-- <script src="controllers/galleria.controller.js"></script> -->
   </body>
 </html>

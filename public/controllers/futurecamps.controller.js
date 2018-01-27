@@ -314,7 +314,7 @@ angular.module('familielejr')
     };
     
     $scope.removeOrganizer = function(orgNum) {
-        console.log("Entering removeOrganizer. numOrgLines: "+$scope.numOrgLines);
+        // console.log("Entering removeOrganizer. numOrgLines: "+$scope.numOrgLines);
         for (var i=orgNum; i<$scope.numOrgLines; i++) {
             $scope.organizers[i] = $scope.organizers[i+1];
         };

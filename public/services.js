@@ -1,4 +1,6 @@
-angular.module('familielejr').factory('AuthService',
+angular.module('familielejr')
+
+.factory('AuthService',
 ['$q', '$timeout', '$http',
 function ($q, $timeout, $http) {
 
@@ -58,4 +60,66 @@ function ($q, $timeout, $http) {
         });
     };
 
-}]);
+}])
+
+.factory('ProfileService',[function() {
+    return({
+        countries: countries,
+        floors: floors,
+        directions: directions
+    });
+
+    function countries() {
+        return [
+            {"name": "Danmark"},
+            {"name": "Sverige"},
+            {"name": "Tyskland"},
+            {"name": "Norge"},
+            {"name": "Finland"},
+            {"name": "Holland"},
+            {"name": "Belgien"},
+            {"name": "Spanien"},
+            {"name": "Italien"},
+            {"name": "Frankrig"},
+            {"name": "Grækenland"},
+            {"name": "Polen"},
+            {"name": "UK"},
+            {"name": "Irland"},
+            {"name": "Syd-Sudan"},
+            {"name": "Langtbortistan"},
+            {"name": "Jylland"},
+            {"name": "USA"},
+            {"name": "Statsløs"}
+        ];
+    };
+
+    function floors() {
+        return [
+            {"floor": "st."},
+            {"floor": "1."},
+            {"floor": "2."},
+            {"floor": "3."},
+            {"floor": "4."},
+            {"floor": "5."},
+            {"floor": "6."},
+            {"floor": "7."},
+            {"floor": "8."},
+            {"floor": "9."},
+            {"floor": "10."},
+            {"floor": "11."},
+            {"floor": "12."},
+            {"floor": "13."},
+            {"floor": "14."},
+            {"floor": "15."}
+        ];
+    }
+
+    function directions() {
+        return [
+            {"dir": "th."},
+            {"dir": "tv."},
+            {"dir": "mf."}
+        ];
+    };
+    
+}])

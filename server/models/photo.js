@@ -21,6 +21,9 @@ var PhotoSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  orientation: {
+    type: Number
+  },
   uploader: {
     type: String
   },

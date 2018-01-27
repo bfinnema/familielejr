@@ -29,6 +29,7 @@ router.post('/upload', authenticate, (req, res) => {
         filetype: req.body.filetype,
         path: 'images/' + req.body.year + '/',
         uploader: uploader,
+        orientation: req.body.orientation,
         imagetext: [
           {
             textobj: {

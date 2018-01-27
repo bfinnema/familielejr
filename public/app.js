@@ -100,31 +100,6 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'familytreeslCtrl',
             access: {restricted: true}
         }).
-        when('/familytreechristian', {
-            templateUrl: 'views/familytreechristian.view.html',
-            controller: 'familytreeCtrl',
-            access: {restricted: true}
-        }).
-        when('/familytreedodde', {
-            templateUrl: 'views/familytreedodde.view.html',
-            controller: 'familytreeCtrl',
-            access: {restricted: true}
-        }).
-        when('/familytreegrethe', {
-            templateUrl: 'views/familytreegrethe.view.html',
-            controller: 'familytreeCtrl',
-            access: {restricted: true}
-        }).
-        when('/familytreeinger', {
-            templateUrl: 'views/familytreeinger.view.html',
-            controller: 'familytreeCtrl',
-            access: {restricted: true}
-        }).
-        when('/familytreehans', {
-            templateUrl: 'views/familytreehans.view.html',
-            controller: 'familytreeCtrl',
-            access: {restricted: true}
-        }).
         when('/about', {
             templateUrl: 'views/about.view.html',
             controller: 'aboutCtrl',

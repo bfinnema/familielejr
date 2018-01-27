@@ -54,7 +54,8 @@ angular.module('familielejr')
                                 filename: file.name,
                                 filetype: file.type,
                                 user: localStorage.familielejrUserId,
-                                text: picturetext
+                                text: picturetext,
+                                orientation: 0
                             }
                         }).then(function(response) {
                             // console.log(`Status: ${response.status}`);
@@ -107,7 +108,6 @@ angular.module('familielejr')
 
                 for (x=0; x<$scope.images.length; x++) {
                     $scope.images[x].num = x;
-                    // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
                 };
 
             };
@@ -145,6 +145,7 @@ angular.module('familielejr')
         };
     });
 
+    $scope.orientation = 0;
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
     //console.log(`Photos from year ${$scope.year}`)
@@ -165,11 +166,16 @@ angular.module('familielejr')
             $scope.imagesExist = true;
             // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
             $scope.mainImageObj = $scope.images[0];
+            $scope.orientation = $scope.mainImageObj.orientation;
             getImage(0);
             
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+                console.log(`orientation: ${$scope.images[x].orientation}`);
+                if (!$scope.images[x].orientation) {
+                    $scope.images[x].orientation = 0;
+                };
+                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
             };
         };
     }, function errorCallback(response) {
@@ -308,6 +314,7 @@ angular.module('familielejr')
         };
     });
 
+    $scope.orientation = 0;
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
     //console.log(`Photos from year ${$scope.year}`)
@@ -339,7 +346,11 @@ angular.module('familielejr')
             getImage(0);
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}`);
+                console.log(`orientation: ${$scope.images[x].orientation}`);
+                if (!$scope.images[x].orientation) {
+                    $scope.images[x].orientation = 0;
+                };
+                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
             };
         };
     }, function errorCallback(response) {

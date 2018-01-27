@@ -112,7 +112,7 @@
         <h2 class="form-signin-heading">Registrering</h2>
         <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
         <div class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
                 <label for="inputEmail">Email adresse</label>
                 <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required autofocus>
                 <i ng-show="formRegister.inputEmail.$error.email">Indtast korrekt email format. </i>
@@ -127,8 +127,8 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-3">
-                <label>Hemmelighed</label>
+            <div class="form-group col-md-4">
+                <label>Hemmelighed (du har modtaget den i et email)</label>
                 <input type="text" class="form-control" ng-model="secret" name="secret" placeholder="Hemmelighed" required>
                 <i ng-show="formRegister.secret.$error.required">Skal indtastes. </i>
             </div>

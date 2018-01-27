@@ -1,0 +1,16 @@
+<div ng-show="mainImageObj.orientation == 0">
+    <a href="{{mainImage}}" target="_blank">
+        <img class="img-responsive" src="{{mainImage}}">
+    </a>
+</div>
+<div class="photoalbumver-full" ng-show="mainImageObj.orientation == 1">
+    <a href="{{mainImage}}" target="_blank">
+        <img class="img-vertical-full" src="{{mainImage}}">
+    </a>
+</div>
+<div class="previmage-full">
+    <h1 class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></h1>
+</div>
+<div class="nextimage-full">
+    <h1 class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></h1>
+</div>

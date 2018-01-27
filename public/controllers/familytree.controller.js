@@ -13,6 +13,7 @@ angular.module('familielejr')
     $scope.addNamesForm = false;
     $scope.editNamesForm = false;
     $scope.famIdBases = [0, 10, 200, 3000, 40000, 500000];
+    $scope.nameArr = [0,1,2,3];
 
     $http({
         method: 'GET',
@@ -52,9 +53,6 @@ angular.module('familielejr')
     $scope.BtnShow = [false,true,false,false];
     $scope.newnameShow = [true,false,false,false];
     var numLines = 0;
-    // console.log(`BtnShow: ${$scope.BtnShow}`);
-    // console.log(`newnameShow: ${$scope.newnameShow}`);
-    // console.log(`addNamesForm: ${$scope.addNamesForm}`);
 
     $scope.addFamily = function(level, parent_id) {
         if ($scope.addNamesForm) {
@@ -120,11 +118,6 @@ angular.module('familielejr')
                 if (family.persons[i].pass != null) {$scope.passdate[i] = new Date(family.persons[i].pass);};
                 // console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
             };
-/* 
-            console.log(`BtnShow: ${$scope.BtnShow}`);
-            console.log(`newnameShow: ${$scope.newnameShow}`);
-            console.log(`editNamesForm: ${$scope.editNamesForm}`);
- */            
             numLines -= 1; $scope.numLines = numLines;
         };
     };
@@ -133,7 +126,7 @@ angular.module('familielejr')
         // console.log("Entering showline. numLines: "+numLines);
         if ($scope.firstname[numLines]) {
             // console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
-            numLines = numLines + 1;
+            numLines = numLines + 1; $scope.numLines = numLines;
             $scope.newnameShow[numLines] = true;
             $scope.BtnShow[numLines] = false;
             $scope.BtnShow[numLines+1] = true;
@@ -143,24 +136,33 @@ angular.module('familielejr')
         };
     };
 
+    $scope.removeLine = function(nameNum) {
+        for (var i=nameNum; i<$scope.numLines; i++) {
+            $scope.firstname[i] = $scope.firstname[i+1];
+            $scope.middlename[i] = $scope.middlename[i+1];
+            $scope.surname[i] = $scope.surname[i+1];
+            $scope.birth[i] = $scope.birth[i+1];
+            $scope.passdate[i] = $scope.passdate[i+1];
+        };
+        $scope.firstname[numLines] = "";
+        $scope.middlename[numLines] = "";
+        $scope.surname[numLines] = "";
+        $scope.birth[numLines] = null;
+        $scope.passdate[numLines] = null;
+        $scope.newnameShow[numLines] = false;
+        $scope.BtnShow[numLines] = true;
+        $scope.BtnShow[numLines+1] = false;
+        numLines -= 1; $scope.numLines = numLines;
+    };
+
     $scope.addOrEditNames = function() {
         if ($scope.addNamesForm) {addNames();} else {editNames();};
     };
     
     addNames = function() {
         // console.log(`Entering addNames. numLines: ${numLines}`);
-        var persons = [];
-        for (i=0; i<numLines+1; i++) {
-            persons.push(
-                {
-                    firstname: $scope.firstname[i],
-                    middlename: $scope.middlename[i],
-                    surname: $scope.surname[i],
-                    birth: $scope.birth[i],
-                    pass: $scope.passdate[i]
-                }
-            );
-        };
+        var persons = personArr(numLines);
+        console.log(`Persons: ${persons}`);
 
         var data = {
             _family_id: $scope.newFamilyId,
@@ -184,19 +186,8 @@ angular.module('familielejr')
 
     editNames = function() {
         // console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
-        var persons = [];
-        for (i=0; i<numLines+1; i++) {
-            persons.push(
-                {
-                    firstname: $scope.firstname[i],
-                    middlename: $scope.middlename[i],
-                    surname: $scope.surname[i],
-                    birth: $scope.birth[i],
-                    pass: $scope.passdate[i]
-                }
-            );
-        };
-        console.log(`Firstname: ${persons[0].firstname}`);
+        var persons = personArr(numLines);
+        console.log(`Persons: ${persons}`);
 
         var data = {
             level: $scope.editAtLevel,
@@ -248,6 +239,28 @@ angular.module('familielejr')
             });
         };
     };
+
+    function personArr(nl) {
+        var persons = [];
+        for (i=0; i<nl+1; i++) {
+            person = {
+                firstname: $scope.firstname[i],
+                middlename: $scope.middlename[i],
+                surname: $scope.surname[i],
+                birth: $scope.birth[i],
+                pass: $scope.passdate[i]
+            };
+            if (i == nl) {
+                if ($scope.firstname[i] != '' || $scope.surname[i] != '') {
+                    persons.push(person);
+                };
+            } else {
+                persons.push(person);
+            };
+        };
+        return persons;
+    };
+
 }])
 
 .controller('familytreeslCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
@@ -265,6 +278,7 @@ angular.module('familielejr')
     $scope.L3Familytree = [];
     $scope.showL3Family = 0;
     $scope.famIdBases = [0, 10, 200, 3000, 40000, 500000];
+    $scope.nameArr = [0,1,2,3];
     
     $http({
         method: 'GET',
@@ -289,7 +303,7 @@ angular.module('familielejr')
     });
 
     initForms();
-    var numLines = 0;
+    var numLines = 0; $scope.numLines = 0;
 
     $scope.addFamily = function(level, parent_id, tree_id) {
         if ($scope.addNamesForm) {
@@ -499,7 +513,7 @@ angular.module('familielejr')
         // console.log("Entering showline. numLines: "+numLines);
         if ($scope.firstname[numLines]) {
             // console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
-            numLines = numLines + 1;
+            numLines = numLines + 1; $scope.numLines = numLines;
             $scope.newnameShow[numLines] = true;
             $scope.BtnShow[numLines] = false;
             $scope.BtnShow[numLines+1] = true;
@@ -509,24 +523,33 @@ angular.module('familielejr')
         };
     };
 
+    $scope.removeLine = function(nameNum) {
+        for (var i=nameNum; i<$scope.numLines; i++) {
+            $scope.firstname[i] = $scope.firstname[i+1];
+            $scope.middlename[i] = $scope.middlename[i+1];
+            $scope.surname[i] = $scope.surname[i+1];
+            $scope.birth[i] = $scope.birth[i+1];
+            $scope.passdate[i] = $scope.passdate[i+1];
+        };
+        $scope.firstname[numLines] = "";
+        $scope.middlename[numLines] = "";
+        $scope.surname[numLines] = "";
+        $scope.birth[numLines] = null;
+        $scope.passdate[numLines] = null;
+        $scope.newnameShow[numLines] = false;
+        $scope.BtnShow[numLines] = true;
+        $scope.BtnShow[numLines+1] = false;
+        numLines -= 1; $scope.numLines = numLines;
+    };
+
     $scope.addOrEditNames = function() {
         if ($scope.addNamesForm) {addNames();} else {editNames();};
     };
     
     addNames = function() {
         // console.log(`Entering addNames. numLines: ${numLines}, addAtLevel: ${$scope.addAtLevel}`);
-        var persons = [];
-        for (i=0; i<numLines+1; i++) {
-            persons.push(
-                {
-                    firstname: $scope.firstname[i],
-                    middlename: $scope.middlename[i],
-                    surname: $scope.surname[i],
-                    birth: $scope.birth[i],
-                    pass: $scope.passdate[i]
-                }
-            );
-        };
+        var persons = personArr(numLines);
+        console.log(`Persons: ${persons}`);
 
         if ($scope.addAtLevel == 1 || $scope.addAtLevel == 4) {
             // console.log(`Add at level 4`);
@@ -606,18 +629,8 @@ angular.module('familielejr')
 
     editNames = function() {
         // console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
-        var persons = [];
-        for (i=0; i<numLines+1; i++) {
-            persons.push(
-                {
-                    firstname: $scope.firstname[i],
-                    middlename: $scope.middlename[i],
-                    surname: $scope.surname[i],
-                    birth: $scope.birth[i],
-                    pass: $scope.passdate[i]
-                }
-            );
-        };
+        var persons = personArr(numLines);
+        console.log(`Persons: ${persons}`);
 
         var data = {
             level: $scope.editAtLevel,
@@ -737,6 +750,27 @@ angular.module('familielejr')
                 });
             };
         };
+    };
+
+    function personArr(nl) {
+        var persons = [];
+        for (i=0; i<nl+1; i++) {
+            person = {
+                firstname: $scope.firstname[i],
+                middlename: $scope.middlename[i],
+                surname: $scope.surname[i],
+                birth: $scope.birth[i],
+                pass: $scope.passdate[i]
+            };
+            if (i == nl) {
+                if ($scope.firstname[i] != '' || $scope.surname[i] != '') {
+                    persons.push(person);
+                };
+            } else {
+                persons.push(person);
+            };
+        };
+        return persons;
     };
 
     function initForms() {

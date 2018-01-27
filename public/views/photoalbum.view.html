@@ -107,22 +107,21 @@
     <h1>Billeder, {{ year }}. Antal: {{ images.length }}</h1>
 </div>
 <div ng-show="imagesExist">
-    <div class="row">
-        <img class="img-responsive" src="{{mainImage}}">
+    <div class="photoalbumhor" ng-show="mainImageObj.orientation == 0">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-horizontal" src="{{mainImage}}">
+        </a>
     </div>
-    <div class="row">
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></span>
-        </div>
-        <div class="col-md-4">
-        </div>
-        <div class="col-md-1">
-            <span class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></span>
-        </div>
-        <div class="col-md-3">
-        </div>
+    <div class="photoalbumver" ng-show="mainImageObj.orientation == 1">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-vertical" src="{{mainImage}}">
+        </a>
+    </div>
+    <div class="previmage">
+        <h2 class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></h2>
+    </div>
+    <div class="nextimage">
+        <h2 class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></h2>
     </div>
     <div class="row">
         <h3>Uploaded af {{mainImageObj.uploader}}</h3>
@@ -153,12 +152,15 @@
     <br>
     <div class="row">
         <div ng-repeat="image in images">
-            <div class="col-md-1" ng-show="image.signedRequest">
+            <div class="col-md-1" ng-show="image.signedRequest && image.orientation == 0">
+                <img class="img-thumbnail" ng-src="{{image.signedRequest}}" ng-click="setImage(image)">
+            </div>
+            <div class="col-md-1" style="transform: rotate(90deg);" ng-show="image.signedRequest && image.orientation == 1">
                 <img class="img-thumbnail" ng-src="{{image.signedRequest}}" ng-click="setImage(image)">
             </div>
         </div>
     </div>
-    
+    <br>
 </div>
 <div ng-show="!imagesExist">
     <h3>Der er ikke nogen billeder fra {{ year }} endnu.<a href="#!photoupload"> Har du nogen at lægge op?</a></h3>

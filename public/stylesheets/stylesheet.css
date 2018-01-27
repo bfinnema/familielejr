@@ -19,7 +19,6 @@
 form .progress {
     line-height: 30px;
 }
-}
 
 .progress {
     display: inline-block;
@@ -31,4 +30,77 @@ form .progress {
     font-size: smaller;
     background: steelblue;
     width: 0;
+}
+
+.photoalbumhor {
+    max-width: 1200px;
+    height: 650px;
+}
+
+.photoalbumver {
+    max-width: 1200px;
+    height: 620px;
+    transform: rotate(90deg);
+}
+
+.img-horizontal {
+    height: 600px;
+}
+
+.img-vertical {
+    width: 50%;
+    position: absolute;
+    top: 20px;
+    left: 270px;
+}
+
+.img-horizontal-full {
+    height: 750px;
+}
+
+.img-vertical-full {
+    max-height: 700px;
+}
+
+.previmage {
+    position: absolute;
+    top: 300px;
+    left: 5%;
+    color: rgb(10, 121, 20);
+}
+
+.nextimage {
+    position: absolute;
+    top: 300px;
+    right: 5%;
+    color: rgb(10, 121, 20);
+}
+
+.galleria {
+    max-width: 1200px;
+    height: 600px;
+    background: #000;
+}
+
+.photoalbumhor-full {
+    max-width: 1400px;
+    height: 750px;
+}
+
+.photoalbumver-full {
+    transform: rotate(90deg);
+}
+
+.previmage-full {
+    position: absolute;
+    top: 40%;
+    left: 5%;
+    color: rgb(10, 121, 20);
+}
+
+.nextimage-full {
+    position: absolute;
+    top: 40%;
+    right: 5%;
+    color: rgb(10, 121, 20);
 }

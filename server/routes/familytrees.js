@@ -77,7 +77,7 @@ router.get('/parent/:parent_id', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  console.log(`id: ${id}`);
+  // console.log(`id: ${id}`);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();

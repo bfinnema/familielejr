@@ -1,53 +1,11 @@
 angular.module('familielejr')
 
-.controller('registerCtrl', ['$scope', '$http', '$location', 'AuthService', function($scope, $http, $location, AuthService) {
-    
-    $scope.countries = [
-        {"name": "Danmark"},
-        {"name": "Sverige"},
-        {"name": "Tyskland"},
-        {"name": "Norge"},
-        {"name": "Finland"},
-        {"name": "Holland"},
-        {"name": "Belgien"},
-        {"name": "Spanien"},
-        {"name": "Italien"},
-        {"name": "Frankrig"},
-        {"name": "Grækenland"},
-        {"name": "Polen"},
-        {"name": "UK"},
-        {"name": "Irland"},
-        {"name": "Syd-Sudan"},
-        {"name": "Langtbortistan"},
-        {"name": "Jylland"},
-        {"name": "USA"},
-        {"name": "Statsløs"}
-    ];
-    
-    $scope.directions = [
-        {"dir": "th."},
-        {"dir": "tv."},
-        {"dir": "mf."}
-    ];
-    
-    $scope.floors = [
-        {"floor": "st."},
-        {"floor": "1."},
-        {"floor": "2."},
-        {"floor": "3."},
-        {"floor": "4."},
-        {"floor": "5."},
-        {"floor": "6."},
-        {"floor": "7."},
-        {"floor": "8."},
-        {"floor": "9."},
-        {"floor": "10."},
-        {"floor": "11."},
-        {"floor": "12."},
-        {"floor": "13."},
-        {"floor": "14."},
-        {"floor": "15."}
-    ];
+.controller('registerCtrl', ['$scope', '$http', '$location', 'AuthService', 'ProfileService', 
+function($scope, $http, $location, AuthService, ProfileService) {
+
+    $scope.countries = ProfileService.countries();
+    $scope.floors = ProfileService.floors();
+    $scope.directions = ProfileService.directions();
 
     $scope.maxUserCount = 100;
     $scope.registrationAllowed = false;
@@ -109,54 +67,12 @@ angular.module('familielejr')
 
 }])
 
-.controller('profileCtrl', ['$scope', '$http', '$location', '$route', 'AuthService', function($scope, $http, $location, $route, AuthService) {
+.controller('profileCtrl', ['$scope', '$http', '$location', '$route', 'AuthService', 'ProfileService', 
+function($scope, $http, $location, $route, AuthService, ProfileService) {
 
-    $scope.countries = [
-        {"name": "Danmark"},
-        {"name": "Sverige"},
-        {"name": "Tyskland"},
-        {"name": "Norge"},
-        {"name": "Finland"},
-        {"name": "Holland"},
-        {"name": "Belgien"},
-        {"name": "Spanien"},
-        {"name": "Italien"},
-        {"name": "Frankrig"},
-        {"name": "Grækenland"},
-        {"name": "Polen"},
-        {"name": "UK"},
-        {"name": "Irland"},
-        {"name": "Syd-Sudan"},
-        {"name": "Langtbortistan"},
-        {"name": "Jylland"},
-        {"name": "USA"},
-        {"name": "Statsløs"}
-    ];
-    
-    $scope.directions = [
-        {"dir": "th."},
-        {"dir": "tv."},
-        {"dir": "mf."}
-    ];
-    
-    $scope.floors = [
-        {"floor": "st."},
-        {"floor": "1."},
-        {"floor": "2."},
-        {"floor": "3."},
-        {"floor": "4."},
-        {"floor": "5."},
-        {"floor": "6."},
-        {"floor": "7."},
-        {"floor": "8."},
-        {"floor": "9."},
-        {"floor": "10."},
-        {"floor": "11."},
-        {"floor": "12."},
-        {"floor": "13."},
-        {"floor": "14."},
-        {"floor": "15."}
-    ];
+    $scope.countries = ProfileService.countries();
+    $scope.floors = ProfileService.floors();
+    $scope.directions = ProfileService.directions();
 
     $scope.isLoggedIn = false;
     $scope.editProfile = false;
@@ -317,6 +233,11 @@ angular.module('familielejr')
                 $scope.allEmails += ", ";
             };
         };
+
+        // console.log($scope.users);
+        // $scope.users.sort(function(a,b) {a.email - b.email});
+        // console.log($scope.users);
+
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });
