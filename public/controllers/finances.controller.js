@@ -10,4 +10,9 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#finances' ) ).addClass('active');
+    }, 1000);
+
 }]);

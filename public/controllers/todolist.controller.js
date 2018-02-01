@@ -10,6 +10,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#todolist' ) ).addClass('active');
+    }, 1000);
+
     $scope.categories = [
         {"category": "Lejren"},
         {"category": "Invitation"},

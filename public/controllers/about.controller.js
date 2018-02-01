@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('aboutCtrl', ['$scope', '$http', '$location', 'AuthService', function($scope, $http, $location, AuthService) {
+.controller('aboutCtrl', ['$scope', 'AuthService', function($scope, AuthService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -9,5 +9,9 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
-    
+
+    setTimeout(function(){
+        angular.element(document.querySelector( '#about' ) ).addClass('active');
+    }, 1000);
+
 }]);

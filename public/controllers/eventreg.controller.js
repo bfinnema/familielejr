@@ -10,6 +10,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#nextcamp' ) ).addClass('active');
+        angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
+    }, 1000);
+
     var currentyear = (new Date()).getFullYear();
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
@@ -20,7 +25,7 @@ angular.module('familielejr')
         invyear += 1;
         pastyear += 1;
     };
-    console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    // console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
     $scope.invitationyear = invyear;
 
     $scope.agegroups = [
@@ -123,6 +128,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#nextcamp' ) ).addClass('active');
+        angular.element(document.querySelector( '#eventregall' ) ).addClass('active');
+    }, 1000);
+
     var currentyear = (new Date()).getFullYear();
     var now = new Date();
     var demarc = new Date(currentyear,8,1);
@@ -222,7 +232,7 @@ angular.module('familielejr')
                     $scope.saturday[ag] += 1;
                 };
             };
-        }
+        };
 /* 
         console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
         console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);

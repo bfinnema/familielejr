@@ -29,12 +29,14 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
         if (response.data) {
             $scope.camps = response.data;
         } else {
             console.log('No future camps');
         };
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#futurecamps' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
@@ -295,6 +297,8 @@ angular.module('familielejr')
         } else {
             console.log('Camp not found');
         };
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#futurecamps' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
@@ -462,6 +466,8 @@ angular.module('familielejr')
         } else {
             console.log('Camp not found');
         };
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#futurecamps' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });

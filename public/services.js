@@ -85,11 +85,13 @@ function ($q, $timeout, $http) {
             {"name": "Polen"},
             {"name": "UK"},
             {"name": "Irland"},
+            {"name": "Brasilien"},
             {"name": "Syd-Sudan"},
             {"name": "Langtbortistan"},
             {"name": "Jylland"},
             {"name": "USA"},
-            {"name": "Statsløs"}
+            {"name": "Statsløs"},
+            {"name": "Lorteland!"}
         ];
     };
 
@@ -110,7 +112,8 @@ function ($q, $timeout, $http) {
             {"floor": "12."},
             {"floor": "13."},
             {"floor": "14."},
-            {"floor": "15."}
+            {"floor": "15."},
+            {"floor": "Højt oppe"}
         ];
     }
 

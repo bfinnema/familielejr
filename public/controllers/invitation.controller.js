@@ -10,6 +10,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
+    }, 1000);
+
     var invyear = (new Date()).getFullYear();
     var now = new Date();
     var demarc = new Date(invyear,8,1);
@@ -28,8 +33,8 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success, invitation fetched. Status: ${response.status}`);
-        console.log(response.data);
+        // console.log(`Success, invitation fetched. Status: ${response.status}`);
+        // console.log(response.data);
         if (response.data) {
             // console.log(response.data.enddate, response.data.startdate);
             invitationExists = true;
@@ -49,7 +54,7 @@ angular.module('familielejr')
             $scope.organizerBtnShow = [false,true,false,false,false];
             $scope.organizerShow = [true,false,false,false,false];
             $scope.numOrgLines = $scope.invitation.organizers.length;
-            console.log(`numOrgLines: ${$scope.numOrgLines}`);
+            // console.log(`numOrgLines: ${$scope.numOrgLines}`);
             for (var i=0; i<$scope.numOrgLines; i++) {
                 $scope.organizerShow[i] = true;
                 $scope.organizerBtnShow[i] = false;
@@ -57,7 +62,7 @@ angular.module('familielejr')
                 $scope.organizers[i] = $scope.invitation.organizers[i].name;
             };
             if ($scope.numOrgLines > 0) {$scope.numOrgLines -= 1;};
-            console.log(`numOrgLines: ${$scope.numOrgLines}`);
+            // console.log(`numOrgLines: ${$scope.numOrgLines}`);
 
         } else {
             console.log('Invitation does not exist');
@@ -91,14 +96,13 @@ angular.module('familielejr')
                     };
 
                     if ($scope.numOrgLines > 0) {$scope.numOrgLines -= 1;};
-                    console.log(`numOrgLines: ${$scope.numOrgLines}`);
+                    // console.log(`numOrgLines: ${$scope.numOrgLines}`);
                 } else {
                     console.log('Camp not found');
                 };
             }, function errorCallback(response) {
                 console.log(`Error, camp does not exist. Status: ${response.status}`);
             });
-            
         };
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
@@ -107,7 +111,7 @@ angular.module('familielejr')
     $scope.showOrgLine = function() {
         console.log("Entering showOrgline. numOrgLines: "+$scope.numOrgLines);
         if ($scope.organizers[$scope.numOrgLines]) {
-            console.log("numOrgLines: "+$scope.numOrgLines+", Organizer: "+$scope.organizers[$scope.numOrgLines]);
+            // console.log("numOrgLines: "+$scope.numOrgLines+", Organizer: "+$scope.organizers[$scope.numOrgLines]);
             $scope.numOrgLines = $scope.numOrgLines + 1;
             $scope.organizerShow[$scope.numOrgLines] = true;
             $scope.organizerBtnShow[$scope.numOrgLines] = false;
@@ -227,6 +231,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#nextcamp' ) ).addClass('active');
+        angular.element(document.querySelector( '#nextcampinfo' ) ).addClass('active');
+    }, 1000);
+
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"];
 
@@ -252,7 +261,7 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
         if (response.data) {
             invitationExists = true;
             $scope.invitationExists = invitationExists;
@@ -271,7 +280,7 @@ angular.module('familielejr')
             $scope.deadlinemonth = months[dl.getMonth()];
 
             var encodedAddress = encodeURIComponent($scope.invitation.address.street+" "+$scope.invitation.address.zip+" "+$scope.invitation.address.town+" Denmark");
-            console.log(encodedAddress);
+            // console.log(encodedAddress);
             $http({
                 method: 'GET',
                 url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`

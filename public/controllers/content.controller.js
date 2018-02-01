@@ -11,4 +11,8 @@ angular.module('familielejr')
         };
     });
     
+    setTimeout(function(){
+        angular.element(document.querySelector( '#contact' ) ).addClass('active');
+    }, 1000);
+
 }]);

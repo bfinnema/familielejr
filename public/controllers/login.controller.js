@@ -21,4 +21,6 @@ angular.module('familielejr')
 
     };
 
+    angular.element(document.querySelector( '#login' ) ).addClass('active');
+
 }]);

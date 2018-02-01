@@ -149,6 +149,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photouploadCtrl',
             access: {restricted: true}
         }).
+        when('/imagetest', {
+            templateUrl: 'views/imagetest.view.html',
+            controller: 'imagetestCtrl',
+            access: {restricted: true}
+        }).
         when('/content', {
             templateUrl: 'views/content.view.html',
             controller: 'contentCtrl',

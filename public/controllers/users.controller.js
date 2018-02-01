@@ -22,6 +22,7 @@ function($scope, $http, $location, AuthService, ProfileService) {
         } else {
             console.log("Too many users. You cannot register");
         };
+        angular.element(document.querySelector( '#register' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Users count Status: ${response.status}`);
     });
@@ -90,8 +91,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
             'x-auth': token
         }
     }).then(function(response) {
-        console.log(`profileUserStatus: ${response.status}`);
-        console.log(response.data._id, response.data.email);
+        // console.log(`profileUserStatus: ${response.status}`);
+        // console.log(response.data._id, response.data.email);
         if (response.data._id === localStorage.familielejrUserId) {
             $scope.isLoggedIn = true;
             $scope.user = response.data;
@@ -101,6 +102,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         } else {
             alert('Something fishy...');
         };
+        angular.element(document.querySelector( '#myprofile' ) ).addClass('active');
+        angular.element(document.querySelector( '#myaccount' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });
@@ -168,6 +171,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
             $scope.isLoggedIn = true;
             $scope.role = AuthService.userRole();
         };
+        angular.element(document.querySelector( '#myaccount' ) ).addClass('active');
+        angular.element(document.querySelector( '#changepassword' ) ).addClass('active');
     });
 
     $scope.changePwd = function() {
@@ -238,6 +243,10 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         // $scope.users.sort(function(a,b) {a.email - b.email});
         // console.log($scope.users);
 
+        angular.element(document.querySelector( '#admin' ) ).addClass('active');
+        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+        angular.element(document.querySelector( '#usersorg' ) ).addClass('active');
+        angular.element(document.querySelector( '#usersadmin' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });
@@ -311,6 +320,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         // console.log(`UserStatus: ${response.status}`);
         $scope.user = response.data;
         // console.log(`User: ${$scope.user.email}`);
+        angular.element(document.querySelector( '#admin' ) ).addClass('active');
+        angular.element(document.querySelector( '#usersadmin' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });

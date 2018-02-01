@@ -10,6 +10,10 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#familytree' ) ).addClass('active');
+    }, 1000);
+
     $scope.addNamesForm = false;
     $scope.editNamesForm = false;
     $scope.famIdBases = [0, 10, 200, 3000, 40000, 500000];
@@ -272,6 +276,10 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
+
+    setTimeout(function(){
+        angular.element(document.querySelector( '#familytree' ) ).addClass('active');
+    }, 1000);
 
     var family_id = $routeParams._family_id;
     var level = 1;

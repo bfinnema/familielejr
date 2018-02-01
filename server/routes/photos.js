@@ -202,6 +202,27 @@ router.patch('/:id', authenticate, (req, res) => {
   });
 });
 
+router.patch('/orientation/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`Rotation: ${req.body.orientation}`);
+
+  if (!ObjectID.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  };
+
+  Photo.findOneAndUpdate({_id: id}, {$set: {'orientation': req.body.orientation}}).then((photo) => {
+    if (!photo) {
+      console.log(`Photo not found`);
+      return res.status(404).send();
+    }
+
+    res.json(photo);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
 router.get('/sign-s3', (req, res) => {
   const s3 = new aws.S3();
   const fileName = req.query['file_name'];

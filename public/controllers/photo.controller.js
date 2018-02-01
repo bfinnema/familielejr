@@ -1,9 +1,10 @@
 angular.module('familielejr')
 
-.controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', function ($scope, $http, $route, $window, $timeout, AuthService) {
+.controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', 
+function ($scope, $http, $route, $window, $timeout, AuthService) {
 
     var currentyear = (new Date()).getFullYear();
-    var firstyear = 1993
+    var firstyear = 1993;
     $scope.years = [];
 
     for (var y=firstyear; y<=currentyear; y++) {
@@ -17,6 +18,11 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
+
+    setTimeout(function(){
+        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+        angular.element(document.querySelector( '#photoupload' ) ).addClass('active');
+    }, 1000);
 
     $scope.errorMsg = '';
     $scope.successMsg = '';
@@ -63,7 +69,7 @@ angular.module('familielejr')
                             $scope.picFile = null;
                             $scope.picturetext = "";
                             $scope.errorMsg = "";
-                            $scope.successMsg = file.name + 'blev uploaded.'
+                            $scope.successMsg = file.name + ' blev uploaded.'
                             $scope.getUploadedPhotos();
                             // $route.reload();
                         }, function errorCallback(response) {
@@ -89,7 +95,7 @@ angular.module('familielejr')
     };
 
     $scope.getUploadedPhotos = function() {
-
+        // $scope.successMsg = '';
         $http({
             method: 'GET',
             url: '/photos/my/'+$scope.year,
@@ -97,7 +103,7 @@ angular.module('familielejr')
                 'x-auth': localStorage.userToken
             }
         }).then(function(response) {
-            console.log(`MyphotosStatus: ${response.status}`);
+            // console.log(`MyphotosStatus: ${response.status}`);
             $scope.images = response.data;
             if (!response.data[0]) {
                 // console.log('No photos for year '+$scope.year)
@@ -105,11 +111,9 @@ angular.module('familielejr')
             } else {
                 $scope.imagesExist = true;
                 // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
-
                 for (x=0; x<$scope.images.length; x++) {
                     $scope.images[x].num = x;
                 };
-
             };
             $scope.showImagesList = true;
         }, function errorCallback(response) {
@@ -131,6 +135,13 @@ angular.module('familielejr')
             };
         };
         if (!foundReplica) {$scope.imageReplica = false;};
+        console.log(`${file.name}, ${file.type}, ${file.size}, ${file}`);
+        var selectedFile = document.getElementById('fileSelected').files[0];
+        console.log(`${selectedFile}`);
+        console.log(`${document.getElementById("fileSelected").height}, ${document.getElementById("fileSelected").width}`);
+        var img = new Image();
+        // img.src = file;
+        // console.log(`Image 1 width: ${img.width}. Height: ${img.height}`);
     };
 
 }])
@@ -145,7 +156,15 @@ angular.module('familielejr')
         };
     });
 
-    $scope.orientation = 0;
+    setTimeout(function(){
+        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+    }, 1000);
+
+    $scope.innerWidth = window.innerWidth;
+    $scope.innerHeight = window.innerHeight;
+    detectClient();
+    $scope.screenSizeIndex = screenSizing();
+    // console.log(`Screen Size detected: ${$scope.screenSizeIndex}`);
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
     //console.log(`Photos from year ${$scope.year}`)
@@ -157,7 +176,7 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Status: ${response.status}`);
+        // console.log(`Status: ${response.status}`);
         $scope.images = response.data;
         if (!response.data[0]) {
             // console.log('No photos for year '+$scope.year)
@@ -166,17 +185,19 @@ angular.module('familielejr')
             $scope.imagesExist = true;
             // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
             $scope.mainImageObj = $scope.images[0];
-            $scope.orientation = $scope.mainImageObj.orientation;
             getImage(0);
             
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                console.log(`orientation: ${$scope.images[x].orientation}`);
+                // console.log(`orientation: ${$scope.images[x].orientation}`);
                 if (!$scope.images[x].orientation) {
                     $scope.images[x].orientation = 0;
                 };
-                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
             };
+            setTimeout(function(){
+                imageFormatting();
+            }, 500);
         };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
@@ -187,6 +208,9 @@ angular.module('familielejr')
         currentPhoto = image.num;
         $scope.mainImage = $scope.images[currentPhoto].signedRequest;
         $scope.mainImageObj = $scope.images[currentPhoto];
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
         // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
@@ -208,6 +232,9 @@ angular.module('familielejr')
         } else {
             getImage(currentPhoto);
         };
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
     // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
 
@@ -224,6 +251,9 @@ angular.module('familielejr')
         } else {
             getImage(currentPhoto);
         };
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
         // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
     };
 
@@ -278,8 +308,18 @@ angular.module('familielejr')
             data: {text: $scope.mycomment}
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
-            $location.path('/photoalbum/' + $scope.year);
-            $route.reload();
+            // $location.path('/photoalbum/' + $scope.year);
+            // $route.reload();
+            var newtextobj = {
+                textobj: {
+                    date: new Date(),
+                    contributor: 'Mit bidrag',
+                    text: $scope.mycomment
+                }
+            };
+            $scope.mainImageObj.imagetext.push(newtextobj);
+            console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
+            $scope.mycomment = '';
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -302,9 +342,175 @@ angular.module('familielejr')
             console.log(`Status: ${response.status}`);
         });
     };
+/* 
+    function imageSizing() {
+        var sizes = [
+            {screenHeight: 400, imageSize: "XXSMALL", divhc: "photoalbumhor-520", imghc: "img-horizontal-520", divvc: "photoalbumver-520", imgvc: "img-vertical-520"},
+            {screenHeight: 520, imageSize: "XSMALL", divhc: "photoalbumhor-680", imghc: "img-horizontal-680", divvc: "photoalbumver-680", imgvc: "img-vertical-680"},
+            {screenHeight: 680, imageSize: "SMALL", divhc: "photoalbumhor-780", imghc: "img-horizontal-780", divvc: "photoalbumver-780", imgvc: "img-vertical-780"},
+            {screenHeight: 780, imageSize: "MEDIUM", divhc: "photoalbumhor-930", imghc: "img-horizontal-930", divvc: "photoalbumver-930", imgvc: "img-vertical-930"},
+            {screenHeight: 930, imageSize: "LARGE", divhc: "photoalbumhor-1080", imghc: "img-horizontal-1080", divvc: "photoalbumver-1080", imgvc: "img-vertical-1080"},
+            {screenHeight: 1080, imageSize: "XLARGE", divhc: "photoalbumhor-1081", imghc: "img-horizontal-1081", divvc: "photoalbumver-1081", imgvc: "img-vertical-1081"}
+        ];
+        var imageSize = "XSMALL";
+        for (var s=0; s<sizes.length; s++) {
+            console.log(`imageSizing, innerHeight: ${window.innerHeight}, ${sizes[s].screenHeight}, ${sizes[s].imageSize}`);
+            if (window.innerHeight > sizes[s].screenHeight) {
+                imageSize = sizes[s].imageSize;
+                angular.element(document.querySelector('#photo-horizontal') ).addClass(sizes[s].divhc);
+                angular.element(document.querySelector('#img-horizontal1') ).addClass(sizes[s].imghc);
+                angular.element(document.querySelector('#photo-vertical') ).addClass(sizes[s].divvc);
+                angular.element(document.querySelector('#img-vertical1') ).addClass(sizes[s].imgvc);
+                console.log(`Bigger!`);
+            };
+        };
+        return imageSize;
+    };
+ */
+    function screenSizing() {
+        var screenSizes = [
+            {"screenHeight": 400},
+            {"screenHeight": 520},
+            {"screenHeight": 680},
+            {"screenHeight": 780},
+            {"screenHeight": 930},
+            {"screenHeight": 1080}
+        ];
+
+        var screenSizeIndex = 0;
+        for (var s=0; s<screenSizes.length; s++) {
+            // console.log(`screenSizing, innerHeight: ${window.innerHeight}, ${screenSizes[s].screenHeight}`);
+            if (window.innerHeight > screenSizes[s].screenHeight) {
+                screenSizeIndex = s;
+                // console.log(`Bigger!`);
+            };
+        };
+        // console.log(`screenSizeIndex: ${screenSizeIndex}`);
+        return screenSizeIndex;
+    };
+
+    function imageFormatting() {
+
+        var imageFormats = [
+            {"whRelation": 0.6},
+            {"whRelation": 1.3},
+            {"whRelation": 1.7}
+        ];
+
+        var classMapDivHor = [
+            ['div-horizontal-520-ver','div-horizontal-680-ver','div-horizontal-780-ver','div-horizontal-930-ver','div-horizontal-1080-ver','div-horizontal-1081-ver'],
+            ['div-horizontal-520-4-3','div-horizontal-680-4-3','div-horizontal-780-4-3','div-horizontal-930-4-3','div-horizontal-1080-4-3','div-horizontal-1081-4-3'],
+            ['div-horizontal-520-16-9','div-horizontal-680-16-9','div-horizontal-780-16-9','div-horizontal-930-16-9','div-horizontal-1080-16-9','div-horizontal-1081-16-9']
+        ];
+        var classMapImgHor = [
+            ['img-horizontal-520-ver','img-horizontal-680-ver','img-horizontal-780-ver','img-horizontal-930-ver','img-horizontal-1080-ver','img-horizontal-1081-ver'],
+            ['img-horizontal-520-4-3','img-horizontal-680-4-3','img-horizontal-780-4-3','img-horizontal-930-4-3','img-horizontal-1080-4-3','img-horizontal-1081-4-3'],
+            ['img-horizontal-520-16-9','img-horizontal-680-16-9','img-horizontal-780-16-9','img-horizontal-930-16-9','img-horizontal-1080-16-9','img-horizontal-1081-16-9']
+        ];
+
+        var classMapDivVer = [
+            ['div-vertical-520-ver','div-vertical-680-ver','div-vertical-780-ver','div-vertical-930-ver','div-vertical-1080-ver','div-vertical-1081-ver']
+        ];
+        var classMapImgVer = [
+            ['img-vertical-520-ver','img-vertical-680-ver','img-vertical-780-ver','img-vertical-930-ver','img-vertical-1080-ver','img-vertical-1081-ver']
+        ];
+
+        if ($scope.images[currentPhoto].orientation == 0) {
+            var imgWidth = document.getElementById("photo-img").naturalWidth;
+            var imgHeight = document.getElementById("photo-img").naturalHeight;
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            var imgWidth = document.getElementById("photo-img-ver").naturalWidth;
+            var imgHeight = document.getElementById("photo-img-ver").naturalHeight;
+        } else {
+
+        };
+        var whr = imgWidth/imgHeight;
+        // console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
+        $scope.imgWidth = imgWidth; $scope.imgHeight = imgHeight;
+
+        var imageFormatIndex = 0;
+        for (var f=0; f<imageFormats.length; f++) {
+            // console.log(`f: ${f}, imageFormat: ${imageFormats[f].whRelation}`);
+            if (whr > imageFormats[f].whRelation) {imageFormatIndex = f};
+        };
+
+        // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
+
+        if ($scope.images[currentPhoto].orientation == 0) {
+            // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
+        } else {
+
+        };
+    };
+
+    $scope.rotateImage = function(image, direction) {
+        var newOrientation = 0;
+        var rotation = false;
+        var rotAction = 'med uret'
+        if (direction == -1) {
+            if (image.orientation > 0) {
+                newOrientation = image.orientation + direction;
+                rotation = true;
+                rotAction = 'mod uret';
+                // console.log(`Rotate counter clockwise`);
+            } else {
+                $window.alert('Handlingen er pt ikke understøttet.');
+            };
+        } else {
+            if (image.orientation < 1) {
+                newOrientation = image.orientation + direction;
+                rotation = true;
+                // console.log(`Rotate clockwise`);
+            } else {
+                $window.alert('Handlingen er pt ikke understøttet.');
+            };
+        };
+
+        if (rotation) {
+            if ($window.confirm('Venligst bekræft at du vil rotere billedet '+rotAction)) {
+                $http({
+                    method: 'PATCH',
+                    url: '/photos/orientation/'+image._id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    },
+                    data: {orientation: newOrientation}
+                }).then(function(response) {
+                    // console.log(`Status: ${response.status}`);
+                    // $location.path('/photoalbum/' + $scope.year);
+                    // $route.reload();
+                    $scope.mainImageObj.orientation = newOrientation;
+                    imageFormatting();
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                });
+            };
+        };
+    };
+    
+    function detectClient() {
+        $scope.userClientFullDesc = navigator.userAgent;
+        console.log(navigator.userAgent);
+        if (navigator.userAgent.match(/Android/i)) {
+            $scope.userClient = "ANDROID";
+        } else if (navigator.userAgent.match(/iPhone/i)) {
+            $scope.userClient = "IPHONE";
+        } else if (navigator.userAgent.match(/iPad/i)) {
+            $scope.userClient = "IPAD";
+        } else {
+            $scope.userClient = "BROWSER";
+        };
+    };
 }])
 
-.controller('myphotoalbumCtrl', ['$scope', '$http', '$routeParams', '$window', '$location', '$route', 'AuthService', function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
+.controller('myphotoalbumCtrl', ['$scope', '$http', '$routeParams', '$window', '$location', '$route', 'AuthService', 
+function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -314,7 +520,16 @@ angular.module('familielejr')
         };
     });
 
-    $scope.orientation = 0;
+    setTimeout(function(){
+        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+        angular.element(document.querySelector( '#myphotos' ) ).addClass('active');
+    }, 1000);
+
+    $scope.innerWidth = window.innerWidth;
+    $scope.innerHeight = window.innerHeight;
+    detectClient();
+    $scope.screenSizeIndex = screenSizing();
+    // console.log(`Screen Size detected: ${$scope.screenSizeIndex}`);
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
     //console.log(`Photos from year ${$scope.year}`)
@@ -346,12 +561,15 @@ angular.module('familielejr')
             getImage(0);
             for (x=0; x<$scope.images.length; x++) {
                 $scope.images[x].num = x;
-                console.log(`orientation: ${$scope.images[x].orientation}`);
+                // console.log(`orientation: ${$scope.images[x].orientation}`);
                 if (!$scope.images[x].orientation) {
                     $scope.images[x].orientation = 0;
                 };
-                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
             };
+            setTimeout(function(){
+                imageFormatting();
+            }, 500);
         };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
@@ -361,6 +579,9 @@ angular.module('familielejr')
         currentPhoto = image.num;
         $scope.mainImage = $scope.images[currentPhoto].signedRequest;
         $scope.mainImageObj = $scope.images[currentPhoto];
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
         // console.log(`Current Photo: ${image.num}, ${image.filename}`);
 	};
 
@@ -377,6 +598,9 @@ angular.module('familielejr')
         } else {
             getImage(currentPhoto);
         };
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
     };
 
     $scope.prevImage = function() {
@@ -392,6 +616,9 @@ angular.module('familielejr')
         } else {
             getImage(currentPhoto);
         };
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
     };
 
     $scope.removeImage = function(image) {
@@ -442,7 +669,7 @@ angular.module('familielejr')
                             $location.path('/myphotoalbum');
                         };
  */
-                        $location.path('/myphotoalbum');
+                        $location.path('/myphotoalbum/'+image.year);
                         // $route.reload();
                     }, function errorCallback(response) {
                         console.log(`Status: ${response.status}`);
@@ -467,8 +694,18 @@ angular.module('familielejr')
             },
             data: {text: $scope.mycomment}
         }).then(function(response) {
-            $location.path('/photoalbum/' + $scope.year);
-            $route.reload();
+            // $location.path('/photoalbum/' + $scope.year);
+            // $route.reload();
+            var newtextobj = {
+                textobj: {
+                    date: new Date(),
+                    contributor: 'Mit bidrag',
+                    text: $scope.mycomment
+                }
+            };
+            $scope.mainImageObj.imagetext.push(newtextobj);
+            console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
+            $scope.mycomment = '';
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -491,6 +728,147 @@ angular.module('familielejr')
             console.log(`Status: ${response.status}`);
         });
     };
+
+    function screenSizing() {
+        var screenSizes = [
+            {"screenHeight": 400},
+            {"screenHeight": 520},
+            {"screenHeight": 680},
+            {"screenHeight": 780},
+            {"screenHeight": 930},
+            {"screenHeight": 1080}
+        ];
+
+        var screenSizeIndex = 0;
+        for (var s=0; s<screenSizes.length; s++) {
+            // console.log(`screenSizing, innerHeight: ${window.innerHeight}, ${screenSizes[s].screenHeight}`);
+            if (window.innerHeight > screenSizes[s].screenHeight) {
+                screenSizeIndex = s;
+                // console.log(`Bigger!`);
+            };
+        };
+        // console.log(`screenSizeIndex: ${screenSizeIndex}`);
+        return screenSizeIndex;
+    };
+
+    function imageFormatting() {
+
+        var imageFormats = [
+            {"whRelation": 0.6},
+            {"whRelation": 1.3},
+            {"whRelation": 1.7}
+        ];
+
+        var classMapDivHor = [
+            ['div-horizontal-520-ver','div-horizontal-680-ver','div-horizontal-780-ver','div-horizontal-930-ver','div-horizontal-1080-ver','div-horizontal-1081-ver'],
+            ['div-horizontal-520-4-3','div-horizontal-680-4-3','div-horizontal-780-4-3','div-horizontal-930-4-3','div-horizontal-1080-4-3','div-horizontal-1081-4-3'],
+            ['div-horizontal-520-16-9','div-horizontal-680-16-9','div-horizontal-780-16-9','div-horizontal-930-16-9','div-horizontal-1080-16-9','div-horizontal-1081-16-9']
+        ];
+        var classMapImgHor = [
+            ['img-horizontal-520-ver','img-horizontal-680-ver','img-horizontal-780-ver','img-horizontal-930-ver','img-horizontal-1080-ver','img-horizontal-1081-ver'],
+            ['img-horizontal-520-4-3','img-horizontal-680-4-3','img-horizontal-780-4-3','img-horizontal-930-4-3','img-horizontal-1080-4-3','img-horizontal-1081-4-3'],
+            ['img-horizontal-520-16-9','img-horizontal-680-16-9','img-horizontal-780-16-9','img-horizontal-930-16-9','img-horizontal-1080-16-9','img-horizontal-1081-16-9']
+        ];
+
+        var classMapDivVer = [
+            ['div-vertical-520-ver','div-vertical-680-ver','div-vertical-780-ver','div-vertical-930-ver','div-vertical-1080-ver','div-vertical-1081-ver']
+        ];
+        var classMapImgVer = [
+            ['img-vertical-520-ver','img-vertical-680-ver','img-vertical-780-ver','img-vertical-930-ver','img-vertical-1080-ver','img-vertical-1081-ver']
+        ];
+
+        if ($scope.images[currentPhoto].orientation == 0) {
+            var imgWidth = document.getElementById("photo-img").naturalWidth;
+            var imgHeight = document.getElementById("photo-img").naturalHeight;
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            var imgWidth = document.getElementById("photo-img-ver").naturalWidth;
+            var imgHeight = document.getElementById("photo-img-ver").naturalHeight;
+        } else {
+
+        };
+        var whr = imgWidth/imgHeight;
+        // console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
+        $scope.imgWidth = imgWidth; $scope.imgHeight = imgHeight;
+
+        var imageFormatIndex = 0;
+        for (var f=0; f<imageFormats.length; f++) {
+            // console.log(`f: ${f}, imageFormat: ${imageFormats[f].whRelation}`);
+            if (whr > imageFormats[f].whRelation) {imageFormatIndex = f};
+        };
+
+        // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
+
+        if ($scope.images[currentPhoto].orientation == 0) {
+            console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
+        } else {
+
+        };
+    };
+
+    $scope.rotateImage = function(image, direction) {
+        var newOrientation = 0;
+        var rotation = false;
+        var rotAction = 'med uret'
+        if (direction == -1) {
+            if (image.orientation > 0) {
+                newOrientation = image.orientation + direction;
+                rotation = true;
+                rotAction = 'mod uret';
+                // console.log(`Rotate counter clockwise`);
+            } else {
+                $window.alert('Handlingen er pt ikke understøttet.');
+            };
+        } else {
+            if (image.orientation < 1) {
+                newOrientation = image.orientation + direction;
+                rotation = true;
+                // console.log(`Rotate clockwise`);
+            } else {
+                $window.alert('Handlingen er pt ikke understøttet.');
+            };
+        };
+
+        if (rotation) {
+            if ($window.confirm('Venligst bekræft at du vil rotere billedet '+rotAction)) {
+                $http({
+                    method: 'PATCH',
+                    url: '/photos/orientation/'+image._id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    },
+                    data: {orientation: newOrientation}
+                }).then(function(response) {
+                    // console.log(`Status: ${response.status}`);
+                    // $location.path('/photoalbum/' + $scope.year);
+                    // $route.reload();
+                    $scope.mainImageObj.orientation = newOrientation;
+                    imageFormatting();
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                });
+            };
+        };
+    };
+    
+    function detectClient() {
+        $scope.userClientFullDesc = navigator.userAgent;
+        console.log(navigator.userAgent);
+        if (navigator.userAgent.match(/Android/i)) {
+            $scope.userClient = "ANDROID";
+        } else if (navigator.userAgent.match(/iPhone/i)) {
+            $scope.userClient = "IPHONE";
+        } else if (navigator.userAgent.match(/iPad/i)) {
+            $scope.userClient = "IPAD";
+        } else {
+            $scope.userClient = "BROWSER";
+        };
+    };
 }])
 
 .controller('photooverviewCtrl', ['$scope', '$http', '$routeParams', 'AuthService', function($scope, $http, $routeParams, AuthService) {
@@ -503,6 +881,8 @@ angular.module('familielejr')
         };
     });
 
+    $scope.userClient = "BROWSER";
+    detectClient();
     $scope.imagescope = $routeParams.imagescope;
     var currentyear = (new Date()).getFullYear();
     var firstyear = 1993
@@ -517,7 +897,7 @@ angular.module('familielejr')
         photosurl = '/photos/my/count/';
         $scope.headline = "Min billedoversigt";
     };
-    console.log(`My pictures?: ${$scope.mypictures}`);
+    // console.log(`My pictures?: ${$scope.mypictures}`);
 
     for (var y=firstyear; y<=currentyear; y++) {
         // console.log(`Year before http: ${y}`);
@@ -529,15 +909,30 @@ angular.module('familielejr')
             }
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
-            // console.log(response.data);
             $scope.years.push(response.data);
             // console.log(`Year: ${y.toString()}, Count: ${response.data}`);
             $scope.total += response.data.count;
+            angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+            if ($scope.mypictures) {
+                angular.element(document.querySelector( '#myphotooverview' ) ).addClass('active');
+            } else {
+                angular.element(document.querySelector( '#globalphotooverview' ) ).addClass('active');
+            };
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
     };
-    
+
+    function detectClient() {
+        console.log(navigator.userAgent);
+        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
+            $scope.userClient = "MOBILE";
+        } else if (navigator.userAgent.match(/iPad/i)) {
+            $scope.userClient = "IPAD";
+        } else {
+            $scope.userClient = "BROWSER";
+        };
+    };
 }])
 
 

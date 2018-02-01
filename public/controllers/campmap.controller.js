@@ -11,6 +11,11 @@ angular.module('familielejr')
         };
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#campmap' ) ).addClass('active');
+    }, 1000);
+
     uiGmapGoogleMapApi.then(function (maps) {
         // console.log('Google Maps loaded');
         // maps.visualRefresh = true;
@@ -183,6 +188,11 @@ angular.module('familielejr')
             $scope.role = AuthService.userRole();
         };
     });
+
+    setTimeout(function(){
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#camplist' ) ).addClass('active');
+    }, 1000);
 
     $http({
         method: 'GET',

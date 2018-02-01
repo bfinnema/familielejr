@@ -10,6 +10,11 @@ angular.module('familielejr')
         };
     });
     
+    setTimeout(function(){
+        angular.element(document.querySelector( '#myaccount' ) ).addClass('active');
+        angular.element(document.querySelector( '#logout' ) ).addClass('active');
+    }, 1000);
+
     $scope.logoutUser = function() {
 
         if (localStorage.userToken) {

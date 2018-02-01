@@ -26,6 +26,11 @@ angular.module('familielejr')
         console.log(`GamesStatus: ${response.status}`);
     });
 
+    setTimeout(function(){
+        angular.element(document.querySelector( '#entertainment' ) ).addClass('active');
+        angular.element(document.querySelector( '#games' ) ).addClass('active');
+    }, 1000);
+
     $scope.newEntryToggle = function() {
         if ($scope.newEntry) {
             $scope.newEntry = false;
