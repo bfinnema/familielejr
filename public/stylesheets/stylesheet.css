@@ -302,3 +302,22 @@ form .progress {
     left: 1800px;
 }
 
+.div-horizontal-mobile {
+
+}
+
+.img-horizontal-mobile {
+    
+}
+
+.div-vertical-mobile {
+    height: 420px;
+    transform: rotate(90deg);
+}
+
+.img-vertical-mobile {
+    width: 42%;
+    position: absolute;
+    top: 20px;
+    left: 310px;
+}

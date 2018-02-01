@@ -34,7 +34,7 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
         if (response.data) {
             invitationExists = true;
             $scope.invitationExists = invitationExists;
@@ -70,7 +70,7 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
         if (response.data) {
             $scope.camps = response.data;
         } else {

@@ -435,18 +435,55 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         };
 
         // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
-
         if ($scope.images[currentPhoto].orientation == 0) {
+            if ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE") {
+                angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+                angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+            } else if ($scope.userClient == "BROWSER") {
+                // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+                angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
+                angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+            } else {
+                angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+                angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+            };
+        } else {
+            if ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE") {
+                angular.element(document.querySelector('#photo-div-ver') ).addClass('div-vertical-mobile');
+                angular.element(document.querySelector('#photo-img-ver') ).addClass('img-vertical-mobile');
+            } else if ($scope.userClient == "BROWSER") {
+                // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+                angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
+                angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
+            } else {
+                angular.element(document.querySelector('#photo-div-ver') ).addClass('div-vertical-mobile');
+                angular.element(document.querySelector('#photo-img-ver') ).addClass('img-vertical-mobile');
+            };
+        };
+/* 
+        if ($scope.images[currentPhoto].orientation == 0 && ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE")) {
+            // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+            angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+        } else if ($scope.images[currentPhoto].orientation == 0 && $scope.userClient == "BROWSER") {
             // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
             angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
             angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
-        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+        } else if (($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) && ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE")) {
+            // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div-ver') ).addClass('div-vertical-mobile');
+            angular.element(document.querySelector('#photo-img-ver') ).addClass('img-vertical-mobile');
+        } else if (($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) && $scope.userClient == "BROWSER") {
             // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
             angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
             angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
         } else {
-
+            angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+            angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+            angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+            angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
         };
+ */        
     };
 
     $scope.rotateImage = function(image, direction) {
@@ -797,7 +834,32 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         };
 
         // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
-
+        if ($scope.images[currentPhoto].orientation == 0) {
+            if ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE") {
+                angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+                angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+            } else if ($scope.userClient == "BROWSER") {
+                // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+                angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
+                angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+            } else {
+                angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
+                angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
+            };
+        } else {
+            if ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE") {
+                angular.element(document.querySelector('#photo-div-ver') ).addClass('div-vertical-mobile');
+                angular.element(document.querySelector('#photo-img-ver') ).addClass('img-vertical-mobile');
+            } else if ($scope.userClient == "BROWSER") {
+                // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+                angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
+                angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
+            } else {
+                angular.element(document.querySelector('#photo-div-ver') ).addClass('div-vertical-mobile');
+                angular.element(document.querySelector('#photo-img-ver') ).addClass('img-vertical-mobile');
+            };
+        };
+/* 
         if ($scope.images[currentPhoto].orientation == 0) {
             console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
             angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
@@ -809,6 +871,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         } else {
 
         };
+ */        
     };
 
     $scope.rotateImage = function(image, direction) {
@@ -858,7 +921,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     
     function detectClient() {
         $scope.userClientFullDesc = navigator.userAgent;
-        console.log(navigator.userAgent);
+        // console.log(navigator.userAgent);
         if (navigator.userAgent.match(/Android/i)) {
             $scope.userClient = "ANDROID";
         } else if (navigator.userAgent.match(/iPhone/i)) {
@@ -881,8 +944,6 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         };
     });
 
-    $scope.userClient = "BROWSER";
-    detectClient();
     $scope.imagescope = $routeParams.imagescope;
     var currentyear = (new Date()).getFullYear();
     var firstyear = 1993
@@ -923,16 +984,6 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         });
     };
 
-    function detectClient() {
-        console.log(navigator.userAgent);
-        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
-            $scope.userClient = "MOBILE";
-        } else if (navigator.userAgent.match(/iPad/i)) {
-            $scope.userClient = "IPAD";
-        } else {
-            $scope.userClient = "BROWSER";
-        };
-    };
 }])
 
 
