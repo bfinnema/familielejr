@@ -13,5 +13,22 @@ angular.module('familielejr')
     setTimeout(function(){
         angular.element(document.querySelector( '#about' ) ).addClass('active');
     }, 1000);
+/* 
+    $scope.keyPressed = "Nothing";
+    $scope.testKeyPress1 = function($event) {
+        console.log(`testKeyPress1`);
+        if ($event.keyCode === 107) {
+            console.log(`Left arrow`);
+        };
+        $scope.keyPressed = "key "+$event.keyCode+" was pressed";
+    };
 
+    $scope.testKeyPress2 = function() {
+        console.log(`2. Key was pressed.`);
+    };
+
+    $scope.getkeys = function (event) {
+        $scope.keyval = event.keyCode;
+    };
+ */
 }]);

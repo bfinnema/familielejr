@@ -4,23 +4,37 @@
     <h1>Billeder, {{ year }}. Antal: {{ images.length }}</h1>
 </div>
 <div ng-show="imagesExist">
-    <div id="photo-div" ng-show="mainImageObj.orientation == 0">
-        <a href="{{mainImage}}" target="_blank">
-            <img id="photo-img" src="{{mainImage}}">
-        </a>
+    <div ng-show="userClient == 'BROWSER'">
+        <div id="photo-div" ng-show="mainImageObj.orientation == 0">
+            <a href="{{mainImage}}" target="_blank">
+                <img id="photo-img" src="{{mainImage}}">
+            </a>
+        </div>
+        <div id="photo-div-ver" ng-show="mainImageObj.orientation == 1">
+            <a href="{{mainImage}}" target="_blank">
+                <img id="photo-img-ver" src="{{mainImage}}">
+            </a>
+        </div>
     </div>
-    <div id="photo-div-ver" ng-show="mainImageObj.orientation == 1">
-        <a href="{{mainImage}}" target="_blank">
-            <img id="photo-img-ver" src="{{mainImage}}">
-        </a>
+    <div ng-show="userClient != 'BROWSER'">
+        <div ng-show="mainImageObj.orientation == 0">
+            <a href="{{mainImage}}" target="_blank">
+                <img class="img-responsive" src="{{mainImage}}">
+            </a>
+        </div>
+        <div class="div-vertical-mobile" ng-show="mainImageObj.orientation == 1">
+            <a href="{{mainImage}}" target="_blank">
+                <img class="img-vertical-mobile" src="{{mainImage}}">
+            </a>
+        </div>
     </div>
     <br>
     <div class="row">
         <div class="col-md-offset-3 col-md-1">
-            <h4 class="glyphicon glyphicon-chevron-left" ng-click="prevImage()"></h4>
+            <h4 class="glyphicon glyphicon-chevron-left" ng-click="prevImage()" ng-keypress="$event.keyCode === 39 && prevImage()"></h4>
         </div>
         <div class="col-md-offset-3 col-md-1">
-            <h4 class="glyphicon glyphicon-chevron-right" ng-click="nextImage()"></h4>
+            <h4 class="glyphicon glyphicon-chevron-right" ng-click="nextImage()" ng-keypress="$event.keyCode === 37 && nextImage()"></h4>
         </div>
         <div class="col-md-offset-2 col-md-1" ng-show="role == 0">
             <a class="btn btn-danger btn-sm" ng-click="rotateImage(mainImageObj, -1)">L</a>

@@ -237,7 +237,7 @@ angular.module('familielejr')
     }, 1000);
 
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
-    var days = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"];
+    var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
     var currentyear = (new Date()).getFullYear();
     var now = new Date();
@@ -271,7 +271,9 @@ angular.module('familielejr')
             $scope.startdate = sd.getDate();
             $scope.startmonth = months[sd.getMonth()];
             var ed = new Date($scope.invitation.enddate);
+            console.log(`endday: ${ed}, getDay: ${ed.getDay()}`);
             $scope.endday = days[ed.getDay()];
+            console.log(`Slutdag: ${$scope.endday}`);
             $scope.enddate = ed.getDate();
             $scope.endmonth = months[ed.getMonth()];
             var dl = new Date($scope.invitation.registration.deadline);

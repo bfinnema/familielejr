@@ -11,7 +11,7 @@ angular.module('familielejr')
     });
     
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
-    var days = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"];
+    var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
     var currentyear = (new Date()).getFullYear();
     var now = new Date();
