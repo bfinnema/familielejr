@@ -11,13 +11,16 @@ var FuturecampSchema = new mongoose.Schema({
         unique: true
     },
     camp: {
-        type: String,
+        type: String
     },
     address: {
         street: {type: String},
         houseno: {type: Number},
         zip: {type: String},
         town: {type: String}
+    },
+    website: {
+        type: String
     },
     startdate: {
         type: Date

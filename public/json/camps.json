@@ -2,6 +2,32 @@
     {
         "id": 0,
         "coords": {
+            "latitude": 55.4051511,
+            "longitude": 9.6015006
+        },
+        "name": "Hejls Lejrskole",
+        "address": "Overbyvej 102, 6094 Hejls",
+        "year": "1993",
+        "website": "Er ikke lejrskole mere",
+        "dates": "24.-25. juli",
+        "organizers": "Grethe, Else Marie, Inger"
+    },
+    {
+        "id": 0,
+        "coords": {
+            "latitude": 55.4051511,
+            "longitude": 9.6015006
+        },
+        "name": "Hejls Lejrskole",
+        "address": "Overbyvej 102, 6094 Hejls",
+        "year": "1993",
+        "website": "Er ikke lejrskole mere",
+        "dates": "25.-26. juni",
+        "organizers": "Grethe, Else Marie, Inger"
+    },
+    {
+        "id": 0,
+        "coords": {
             "latitude": 55.3846357,
             "longitude": 9.6199201
         },

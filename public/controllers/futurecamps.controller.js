@@ -191,7 +191,8 @@ angular.module('familielejr')
         var data = {
             year: $scope.year,
             camp: $scope.camp,
-			address: addr,
+            address: addr,
+            website: $scope.website,
             startdate: $scope.startdate,
             enddate: $scope.enddate
         };
@@ -386,19 +387,6 @@ angular.module('familielejr')
     
     $scope.editFuturecamp = function(id) {
 
-/*         
-        var street = "";
-        var zip = "";
-        var town = "";
-        var camp = "";
- */
-        console.log(`street: ${$scope.camp.address.street}`);
-/*         
-        if ($scope.camp.address.zip) {zip = $scope.camp.address.zip};
-        if ($scope.camp.address.town) {town = $scope.camp.address.town};
-        if ($scope.camp.camp) {camp = $scope.camp.camp};
-        if ($scope.camp.address.street) {street = $scope.camp.address.street};
- */
         var addr = {
             houseno: $scope.camp.address.houseno, street: $scope.camp.address.street, zip: $scope.camp.address.zip, town: $scope.camp.address.town
         };
@@ -430,6 +418,7 @@ angular.module('familielejr')
             year: $scope.year,
             camp: $scope.camp.camp,
 			address: addr,
+            website: $scope.camp.website,
             startdate: $scope.startdateView,
             enddate: $scope.enddateView
         };

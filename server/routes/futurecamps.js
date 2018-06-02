@@ -12,6 +12,7 @@ router.post('/', authenticate, (req, res) => {
     year: req.body.year,
     camp: req.body.camp,
     address: req.body.address,
+    website: req.body.website,
     startdate: req.body.startdate,
     enddate: req.body.enddate,
     organizers: req.body.organizers,
@@ -38,6 +39,16 @@ router.get('/future/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by GTYear section');
   Futurecamp.find({'year':{'$gt':year}}).then((futurecamps) => {
+    res.json(futurecamps);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/past/:year', authenticate, (req, res) => {
+  var year = req.params.year;
+  // console.log('This is the find by LTEYear section');
+  Futurecamp.find({'year':{'$lt':year}}).then((futurecamps) => {
     res.json(futurecamps);
   }, (e) => {
     res.status(400).send(e);
@@ -83,7 +94,7 @@ router.get('/year/:year', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['year', 'camp', 'address', 'startdate', 'enddate', 'organizers', 'committees']);
+  var body = _.pick(req.body, ['year', 'camp', 'address', 'website', 'startdate', 'enddate', 'organizers', 'committees']);
 
   if (!ObjectID.isValid(id)) {
     console.log(`id is not valid`);

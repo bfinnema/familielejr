@@ -7,19 +7,19 @@
     <thead>
         <tr>
             <th width="8%">År</th>
-            <th width="14%">Lejr</th>
-            <th width="35%">Adresse</th>
-            <th width="30%">Hjemmeside</th>
-            <th width="13%">Kort</th>
-        </tr>
+            <th width="28%">Lejr</th>
+            <th width="12%">Startdato</th>
+            <th width="12%">Slutdato</th>
+            <th width="24%">Arrangører</th>
+    </tr>
     </thead>
     <tbody>
         <tr ng-repeat="camp in camps">
             <td>{{ camp.year }}</td>
-            <td>{{ camp.name }}</td>
-            <td>{{ camp.address }}</td>
-            <td><a href="{{camp.website}}" target="#">{{ camp.website }}</a></td>
-            <td></td>
-        </tr>
+            <td><a href="{{camp.website}}" target="_blank">{{ camp.camp }}</a>, <a href="https://www.google.com/maps/search/{{camp.address.street}},+{{camp.address.zip}}+{{camp.address.town}}" target="_blank">{{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</a></td>
+            <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
+            <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
+            <td><span ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </span></td>
+    </tr>
     </tbody>
 </table>

@@ -17,7 +17,7 @@
         <tbody>
             <tr ng-repeat="camp in camps">
                 <td>{{ camp.year }}</td>
-                <td>{{ camp.camp }}, {{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</td>
+                <td><a href="{{camp.website}}" target="_blank">{{ camp.camp }}</a>, <a href="https://www.google.com/maps/search/{{camp.address.street}},+{{camp.address.zip}}+{{camp.address.town}}" target="_blank">{{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</a></td>
                 <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
                 <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
                 <td><span ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </span></td>
@@ -72,6 +72,12 @@
             <div class="form-group col-md-3">
                 <label>By</label>
                 <input type="text" class="form-control" ng-model="town" name="town" placeholder="By">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Hjemmeside</label>
+                <input type="text" class="form-control" ng-model="website" name="website" placeholder="Hjemmeside">
             </div>
         </div>
         <h3 class="form-signin-heading">Datoer og tidspunkter</h3>

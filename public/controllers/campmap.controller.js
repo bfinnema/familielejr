@@ -76,6 +76,72 @@ angular.module('familielejr')
         {
             "id": 0,
             "coords": {
+                "latitude": 55.4051511,
+                "longitude": 9.6015006
+            },
+            "name": "Hejls Lejrskole",
+            "address": "Overbyvej 102, 6094 Hejls",
+            "years": "1993, 1994, 1995",
+            "website": "Er ikke lejrskole mere",
+        },
+        {
+            "id": 1,
+            "coords": {
+                "latitude": 55.8469999,
+                "longitude": 11.4976986
+            },
+            "name": "Lejrskolen Høve Strand",
+            "address": "Asnæs Lyngvej 11, 4550 Asnæs",
+            "years": "1996, 1999, 2001, 2003",
+            "website": "http://www.lejrskolen.dk",
+        },
+        {
+            "id": 2,
+            "coords": {
+                "latitude": 55.545347,
+                "longitude": 9.8218295
+            },
+            "name": "Skovgården",
+            "address": "Karlskovvej 35C, 5500 Middelfart",
+            "years": "1997",
+            "website": "http://www.fyn.ysmen.dk/index.php?id=5652",
+        },
+        {
+            "id": 3,
+            "coords": {
+                "latitude": 55.5366694,
+                "longitude": 9.9968613
+            },
+            "name": "Skåstrup Strand Lejren",
+            "address": "Strandgyden 28, 5400 Bogense",
+            "years": "1998, 2000",
+            "website": "http://skaastrupstrand.dk/",
+        },
+        {
+            "id": 4,
+            "coords": {
+                "latitude": 55.3405654,
+                "longitude": 9.6244667
+            },
+            "name": "Philipsborg",
+            "address": "Kystvejen 73, 6100 Haderslev",
+            "years": "2002, 2004",
+            "website": "http://hyttefortegnelsen.dk/hytte/philipsborg/",
+        },
+        {
+            "id": 5,
+            "coords": {
+                "latitude": 55.164516,
+                "longitude": 9.512978
+            },
+            "name": "Irokeser Hytten",
+            "address": "Havvejen 70, Sdr. Vilstrup, 6100 Haderslev",
+            "years": "2007",
+            "website": "http://www.irokeserhytten.dk/",
+        },
+        {
+            "id": 6,
+            "coords": {
                 "latitude": 56.379566,
                 "longitude": 10.9050075
             },
@@ -85,7 +151,7 @@ angular.module('familielejr')
             "website": "http://www.laerkereden.org/"
         },
         {
-            "id": 1,
+            "id": 7,
             "coords": {
                 "latitude": 55.1993697,
                 "longitude": 11.5146273
@@ -96,29 +162,29 @@ angular.module('familielejr')
             "website": "http://www.bisseruplejren.dk/"
         },
         {
-            "id": 2,
+            "id": 8,
             "coords": {
                 "latitude": 55.8784227,
                 "longitude": 11.5343726
             },
             "name": "Lyngborgen",
             "address": "Enebærvej 4, Ellinge Lyng, 4560 Vig",
-            "years": "2011, 2013",
+            "years": "2008, 2011, 2013",
             "website": "http://lyngborgen.dk/"
         },
         {
-            "id": 3,
+            "id": 9,
             "coords": {
                 "latitude": 55.3846357,
                 "longitude": 9.6199201
             },
             "name": "Grænseborgen",
             "address": "Vargårdevej 86, 6094 Hejls",
-            "years": "2006, 2016",
+            "years": "2005, 2016",
             "website": "http://www.graenseborgen.dk/"
         },
         {
-            "id": 4,
+            "id": 10,
             "coords": {
                 "latitude": 55.2455902,
                 "longitude": 9.8777956
@@ -129,7 +195,7 @@ angular.module('familielejr')
             "website": "http://kolonierne.dk/koloni/skovhytten/"
         },
         {
-            "id": 5,
+            "id": 11,
             "coords": {
                 "latitude": 55.554425,
                 "longitude": 10.616398
@@ -189,6 +255,37 @@ angular.module('familielejr')
         };
     });
 
+    var currentyear = (new Date()).getFullYear();
+    var now = new Date();
+    var demarc = new Date(currentyear,8,1);
+    var lastDateOfYear = new Date(currentyear,11,31);
+    var invyear = currentyear;
+    var pastyear = currentyear - 1;
+    if (now > demarc && lastDateOfYear >= now) {
+        invyear += 1;
+        pastyear += 1;
+    };
+    console.log(`Invyear: ${invyear}`);
+
+    $http({
+        method: 'GET',
+        url: '/futurecamps/past/' + invyear,
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        // console.log(`Success. Status: ${response.status}`);
+        if (response.data) {
+            $scope.camps = response.data;
+        } else {
+            console.log('No past camps');
+        };
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#camplist' ) ).addClass('active');
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
+    });
+/* 
     setTimeout(function(){
         angular.element(document.querySelector( '#history' ) ).addClass('active');
         angular.element(document.querySelector( '#camplist' ) ).addClass('active');
@@ -207,4 +304,5 @@ angular.module('familielejr')
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
+ */    
 }]);
