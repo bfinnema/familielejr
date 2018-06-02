@@ -162,7 +162,7 @@ angular.module('familielejr')
     $scope.generateFuturecamp = function() {
 
         var addr = {
-            street: $scope.street, zip: $scope.zip, town: $scope.town
+            street: $scope.street, houseno: 0, zip: $scope.zip, town: $scope.town
         };
 
         var organizers = [];
@@ -386,8 +386,21 @@ angular.module('familielejr')
     
     $scope.editFuturecamp = function(id) {
 
+/*         
+        var street = "";
+        var zip = "";
+        var town = "";
+        var camp = "";
+ */
+        console.log(`street: ${$scope.camp.address.street}`);
+/*         
+        if ($scope.camp.address.zip) {zip = $scope.camp.address.zip};
+        if ($scope.camp.address.town) {town = $scope.camp.address.town};
+        if ($scope.camp.camp) {camp = $scope.camp.camp};
+        if ($scope.camp.address.street) {street = $scope.camp.address.street};
+ */
         var addr = {
-            street: $scope.camp.address.street, zip: $scope.camp.address.zip, town: $scope.camp.address.town
+            houseno: $scope.camp.address.houseno, street: $scope.camp.address.street, zip: $scope.camp.address.zip, town: $scope.camp.address.town
         };
 
         var organizers = [];
