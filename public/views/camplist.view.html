@@ -1,7 +1,7 @@
 <div ng-include="'navigation.html'"></div>
 
 <h2 class="heading">Liste over lejrskoler</h2>
-<p>Denne liste er ikke komplet. Hvis I kan huske, hvor vi har været de år, der ikke er med i listen, 
+<p>Denne liste er ikke komplet. Hvis I kan bidrage med de detaljer, der mangler, 
     så skriv til bo_finnemann@hotmail.com</p>
 <table class="table table-striped">
     <thead>
@@ -11,7 +11,8 @@
             <th width="12%">Startdato</th>
             <th width="12%">Slutdato</th>
             <th width="24%">Arrangører</th>
-    </tr>
+            <th ng-show="role == 0" width="16%">Ændre / Se detaljer</th>
+        </tr>
     </thead>
     <tbody>
         <tr ng-repeat="camp in camps">
@@ -20,6 +21,14 @@
             <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
             <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
             <td><span ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </span></td>
-    </tr>
+            <td ng-show="role == 0">
+                <a class="btn btn-primary" href="#!futurecamps/edit/{{camp._id}}">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" href="#!futurecamps/details/{{camp._id}}">
+                    <i class="glyphicon glyphicon-zoom-in"></i>
+                </a>
+            </td>
+        </tr>
     </tbody>
 </table>

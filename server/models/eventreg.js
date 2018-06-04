@@ -32,6 +32,18 @@ var EventregSchema = new mongoose.Schema({
     registeree: {
         type: String,
         required: true
+    },
+    paid: {
+      type: Boolean,
+      default: false
+    },
+    paidAt: {
+      type: Number,
+      default: null
+    },
+    paymentRegisteredBy: {
+      type: String,
+      default: null
     }
 });
 

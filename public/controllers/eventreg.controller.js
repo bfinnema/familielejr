@@ -266,5 +266,36 @@ angular.module('familielejr')
         };
     };
 
+    $scope.paidStatus = function(registration) {
+        // console.log(`Payment status: ${registration.paid}`);
+        var data = {
+            name: registration.name,
+            agegroup: registration.agegroup,
+            year: registration.year,
+            arrivalday: registration.arrivalday,
+            arrivaltime: registration.arrivaltime,
+            departureday: registration.departureday,
+            departuretime: registration.departuretime,
+            _creator: registration._creator,
+            registeree: registration.registeree,
+            paid: registration.paid
+        };
+
+        $http({
+            method: 'PATCH',
+            url: '/eventregs/'+registration._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: data
+        }).then(function(response) {
+            $location.path('/eventregistrationall');
+            // $route.reload();
+        }, function errorCallback(response) {
+            console.log(`editEventregStatus: ${response.status}`);
+        });
+
+    };
+
 }])
 

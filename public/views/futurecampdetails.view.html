@@ -1,7 +1,7 @@
 <div ng-include="'navigation.html'"></div>
 
 <div>
-	<a href="#!futurecamps">Tilbage</a>
+	<a href="#!home">Tilbage</a>
     <h1>Familielejr i {{camp.year}}</h1>
     <hr>
     <div class="row">
@@ -43,7 +43,7 @@
         </div>
     </div>
     <hr>
-	<div class="actions">
+	<div ng-show="role < 2" class="actions">
 		<a href="#!futurecamps/edit/{{camp._id}}" class="btn btn-default">Ændre lejren</a>
 		<a href="#" class="btn btn-danger" ng-click="removeCamp()">Slet lejren</a>
 	</div>

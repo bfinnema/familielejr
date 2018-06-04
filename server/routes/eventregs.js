@@ -30,6 +30,41 @@ router.post('/', authenticate, (req, res) => {
   });
 });
 
+// Change an Eventreg. Is used for registering that a participant has paid the camp fee.
+router.patch('/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['name', 'agegroup', 'year', 'arrivalday', 'arrivaltime', 'departureday', 'departuretime', '_creator', 'registeree', 'paid']);
+  // console.log(`Patching Eventreg, name: ${body.name}, Registeree: ${body.registeree}, Paid? ${body.paid}`);
+
+  var uploader = req.user.name.firstname;
+  if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
+  uploader = uploader + ' ' + req.user.name.surname;
+  body.paymentRegisteredBy = uploader;
+  // console.log(`paymentRegisteredBy: ${body.paymentRegisteredBy}`);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  if (_.isBoolean(body.paid) && body.paid) {
+    body.paidAt = new Date().getTime();
+  } else {
+    body.paid = false;
+    body.paidAt = null;
+    body.paymentRegisteredBy = null;
+  }
+
+  Eventreg.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventreg) => {
+    if (!eventreg) {
+      return res.status(404).send();
+    }
+
+    res.json(eventreg);
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
 // Get all event registrations for all years submitted by a specific member
 router.get('/', authenticate, (req, res) => {
   Eventreg.find({

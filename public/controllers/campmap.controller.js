@@ -147,7 +147,7 @@ angular.module('familielejr')
             },
             "name": "Lærkereden",
             "address": "Slåenvej 6, 8500 Grenå",
-            "years": "2010",
+            "years": "2009, 2010",
             "website": "http://www.laerkereden.org/"
         },
         {
@@ -204,6 +204,17 @@ angular.module('familielejr')
             "address": "Langøvej 272, 5390 Martofte",
             "years": "2018",
             "website": "http://sommerlejrfyn.dk"
+        },
+        {
+            "id": 12,
+            "coords": {
+                "latitude": 55.2749899,
+                "longitude": 11.2527146
+            },
+            "name": "Egeruphytten",
+            "address": "Egerupvej 49, 4230 Skælskør",
+            "years": "2006",
+            "website": "http://egeruphytten.dk/"
         }
     ];
 

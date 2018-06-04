@@ -53,8 +53,9 @@
                 <th width="10%">Ankomsttidspunkt</th>
                 <th width="15%">Afgang</th>
                 <th width="10%">Afgangstidspunkt</th>
-                <th width="15%">Tilmeldt af</th>
-                <th ng-show="role != 2" width="9%">Slet</th>
+                <th width="14%">Tilmeldt af</th>
+                <th ng-show="role != 2" width="5%">Slet</th>
+                <th ng-show="role != 2" width="5%">Betalt</th>
             </tr>
         </thead>
         <tbody>
@@ -70,6 +71,9 @@
                     <a class="btn btn-primary" ng-click="adminRemoveReg(registration)">
                         <i class="glyphicon glyphicon-trash"></i>
                     </a>
+                </td>
+                <td ng-show="role != 2">
+                    <input type="checkbox" ng-model="registration.paid" id="paid" ng-change="paidStatus(registration)">
                 </td>
             </tr>
         </tbody>
