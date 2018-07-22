@@ -215,6 +215,28 @@ angular.module('familielejr')
             "address": "Egerupvej 49, 4230 Skælskør",
             "years": "2006",
             "website": "http://egeruphytten.dk/"
+        },
+        {
+            "id": 13,
+            "coords": {
+                "latitude": 55.026642,
+                "longitude": 10.8547743
+            },
+            "name": "Helletofte Lejrskole",
+            "address": "Korsvej 12, 5953 Tranekær",
+            "years": "2009",
+            "website": "https://www.schoolandcollegelistings.com/DK"
+        },
+        {
+            "id": 14,
+            "coords": {
+                "latitude": 55.423817,
+                "longitude": 9.845415
+            },
+            "name": "Fønsborg",
+            "address": "Gl. Fønsvej 3, 5580 Nørre Aaby",
+            "years": "2012",
+            "website": "http://hyttefortegnelsen.dk/hytte/foensborg/"
         }
     ];
 

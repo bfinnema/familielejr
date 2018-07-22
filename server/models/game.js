@@ -6,8 +6,7 @@ var GameSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     _creator: {
         type: mongoose.Schema.Types.ObjectId,

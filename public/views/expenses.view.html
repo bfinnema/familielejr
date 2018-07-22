@@ -1,0 +1,134 @@
+<div ng-include="'navigation.html'"></div>
+
+<h2 class="heading">Udgifter for {{year}}</h2>
+<p>Liste over årets udgifter</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="35%">Beskrivelse</th>
+            <th width="15%">Leverandør</th>
+            <th width="13%">Dato</th>
+            <th width="12%">Pris</th>
+            <th width="15%">Indført af</th>
+            <th width="10%">Slet / Ændre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="expense in expenses">
+            <td>{{ expense.description }}</td>
+            <td>{{ expense.vendor }}</td>
+            <td>{{ expense.expensedate | date:'dd-MM-yyyy HH:mm' : 'CET' }}</td>
+            <td>{{ expense.expenseprice | number:2 }}</td>
+            <td>{{ expense.registeree }}</td>
+            <td>
+                <a class="btn btn-primary" ng-click="editExpenseToggle(expense)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" ng-click="removeExpense(expense)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<div ng-show="newExpense">
+    <h2>Indtast en ny udgift for {{year}}</h2>
+    <form name="newExpenseForm" ng-submit="addExpense()">
+<!-- 
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Type</label>
+                <select class="form-control" ng-model="expensetype" name="expensetype" required>
+                    <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
+                </select>
+                <i ng-show="newExpenseForm.expensetype.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+ -->        
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse af udgiften" autofocus required>
+                <i ng-show="newExpenseForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Leverandør</label>
+                <input type="text" class="form-control" ng-model="vendor" name="vendor" placeholder="Leverandør" required>
+                <i ng-show="newExpenseForm.vendor.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="expensedate" name="expensedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="expenseprice" name="expenseprice" placeholder="Beløb" required>
+                <i ng-show="newExpenseForm.expenseprice.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newExpenseForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newExpenseToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editExpense">
+    <h2>Ændre en udgift</h2>
+    <form name="editExpenseForm" ng-submit="expenseEdit()">
+<!-- 
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Type</label>
+                <select class="form-control" ng-model="editExpensetype" name="editExpensetype" required>
+                    <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
+                </select>
+                <i ng-show="newExpenseForm.expensetype.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+ -->        
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="editDescription" name="editDescription" placeholder="Beskrivelse af udgiften" autofocus required>
+                <i ng-show="newExpenseForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Leverandør</label>
+                <input type="text" class="form-control" ng-model="editVendor" name="editVendor" placeholder="Leverandør" required>
+                <i ng-show="newExpenseForm.vendor.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="editExpensedate" name="editExpensedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="editExpenseprice" name="editExpenseprice" placeholder="Beløb" required>
+                <i ng-show="newExpenseForm.expenseprice.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editExpenseForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editExpenseToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newExpense && !editExpense">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newExpenseToggle()">Indtast nyt punkt til huskelisten</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#organizer').addClass('active');
+    $('#expenselist').addClass('active');
+</script>

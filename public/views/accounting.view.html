@@ -1,27 +1,67 @@
 <div ng-include="'navigation.html'"></div>
 
-<h2 class="heading">Huskeliste til inspiration</h2>
-<p>Med denne huskeliste kan man overføre erfaring til nye arrangører ved at oprette nye punkter til listen. Og arrangørerne kan bruge listen til at holde styr på, hvad der er gjort.</p>
+<h2 class="heading">Regnskab for familielejr {{accyear}}</h2>
+<p>Regnskab - forklaring</p>
+<h3 class="heading">Indtægter</h3>
+<h3 class="heading">Udgifter</h3>
 <table class="table table-striped">
     <thead>
         <tr>
-            <th width="8%">Udført?</th>
-            <th width="14%">Kategori</th>
-            <th width="40%">Beskrivelse</th>
-            <th width="15%">Udført af</th>
-            <th width="13%">Dato</th>
+            <th width="8%">Beskrivelse</th>
+            <th width="14%">Leverandør</th>
+            <th width="40%">Dato</th>
+            <th width="15%">Indført af</th>
+            <th width="13%">Beløb</th>
             <th width="10%">Slet / Ændre</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="todo in todos">
-            <td>
-                <input type="checkbox" ng-model="todo.completed" id="completed" ng-change="completionStatus(todo)">
-            </td>
-            <td>{{ todo.category }}</td>
-            <td>{{ todo.text }}</td>
-            <td>{{ todo.completedBy }}</td>
-            <td>{{ todo.completedAt | date:'dd-MM-yyyy HH:mm' : 'CET' }}</td>
+        <tr>
+            <td>Beholdning ved årets start</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.assetsStart}}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>INDTÆGTER</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Indtægter fra deltagergebyr</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.participantsFee}}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Andre indtægter</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.otherIncome}}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>UDGIFTER</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr ng-repeat="expense in expenses">
+            <td>{{ expense.description }}</td>
+            <td>{{ expense.vendor }}</td>
+            <td>{{ expense.expensedate | date:'dd-MM-yyyy' : 'CET' }}</td>
+            <td>{{ expense.registeree }}</td>
+            <td>{{ expense.expenseprice }}</td>
             <td>
                 <a class="btn btn-primary" ng-click="editTodoToggle(todo)">
                     <i class="glyphicon glyphicon-edit"></i>
@@ -31,11 +71,52 @@
                 </a>
             </td>
         </tr>
+        <tr>
+            <td>SAMLEDE UDGIFTER</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.expensesTotal}}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>ÅRETS RESULTAT</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>ÅRETS RESULTAT</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.result}}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>FORVENTET BEHOLDNING EFTER ÅRETS LEJR</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Forventet beholdning efter årets lejr</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{accounting.assetsEnd}}</td>
+            <td></td>
+        </tr>
     </tbody>
 </table>
+<h3 class="heading">Årets resultat</h3>
 <hr>
 <div ng-show="newTodo">
-    <h2>Indtast nyt punkt til huskelisten</h2>
+    <h2>Indtast nyt punkt til huskelisten {{newTodo}} </h2>
     <form name="newTodoForm" ng-submit="addTodo()">
         <div class="row">
             <div class="form-group col-md-4">
@@ -64,7 +145,7 @@
     </form>
 </div>
 <div ng-show="editTodo">
-    <h2>Ændre et punkt til huskelisten</h2>
+    <h2>Ændre et punkt til huskelisten {{editTodo}} </h2>
     <form name="editTodoForm" ng-submit="todoEdit()">
         <div class="row">
             <div class="form-group col-md-4">
