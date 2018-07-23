@@ -9,10 +9,10 @@ var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', (req, res) => {
   var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret']);
-  // console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
-  // console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
+  console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
+  console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
   if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
-    // console.log('Secret approved and passwords equal.');
+    console.log('Secret approved and passwords equal.');
     var user = new User(body);
 
     user.save().then(() => {
@@ -111,7 +111,7 @@ router.get('/me', authenticate, (req, res) => {
 
 router.post('/login', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
-
+  console.log(`Email: ${body.email}, ${body.password}`);
   User.findByCredentials(body.email, body.password).then((user) => {
     return user.generateAuthToken().then((token) => {
       res.header('x-auth', token).json(user);
