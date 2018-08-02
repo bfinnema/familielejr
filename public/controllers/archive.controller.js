@@ -1,16 +1,23 @@
 angular.module('familielejr')
 
-.controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', 
+.controller('docuploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', 
 function ($scope, $http, $route, $window, $timeout, AuthService) {
 
     var currentyear = (new Date()).getFullYear();
     var firstyear = 1993;
     $scope.years = [];
-
     for (var y=firstyear; y<=currentyear; y++) {
         $scope.years.push({"year": y.toString()});
     };
     
+    $scope.categories = [
+        {"category": "Invitationer"},
+        {"category": "Menuer"},
+        {"category": "Indkøbslister"},
+        {"category": "Regnskaber"},
+        {"category": "Andet"}
+    ];
+
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
@@ -20,21 +27,19 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     });
 
     setTimeout(function(){
-        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
-        angular.element(document.querySelector( '#photoupload' ) ).addClass('active');
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#archive' ) ).addClass('active');
     }, 1000);
 
     $scope.errorMsg = '';
     $scope.successMsg = '';
-    $scope.showImagesList = false;
-    $scope.imageReplica = true;
+    $scope.showDocsList = false;
+    $scope.docReplica = true;
 
-    $scope.uploadPicture = function(file) {
-        // console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);
-        var folder = $scope.year;
+    $scope.uploadDoc = function(file) {
+        // console.log(`uploadDoc. filename: ${file.name}, filetype: ${file.type}`);
+        var folder = $scope.category;
         var operation = 'putObject';
-        var picturetext = 'Familielejr '+$scope.year;
-        if ($scope.picturetext) {picturetext = $scope.picturetext;};
 
         $http({
             method: 'GET',
@@ -42,16 +47,16 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         }).then(function(response) {
             // console.log(response);
             // console.log(response.data.url);
-            $scope.successMsg = 'VENT VENLIGST. Billedet '+file.name+' bliver uploaded.......'
+            $scope.successMsg = 'VENT VENLIGST. Dokumentet '+file.name+' bliver uploaded.......'
             const xhr = new XMLHttpRequest();
             xhr.open('PUT', response.data.signedRequest);
             xhr.onreadystatechange = () => {
                 if(xhr.readyState === 4){
                     if(xhr.status === 200){
-                        // console.log("Success!");
+                        console.log("Document Success!");
                         $http({
                             method: 'POST',
-                            url: '/photos/upload',
+                            url: '/docs/upload',
                             headers: {
                                 'x-auth': localStorage.userToken
                             },
@@ -59,30 +64,30 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                                 year: $scope.year,
                                 filename: file.name,
                                 filetype: file.type,
+                                category: $scope.category,
                                 user: localStorage.familielejrUserId,
-                                text: picturetext,
+                                description: $scope.description,
                                 orientation: 0
                             }
                         }).then(function(response) {
-                            // console.log(`Status: ${response.status}`);
-                            // console.log(response.data._id);
-                            $scope.picFile = null;
-                            $scope.picturetext = "";
+                            console.log(`Status: ${response.status}`);
+                            console.log(response.data._id);
+                            $scope.docFile = null;
+                            $scope.description = "";
                             $scope.errorMsg = "";
                             $scope.successMsg = file.name + ' blev uploaded.'
-                            $scope.getUploadedPhotos();
                             // $route.reload();
                         }, function errorCallback(response) {
                             console.log(`Status: ${response.status}`);
                             if (response.status == 409) {
-                                $scope.errorMsg = "En anden har allerede uploaded et billede med navnet "+file.name;
+                                $scope.errorMsg = "En anden har allerede uploaded et dokument med navnet "+file.name;
                                 $scope.successMsg = '';
-                                $scope.picFile = null;
+                                $scope.docFile = null;
                             };
                         });
                     }
                     else{
-                        $window.alert('Could not upload file.');
+                        $window.alert('Kunne ikke uploade dokumentet.');
                         $scope.errorMsg = 'Der opstod en fejl';
                     }
                 }
@@ -94,59 +99,10 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         });
     };
 
-    $scope.getUploadedPhotos = function() {
-        // $scope.successMsg = '';
-        $http({
-            method: 'GET',
-            url: '/photos/my/'+$scope.year,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(response) {
-            // console.log(`MyphotosStatus: ${response.status}`);
-            $scope.images = response.data;
-            if (!response.data[0]) {
-                // console.log('No photos for year '+$scope.year)
-                $scope.imagesExist = false;
-            } else {
-                $scope.imagesExist = true;
-                // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
-                for (x=0; x<$scope.images.length; x++) {
-                    $scope.images[x].num = x;
-                };
-            };
-            $scope.showImagesList = true;
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    
-    };
-
-    $scope.checkImageReplica = function(file) {
-        $scope.imageReplica = true;
-        $scope.errorMsg = '';
-        // console.log(`${file.name}`);
-        var foundReplica = false;
-        for (var i=0; i<$scope.images.length; i++) {
-            // console.log(`${$scope.images[i].filename}`);
-            if ($scope.images[i].filename == file.name) {
-                foundReplica = true;
-                $scope.errorMsg = 'Du har allerede uploaded et billede med det navn';
-            };
-        };
-        if (!foundReplica) {$scope.imageReplica = false;};
-        console.log(`${file.name}, ${file.type}, ${file.size}, ${file}`);
-        var selectedFile = document.getElementById('fileSelected').files[0];
-        console.log(`${selectedFile}`);
-        console.log(`${document.getElementById("fileSelected").height}, ${document.getElementById("fileSelected").width}`);
-        var img = new Image();
-        // img.src = file;
-        // console.log(`Image 1 width: ${img.width}. Height: ${img.height}`);
-    };
-
 }])
 
-.controller('photoalbumCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
+.controller('archiveCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', 
+function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -157,7 +113,8 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     });
 
     setTimeout(function(){
-        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#archive' ) ).addClass('active');
     }, 1000);
 
     $scope.innerWidth = window.innerWidth;
@@ -177,92 +134,92 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         }
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
-        $scope.images = response.data;
+        $scope.docs = response.data;
         if (!response.data[0]) {
             // console.log('No photos for year '+$scope.year)
-            $scope.imagesExist = false;
+            $scope.docsExist = false;
         } else {
-            $scope.imagesExist = true;
-            // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
-            $scope.mainImageObj = $scope.images[0];
-            getImage(0);
+            $scope.docsExist = true;
+            // $scope.mainDoc = $scope.docs[0].path + $scope.docs[0].filename;  // Old method
+            $scope.mainDocObj = $scope.docs[0];
+            getDoc(0);
             
-            for (x=0; x<$scope.images.length; x++) {
-                $scope.images[x].num = x;
-                // console.log(`orientation: ${$scope.images[x].orientation}`);
-                if (!$scope.images[x].orientation) {
-                    $scope.images[x].orientation = 0;
+            for (x=0; x<$scope.docs.length; x++) {
+                $scope.docs[x].num = x;
+                // console.log(`orientation: ${$scope.docs[x].orientation}`);
+                if (!$scope.docs[x].orientation) {
+                    $scope.docs[x].orientation = 0;
                 };
-                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+                // console.log(`${$scope.docs[x].num}: ${$scope.docs[x].filename}, orientation: ${$scope.docs[x].orientation}`);
             };
             setTimeout(function(){
-                imageFormatting();
+                docFormatting();
             }, 500);
         };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
 
-	$scope.setImage = function(image){
-		// $scope.mainImage = image.path + image.filename;  // Old method
-        currentPhoto = image.num;
-        $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-        $scope.mainImageObj = $scope.images[currentPhoto];
+	$scope.setDoc = function(doc){
+		// $scope.mainDoc = doc.path + doc.filename;  // Old method
+        currentPhoto = doc.num;
+        $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+        $scope.mainDocObj = $scope.docs[currentPhoto];
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
-        // console.log(`Current Photo: ${image.num}, ${image.filename}`);
+        // console.log(`Current Photo: ${doc.num}, ${doc.filename}`);
 	};
 
-    $scope.nextImage = function() {
+    $scope.nextDoc = function() {
 /* 
         for (sr in $scope.signedRequests) {
-            console.log(`nextImage: signedRequest: ${$scope.signedRequests[sr]}`);
+            console.log(`nextDoc: signedRequest: ${$scope.signedRequests[sr]}`);
         };
  */        
-        if (currentPhoto < $scope.images.length-1) {
+        if (currentPhoto < $scope.docs.length-1) {
             currentPhoto = currentPhoto + 1;
         }
         else {currentPhoto = 0};
-        // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename; // Old method
-        $scope.mainImageObj = $scope.images[currentPhoto];
-        if ($scope.images[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-            // console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        // $scope.mainDoc = $scope.docs[currentPhoto].path + $scope.docs[currentPhoto].filename; // Old method
+        $scope.mainDocObj = $scope.docs[currentPhoto];
+        if ($scope.docs[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
+            $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+            // console.log(`nextDoc: signedRequest in doc: ${$scope.docs[currentPhoto].signedRequest}`);
         } else {
-            getImage(currentPhoto);
+            getDoc(currentPhoto);
         };
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
-    // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+    // console.log(`Current Photo: ${$scope.mainDocObj.num}, ${$scope.mainDocObj.filename}`);
     };
 
-    $scope.prevImage = function() {
+    $scope.prevDoc = function() {
         if (currentPhoto < 1) {
-            currentPhoto = $scope.images.length-1;
+            currentPhoto = $scope.docs.length-1;
         }
         else {currentPhoto = currentPhoto - 1};
-        // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename;
-        $scope.mainImageObj = $scope.images[currentPhoto];
-        if ($scope.images[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
-            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-            // console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        // $scope.mainDoc = $scope.docs[currentPhoto].path + $scope.docs[currentPhoto].filename;
+        $scope.mainDocObj = $scope.docs[currentPhoto];
+        if ($scope.docs[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
+            $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+            // console.log(`prevDoc: signedRequest in doc: ${$scope.docs[currentPhoto].signedRequest}`);
         } else {
-            getImage(currentPhoto);
+            getDoc(currentPhoto);
         };
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
-        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+        // console.log(`Current Photo: ${$scope.mainDocObj.num}, ${$scope.mainDocObj.filename}`);
     };
 
-    $scope.removeImage = function(image) {
-        if ($window.confirm('Bekræft venligst at du vil slette billedet '+image.filename) && $scope.role == 0) {
+    $scope.removeDoc = function(doc) {
+        if ($window.confirm('Bekræft venligst at du vil slette billedet '+doc.filename) && $scope.role == 0) {
 
             $http({
                 method: 'GET',
-                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/sign-s3-deletedoc?file_name=${doc.filename}&file_type=${doc.filetype}&folder=${doc.year}&operation=${'deleteObject'}`
             }).then(function(response) {
                 console.log(response.data.signedRequest);
 
@@ -274,7 +231,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                     // console.log("Success!");
                     $http({
                         method: 'DELETE',
-                        url: '/photos/admindelete/'+image._id,
+                        url: '/photos/admindelete/'+doc._id,
                         headers: {
                             'x-auth': localStorage.userToken
                         }
@@ -297,11 +254,11 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         };
     };
 
-    $scope.addComment = function(image) {
+    $scope.addComment = function(doc) {
         // console.log(`Comment: ${$scope.mycomment}`);
         $http({
             method: 'PATCH',
-            url: '/photos/'+image._id,
+            url: '/photos/'+doc._id,
             headers: {
                 'x-auth': localStorage.userToken
             },
@@ -317,27 +274,27 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                     text: $scope.mycomment
                 }
             };
-            $scope.mainImageObj.imagetext.push(newtextobj);
-            console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
+            $scope.mainDocObj.doctext.push(newtextobj);
+            console.log(`${JSON.stringify($scope.mainDocObj.doctext)}`);
             $scope.mycomment = '';
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
     };
 
-    function getImage(photoNum) {
+    function getDoc(photoNum) {
         var operation = 'getObject';
-        var filename = $scope.images[photoNum].filename;
-        var filetype = $scope.images[photoNum].filetype;
-        var folder = $scope.images[photoNum].year;
+        var filename = $scope.docs[photoNum].filename;
+        var filetype = $scope.docs[photoNum].filetype;
+        var folder = $scope.docs[photoNum].year;
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/sign-s3-getdoc?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log("Signed request: "+response.data.signedRequest);
-            $scope.mainImage = response.data.signedRequest;
-            $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            // console.log(`mainImage: ${$scope.mainImage}`);
+            $scope.mainDoc = response.data.signedRequest;
+            $scope.docs[photoNum].signedRequest = response.data.signedRequest;
+            // console.log(`mainDoc: ${$scope.mainDoc}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -365,9 +322,9 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         return screenSizeIndex;
     };
 
-    function imageFormatting() {
+    function docFormatting() {
 
-        var imageFormats = [
+        var docFormats = [
             {"whRelation": 0.6},
             {"whRelation": 1.3},
             {"whRelation": 1.7}
@@ -391,35 +348,35 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             ['img-vertical-520-ver','img-vertical-680-ver','img-vertical-780-ver','img-vertical-930-ver','img-vertical-1080-ver','img-vertical-1081-ver']
         ];
 
-        if ($scope.images[currentPhoto].orientation == 0) {
+        if ($scope.docs[currentPhoto].orientation == 0) {
             var imgWidth = document.getElementById("photo-img").naturalWidth;
             var imgHeight = document.getElementById("photo-img").naturalHeight;
-        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+        } else if ($scope.docs[currentPhoto].orientation == 1 || $scope.docs[currentPhoto].orientation == -1) {
             var imgWidth = document.getElementById("photo-img-ver").naturalWidth;
             var imgHeight = document.getElementById("photo-img-ver").naturalHeight;
         } else {
 
         };
         var whr = imgWidth/imgHeight;
-        // console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
+        console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
         $scope.imgWidth = imgWidth; $scope.imgHeight = imgHeight;
 
-        var imageFormatIndex = 0;
-        for (var f=0; f<imageFormats.length; f++) {
-            // console.log(`f: ${f}, imageFormat: ${imageFormats[f].whRelation}`);
-            if (whr > imageFormats[f].whRelation) {imageFormatIndex = f};
+        var docFormatIndex = 0;
+        for (var f=0; f<docFormats.length; f++) {
+            console.log(`f: ${f}, docFormat: ${docFormats[f].whRelation}`);
+            if (whr > docFormats[f].whRelation) {docFormatIndex = f};
         };
 
-        // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
+        // console.log(`In docFormatting. ${$scope.docs[currentPhoto].num}: ${$scope.docs[currentPhoto].filename}, orientation: ${$scope.docs[currentPhoto].orientation}`);
 /*         
-        if ($scope.images[currentPhoto].orientation == 0) {
+        if ($scope.docs[currentPhoto].orientation == 0) {
             if ($scope.userClient == "ANDROID" || $scope.userClient == "IPHONE") {
                 angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
                 angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
             } else if ($scope.userClient == "BROWSER") {
-                // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
-                angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
-                angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+                // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[docFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[docFormatIndex][$scope.screenSizeIndex]}`);
+                angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[docFormatIndex][$scope.screenSizeIndex]);
+                angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[docFormatIndex][$scope.screenSizeIndex]);
             } else {
                 angular.element(document.querySelector('#photo-div') ).addClass('div-horizontal-mobile');
                 angular.element(document.querySelector('#photo-img') ).addClass('img-responsive');
@@ -438,12 +395,12 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             };
         };
  */
-        if ($scope.images[currentPhoto].orientation == 0) {
-            // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
-            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
-            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
-        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
-            // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+        if ($scope.docs[currentPhoto].orientation == 0) {
+            console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[docFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[docFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[docFormatIndex][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[docFormatIndex][$scope.screenSizeIndex]);
+        } else if ($scope.docs[currentPhoto].orientation == 1 || $scope.docs[currentPhoto].orientation == -1) {
+            console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
             angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
             angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
         } else {
@@ -452,13 +409,13 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         
     };
 
-    $scope.rotateImage = function(image, direction) {
+    $scope.rotateDoc = function(doc, direction) {
         var newOrientation = 0;
         var rotation = false;
         var rotAction = 'med uret'
         if (direction == -1) {
-            if (image.orientation > 0) {
-                newOrientation = image.orientation + direction;
+            if (doc.orientation > 0) {
+                newOrientation = doc.orientation + direction;
                 rotation = true;
                 rotAction = 'mod uret';
                 // console.log(`Rotate counter clockwise`);
@@ -466,8 +423,8 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 $window.alert('Handlingen er pt ikke understøttet.');
             };
         } else {
-            if (image.orientation < 1) {
-                newOrientation = image.orientation + direction;
+            if (doc.orientation < 1) {
+                newOrientation = doc.orientation + direction;
                 rotation = true;
                 // console.log(`Rotate clockwise`);
             } else {
@@ -479,7 +436,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             if ($window.confirm('Venligst bekræft at du vil rotere billedet '+rotAction)) {
                 $http({
                     method: 'PATCH',
-                    url: '/photos/orientation/'+image._id,
+                    url: '/photos/orientation/'+doc._id,
                     headers: {
                         'x-auth': localStorage.userToken
                     },
@@ -488,8 +445,8 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                     // console.log(`Status: ${response.status}`);
                     // $location.path('/photoalbum/' + $scope.year);
                     // $route.reload();
-                    $scope.mainImageObj.orientation = newOrientation;
-                    imageFormatting();
+                    $scope.mainDocObj.orientation = newOrientation;
+                    docFormatting();
                 }, function errorCallback(response) {
                     console.log(`Status: ${response.status}`);
                 });
@@ -539,11 +496,11 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     if (Number($scope.year) < 1993) {
         $scope.headline = "Mine billeder for alle år";
         photosurl = '/photos/my';
-        $scope.nopicturestext = "Du har ikke lagt nogen billeder op endnu. "
+        $scope.nodocstext = "Du har ikke lagt nogen billeder op endnu. "
     } else {
         $scope.headline = "Mine billeder fra " + $scope.year;
         photosurl = '/photos/my/'+$scope.year;
-        $scope.nopicturestext = "Du har ikke lagt nogen billeder fra "+$scope.year+" op endnu. "
+        $scope.nodocstext = "Du har ikke lagt nogen billeder fra "+$scope.year+" op endnu. "
     };
     
     $http({
@@ -554,82 +511,82 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         }
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
-        $scope.images = response.data;
+        $scope.docs = response.data;
         if (!response.data[0]) {
             // console.log('No photos for user'+localStorage.familielejrUserId);
-            $scope.imagesExist = false;
+            $scope.docsExist = false;
         } else {
-            $scope.imagesExist = true;
-            $scope.mainImageObj = $scope.images[0];
-            getImage(0);
-            for (x=0; x<$scope.images.length; x++) {
-                $scope.images[x].num = x;
-                // console.log(`orientation: ${$scope.images[x].orientation}`);
-                if (!$scope.images[x].orientation) {
-                    $scope.images[x].orientation = 0;
+            $scope.docsExist = true;
+            $scope.mainDocObj = $scope.docs[0];
+            getDoc(0);
+            for (x=0; x<$scope.docs.length; x++) {
+                $scope.docs[x].num = x;
+                // console.log(`orientation: ${$scope.docs[x].orientation}`);
+                if (!$scope.docs[x].orientation) {
+                    $scope.docs[x].orientation = 0;
                 };
-                // console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+                // console.log(`${$scope.docs[x].num}: ${$scope.docs[x].filename}, orientation: ${$scope.docs[x].orientation}`);
             };
             setTimeout(function(){
-                imageFormatting();
+                docFormatting();
             }, 500);
         };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
 
-	$scope.setImage = function(image){
-        currentPhoto = image.num;
-        $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-        $scope.mainImageObj = $scope.images[currentPhoto];
+	$scope.setDoc = function(doc){
+        currentPhoto = doc.num;
+        $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+        $scope.mainDocObj = $scope.docs[currentPhoto];
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
-        // console.log(`Current Photo: ${image.num}, ${image.filename}`);
+        // console.log(`Current Photo: ${doc.num}, ${doc.filename}`);
 	};
 
-    $scope.nextImage = function() {
-        if (currentPhoto < $scope.images.length-1) {
+    $scope.nextDoc = function() {
+        if (currentPhoto < $scope.docs.length-1) {
             currentPhoto = currentPhoto + 1;
         }
         else {currentPhoto = 0};
-        $scope.mainImageObj = $scope.images[currentPhoto];
-        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
-        if ($scope.images[currentPhoto].signedRequest) {
-            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-            // console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        $scope.mainDocObj = $scope.docs[currentPhoto];
+        // console.log(`Current Photo: ${$scope.mainDocObj.num}, ${$scope.mainDocObj.filename}`);
+        if ($scope.docs[currentPhoto].signedRequest) {
+            $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+            // console.log(`nextDoc: signedRequest in doc: ${$scope.docs[currentPhoto].signedRequest}`);
         } else {
-            getImage(currentPhoto);
+            getDoc(currentPhoto);
         };
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
     };
 
-    $scope.prevImage = function() {
+    $scope.prevDoc = function() {
         if (currentPhoto < 1) {
-            currentPhoto = $scope.images.length-1;
+            currentPhoto = $scope.docs.length-1;
         }
         else {currentPhoto = currentPhoto - 1};
-        $scope.mainImageObj = $scope.images[currentPhoto];
-        // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
-        if ($scope.images[currentPhoto].signedRequest) {
-            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-            // console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        $scope.mainDocObj = $scope.docs[currentPhoto];
+        // console.log(`Current Photo: ${$scope.mainDocObj.num}, ${$scope.mainDocObj.filename}`);
+        if ($scope.docs[currentPhoto].signedRequest) {
+            $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+            // console.log(`prevDoc: signedRequest in doc: ${$scope.docs[currentPhoto].signedRequest}`);
         } else {
-            getImage(currentPhoto);
+            getDoc(currentPhoto);
         };
         setTimeout(function(){
-            imageFormatting();
+            docFormatting();
         }, 500);
     };
 
-    $scope.removeImage = function(image) {
-        if ($window.confirm('Bekræft venligst at du vil slette billedet '+image.filename)) {
+    $scope.removeDoc = function(doc) {
+        if ($window.confirm('Bekræft venligst at du vil slette billedet '+doc.filename)) {
 
             $http({
                 method: 'GET',
-                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/sign-s3-deletedoc?file_name=${doc.filename}&file_type=${doc.filetype}&folder=${doc.year}&operation=${'deleteObject'}`
             }).then(function(response) {
                 // console.log(response.data.signedRequest);
 
@@ -641,7 +598,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                     // console.log("Success!");
                     $http({
                         method: 'DELETE',
-                        url: '/photos/'+image._id,
+                        url: '/photos/'+doc._id,
                         headers: {
                             'x-auth': localStorage.userToken
                         }
@@ -649,30 +606,30 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                         // console.log(`Status: ${response.status}`);
                         // console.log(response.data._id);
 /*                         
-                        console.log(`Number of images: ${$scope.images.length}`);
-                        $scope.images.pop(currentPhoto);
-                        console.log(`Number of images after pop: ${$scope.images.length}`);
-                        for (z=0; z<$scope.images.length; z++) {
-                            console.log(`After pop: ${$scope.images[z].filename}`);
+                        console.log(`Number of docs: ${$scope.docs.length}`);
+                        $scope.docs.pop(currentPhoto);
+                        console.log(`Number of docs after pop: ${$scope.docs.length}`);
+                        for (z=0; z<$scope.docs.length; z++) {
+                            console.log(`After pop: ${$scope.docs[z].filename}`);
                         };
-                        if ($scope.images[0]) {
+                        if ($scope.docs[0]) {
                             if (currentPhoto < 1) {
-                                currentPhoto = $scope.images.length-1;
+                                currentPhoto = $scope.docs.length-1;
                             }
                             else {currentPhoto = currentPhoto - 1};
-                            $scope.mainImageObj = $scope.images[currentPhoto];
-                            console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
-                            if ($scope.images[currentPhoto].signedRequest) {
-                                $scope.mainImage = $scope.images[currentPhoto].signedRequest;
-                                console.log(`prevImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+                            $scope.mainDocObj = $scope.docs[currentPhoto];
+                            console.log(`Current Photo: ${$scope.mainDocObj.num}, ${$scope.mainDocObj.filename}`);
+                            if ($scope.docs[currentPhoto].signedRequest) {
+                                $scope.mainDoc = $scope.docs[currentPhoto].signedRequest;
+                                console.log(`prevDoc: signedRequest in doc: ${$scope.docs[currentPhoto].signedRequest}`);
                             } else {
-                                getImage(currentPhoto);
+                                getDoc(currentPhoto);
                             };
                         } else {
                             $location.path('/myphotoalbum');
                         };
  */
-                        $location.path('/myphotoalbum/'+image.year);
+                        $location.path('/myphotoalbum/'+doc.year);
                         // $route.reload();
                     }, function errorCallback(response) {
                         console.log(`Status: ${response.status}`);
@@ -688,10 +645,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         };
     };
 
-    $scope.addComment = function(image) {
+    $scope.addComment = function(doc) {
         $http({
             method: 'PATCH',
-            url: '/photos/'+image._id,
+            url: '/photos/'+doc._id,
             headers: {
                 'x-auth': localStorage.userToken
             },
@@ -706,27 +663,27 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                     text: $scope.mycomment
                 }
             };
-            $scope.mainImageObj.imagetext.push(newtextobj);
-            console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
+            $scope.mainDocObj.doctext.push(newtextobj);
+            console.log(`${JSON.stringify($scope.mainDocObj.doctext)}`);
             $scope.mycomment = '';
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
     };
 
-    function getImage(photoNum) {
+    function getDoc(photoNum) {
         var operation = 'getObject';
-        var filename = $scope.images[photoNum].filename;
-        var filetype = $scope.images[photoNum].filetype;
-        var folder = $scope.images[photoNum].year;
+        var filename = $scope.docs[photoNum].filename;
+        var filetype = $scope.docs[photoNum].filetype;
+        var folder = $scope.docs[photoNum].year;
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/sign-s3-getdoc?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log("Signed request: "+response.data.signedRequest);
-            $scope.mainImage = response.data.signedRequest;
-            $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            // console.log(`mainImage: ${$scope.mainImage}`);
+            $scope.mainDoc = response.data.signedRequest;
+            $scope.docs[photoNum].signedRequest = response.data.signedRequest;
+            // console.log(`mainDoc: ${$scope.mainDoc}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -754,9 +711,9 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         return screenSizeIndex;
     };
 
-    function imageFormatting() {
+    function docFormatting() {
 
-        var imageFormats = [
+        var docFormats = [
             {"whRelation": 0.6},
             {"whRelation": 1.3},
             {"whRelation": 1.7}
@@ -780,10 +737,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
             ['img-vertical-520-ver','img-vertical-680-ver','img-vertical-780-ver','img-vertical-930-ver','img-vertical-1080-ver','img-vertical-1081-ver']
         ];
 
-        if ($scope.images[currentPhoto].orientation == 0) {
+        if ($scope.docs[currentPhoto].orientation == 0) {
             var imgWidth = document.getElementById("photo-img").naturalWidth;
             var imgHeight = document.getElementById("photo-img").naturalHeight;
-        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+        } else if ($scope.docs[currentPhoto].orientation == 1 || $scope.docs[currentPhoto].orientation == -1) {
             var imgWidth = document.getElementById("photo-img-ver").naturalWidth;
             var imgHeight = document.getElementById("photo-img-ver").naturalHeight;
         } else {
@@ -793,18 +750,18 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         // console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
         $scope.imgWidth = imgWidth; $scope.imgHeight = imgHeight;
 
-        var imageFormatIndex = 0;
-        for (var f=0; f<imageFormats.length; f++) {
-            // console.log(`f: ${f}, imageFormat: ${imageFormats[f].whRelation}`);
-            if (whr > imageFormats[f].whRelation) {imageFormatIndex = f};
+        var docFormatIndex = 0;
+        for (var f=0; f<docFormats.length; f++) {
+            // console.log(`f: ${f}, docFormat: ${docFormats[f].whRelation}`);
+            if (whr > docFormats[f].whRelation) {docFormatIndex = f};
         };
 
-        // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
-        if ($scope.images[currentPhoto].orientation == 0) {
-            console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
-            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
-            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
-        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+        // console.log(`In docFormatting. ${$scope.docs[currentPhoto].num}: ${$scope.docs[currentPhoto].filename}, orientation: ${$scope.docs[currentPhoto].orientation}`);
+        if ($scope.docs[currentPhoto].orientation == 0) {
+            console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[docFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[docFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[docFormatIndex][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[docFormatIndex][$scope.screenSizeIndex]);
+        } else if ($scope.docs[currentPhoto].orientation == 1 || $scope.docs[currentPhoto].orientation == -1) {
             console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
             angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
             angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
@@ -813,13 +770,13 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         };
     };
 
-    $scope.rotateImage = function(image, direction) {
+    $scope.rotateDoc = function(doc, direction) {
         var newOrientation = 0;
         var rotation = false;
         var rotAction = 'med uret'
         if (direction == -1) {
-            if (image.orientation > 0) {
-                newOrientation = image.orientation + direction;
+            if (doc.orientation > 0) {
+                newOrientation = doc.orientation + direction;
                 rotation = true;
                 rotAction = 'mod uret';
                 // console.log(`Rotate counter clockwise`);
@@ -827,8 +784,8 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                 $window.alert('Handlingen er pt ikke understøttet.');
             };
         } else {
-            if (image.orientation < 1) {
-                newOrientation = image.orientation + direction;
+            if (doc.orientation < 1) {
+                newOrientation = doc.orientation + direction;
                 rotation = true;
                 // console.log(`Rotate clockwise`);
             } else {
@@ -840,7 +797,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
             if ($window.confirm('Venligst bekræft at du vil rotere billedet '+rotAction)) {
                 $http({
                     method: 'PATCH',
-                    url: '/photos/orientation/'+image._id,
+                    url: '/photos/orientation/'+doc._id,
                     headers: {
                         'x-auth': localStorage.userToken
                     },
@@ -849,8 +806,8 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                     // console.log(`Status: ${response.status}`);
                     // $location.path('/photoalbum/' + $scope.year);
                     // $route.reload();
-                    $scope.mainImageObj.orientation = newOrientation;
-                    imageFormatting();
+                    $scope.mainDocObj.orientation = newOrientation;
+                    docFormatting();
                 }, function errorCallback(response) {
                     console.log(`Status: ${response.status}`);
                 });
@@ -883,21 +840,21 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         };
     });
 
-    $scope.imagescope = $routeParams.imagescope;
+    $scope.docscope = $routeParams.docscope;
     var currentyear = (new Date()).getFullYear();
     var firstyear = 1993
     $scope.years = [];
     $scope.total = 0;
-    if ($routeParams.imagescope == "global") {
-        $scope.mypictures = false;
+    if ($routeParams.docscope == "global") {
+        $scope.mydocs = false;
         photosurl = '/photos/count/';
         $scope.headline = "Billedoversigt";
     } else {
-        $scope.mypictures = true;
+        $scope.mydocs = true;
         photosurl = '/photos/my/count/';
         $scope.headline = "Min billedoversigt";
     };
-    // console.log(`My pictures?: ${$scope.mypictures}`);
+    // console.log(`My docs?: ${$scope.mydocs}`);
 
     for (var y=firstyear; y<=currentyear; y++) {
         // console.log(`Year before http: ${y}`);
@@ -913,7 +870,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
             // console.log(`Year: ${y.toString()}, Count: ${response.data}`);
             $scope.total += response.data.count;
             angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
-            if ($scope.mypictures) {
+            if ($scope.mydocs) {
                 angular.element(document.querySelector( '#myphotooverview' ) ).addClass('active');
             } else {
                 angular.element(document.querySelector( '#globalphotooverview' ) ).addClass('active');
@@ -924,103 +881,3 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     };
 
 }])
-
-
-    /* 
-    $scope.uploadPicture2 = function(file) {
-        console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);
-        var folder = $scope.year;
-        var operation = 'putObject';
-
-        $http({
-            method: 'GET',
-            url: `/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
-        }).then(function(response) {
-            console.log(response);
-            console.log(response.data.url);
-
-            $scope.errorMsg = '';
-            $scope.successMsg = '';
-            file.upload = Upload.upload({
-                method: 'PUT',
-                url: response.data.signedRequest,
-                data: {
-                    file: file
-                },
-                headers: {
-                    'Content-Type': file.type
-                }
-            });
-    
-            file.upload.then(function (response) {
-                $timeout(function () {
-                    file.result = response.data;
-                    console.log(response.data);
-                    console.log(response.status);
-                    $scope.picFile = null;
-                    $scope.successMsg = response.data.filename + 'blev uploaded.'
-                });
-                }, function (response) {
-                    if (response.status > 0) {
-                        if (response.status == 409) {
-                            $scope.errorMsg = response.status + ': Et billede med det filnavn er allerede uploaded.';
-                        } else {
-                            $scope.errorMsg = response.status + ': Der opstod en fejl.';
-                        };
-                    };
-                }, function (evt) {
-                // Math.min is to fix IE which reports 200% sometimes
-                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-            }, function errorCallback(response) {
-                console.log(`Status: ${response.status}`);
-            });
-    
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    };
-
-    $scope.uploadPic = function(file) {
-        $scope.errorMsg = '';
-        $scope.successMsg = '';
-        var picturetext = 'Familielejr '+$scope.year;
-        if ($scope.picturetext) {picturetext = $scope.picturetext;};
-        file.upload = Upload.upload({
-            url: '/photos/upload',
-            data: {
-                year: $scope.year,
-                user: localStorage.familielejrUserId,
-                text: picturetext,
-                file: file
-            },
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        });
-
-        file.upload.then(function (response) {
-            $timeout(function () {
-                file.result = response.data;
-                console.log(response.data);
-                console.log(response.status);
-                $scope.picFile = null;
-                $scope.successMsg = response.data.filename + 'blev uploaded.'
-                $scope.picturetext = "";
-            });
-            }, function (response) {
-                if (response.status > 0) {
-                    if (response.status == 409) {
-                        $scope.errorMsg = response.status + ': Et billede med det filnavn er allerede uploaded.';
-                    } else {
-                        $scope.errorMsg = response.status + ': Der opstod en fejl.';
-                    };
-                };
-            }, function (evt) {
-            // Math.min is to fix IE which reports 200% sometimes
-            file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    };
-
- */

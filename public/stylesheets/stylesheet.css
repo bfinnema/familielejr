@@ -321,3 +321,39 @@ form .progress {
     top: 20px;
     left: 310px;
 }
+
+.acc-table-inc {
+    background-color: rgb(4, 75, 4);
+    color: white;
+}
+
+.acc-table-incomes {
+    background-color: rgb(155, 241, 159);
+    color: black;
+}
+
+.acc-table-exp {
+    background-color: rgb(102, 2, 2);
+    color: white;
+}
+
+.acc-table-expenses {
+    background-color: rgb(235, 151, 151);
+    color: black;
+}
+
+.acc-table-space {
+    background-color: rgb(80, 75, 75);
+    color: white;
+}
+
+.acc-table-head {
+    background-color: rgb(5, 28, 54);
+    color: white;
+}
+
+.acc-table-other {
+    background-color: rgb(96, 181, 238);
+    color: black;
+}
+

@@ -1,6 +1,6 @@
 <div ng-include="'navigation.html'"></div>
 
-<h2 class="heading">Udgifter for {{year}}</h2>
+<h2 class="heading">Udgifter for {{fy}}</h2>
 <p>Liste over årets udgifter</p>
 <table class="table table-striped">
     <thead>
@@ -17,7 +17,7 @@
         <tr ng-repeat="expense in expenses">
             <td>{{ expense.description }}</td>
             <td>{{ expense.vendor }}</td>
-            <td>{{ expense.expensedate | date:'dd-MM-yyyy HH:mm' : 'CET' }}</td>
+            <td>{{ expense.expensedate | date:'dd-MM-yyyy' : 'CET' }}</td>
             <td>{{ expense.expenseprice | number:2 }}</td>
             <td>{{ expense.registeree }}</td>
             <td>
@@ -33,20 +33,16 @@
 </table>
 <hr>
 <div ng-show="newExpense">
-    <h2>Indtast en ny udgift for {{year}}</h2>
+    <h2>Indtast en ny udgift for {{fy}}</h2>
     <form name="newExpenseForm" ng-submit="addExpense()">
-<!-- 
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
                 <label>Type</label>
                 <select class="form-control" ng-model="expensetype" name="expensetype" required>
                     <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
                 </select>
                 <i ng-show="newExpenseForm.expensetype.$error.required">*Skal udfyldes</i>
             </div>
-        </div>
- -->        
-        <div class="row">
             <div class="form-group col-md-4">
                 <label>Description</label>
                 <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse af udgiften" autofocus required>
@@ -57,6 +53,8 @@
                 <input type="text" class="form-control" ng-model="vendor" name="vendor" placeholder="Leverandør" required>
                 <i ng-show="newExpenseForm.vendor.$error.required">*Skal udfyldes</i>
             </div>
+        <div class="row">
+        </div>
             <div class="form-group col-md-2">
                 <label>Dato</label>
                 <input type="date" class="form-control" ng-model="expensedate" name="expensedate">
@@ -80,28 +78,26 @@
 <div ng-show="editExpense">
     <h2>Ændre en udgift</h2>
     <form name="editExpenseForm" ng-submit="expenseEdit()">
-<!-- 
         <div class="row">
             <div class="form-group col-md-4">
                 <label>Type</label>
                 <select class="form-control" ng-model="editExpensetype" name="editExpensetype" required>
                     <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
                 </select>
-                <i ng-show="newExpenseForm.expensetype.$error.required">*Skal udfyldes</i>
+                <i ng-show="newExpenseForm.editExpensetype.$error.required">*Skal udfyldes</i>
             </div>
-        </div>
- -->        
-        <div class="row">
             <div class="form-group col-md-4">
                 <label>Description</label>
                 <input type="text" class="form-control" ng-model="editDescription" name="editDescription" placeholder="Beskrivelse af udgiften" autofocus required>
-                <i ng-show="newExpenseForm.description.$error.required">*Skal udfyldes</i>
+                <i ng-show="newExpenseForm.editDescription.$error.required">*Skal udfyldes</i>
             </div>
             <div class="form-group col-md-2">
                 <label>Leverandør</label>
                 <input type="text" class="form-control" ng-model="editVendor" name="editVendor" placeholder="Leverandør" required>
-                <i ng-show="newExpenseForm.vendor.$error.required">*Skal udfyldes</i>
+                <i ng-show="newExpenseForm.editVendor.$error.required">*Skal udfyldes</i>
             </div>
+        <div class="row">
+        </div>
             <div class="form-group col-md-2">
                 <label>Dato</label>
                 <input type="date" class="form-control" ng-model="editExpensedate" name="editExpensedate">
@@ -109,7 +105,7 @@
             <div class="form-group col-md-2">
                 <label>Beløb</label>
                 <input type="number" step="0.01" class="form-control" ng-model="editExpenseprice" name="editExpenseprice" placeholder="Beløb" required>
-                <i ng-show="newExpenseForm.expenseprice.$error.required">*Skal udfyldes</i>
+                <i ng-show="newExpenseForm.editExpenseprice.$error.required">*Skal udfyldes</i>
             </div>
         </div>
         <div class="row">
@@ -124,7 +120,7 @@
 </div>
 <div class="row actions" ng-show="!newExpense && !editExpense">
     <div class="col-md-4">
-        <a class="btn btn-info btn-lg btn-block" ng-click="newExpenseToggle()">Indtast nyt punkt til huskelisten</a>
+        <a class="btn btn-info btn-lg btn-block" ng-click="newExpenseToggle()">Indtast ny udgift</a>
     </div>
 </div>
 

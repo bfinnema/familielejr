@@ -33,6 +33,9 @@ var EventregSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    fee: {
+        type: Number
+    },
     paid: {
       type: Boolean,
       default: false

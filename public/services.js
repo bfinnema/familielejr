@@ -126,3 +126,23 @@ function ($q, $timeout, $http) {
     };
     
 }])
+
+.factory('YearService',[function(demarcationMonth) {
+    return({
+        myYear: myYear
+    });
+
+    function myYear(demarcationMonth) {
+        console.log(`demarcationMonth: ${demarcationMonth}`);
+        var currentyear = (new Date()).getFullYear();
+        var now = new Date();
+        var demarc = new Date(currentyear,demarcationMonth,1);
+        var lastDateOfYear = new Date(currentyear,11,31);
+        var year = currentyear;
+        if (now > demarc && lastDateOfYear >= now) {
+            year += 1;
+        };
+        return year;
+    };
+
+}])

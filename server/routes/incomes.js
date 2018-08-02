@@ -4,19 +4,19 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
 
-var {Expense} = require('../models/expense');
+var {Income} = require('../models/income');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-    var body = _.pick(req.body, ['year', 'description', 'vendor', 'expensedate', 'expensetype', 'expenseprice']);
+    var body = _.pick(req.body, ['year', 'description', 'source', 'incomedate', 'incometype', 'incomeamount']);
     var registeree = req.user.name.firstname;
     if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
     registeree = registeree + ' ' + req.user.name.surname
     body._creator = req.user._id;
     body.registeree = registeree
-    var expense = new Expense(body);
+    var income = new Income(body);
 
-    expense.save().then((doc) => {
+    income.save().then((doc) => {
         res.json(doc);
     }, (e) => {
         res.status(400).send(e);
@@ -24,8 +24,8 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    Expense.find({}).then((expenses) => {
-        res.json(expenses);
+    Income.find({}).then((incomes) => {
+        res.json(incomes);
     }, (e) => {
         res.status(400).send(e);
     });
@@ -38,24 +38,24 @@ router.get('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Expense.findOne({
+  Income.findOne({
     _id: id
-  }).then((expense) => {
-    if (!expense) {
+  }).then((income) => {
+    if (!income) {
       return res.status(404).send();
     }
 
-    res.json(expense);
+    res.json(income);
   }).catch((e) => {
     res.status(400).send();
   });
 });
 
-// Get all expenses for one year
+// Get all incomes for one year
 router.get('/year/:year', (req, res) => {
     var year = req.params.year;
-    Expense.find({year: year}).then((expenses) => {
-        res.json(expenses);
+    Income.find({year: year}).then((incomes) => {
+        res.json(incomes);
     }, (e) => {
         res.status(400).send(e);
     });
@@ -68,14 +68,14 @@ router.delete('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Expense.findOneAndRemove({
+    Income.findOneAndRemove({
         _id: id
-    }).then((expense) => {
-        if (!expense) {
+    }).then((income) => {
+        if (!income) {
         return res.status(404).send();
     }
 
-        res.json(expense);
+        res.json(income);
     }).catch((e) => {
         res.status(400).send();
     });
@@ -83,8 +83,8 @@ router.delete('/:id', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
     var id = req.params.id;
-    var body = _.pick(req.body, ['year', 'description', 'vendor', 'expensedate', 'expensetype', 'expenseprice']);
-    console.log(`Patching Expense, Description: ${body.description}, price: ${body.expenseprice}`);
+    var body = _.pick(req.body, ['year', 'description', 'source', 'incomedate', 'incometype', 'incomeamount']);
+    console.log(`Patching Income, Description: ${body.description}, price: ${body.incomeamount}`);
 
     var uploader = req.user.name.firstname;
     if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
@@ -96,12 +96,12 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Expense.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((expense) => {
-        if (!expense) {
+    Income.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((income) => {
+        if (!income) {
         return res.status(404).send();
         }
 
-        res.json(expense);
+        res.json(income);
     }).catch((e) => {
         res.status(400).send();
     })

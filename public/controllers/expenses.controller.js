@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('expenselistCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 
+.controller('expensesCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 
 function($scope, $http, $location, $route, $window, AuthService) {
 
     $scope.isLoggedIn = false;
@@ -15,13 +15,14 @@ function($scope, $http, $location, $route, $window, AuthService) {
     var now = new Date();
     var demarc = new Date(currentyear,10,1);
     var lastDateOfYear = new Date(currentyear,11,31);
-    var fiscalyear = currentyear;
+    var fy = currentyear;
     var pastyear = currentyear - 1;
     if (now > demarc && lastDateOfYear >= now) {
-        fiscalyear += 1;
+        fy += 1;
         pastyear += 1;
     };
-    console.log(`Invyear: ${fiscalyear}`);
+    $scope.fy = fy;
+    console.log(`Fiscalyear: ${fy}`);
 
     setTimeout(function(){
         angular.element(document.querySelector( '#organizer' ) ).addClass('active');
@@ -33,19 +34,20 @@ function($scope, $http, $location, $route, $window, AuthService) {
         {"expensetype": "Mad"},
         {"expensetype": "Drikkevarer"},
         {"expensetype": "Underholdning"},
+        {"expensetype": "Hjemmeside"},
         {"expensetype": "Andet"}
     ];
 
     $http({
         method: 'GET',
-        url: '/expenses',
+        url: '/expenses/year/'+fy,
         headers: {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        // console.log(`Success. Status: ${response.status}`);
+        console.log(`Success. Status: ${response.status}`);
         $scope.expenses = response.data;
-        // console.log($scope.expenses[0]);
+        console.log($scope.expenses[0]);
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
@@ -63,7 +65,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
 
     $scope.addExpense = function() {
         var expense = {
-            year: fiscalyear,
+            year: fy,
             expensetype: $scope.expensetype,
             description: $scope.description,
             vendor: $scope.vendor,
@@ -81,7 +83,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
         }).then(function(response) {
             console.log(`Status: ${response.status}`);
             console.log(response.data._id);
-            $location.path('/expenselist');
+            $location.path('/expenses');
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
@@ -94,6 +96,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
         } else {
             $scope.editExpense = true;
         };
+        $scope.editFy = expense.fy;
         $scope.editExpensetype = expense.expensetype;
         $scope.editDescription = expense.description;
         $scope.editVendor = expense.vendor;
@@ -104,7 +107,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
 
     $scope.expenseEdit = function() {
         var data = {
-            year: editFiscalyear,
+            year: $scope.editFy,
             expensetype: $scope.editExpensetype,
             description: $scope.editDescription,
             vendor: $scope.editVendor,
@@ -120,7 +123,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
             },
             data: data
         }).then(function(response) {
-            $location.path('/expenselist');
+            $location.path('/expenses');
             $route.reload();
         }, function errorCallback(response) {
             console.log(`editUserStatus: ${response.status}`);
@@ -139,7 +142,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
             }).then(function(response) {
                 // console.log(`Status: ${response.status}`);
                 // console.log(response.data);
-                $location.path('/expenselist');
+                $location.path('/expenses');
                 $route.reload();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);

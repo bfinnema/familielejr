@@ -21,6 +21,7 @@ angular.module('familielejr')
         {"category": "Mad"},
         {"category": "Drikkevarer"},
         {"category": "Underholdning"},
+        {"category": "Regnskab / økonomi"},
         {"category": "Andet"}
     ];
 

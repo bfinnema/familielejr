@@ -1,185 +1,387 @@
 <div ng-include="'navigation.html'"></div>
 
-<h2 class="heading">Regnskab for familielejr {{accyear}}</h2>
+<h2 class="heading">Regnskab for familielejr {{fy}}</h2>
 <p>Regnskab - forklaring</p>
-<h3 class="heading">Indtægter</h3>
-<h3 class="heading">Udgifter</h3>
-<table class="table table-striped">
+<table class="table">
     <thead>
-        <tr>
-            <th width="8%">Beskrivelse</th>
-            <th width="14%">Leverandør</th>
-            <th width="40%">Dato</th>
+        <tr class="acc-table-head">
+            <th width="35%">Beskrivelse</th>
+            <th width="15%">Leverandør</th>
+            <th width="13%">Dato</th>
+            <th width="12%">Beløb</th>
             <th width="15%">Indført af</th>
-            <th width="13%">Beløb</th>
-            <th width="10%">Slet / Ændre</th>
+            <th ng-show="!fiscalyear.locked" width="10%">Ændre / Slet</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="acc-table-other">
             <td>Beholdning ved årets start</td>
             <td></td>
             <td></td>
+            <td align="right">{{assetsStart | number:2}}</td>
             <td></td>
-            <td>{{accounting.assetsStart}}</td>
-            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
-            <td>INDTÆGTER</td>
+        <tr class="acc-table-space">
             <td></td>
             <td></td>
             <td></td>
             <td></td>
             <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
+        <tr class="acc-table-inc">
+            <td>INDTÆGTER:</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
+        </tr>
+        <tr class="acc-table-incomes">
             <td>Indtægter fra deltagergebyr</td>
             <td></td>
             <td></td>
+            <td align="right">{{participantsFee | number:2}}</td>
             <td></td>
-            <td>{{accounting.participantsFee}}</td>
-            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
-            <td>Andre indtægter</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>{{accounting.otherIncome}}</td>
-            <td></td>
+        <tr ng-repeat="income in incomes" class="acc-table-incomes">
+            <td>{{ income.description }}</td>
+            <td>{{ income.source }}</td>
+            <td>{{ income.incomedate | date:'dd-MM-yyyy' : 'CET' }}</td>
+            <td align="right">{{ income.incomeamount | number:2 }}</td>
+            <td>{{ income.registeree }}</td>
+            <td ng-show="!fiscalyear.locked">
+                <a class="btn btn-default btn-xs" ng-click="editIncomeToggle(income)">ændre</a>
+                <a class="btn btn-default btn-xs" ng-click="removeIncome(income)">slet</a>
+            </td>
         </tr>
-        <tr>
-            <td>UDGIFTER</td>
+        <tr class="acc-table-inc">
+            <td>Samlede indtægter</td>
             <td></td>
             <td></td>
+            <td align="right">{{incomeTotal | number:2}}</td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr ng-repeat="expense in expenses">
+        <tr class="acc-table-space">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
+        </tr>
+        <tr class="acc-table-exp">
+            <td>UDGIFTER:</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
+        </tr>
+        <tr ng-repeat="expense in expenses" class="acc-table-expenses">
             <td>{{ expense.description }}</td>
             <td>{{ expense.vendor }}</td>
             <td>{{ expense.expensedate | date:'dd-MM-yyyy' : 'CET' }}</td>
+            <td align="right">{{ expense.expenseprice | number:2 }}</td>
             <td>{{ expense.registeree }}</td>
-            <td>{{ expense.expenseprice }}</td>
-            <td>
-                <a class="btn btn-primary" ng-click="editTodoToggle(todo)">
-                    <i class="glyphicon glyphicon-edit"></i>
-                </a>
-                <a class="btn btn-primary" ng-click="removeTodo(todo)">
-                    <i class="glyphicon glyphicon-trash"></i>
-                </a>
+            <td ng-show="!fiscalyear.locked">
+                <a class="btn btn-default btn-xs" ng-click="editExpenseToggle(expense)">ændre</a>
+                <a class="btn btn-default btn-xs" ng-click="removeExpense(expense)">slet</a>
             </td>
         </tr>
-        <tr>
-            <td>SAMLEDE UDGIFTER</td>
+        <tr class="acc-table-exp">
+            <td>Samlede udgifter</td>
             <td></td>
             <td></td>
+            <td align="right">{{expenseSum | number:2}}</td>
             <td></td>
-            <td>{{accounting.expensesTotal}}</td>
-            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
+        <tr class="acc-table-space">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
+        </tr>
+        <tr class="acc-table-other">
             <td>ÅRETS RESULTAT</td>
             <td></td>
             <td></td>
+            <td align="right">{{result | number:2}}</td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
-            <td>ÅRETS RESULTAT</td>
+        <tr class="acc-table-space">
             <td></td>
             <td></td>
             <td></td>
-            <td>{{accounting.result}}</td>
             <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
-        <tr>
-            <td>FORVENTET BEHOLDNING EFTER ÅRETS LEJR</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
+        <tr class="acc-table-other">
             <td>Forventet beholdning efter årets lejr</td>
             <td></td>
             <td></td>
+            <td align="right">{{assetsEnd | number:2}}</td>
             <td></td>
-            <td>{{accounting.assetsEnd}}</td>
+            <td ng-show="!fiscalyear.locked"></td>
+        </tr>
+        <tr class="acc-table-space">
             <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td ng-show="!fiscalyear.locked"></td>
         </tr>
     </tbody>
 </table>
-<h3 class="heading">Årets resultat</h3>
-<hr>
-<div ng-show="newTodo">
-    <h2>Indtast nyt punkt til huskelisten {{newTodo}} </h2>
-    <form name="newTodoForm" ng-submit="addTodo()">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label>Kategori</label>
-                <select class="form-control" ng-model="category" name="category" required>
-                    <option ng-repeat="category in categories" value="{{category.category}}">{{category.category}}</option>
-                </select>
-                <i ng-show="newTodoForm.category.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-8">
-                <label>Beskrivelse</label>
-                <textarea class="form-control" ng-model="text" name="text" rows="3" placeholder="Beskrivelse" required></textarea>
-                <i ng-show="newTodoForm.text.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <button ng-disabled="newTodoForm.$invalid" type="submit" class="btn btn-primary">Send</button>
-            </div>
-            <div class="col-md-2">
-                <a class="btn btn-warning" ng-click="newTodoToggle()">Afbryd</a>
-            </div>
-        </div>
-    </form>
-</div>
-<div ng-show="editTodo">
-    <h2>Ændre et punkt til huskelisten {{editTodo}} </h2>
-    <form name="editTodoForm" ng-submit="todoEdit()">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label>Kategori</label>
-                <select class="form-control" ng-model="editCategory" name="editCategory" required>
-                    <option ng-repeat="category in categories" value="{{category.category}}">{{category.category}}</option>
-                </select>
-                <i ng-show="editTodoForm.editCategory.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-8">
-                <label>Beskrivelse</label>
-                <textarea class="form-control" ng-model="editText" name="editText" rows="3" placeholder="Beskrivelse" required></textarea>
-                <i ng-show="editTodoForm.editText.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <button ng-disabled="editTodoForm.$invalid" type="submit" class="btn btn-primary">Send</button>
-            </div>
-            <div class="col-md-2">
-                <a class="btn btn-warning" ng-click="editTodoToggle()">Afbryd</a>
-            </div>
-        </div>
-    </form>
-</div>
-<div class="row actions" ng-show="!newTodo && !editTodo">
+
+<div class="row actions" ng-show="!editFy && !newExpense && !editAnExpense && !newIncome && !editAnIncome && !fiscalyear.locked">
+    <hr>
+<!-- 
     <div class="col-md-4">
-        <a class="btn btn-info btn-lg btn-block" ng-click="newTodoToggle()">Indtast nyt punkt til huskelisten</a>
+        <a class="btn btn-info btn-lg btn-block" ng-click="editFyToggle()">Ændringer til regnskabsåret</a>
+    </div>
+ -->    
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" ng-click="newExpenseToggle()">Indtast ny udgift</a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" ng-click="newIncomeToggle()">Indtast ny indtægt</a>
     </div>
 </div>
+<!-- 
+<div ng-show="editFy">
+    <h2>Ændringer til regnskabsåret</h2>
+    <form name="editFyForm" ng-submit="fyEdit()">
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Beholdning ved årets start (dette beløb skulle gerne komme fra forrige års regnskab, så vil du virkelig ændre det?)</label>
+                <input type="number" step="0.01" class="form-control" ng-model="assetsStart" name="assetsStart" placeholder="Beholdning ved start" required>
+                <i ng-show="editFyForm.assetsStart.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editFyForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editFyToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+ -->
+<div ng-show="newExpense">
+    <h2>Indtast en ny udgift for {{fy}}</h2>
+    <form name="newExpenseForm" ng-submit="addExpense()">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Type</label>
+                <select class="form-control" ng-model="expensetype" name="expensetype" required>
+                    <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
+                </select>
+                <i ng-show="newExpenseForm.expensetype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse af udgiften" autofocus required>
+                <i ng-show="newExpenseForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Leverandør</label>
+                <input type="text" class="form-control" ng-model="vendor" name="vendor" placeholder="Leverandør" required>
+                <i ng-show="newExpenseForm.vendor.$error.required">*Skal udfyldes</i>
+            </div>
+        <div class="row">
+        </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="expensedate" name="expensedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="expenseprice" name="expenseprice" placeholder="Beløb" required>
+                <i ng-show="newExpenseForm.expenseprice.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newExpenseForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newExpenseToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editAnExpense">
+    <h2>Ændre en udgift</h2>
+    <form name="editExpenseForm" ng-submit="editExpense()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Type</label>
+                <select class="form-control" ng-model="editExpensetype" name="editExpensetype" required>
+                    <option ng-repeat="expensetype in expensetypes" value="{{expensetype.expensetype}}">{{expensetype.expensetype}}</option>
+                </select>
+                <i ng-show="newExpenseForm.editExpensetype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="editDescription" name="editDescription" placeholder="Beskrivelse af udgiften" autofocus required>
+                <i ng-show="newExpenseForm.editDescription.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Leverandør</label>
+                <input type="text" class="form-control" ng-model="editVendor" name="editVendor" placeholder="Leverandør" required>
+                <i ng-show="newExpenseForm.editVendor.$error.required">*Skal udfyldes</i>
+            </div>
+        <div class="row">
+        </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="editExpensedate" name="editExpensedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="editExpenseprice" name="editExpenseprice" placeholder="Beløb" required>
+                <i ng-show="newExpenseForm.editExpenseprice.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editExpenseForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editExpenseToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div ng-show="newIncome">
+    <h2>Indtast en ny indkomst for {{fy}}</h2>
+    <form name="newIncomeForm" ng-submit="addIncome()">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Type</label>
+                <select class="form-control" ng-model="incometype" name="incometype" required>
+                    <option ng-repeat="incometype in incometypes" value="{{incometype.incometype}}">{{incometype.incometype}}</option>
+                </select>
+                <i ng-show="newIncomeForm.incometype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse af indtægten" autofocus required>
+                <i ng-show="newIncomeForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Indtægtskilde</label>
+                <input type="text" class="form-control" ng-model="source" name="source" placeholder="Indtægtskilde">
+            </div>
+        <div class="row">
+        </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="incomedate" name="incomedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="incomeamount" name="incomeamount" placeholder="Beløb" required>
+                <i ng-show="newIncomeForm.incomeamount.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newIncomeForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newIncomeToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editAnIncome">
+    <h2>Ændre en indkomst</h2>
+    <form name="editIncomeForm" ng-submit="editIncome()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Type</label>
+                <select class="form-control" ng-model="editIncometype" name="editIncometype" required>
+                    <option ng-repeat="incometype in incometypes" value="{{incometype.incometype}}">{{incometype.incometype}}</option>
+                </select>
+                <i ng-show="newIncomeForm.editIncometype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="editDescription" name="editDescription" placeholder="Beskrivelse af indtægten" autofocus required>
+                <i ng-show="newIncomeForm.editDescription.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Indtægtskilde</label>
+                <input type="text" class="form-control" ng-model="editSource" name="editSource" placeholder="Indtægtskilde">
+            </div>
+        <div class="row">
+        </div>
+            <div class="form-group col-md-2">
+                <label>Dato</label>
+                <input type="date" class="form-control" ng-model="editIncomedate" name="editIncomedate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Beløb</label>
+                <input type="number" step="0.01" class="form-control" ng-model="editIncomeamount" name="editIncomeamount" placeholder="Beløb" required>
+                <i ng-show="newIncomeForm.editIncomeamount.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editIncomeForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editIncomeToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<hr>
+<div ng-show="!editFy && !newExpense && !editAnExpense && !newIncome && !editAnIncome">
+    <div class="row">
+        <div class="col-md-3">
+            <span ng-if="!fiscalyear.locked">Regnskabsåret er ikke afsluttet.</span>
+            <span ng-if="fiscalyear.locked">Regnskabsåret er afsluttet.</span>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-danger" ng-show="!fiscalyear.locked" ng-click="closeOrOpenFy(true)">Afslut regnskabet</a>
+            <a class="btn btn-danger" ng-show="fiscalyear.locked" ng-click="closeOrOpenFy(false)">Genåben regnskabet</a>
+        </div>
+        <div class="col-md-6">
+            <p>Når du er rimelig sikker på, at alle udgifter og indtægter er med i regnskabet, kan du afslutte 
+                det. Det betyder, at regnskabet ikke kan ændres, og at andre kan se, at det er afsluttet. Skulle 
+                det blive nødvendigt at lave ændringer, kan det genåbnes.</p>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-4">
+            <form name="otherFy">
+                <label>Se et regnskab for et andet år:</label>
+                <select class="form-control" ng-model="theOtherFy" name="theOtherFy" ng-change="newFy()">
+                    <option ng-repeat="fy in fys" value="{{fy.fy}}">{{fy.fy}}</option>
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
 
 <script type="text/javascript">
     $('#organizer').addClass('active');
-    $('#todolist').addClass('active');
+    $('#accounting').addClass('active');
 </script>

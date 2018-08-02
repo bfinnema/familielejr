@@ -50,11 +50,12 @@
                 <th width="15%">Navn</th>
                 <th width="12%">Voksen / Barn</th>
                 <th width="14%">Ankomst</th>
-                <th width="10%">Ankomsttidspunkt</th>
+                <th width="5%">~tid</th>
                 <th width="15%">Afgang</th>
-                <th width="10%">Afgangstidspunkt</th>
+                <th width="5%">~tid</th>
                 <th width="14%">Tilmeldt af</th>
-                <th ng-show="role != 2" width="5%">Slet</th>
+                <th ng-show="role != 2" width="5%">Pris</th>
+                <th ng-show="role != 2" width="10%">Ændre/Slet</th>
                 <th ng-show="role != 2" width="5%">Betalt</th>
             </tr>
         </thead>
@@ -67,7 +68,11 @@
                 <td>{{ registration.departureday }}</td>
                 <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
                 <td>{{ registration.registeree }}</td>
+                <td ng-show="role != 2" align="right">{{ registration.fee | number:0 }}</td>
                 <td ng-show="role != 2">
+                    <a class="btn btn-primary" ng-click="editRegistrationToggle(registration)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
                     <a class="btn btn-primary" ng-click="adminRemoveReg(registration)">
                         <i class="glyphicon glyphicon-trash"></i>
                     </a>
@@ -76,6 +81,28 @@
                     <input type="checkbox" ng-model="registration.paid" id="paid" ng-change="paidStatus(registration)">
                 </td>
             </tr>
+            <tr ng-show="role != 2">
+                <td>Total deltagergebyr</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right">{{feeSum}}</td>
+            </tr>
+            <tr ng-show="role != 2">
+                <td>Totalt indbetalt</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right">{{feePaidSum}}</td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 </div>
@@ -83,4 +110,55 @@
     <tr>
         <td></td><td>Der er ikke tilmeldt nogen endnu</td>
     </tr>
+</div>
+<div ng-show="editRegistration">
+    <h3 class="heading">Ændre tilmeldingen af {{editRegname}}</h3>
+    <form name="editEventregForm" ng-submit="editEventreg()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Navn</label>
+                <input type="text" class="form-control" ng-model="editRegname" name="editRegname" placeholder="Navn" autofocus required>
+                <i ng-show="editEventregForm.regname.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Barn / Voksen</label>
+                <select class="form-control" ng-model="editAgegroup" name="editAgegroup" required>
+                    <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
+                </select>
+                <i ng-show="editEventregForm.agegroup.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Ankomst</label>
+                <select class="form-control" ng-model="editArrivalday" name="editArrivalday" required>
+                    <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
+                </select>
+                <i ng-show="editEventregForm.arrivalday.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Ca. tid</label>
+                <input type="time" class="form-control" ng-model="editArrivaltime" name="editArrivaltime">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Afgang</label>
+                <select class="form-control" ng-model="editDepartureday" name="editDepartureday" required>
+                    <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
+                </select>
+                <i ng-show="editEventregForm.departureday.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Ca. tid</label>
+                <input type="time" class="form-control" ng-model="editDeparturetime" name="editDeparturetime">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Tilmeld</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning btn-lg btn-block" href="#!">Afbryd</a>
+            </div>
+        </div>
+    </form>
 </div>

@@ -1,0 +1,79 @@
+<div ng-include="'navigation.html'"></div>
+
+<div>
+    <h1>Upload af dokumenter til arkivet</h1>
+    <p>Her kan du lægge dokumenter op i arkivet. Angiv årstal for dokumentet, angiv kategori og skriv en lille beskrivelse. 
+        Vælg derefter det dokument, du vil lægge op, fra din computer.</p>
+    <p>Der kommer en fejlmeddelelse, hvis du forsøger at lægge et dokument op, med et navn, der allerede er 
+        lagt op en gang.</p>
+    <hr>
+    <form name="docuploadForm">
+        <fieldset>
+        <!-- <legend>Upload on form submit</legend> -->
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Hvilket år er dokumentet fra?</label>
+                <select class="form-control" ng-model="year" name="year" required>
+                    <option ng-repeat="year in years" value="{{year.year}}">{{year.year}}</option>
+                </select>
+                <i ng-show="docuploadForm.year.$error.required">*Skal vælges</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="category" name="category" required>
+                    <option ng-repeat="category in categories" value="{{category.category}}">{{category.category}}</option>
+                </select>
+                <i ng-show="docuploadForm.category.$error.required">*Skal vælges</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-10">
+                <label>Dokument:</label>
+                <input id="fileSelected" type="file" ngf-select ng-model="docFile" name="docFile"    
+                        accept="pdf/*" ngf-max-size="10MB" required
+                        ngf-model-invalid="errorFile">
+                <i ng-show="docuploadForm.file.$error.required">*Skal vælges</i><br>
+                <i ng-show="docuploadForm.file.$error.maxSize">Filen er for stor 
+                    {{errorFile.size / 1000000|number:1}}MB: max 10MB</i>
+                <img ng-show="docuploadForm.file.$valid" ngf-thumbnail="docFile" class="thumb"> <button ng-click="docFile = null" ng-show="docFile">Fjern</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <button btn btn-default ng-disabled="!docuploadForm.$valid || imageReplica" 
+                    ng-click="uploadDoc(docFile)">Send</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <span class="alert alert-info" ng-show="successMsg != ''">{{successMsg}}</span>
+                <span class="alert alert-danger" ng-show="errorMsg != ''">{{errorMsg}}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <span class="progress" ng-show="docFile.progress >= 0">
+                    <div style="width:{{docFile.progress}}%" 
+                        ng-bind="docFile.progress + '%'"></div>
+                </span>
+            </div>
+        </div>
+<!-- 
+        <div class="row">
+            <div class="form-group col-md-12">
+                <span ng-show="docFile.result">{{successMsg}}</span>
+                <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+            </div>
+        </div>
+ -->        
+        </fieldset>
+        <br>
+    </form>
+</div>

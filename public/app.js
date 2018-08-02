@@ -189,9 +189,24 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'gameCtrl',
             access: {restricted: true}
         }).
-        when('/finances', {
-            templateUrl: 'views/finances.view.html',
-            controller: 'financesCtrl',
+        when('/accounting/:year', {
+            templateUrl: 'views/accounting.view.html',
+            controller: 'accountingCtrl',
+            access: {restricted: true}
+        }).
+        when('/expenses', {
+            templateUrl: 'views/expenses.view.html',
+            controller: 'expensesCtrl',
+            access: {restricted: true}
+        }).
+        when('/archive', {
+            templateUrl: 'views/archive.view.html',
+            controller: 'archiveCtrl',
+            access: {restricted: true}
+        }).
+        when('/docupload', {
+            templateUrl: 'views/docupload.view.html',
+            controller: 'docuploadCtrl',
             access: {restricted: true}
         }).
 		otherwise({redirectTo: '/'})

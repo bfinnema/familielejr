@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var AccountingYear = mongoose.model('AccountingYear', {
+var FiscalYear = mongoose.model('FiscalYear', {
     year: {
         type: Number,
         required: true
@@ -21,11 +21,8 @@ var AccountingYear = mongoose.model('AccountingYear', {
     participantsFee: {
         type: Number
     },
-	participantsFee: {
-		type: Number
-	},
-	otherIncome: {
-		type: Number
+	incomeTotal: {
+        type: Number
 	},
 	expensesTotal: {
 		type: Number
@@ -46,4 +43,4 @@ var AccountingYear = mongoose.model('AccountingYear', {
     }
 });
 
-module.exports = {AccountingYear};
+module.exports = {FiscalYear};
