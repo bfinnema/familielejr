@@ -114,7 +114,7 @@ router.patch('/:id', authenticate, (req, res) => {
 
 router.patch('/locked/:id', authenticate, (req, res) => {
     var id = req.params.id;
-    console.log(`Locked status: ${req.body.locked}`);
+    // console.log(`Locked status: ${req.body.locked}`);
 
     if (!ObjectID.isValid(id)) {
         console.log(`id is not valid`);

@@ -1,6 +1,7 @@
 angular.module('familielejr')
 
-.controller('futurecampsCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+.controller('futurecampsCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 
+function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -10,17 +11,9 @@ angular.module('familielejr')
         };
     });
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        invyear += 1;
-        pastyear += 1;
-    };
-    console.log(`Invyear: ${invyear}`);
+    var invyear = YearService.myYear(8);
+    var pastyear = invyear - 1;
+    // console.log(`futurecampsCtrl: Invyear: ${invyear}, Pastyear: ${pastyear}`);
 
     $http({
         method: 'GET',

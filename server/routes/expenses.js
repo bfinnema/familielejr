@@ -84,7 +84,7 @@ router.delete('/:id', authenticate, (req, res) => {
 router.patch('/:id', authenticate, (req, res) => {
     var id = req.params.id;
     var body = _.pick(req.body, ['year', 'description', 'vendor', 'expensedate', 'expensetype', 'expenseprice']);
-    console.log(`Patching Expense, Description: ${body.description}, price: ${body.expenseprice}`);
+    // console.log(`Patching Expense, Description: ${body.description}, price: ${body.expenseprice}`);
 
     var uploader = req.user.name.firstname;
     if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};

@@ -66,6 +66,27 @@ router.patch('/:id', authenticate, (req, res) => {
   })
 });
 
+router.patch('/fee/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`Calculated fee: ${req.body.eventFee}`);
+
+  if (!ObjectID.isValid(id)) {
+      console.log(`id is not valid`);
+      return res.status(404).send();
+  };
+
+  Eventreg.findOneAndUpdate({_id: id}, {$set: {'fee': req.body.eventFee}}).then((eventreg) => {
+      if (!eventreg) {
+          console.log(`Eventreg not found`);
+          return res.status(404).send();
+      }
+
+      res.json(eventreg);
+  }).catch((e) => {
+      res.status(400).send();
+  });
+});
+
 // Get all event registrations for all years submitted by a specific member
 router.get('/', authenticate, (req, res) => {
   Eventreg.find({

@@ -1,6 +1,7 @@
 angular.module('familielejr')
 
-.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 'NumDaysService', 
+function($scope, $http, $location, $route, $window, AuthService, YearService, NumDaysService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -15,17 +16,8 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        invyear += 1;
-        pastyear += 1;
-    };
-    // console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    var invyear = YearService.myYear(8);
+    // console.log(`Invyear in eventregCtrl: ${invyear}`);
     $scope.invitationyear = invyear;
 
     $scope.agegroups = [
@@ -95,16 +87,8 @@ angular.module('familielejr')
     $scope.addEventreg = function() {
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        var numDays = 1;
-        if ($scope.departureday == "Søndag efter frokost" || $scope.departureday == "Jeg tager aldrig hjem!!") {
-            if ($scope.arrivalday == "Fredag" || $scope.arrivalday == "Lørdag formiddag") {
-                numDays = 2;
-            };
-        } else if ($scope.departureday == "Søndag efter morgenmad") {
-            if ($scope.arrivalday == "Fredag") {
-                numDays = 2;
-            };
-        };
+        var numDays = NumDaysService.numDays($scope.arrivalday ,$scope.departureday);
+        // console.log(`numDays in eventreg: ${numDays}`);
         if ($scope.agegroup == "Voksen") {eventFee = numDays * adultFee;} else {eventFee = numDays * childFee;};
         var eventreg = {
             name: $scope.regname,
@@ -166,9 +150,17 @@ angular.module('familielejr')
         $scope.editRegname = registration.name;
         $scope.editAgegroup = registration.agegroup;
         $scope.editArrivalday = registration.arrivalday;
-        $scope.editArrivaltime = new Date(registration.arrivaltime);
+        if (registration.arrivaltime == null) {
+            $scope.editArrivaltime = null;
+        } else {
+            $scope.editArrivaltime = new Date(registration.arrivaltime);
+        };
         $scope.editDepartureday = registration.departureday;
-        $scope.editDeparturetime = new Date(registration.departuretime);
+        if (registration.departuretime == null) {
+            $scope.editDeparturetime = null;
+        } else {
+            $scope.editDeparturetime = new Date(registration.departuretime);
+        };
         $scope.editPaid = registration.paid;
         $scope.editID = registration._id;
     };
@@ -176,16 +168,8 @@ angular.module('familielejr')
     $scope.editEventreg = function() {
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        var numDays = 1;
-        if ($scope.editDepartureday == "Søndag efter frokost" || $scope.editDepartureday == "Jeg tager aldrig hjem!!") {
-            if ($scope.editArrivalday == "Fredag" || $scope.editArrivalday == "Lørdag formiddag") {
-                numDays = 2;
-            };
-        } else if ($scope.editDepartureday == "Søndag efter morgenmad") {
-            if ($scope.editArrivalday == "Fredag") {
-                numDays = 2;
-            };
-        };
+        var numDays = NumDaysService.numDays($scope.editArrivalday ,$scope.editDepartureday);
+        // console.log(`numDays in edit eventreg: ${numDays}`);
         if ($scope.editAgegroup == "Voksen") {eventFee = numDays * adultFee;} else {eventFee = numDays * childFee;};
         var eventreg = {
             name: $scope.editRegname,
@@ -220,7 +204,8 @@ angular.module('familielejr')
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', 'AuthService', function($scope, $http, $window, $location, $route, AuthService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', 'AuthService', 'YearService', 'NumDaysService', 
+function($scope, $http, $window, $location, $route, AuthService, YearService, NumDaysService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -235,17 +220,8 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#eventregall' ) ).addClass('active');
     }, 1000);
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        invyear += 1;
-        pastyear += 1;
-    };
-    // console.log(`Now: ${now}, 31/12: ${lastDateOfYear}, Invyear: ${invyear}`);
+    var invyear = YearService.myYear(8);
+    // console.log(`Invyear in eventregall: ${invyear}`);
     $scope.invitationyear = invyear;
 
     $scope.agegroups = [
@@ -462,9 +438,17 @@ angular.module('familielejr')
         $scope.editRegname = registration.name;
         $scope.editAgegroup = registration.agegroup;
         $scope.editArrivalday = registration.arrivalday;
-        $scope.editArrivaltime = new Date(registration.arrivaltime);
+        if (registration.arrivaltime == null) {
+            $scope.editArrivaltime = null;
+        } else {
+            $scope.editArrivaltime = new Date(registration.arrivaltime);
+        };
         $scope.editDepartureday = registration.departureday;
-        $scope.editDeparturetime = new Date(registration.departuretime);
+        if (registration.departuretime == null) {
+            $scope.editDeparturetime = null;
+        } else {
+            $scope.editDeparturetime = new Date(registration.departuretime);
+        };
         $scope.editPaid = registration.paid;
         $scope.editID = registration._id;
     };
@@ -472,16 +456,8 @@ angular.module('familielejr')
     $scope.editEventreg = function() {
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        var numDays = 1;
-        if ($scope.editDepartureday == "Søndag efter frokost" || $scope.editDepartureday == "Jeg tager aldrig hjem!!") {
-            if ($scope.editArrivalday == "Fredag" || $scope.editArrivalday == "Lørdag formiddag") {
-                numDays = 2;
-            };
-        } else if ($scope.editDepartureday == "Søndag efter morgenmad") {
-            if ($scope.editArrivalday == "Fredag") {
-                numDays = 2;
-            };
-        };
+        var numDays = NumDaysService.numDays($scope.editArrivalday ,$scope.editDepartureday);
+        // console.log(`numDays in edit eventregall: ${numDays}`);
         if ($scope.editAgegroup == "Voksen") {eventFee = numDays * adultFee;} else {eventFee = numDays * childFee;};
         var eventreg = {
             name: $scope.editRegname,
@@ -512,6 +488,34 @@ angular.module('familielejr')
             console.log(`Status: ${response.status}`);
             $scope.errorHappened = true;
         });
+    };
+
+    $scope.recalcFees = function() {
+        for (var i=0; i<$scope.registrations.length; i++) {
+            var eventFee = 0;
+            var numDays = NumDaysService.numDays($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday);
+            // console.log(`numDays in recalcFees, participant ${$scope.registrations[i].name}: ${numDays}`);
+            if ($scope.registrations[i].agegroup == "Voksen") {eventFee = numDays * adultFee;} else {eventFee = numDays * childFee;};
+
+            $http({
+                method: 'PATCH',
+                url: 'eventregs/fee/'+$scope.registrations[i]._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: {eventFee: eventFee}
+            }).then(function(response) {
+                // console.log(`Status of recalcFee ${i}: ${response.status}`);
+                // console.log(response.data._id);
+            }, function errorCallback(response) {
+                console.log(`Error Status, recalcFee ${i}: ${response.status}`);
+            });
+        };
+
+        setTimeout(function(){
+            $location.path('/eventregistrationall');
+            $route.reload();
+        }, 2000);
     };
 
 }])

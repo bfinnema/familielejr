@@ -117,15 +117,6 @@ function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
         angular.element(document.querySelector( '#archive' ) ).addClass('active');
     }, 1000);
 
-    $scope.innerWidth = window.innerWidth;
-    $scope.innerHeight = window.innerHeight;
-    detectClient();
-    $scope.screenSizeIndex = screenSizing();
-    // console.log(`Screen Size detected: ${$scope.screenSizeIndex}`);
-    var currentPhoto = 0;
-    $scope.year = $routeParams.year;
-    //console.log(`Photos from year ${$scope.year}`)
-
     $http({
         method: 'GET',
         url: '/photos/year/'+$routeParams.year,

@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('expensesCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 
-function($scope, $http, $location, $route, $window, AuthService) {
+.controller('expensesCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 
+function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -11,18 +11,9 @@ function($scope, $http, $location, $route, $window, AuthService) {
         };
     });
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,10,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var fy = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        fy += 1;
-        pastyear += 1;
-    };
+    var fy = YearService.myYear(10);
     $scope.fy = fy;
-    console.log(`Fiscalyear: ${fy}`);
+    // console.log(`Expenses Ctrl. Fiscalyear new: ${fy}`);
 
     setTimeout(function(){
         angular.element(document.querySelector( '#organizer' ) ).addClass('active');
@@ -45,9 +36,9 @@ function($scope, $http, $location, $route, $window, AuthService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
         $scope.expenses = response.data;
-        console.log($scope.expenses[0]);
+        // console.log($scope.expenses[0]);
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
@@ -81,8 +72,8 @@ function($scope, $http, $location, $route, $window, AuthService) {
             },
             data: expense
         }).then(function(response) {
-            console.log(`Status: ${response.status}`);
-            console.log(response.data._id);
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data._id);
             $location.path('/expenses');
             $route.reload();
         }, function errorCallback(response) {

@@ -127,13 +127,13 @@ function ($q, $timeout, $http) {
     
 }])
 
-.factory('YearService',[function(demarcationMonth) {
+.factory('YearService',[function() {
     return({
         myYear: myYear
     });
 
     function myYear(demarcationMonth) {
-        console.log(`demarcationMonth: ${demarcationMonth}`);
+        // console.log(`demarcationMonth: ${demarcationMonth}`);
         var currentyear = (new Date()).getFullYear();
         var now = new Date();
         var demarc = new Date(currentyear,demarcationMonth,1);
@@ -145,4 +145,24 @@ function ($q, $timeout, $http) {
         return year;
     };
 
+}])
+
+.factory('NumDaysService',[function() {
+    return({
+        numDays: numDays
+    });
+
+    function numDays(arrival, departure) {
+        var numDays = 1;
+        if (departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!") {
+            if (arrival == "Fredag" || arrival == "Lørdag formiddag") {
+                numDays = 2;
+            };
+        } else if (departure == "Søndag efter morgenmad" || departure == "Lørdag efter aftensmad") {
+            if (arrival == "Fredag") {
+                numDays = 2;
+            };
+        };
+        return numDays;
+    };
 }])

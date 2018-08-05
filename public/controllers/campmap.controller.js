@@ -1,6 +1,8 @@
 angular.module('familielejr')
 
-.controller('campmapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
+.controller('campmapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', 
+function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
+
     // console.log('This is the maps controller');
 
     $scope.isLoggedIn = false;
@@ -278,7 +280,10 @@ angular.module('familielejr')
     };
 }])
 
-.controller('camplistCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+.controller('camplistCtrl', ['$scope', '$http', 'AuthService', 'YearService', 
+function($scope, $http, AuthService, YearService) {
+
+    // console.log(`This controller is for the list of past camps. Don't be confused bby the fact that it uses the term "futurecamps" for past camps.`);
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -288,17 +293,8 @@ angular.module('familielejr')
         };
     });
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        invyear += 1;
-        pastyear += 1;
-    };
-    console.log(`Invyear: ${invyear}`);
+    var invyear = YearService.myYear(8);
+    // console.log(`List of past camps. Invyear: ${invyear}`);
 
     $http({
         method: 'GET',
@@ -324,18 +320,5 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#camplist' ) ).addClass('active');
     }, 1000);
 
-    $http({
-        method: 'GET',
-        url: 'json/camps.json',
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        // console.log(`Success. Status: ${response.status}`);
-        $scope.camps = response.data;
-        // console.log($scope.todos[0]);
-    }, function errorCallback(response) {
-        console.log(`Error. Status: ${response.status}`);
-    });
  */    
 }]);

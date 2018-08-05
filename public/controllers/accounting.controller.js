@@ -200,21 +200,6 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
         $scope.editID = income._id;
     };
 
-    $scope.editFyToggle = function(fiscalyear) {
-        if ($scope.editAFy) {
-            $scope.editAFy = false;
-        } else {
-            $scope.editAFy = true;
-        };
-        $scope.editFy = income.fy;
-        $scope.editIncometype = income.incometype;
-        $scope.editDescription = income.description;
-        $scope.editVendor = income.source;
-        $scope.editIncomedate = new Date(income.incomedate);
-        $scope.editIncomeamount = income.incomeamount;
-        $scope.editID = income._id;
-    };
-
     $scope.addExpense = function() {
         var method = 'POST';
         var url = 'expenses';
@@ -298,8 +283,8 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
             },
             data: data
         }).then(function(response) {
-            console.log(`Status: ${response.status}`);
-            console.log(response.data._id);
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data._id);
             $location.path('/accounting/'+$scope.fy);
             $route.reload();
         }, function errorCallback(response) {
@@ -308,14 +293,14 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     };
 
     $scope.newFy = function () {
-		console.log("Entering newFy, period: "+$scope.theOtherFy);
+		// console.log("Entering newFy, period: "+$scope.theOtherFy);
         var i=-1;
         do {
             i++;
         }
         while ($scope.fys[i].fy != $scope.theOtherFy);
         $scope.fy = $scope.fys[i].fy;
-        console.log(`The new fy is: ${$scope.fy}`);
+        // console.log(`The new fy is: ${$scope.fy}`);
 		$location.path('/accounting/'+$scope.fy);
         $route.reload();
     };
@@ -323,9 +308,10 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     $scope.closeOrOpenFy = function(locked) {
         var s = "afslutte";
         if (locked) {
-            console.log(`The FY: ${$scope.fy} is locked`);
+            // console.log(`The FY: ${$scope.fy} is locked`);
+            s = "afslutte";
         } else {
-            console.log(`The FY: ${$scope.fy} is not locked`);
+            // console.log(`The FY: ${$scope.fy} is not locked`);
             s = "genåbne";
         };
         if ($window.confirm('Venligst bekræft at du vil '+s+' regnskabsåret '+$scope.fy)) {
@@ -337,7 +323,7 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
                 },
                 data: {locked: locked}
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
+                // console.log(`Status: ${response.status}`);
                 $location.path('/accounting/' + $scope.fy);
                 $route.reload();
             }, function errorCallback(response) {

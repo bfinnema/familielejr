@@ -1,12 +1,12 @@
 <div ng-include="'navigation.html'"></div>
 
 <h2 class="heading">Regnskab for familielejr {{fy}}</h2>
-<p>Regnskab - forklaring</p>
+<br>
 <table class="table">
     <thead>
         <tr class="acc-table-head">
             <th width="35%">Beskrivelse</th>
-            <th width="15%">Leverandør</th>
+            <th width="15%">Leverandør / Kilde</th>
             <th width="13%">Dato</th>
             <th width="12%">Beløb</th>
             <th width="15%">Indført af</th>
@@ -143,13 +143,8 @@
     </tbody>
 </table>
 
-<div class="row actions" ng-show="!editFy && !newExpense && !editAnExpense && !newIncome && !editAnIncome && !fiscalyear.locked">
+<div class="row actions" ng-show="!newExpense && !editAnExpense && !newIncome && !editAnIncome && !fiscalyear.locked">
     <hr>
-<!-- 
-    <div class="col-md-4">
-        <a class="btn btn-info btn-lg btn-block" ng-click="editFyToggle()">Ændringer til regnskabsåret</a>
-    </div>
- -->    
     <div class="col-md-4">
         <a class="btn btn-success btn-lg btn-block" ng-click="newExpenseToggle()">Indtast ny udgift</a>
     </div>
@@ -157,28 +152,6 @@
         <a class="btn btn-success btn-lg btn-block" ng-click="newIncomeToggle()">Indtast ny indtægt</a>
     </div>
 </div>
-<!-- 
-<div ng-show="editFy">
-    <h2>Ændringer til regnskabsåret</h2>
-    <form name="editFyForm" ng-submit="fyEdit()">
-        <div class="row">
-            <div class="form-group col-md-2">
-                <label>Beholdning ved årets start (dette beløb skulle gerne komme fra forrige års regnskab, så vil du virkelig ændre det?)</label>
-                <input type="number" step="0.01" class="form-control" ng-model="assetsStart" name="assetsStart" placeholder="Beholdning ved start" required>
-                <i ng-show="editFyForm.assetsStart.$error.required">*Skal udfyldes</i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <button ng-disabled="editFyForm.$invalid" type="submit" class="btn btn-primary">Send</button>
-            </div>
-            <div class="col-md-2">
-                <a class="btn btn-warning" ng-click="editFyToggle()">Afbryd</a>
-            </div>
-        </div>
-    </form>
-</div>
- -->
 <div ng-show="newExpense">
     <h2>Indtast en ny udgift for {{fy}}</h2>
     <form name="newExpenseForm" ng-submit="addExpense()">
@@ -351,7 +324,7 @@
     </form>
 </div>
 <hr>
-<div ng-show="!editFy && !newExpense && !editAnExpense && !newIncome && !editAnIncome">
+<div ng-show="!newExpense && !editAnExpense && !newIncome && !editAnIncome">
     <div class="row">
         <div class="col-md-3">
             <span ng-if="!fiscalyear.locked">Regnskabsåret er ikke afsluttet.</span>

@@ -1,6 +1,7 @@
 angular.module('familielejr')
 
-.controller('homeCtrl', ['$scope', '$http', 'AuthService', function($scope, $http, AuthService) {
+.controller('homeCtrl', ['$scope', '$http', 'AuthService', 'YearService', 
+function($scope, $http, AuthService, YearService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -13,17 +14,10 @@ angular.module('familielejr')
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc) {
-        invyear += 1;
-        pastyear += 1;
-    };
+    var invyear = YearService.myYear(8);
+    var pastyear = invyear - 1;
     $scope.invyear = invyear;
-    // console.log(`Invyear: ${invyear}`);
+    // console.log(`Home Ctrl. Invyear: ${invyear}. Pastyear: ${pastyear}`);
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
 

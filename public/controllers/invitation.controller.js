@@ -1,6 +1,7 @@
 angular.module('familielejr')
 
-.controller('invitationadminCtrl', ['$scope', '$http', '$location', '$window', 'AuthService', function($scope, $http, $location, $window, AuthService) {
+.controller('invitationadminCtrl', ['$scope', '$http', '$location', '$window', 'AuthService', 'YearService', 
+function($scope, $http, $location, $window, AuthService, YearService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -15,14 +16,9 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
     }, 1000);
 
-    var invyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(invyear,8,1);
-    if (now > demarc) {
-        invyear += 1
-    };
+    var invyear = YearService.myYear(8);
     $scope.invyear = invyear;
-    // console.log(`Invyear: ${invyear}`);
+    // console.log(`Invitation Admin Ctrl. Invyear: ${invyear}`);
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
 
@@ -221,7 +217,8 @@ angular.module('familielejr')
 
 }])
 
-.controller('eventinfoCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService) {
+.controller('eventinfoCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', 'YearService', 
+function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -239,17 +236,8 @@ angular.module('familielejr')
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var currentyear = (new Date()).getFullYear();
-    var now = new Date();
-    var demarc = new Date(currentyear,8,1);
-    var lastDateOfYear = new Date(currentyear,11,31);
-    var invyear = currentyear;
-    var pastyear = currentyear - 1;
-    if (now > demarc && lastDateOfYear >= now) {
-        invyear += 1;
-        pastyear += 1;
-    };
-    console.log(`Invyear: ${invyear}`);
+    var invyear = YearService.myYear(8);
+    // console.log(`Event info Ctrl = Invitation. Invyear: ${invyear}`);
     $scope.invyear = invyear;
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
