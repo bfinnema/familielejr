@@ -3,9 +3,13 @@ const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
+const aws = require('aws-sdk');
 
 var {Doc} = require('../models/doc');
 var {authenticate} = require('../middleware/authenticate');
+
+aws.config.region = 'eu-west-2';
+const S3_BUCKET = process.env.S3_BUCKET;
 
 router.post('/upload', authenticate, (req, res) => {
   // console.log(req.body.description);
@@ -43,6 +47,14 @@ router.post('/upload', authenticate, (req, res) => {
     res.status(400).send();
   });
     
+});
+
+router.get('/', authenticate, (req, res) => {
+  Doc.find({}).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
 });
 
 router.get('/:id', authenticate, (req, res) => {
