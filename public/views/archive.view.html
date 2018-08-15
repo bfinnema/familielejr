@@ -2,38 +2,42 @@
 
 <div>
     <h2>ARKIVET</h2>
+    <p>Arkivet indholder alle gamle dokumenter opdelt i kategorier (invitationer, menuer og madplaner, regnskaber, osv.) 
+        Herunder finder du en link til hvert dokument. Når du klikker på linket, åbnes en ny fane eller vindue med 
+        dokumentet. Du kan komme ud for, at åbning af dokumentet blokeres af sikkerhedshensyn. I så fald skal du give 
+        tilladelse til pop-up's i din browser for denne hjemmeside.</p>
     <div ng-show="invitations.length > 0" class="row">
-        <h3 class="archive-headline">Invitationer {{ invitations.length }}</h3>
+        <h3 class="archive-headline">Invitationer ({{ invitations.length }})</h3>
         <div ng-repeat="invitation in invitations" class="col-md-4">
             <a ng-click="getDoc(invitation)"><h4 class="archive-invitations">{{ invitation.description }}</h4></a>
         </div>
     </div>
     <div ng-show="menus.length > 0" class="row">
-        <h3 class="archive-headline">Menuer og madplaner {{ menus.length }}</h3>
+        <h3 class="archive-headline">Menuer og madplaner ({{ menus.length }})</h3>
         <div ng-repeat="menu in menus" class="col-md-4">
             <a ng-click="getDoc(menu)"><h4 class="archive-menus">{{ menu.description }}</h4></a>
         </div>
     </div>
     <div ng-show="shoppinglists.length > 0" class="row">
-        <h3 class="archive-headline">Indkøbslister {{ shoppinglists.length }}</h3>
+        <h3 class="archive-headline">Indkøbslister ({{ shoppinglists.length }})</h3>
         <div ng-repeat="shoppinglist in shoppinglists" class="col-md-4">
             <a ng-click="getDoc(shoppinglist)"><h4 class="archive-shoppinglists">{{ shoppinglist.description }}</h4></a>
         </div>
     </div>
     <div ng-show="accounts.length > 0" class="row">
-        <h3 class="archive-headline">Regnskaber {{ accounts.length }}</h3>
+        <h3 class="archive-headline">Regnskaber ({{ accounts.length }})</h3>
         <div ng-repeat="account in accounts" class="col-md-4">
             <a ng-click="getDoc(account)"><h4 class="archive-accounts">{{ account.description }}</h4></a>
         </div>
     </div>
     <div ng-show="others.length > 0" class="row">
-        <h3 class="archive-headline">Andet {{ others.length }}</h3>
+        <h3 class="archive-headline">Andet ({{ others.length }})</h3>
         <div ng-repeat="other in others" class="col-md-4">
             <a ng-click="getDoc(other)"><h4 class="archive-others">{{ other.description }}</h4></a>
         </div>
     </div>
     <div ng-show="somethingCompletelyDifferent.length > 0" class="row">
-        <h3 class="archive-headline">Noget helt andet.. {{ somethingCompletelyDifferent.length }}</h3>
+        <h3 class="archive-headline">Noget helt andet.. ({{ somethingCompletelyDifferent.length }})</h3>
         <div ng-repeat="something in somethingCompletelyDifferent" class="col-md-4">
             <a ng-click="getDoc(something)"><h4 class="archive-different">{{ something.description }}</h4></a>
         </div>

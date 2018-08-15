@@ -16,7 +16,7 @@ function($scope, $http, $location, $window, AuthService, YearService) {
         angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(8);
+    var invyear = YearService.myYear(7,17);
     $scope.invyear = invyear;
     // console.log(`Invitation Admin Ctrl. Invyear: ${invyear}`);
     var invitationExists = false;
@@ -236,7 +236,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var invyear = YearService.myYear(8);
+    var invyear = YearService.myYear(7,17);
     // console.log(`Event info Ctrl = Invitation. Invyear: ${invyear}`);
     $scope.invyear = invyear;
     var invitationExists = false;
@@ -259,9 +259,9 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.startdate = sd.getDate();
             $scope.startmonth = months[sd.getMonth()];
             var ed = new Date($scope.invitation.enddate);
-            console.log(`endday: ${ed}, getDay: ${ed.getDay()}`);
+            // console.log(`endday: ${ed}, getDay: ${ed.getDay()}`);
             $scope.endday = days[ed.getDay()];
-            console.log(`Slutdag: ${$scope.endday}`);
+            // console.log(`Slutdag: ${$scope.endday}`);
             $scope.enddate = ed.getDate();
             $scope.endmonth = months[ed.getMonth()];
             var dl = new Date($scope.invitation.registration.deadline);

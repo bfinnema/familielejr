@@ -12,7 +12,7 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     });
 
     var year = $routeParams.year;
-    var currentYear = YearService.myYear(10);
+    var currentYear = YearService.myYear(10,1);
     var fy = year;
     if (year < 1990) {
         fy = currentYear;
@@ -21,12 +21,12 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     // console.log(`Fiscalyear: ${$scope.fy}`);
     var pastyear = fy-1;
 
-    var invyear = YearService.myYear(8);
+    var invyear = YearService.myYear(7,17);
     $scope.invyear = invyear;
     // console.log(`invyear: ${$scope.invyear}`);
 
     var fys = [];
-    for (var y=2005; y<=currentYear; y++) {
+    for (var y=2017; y<=currentYear; y++) {
         fys.push({"fy": y});
     };
     $scope.fys = fys;

@@ -127,21 +127,57 @@ function ($q, $timeout, $http) {
     
 }])
 
+.factory('EventregService',[function() {
+    return({
+        ageGroups: ageGroups,
+        arrivalDays: arrivalDays,
+        departureDays: departureDays
+    });
+
+    function ageGroups() {
+        return [
+            {"agegroup": "Voksen"},
+            {"agegroup": "Barn under 12"},
+            {"agegroup": "Barn under 3"}
+        ];
+    };
+
+    function arrivalDays() {
+        return [
+            {"arrivalday": "Fredag"},
+            {"arrivalday": "Lørdag formiddag"},
+            {"arrivalday": "Lørdag eftermiddag"}
+        ];
+    };
+
+    function departureDays() {
+        return [
+            {"departureday": "Søndag efter frokost"},
+            {"departureday": "Søndag efter morgenmad"},
+            {"departureday": "Lørdag formiddag"},
+            {"departureday": "Lørdag eftermiddag"},
+            {"departureday": "Lørdag efter aftensmad"},
+            {"departureday": "Jeg tager aldrig hjem!!"}
+        ];
+    };
+}])
+
 .factory('YearService',[function() {
     return({
         myYear: myYear
     });
 
-    function myYear(demarcationMonth) {
+    function myYear(demarcationMonth, demarcationDate) {
         // console.log(`demarcationMonth: ${demarcationMonth}`);
         var currentyear = (new Date()).getFullYear();
         var now = new Date();
-        var demarc = new Date(currentyear,demarcationMonth,1);
+        var demarc = new Date(currentyear,demarcationMonth,demarcationDate);
         var lastDateOfYear = new Date(currentyear,11,31);
         var year = currentyear;
         if (now > demarc && lastDateOfYear >= now) {
             year += 1;
         };
+        // console.log(`Demarc: ${demarc}, Year: ${year}`);
         return year;
     };
 

@@ -11,7 +11,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
     });
 
-    var fy = YearService.myYear(10);
+    var fy = YearService.myYear(10,1);
     $scope.fy = fy;
     // console.log(`Expenses Ctrl. Fiscalyear new: ${fy}`);
 

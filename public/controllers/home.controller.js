@@ -14,7 +14,7 @@ function($scope, $http, AuthService, YearService) {
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var invyear = YearService.myYear(8);
+    var invyear = YearService.myYear(7,17);
     var pastyear = invyear - 1;
     $scope.invyear = invyear;
     // console.log(`Home Ctrl. Invyear: ${invyear}. Pastyear: ${pastyear}`);
