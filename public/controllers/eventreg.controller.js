@@ -16,7 +16,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,18);
+    var invyear = YearService.myYear(7,20);
     // console.log(`Invyear in eventregCtrl: ${invyear}`);
     $scope.invitationyear = invyear;
 
@@ -221,7 +221,7 @@ function($scope, $http, $window, $location, $route, AuthService, YearService, Nu
         angular.element(document.querySelector( '#eventregall' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,18);
+    var invyear = YearService.myYear(7,22);
     // console.log(`Invyear in eventregall: ${invyear}`);
     $scope.invitationyear = invyear;
     $scope.agegroups = EventregService.ageGroups();
