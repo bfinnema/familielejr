@@ -205,8 +205,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', 'AuthService', 'YearService', 'NumDaysService', 'EventregService', 
-function($scope, $http, $window, $location, $route, AuthService, YearService, NumDaysService, EventregService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'NumDaysService', 'EventregService', 
+function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, NumDaysService, EventregService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -221,7 +221,19 @@ function($scope, $http, $window, $location, $route, AuthService, YearService, Nu
         angular.element(document.querySelector( '#eventregall' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,22);
+    var invyear = $routeParams.year;
+    var currentYear = YearService.myYear(7,22);
+    if (invyear < 1990) {
+        invyear = currentYear;
+    };
+
+    var fys = [];
+    for (var y=2018; y<=currentYear; y++) {
+        fys.push({"fy": y});
+    };
+    $scope.fys = fys;
+    $scope.fyLocked = false;
+
     // console.log(`Invyear in eventregall: ${invyear}`);
     $scope.invitationyear = invyear;
     $scope.agegroups = EventregService.ageGroups();
@@ -345,6 +357,27 @@ function($scope, $http, $window, $location, $route, AuthService, YearService, Nu
         console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
         console.log(`Børn. Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`);
  */        
+
+        $http({
+            method: 'GET',
+            url: '/fiscalyears/year/'+invyear,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(response) {
+            // console.log(`Success. Status: ${response.status}`);
+            $scope.fiscalyear = response.data;
+            if ($scope.fiscalyear.locked) {
+                $scope.fyLocked = true;
+                // console.log(`FY is locked`);
+            } else {
+                // console.log(`FY is NOT locked`);
+            };
+            // console.log($scope.expenses[0]);
+        }, function errorCallback(response) {
+            console.log(`Fiscalyear Error. Status: ${response.status}`);
+        });
+
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
@@ -489,9 +522,10 @@ function($scope, $http, $window, $location, $route, AuthService, YearService, Nu
                 invitationExists = true;
                 adultFee = $scope.invitation.payment.adult;
                 childFee = $scope.invitation.payment.child;
-                console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
+                // console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
             } else {
-                console.log('Invitation does not exist');
+                // console.log('Invitation does not exist');
+                // console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
             };
 
             for (var i=0; i<$scope.registrations.length; i++) {
@@ -529,10 +563,23 @@ function($scope, $http, $window, $location, $route, AuthService, YearService, Nu
         });
 
         setTimeout(function(){
-            $location.path('/eventregistrationall');
+            $location.path('/eventregistrationall/'+invyear);
             $route.reload();
         }, 1000);
     };
 
+    $scope.newFy = function () {
+		// console.log("Entering newFy, period: "+$scope.theOtherFy);
+        var i=-1;
+        do {
+            i++;
+        }
+        while ($scope.fys[i].fy != $scope.theOtherFy);
+        $scope.fy = $scope.fys[i].fy;
+        // console.log(`The new fy is: ${$scope.fy}`);
+		$location.path('/eventregistrationall/'+$scope.fy);
+        $route.reload();
+    };
+    
 }])
 

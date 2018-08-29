@@ -26,7 +26,7 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     // console.log(`invyear: ${$scope.invyear}`);
 
     var fys = [];
-    for (var y=2017; y<=currentYear; y++) {
+    for (var y=2018; y<=currentYear+5; y++) {
         fys.push({"fy": y});
     };
     $scope.fys = fys;
@@ -88,11 +88,6 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     }).then(function(expenses) {
         $scope.expenses = expenses.data;
         // console.log(`Expense description: ${$scope.expenses[0].description}`);
-        $scope.expenseSum = 0;
-        for (var i=0; i<$scope.expenses.length; i++) {
-            $scope.expenseSum += $scope.expenses[i].expenseprice;
-        };
-        // console.log(`Sum of expenses: ${$scope.expenseSum}`);
         return $http({
             method: 'GET',
             url: 'eventregs/all/year/' + fy,
@@ -103,11 +98,6 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     }).then(function(eventregs) {
         $scope.eventregs = eventregs.data;
         // console.log(`Eventregs fee: ${$scope.eventregs[0].fee}`);
-        $scope.participantsFee = 0;
-        for (var j=0; j<$scope.eventregs.length; j++) {
-            $scope.participantsFee += $scope.eventregs[j].fee;
-        };
-        // console.log(`Sum of participants fees: ${$scope.participantsFee}`);
         return $http({
             method: 'GET',
             url: '/incomes/year/'+fy,
@@ -117,28 +107,72 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
         });
     }).then(function(incomes) {
         $scope.incomes = incomes.data;
-        // console.log(`DONE. Expense description: ${$scope.expenses[0].description}. Income description: ${$scope.incomes[0].description}`)
-        $scope.incomeSum = 0;
-        for (var k=0; k<$scope.incomes.length; k++) {
-            $scope.incomeSum += $scope.incomes[k].incomeamount;
+        // console.log(`Income description: ${$scope.incomes[0].description}`);
+        return $http({
+            method: 'GET',
+            url: '/docs/yearandcat/'+fy+'/6',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(records) {
+        $scope.records = records.data;
+        // console.log(`DONE. Expense description: ${$scope.expenses[0].description}. Income description: ${$scope.incomes[0].description}. Record description: ${$scope.records[0].description}`)
+        if ($scope.fiscalyear.locked) {
+            $scope.participantsFee = $scope.fiscalyear.participantsFee;
+            $scope.incomeTotal = $scope.fiscalyear.incomeTotal;
+            $scope.expensesTotal = $scope.fiscalyear.expensesTotal;
+            $scope.assetsStart = $scope.fiscalyear.assetsStart;
+            $scope.incomeTotal = $scope.fiscalyear.incomeTotal;
+            $scope.result = $scope.fiscalyear.result;
+            $scope.assetsEnd = $scope.fiscalyear.assetsEnd;
+        } else {
+            $scope.expensesTotal = 0;
+            for (var i=0; i<$scope.expenses.length; i++) {
+                $scope.expensesTotal += $scope.expenses[i].expenseprice;
+            };
+            // console.log(`Sum of expenses: ${$scope.expensesTotal}`);
+            $scope.participantsFee = 0;
+            for (var j=0; j<$scope.eventregs.length; j++) {
+                $scope.participantsFee += $scope.eventregs[j].fee;
+            };
+            // console.log(`Sum of participants fees: ${$scope.participantsFee}`);
+            $scope.incomeSum = 0;
+            for (var k=0; k<$scope.incomes.length; k++) {
+                $scope.incomeSum += $scope.incomes[k].incomeamount;
+            };
+            // console.log(`Sum of incomes: ${$scope.incomeSum}`);
+            $scope.assetsStart = $scope.pastFY.assetsEnd;
+            $scope.incomeTotal = $scope.participantsFee + $scope.incomeSum;
+            $scope.result = $scope.incomeTotal - $scope.expensesTotal;
+            $scope.assetsEnd = $scope.assetsStart + $scope.result;
+            var data = {
+                year: $scope.fiscalyear.year,
+                description: $scope.fiscalyear.description,
+                locked: $scope.fiscalyear.locked,
+                initiated: $scope.fiscalyear.initiated,
+                assetsStart: $scope.pastFY.assetsEnd,
+                participantsFee: $scope.participantsFee,
+                incomeTotal: $scope.incomeTotal,
+                expensesTotal: $scope.expensesTotal,
+                result: $scope.result,
+                assetsEnd: $scope.assetsEnd
+            };
+            $http({
+                method: 'PATCH',
+                url: 'fiscalyears/'+$scope.fiscalyear._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: data
+            }).then(function(response) {
+                // console.log(`THE END: Status: ${response.status}`);
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
         };
-        // console.log(`Sum of incomes: ${$scope.incomeSum}`);
-        $scope.assetsStart = $scope.pastFY.assetsEnd;
-        $scope.incomeTotal = $scope.participantsFee + $scope.incomeSum;
-        $scope.result = $scope.incomeTotal - $scope.expenseSum;
-        $scope.assetsEnd = $scope.assetsStart + $scope.result;
-        var data = {
-            year: $scope.fiscalyear.year,
-            description: $scope.fiscalyear.description,
-            locked: $scope.fiscalyear.locked,
-            initiated: $scope.fiscalyear.initiated,
-            assetsStart: $scope.pastFY.assetsEnd,
-            participantsFee: $scope.participantsFee,
-            incomeTotal: $scope.incomeTotal,
-            expensesTotal: $scope.expenseSum,
-            result: $scope.result,
-            assetsEnd: $scope.assetsEnd
-        };
+        
+/*         
         return $http({
             method: 'PATCH',
             url: 'fiscalyears/'+$scope.fiscalyear._id,
@@ -149,6 +183,8 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
         });
     }).then(function(response) {
         // console.log(`THE END: Status: ${response.status}`);
+ */
+
     }, function errorCallback(response) {
         console.log(`Error Status: ${response.status}`);
     });
@@ -330,6 +366,25 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
                 console.log(`Status: ${response.status}`);
             });
         };
+    };
+
+    $scope.getDoc = function(doc) {
+        var operation = 'getObject';
+        var filename = doc.filename;
+        var filetype = doc.filetype;
+        // var folder = "archive/" + categories[doc.category].folder;   // Could not make that work
+        var folder = "archive"
+        // console.log(`Folder: ${folder}`);
+        $http({
+            method: 'GET',
+            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+        }).then(function(response) {
+            // console.log("Signed request: "+response.data.signedRequest);
+            $window.open(response.data.signedRequest, '_blank');
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+
     };
 
 }]);

@@ -89,6 +89,20 @@ router.get('/year/:year', authenticate, (req, res) => {
   });
 });
 
+router.get('/yearandcat/:year/:category', authenticate, (req, res) => {
+  var year = req.params.year;
+  var category = req.params.category;
+  // console.log(`Docs, year: ${year}, category: ${category}`);
+  Doc.find({
+    year: year,
+    category: category
+  }).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/category/:category', authenticate, (req, res) => {
     var category = req.params.category;
     // console.log(`Docs, category: ${category}`);
@@ -101,7 +115,7 @@ router.get('/category/:category', authenticate, (req, res) => {
     });
   });
   
-  router.get('/my', authenticate, (req, res) => {
+router.get('/my', authenticate, (req, res) => {
   // console.log(`My docs, user: ${req.user._id}`);
   Doc.find({
     _creator: req.user._id

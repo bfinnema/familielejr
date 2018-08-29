@@ -96,7 +96,7 @@
             <td>Samlede udgifter</td>
             <td></td>
             <td></td>
-            <td align="right">{{expenseSum | number:2}}</td>
+            <td align="right">{{expensesTotal | number:2}}</td>
             <td></td>
             <td ng-show="!fiscalyear.locked"></td>
         </tr>
@@ -150,6 +150,9 @@
     </div>
     <div class="col-md-4">
         <a class="btn btn-success btn-lg btn-block" ng-click="newIncomeToggle()">Indtast ny indtægt</a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-primary btn-lg btn-block" href="#!docupload">Upload regnskabsbilag</a>
     </div>
 </div>
 <div ng-show="newExpense">
@@ -341,6 +344,13 @@
         </div>
     </div>
     <hr>
+    <div ng-show="records.length > 0" class="row">
+        <h3 class="archive-headline">Regnskabsbilag ({{ records.length }})</h3>
+        <div ng-repeat="record in records" class="col-md-4">
+            <a ng-click="getDoc(record)"><h4>{{ record.description }}</h4></a>
+        </div>
+        <hr>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <form name="otherFy">

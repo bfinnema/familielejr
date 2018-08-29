@@ -61,7 +61,7 @@ function($scope, $http, $location, $window, AuthService, YearService) {
             // console.log(`numOrgLines: ${$scope.numOrgLines}`);
 
         } else {
-            console.log('Invitation does not exist');
+            // console.log('Invitation does not exist');
             $scope.invMessage = "Du opretter en ny invitation for " + invyear + ".";
 
             $http({

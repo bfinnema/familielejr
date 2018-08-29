@@ -15,6 +15,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         {"category": "Menuer og madplaner", "catNum": 1, "folder": "menus"},
         {"category": "Indkøbslister", "catNum": 2, "folder": "shoppinglists"},
         {"category": "Regnskaber", "catNum": 3, "folder": "accounting"},
+        {"category": "Regnskabsbilag", "catNum": 6, "folder": "records"},
         {"category": "Andet", "catNum": 4, "folder": "other"},
         {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"}
     ];
@@ -38,7 +39,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     $scope.docReplica = true;
 
     $scope.uploadDoc = function(file) {
-        console.log(`uploadDoc. filename: ${file.name}, filetype: ${file.type}`);
+        // console.log(`uploadDoc. filename: ${file.name}, filetype: ${file.type}`);
         // var folder = "archive/" + $scope.categories[$scope.category].folder;
         var folder = "archive"
         // console.log(`Folder to upload to: ${folder}`);
@@ -49,7 +50,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             url: `/photos/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             // console.log(response);
-            console.log(response.data.url);
+            // console.log(response.data.url);
             $scope.successMsg = 'VENT VENLIGST. Dokumentet '+file.name+' bliver uploaded.......'
             const xhr = new XMLHttpRequest();
             xhr.open('PUT', response.data.signedRequest);
@@ -73,8 +74,8 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                                 orientation: 0
                             }
                         }).then(function(response) {
-                            console.log(`Status: ${response.status}`);
-                            console.log(response.data._id);
+                            // console.log(`Status: ${response.status}`);
+                            // console.log(response.data._id);
                             $scope.docFile = null;
                             $scope.description = "";
                             $scope.errorMsg = "";
@@ -125,6 +126,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
         {"category": "Menuer og madplaner", "catNum": 1, "folder": "menus"},
         {"category": "Indkøbslister", "catNum": 2, "folder": "shoppinglists"},
         {"category": "Regnskaber", "catNum": 3, "folder": "accounting"},
+        {"category": "Regnskabsbilag", "catNum": 6, "folder": "records"},
         {"category": "Andet", "catNum": 4, "folder": "other"},
         {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"}
     ];
@@ -136,7 +138,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Status: ${response.status}`);
+        // console.log(`Status: ${response.status}`);
         $scope.docs = response.data;
         if (!response.data[0]) {
             // console.log('No Documents in db)
@@ -147,6 +149,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
             $scope.menus = [];
             $scope.shoppinglists = [];
             $scope.accounts = [];
+            $scope.records = [];
             $scope.others = [];
             $scope.somethingCompletelyDifferent = [];
             for (x=0; x<$scope.docs.length; x++) {
@@ -155,6 +158,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
                 else if ($scope.docs[x].category == 2) {$scope.shoppinglists.push($scope.docs[x]);}
                 else if ($scope.docs[x].category == 3) {$scope.accounts.push($scope.docs[x]);}
                 else if ($scope.docs[x].category == 4) {$scope.others.push($scope.docs[x]);}
+                else if ($scope.docs[x].category == 6) {$scope.records.push($scope.docs[x]);}
                 else {$scope.somethingCompletelyDifferent.push($scope.docs[x]);};
             };
         };
@@ -173,7 +177,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
             method: 'GET',
             url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
-            console.log("Signed request: "+response.data.signedRequest);
+            // console.log("Signed request: "+response.data.signedRequest);
             $window.open(response.data.signedRequest, '_blank');
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
@@ -217,7 +221,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
                 console.log(`Status: ${response.status}`);
             });
         } else {
-            $location.path('/about');
+            $location.path('/archive');
         };
     };
 

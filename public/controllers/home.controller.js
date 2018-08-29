@@ -51,7 +51,7 @@ function($scope, $http, AuthService, YearService) {
             if ($scope.invitation.organizers[3]) {$scope.organizer4 = $scope.invitation.organizers[3].name;};
             if ($scope.invitation.organizers[4]) {$scope.organizer5 = $scope.invitation.organizers[4].name;};
         } else {
-            console.log('Invitation does not exist');
+            // console.log('Invitation does not exist');
         };
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);

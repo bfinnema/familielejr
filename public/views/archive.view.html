@@ -30,6 +30,12 @@
             <a ng-click="getDoc(account)"><h4 class="archive-accounts">{{ account.description }}</h4></a>
         </div>
     </div>
+    <div ng-show="records.length > 0" class="row">
+        <h3 class="archive-headline">Regnskabsbilag ({{ records.length }})</h3>
+        <div ng-repeat="record in records" class="col-md-4">
+            <a ng-click="getDoc(record)"><h4 class="archive-accounts">{{ record.description }}</h4></a>
+        </div>
+    </div>
     <div ng-show="others.length > 0" class="row">
         <h3 class="archive-headline">Andet ({{ others.length }})</h3>
         <div ng-repeat="other in others" class="col-md-4">

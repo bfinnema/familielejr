@@ -70,7 +70,7 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregCtrl',
             access: {restricted: true}
         }).
-        when('/eventregistrationall', {
+        when('/eventregistrationall/:year', {
             templateUrl: 'views/eventregall.view.html',
             controller: 'eventregallCtrl',
             access: {restricted: true}
