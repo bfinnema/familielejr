@@ -39,7 +39,7 @@
             <td ng-show="!fiscalyear.locked"></td>
         </tr>
         <tr class="acc-table-incomes">
-            <td>Indtægter fra deltagergebyr</td>
+            <td><a href="#!eventregistrationall/{{fy}}">Indtægter fra deltagergebyr</a></td>
             <td></td>
             <td></td>
             <td align="right">{{participantsFee | number:2}}</td>
@@ -345,12 +345,12 @@
     </div>
     <hr>
     <div ng-show="records.length > 0" class="row">
-        <h3 class="archive-headline">Regnskabsbilag ({{ records.length }})</h3>
+        <h3>Regnskabsbilag ({{ records.length }})</h3>
         <div ng-repeat="record in records" class="col-md-4">
             <a ng-click="getDoc(record)"><h4>{{ record.description }}</h4></a>
         </div>
-        <hr>
     </div>
+    <hr>
     <div class="row">
         <div class="col-md-4">
             <form name="otherFy">

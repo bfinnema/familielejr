@@ -26,7 +26,8 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     // console.log(`invyear: ${$scope.invyear}`);
 
     var fys = [];
-    for (var y=2018; y<=currentYear+5; y++) {
+    var firstyear = 2018;
+    for (var y=currentYear+5; y>=firstyear; y--) {
         fys.push({"fy": y});
     };
     $scope.fys = fys;

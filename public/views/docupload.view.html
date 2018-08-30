@@ -4,15 +4,18 @@
     <h1>Upload af dokumenter til arkivet</h1>
     <p>Her kan du lægge dokumenter op i arkivet. Angiv årstal for dokumentet, angiv kategori og skriv en lille beskrivelse. 
         Vælg derefter det dokument, du vil lægge op, fra din computer.</p>
-    <p>Der kommer en fejlmeddelelse, hvis du forsøger at lægge et dokument op, med et navn, der allerede er 
-        lagt op en gang.</p>
+    <p><i>Årstal er det år, dokumentet er tilknyttet, som kan være forskellig fra det år, dokumentet er fra. 
+        F.eks. et depositum for familielejr 2019 er et regnskabsbilag fra 2018 og betalt i 2018. Men det er 
+        tilknyttet lejren 2019</i></p>
+    <p><i>Der kommer en fejlmeddelelse, hvis du forsøger at lægge et dokument op, med et navn, der allerede er 
+        lagt op en gang.</i></p>
     <hr>
     <form name="docuploadForm">
         <fieldset>
         <!-- <legend>Upload on form submit</legend> -->
         <div class="row">
             <div class="form-group col-md-4">
-                <label>Hvilket år er dokumentet fra?</label>
+                <label>Hvilket år er dokumentet tilknyttet?</label>
                 <select class="form-control" ng-model="year" name="year" required>
                     <option ng-repeat="year in years" value="{{year.year}}">{{year.year}}</option>
                 </select>
@@ -29,7 +32,8 @@
         <div class="row">
             <div class="form-group col-md-8">
                 <label>Beskrivelse</label>
-                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse">
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Beskrivelse" required>
+                <i ng-show="docuploadForm.category.$error.required">*Skal udfyldes</i>
             </div>
         </div>
         <div class="row">

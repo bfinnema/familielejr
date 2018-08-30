@@ -228,7 +228,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     };
 
     var fys = [];
-    for (var y=2018; y<=currentYear; y++) {
+    var firstyear = 2018;
+    for (var y=currentYear; y>=firstyear; y--) {
         fys.push({"fy": y});
     };
     $scope.fys = fys;

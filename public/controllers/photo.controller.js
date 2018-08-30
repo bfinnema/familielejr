@@ -7,7 +7,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     var firstyear = 1993;
     $scope.years = [];
 
-    for (var y=firstyear; y<=currentyear; y++) {
+    for (var y=currentyear; y>=firstyear; y--) {
         $scope.years.push({"year": y.toString()});
     };
     
