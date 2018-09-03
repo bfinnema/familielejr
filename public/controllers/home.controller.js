@@ -17,9 +17,11 @@ function($scope, $http, AuthService, YearService) {
     var invyear = YearService.myYear(7,20);
     var pastyear = invyear - 1;
     $scope.invyear = invyear;
+    $scope.pastyear = pastyear;
     // console.log(`Home Ctrl. Invyear: ${invyear}. Pastyear: ${pastyear}`);
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
+    $scope.showCommittees = [];
 
     $http({
         method: 'GET',
@@ -67,11 +69,25 @@ function($scope, $http, AuthService, YearService) {
         // console.log(`Success. Status: ${response.status}`);
         if (response.data) {
             $scope.camps = response.data;
+            for (var i=0; i<$scope.camps.length; i++) {
+                $scope.showCommittees[$scope.camps[i].year] = false;
+                // console.log(`Year: ${$scope.camps[i].year}, showC: ${$scope.showCommittees[$scope.camps[i].year]}`);
+            };
         } else {
             console.log('No future camps');
         };
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
+
+    $scope.hoverIn = function(year) {
+        $scope.showCommittees[year] = true;
+        // console.log(`Hovered In. Year: ${year}, showC: ${$scope.showCommittees[year]}`);
+    };
+
+    $scope.hoverOut = function(year) {
+        $scope.showCommittees[year] = false;
+        // console.log(`Hovered Out. Year: ${year}, showC: ${$scope.showCommittees[year]}`);
+    };
 
 }])

@@ -41,9 +41,9 @@
                         <i class="glyphicon glyphicon-trash"></i>
                     </a>
                     <a class="btn btn-primary" href="#!users/forgottenpassword/{{user._id}}">
-                            <i class="glyphicon glyphicon-sunglasses"></i>
-                        </a>
-                    </td>
+                        <i class="glyphicon glyphicon-sunglasses"></i>
+                    </a>
+                </td>
                 <td ng-show="role == 0">
                     <a ng-show="user.role != 2" class="btn btn-primary" ng-click="changeRole(user._id, 2, user.name.firstname)">
                         <i class="glyphicon glyphicon-info-sign"></i>
@@ -75,4 +75,223 @@
     <br>
     <h3>Liste over alle email adresser. Kan kopieres over i "Til" feltet i dit email program, hvis linken ovenfor ikke virker for dig.</h3>
     <p>{{allEmails}}</p>
+</div>
+<br>
+<hr>
+<br>
+<div id="nonactiveusers">
+    <h2>Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden</h2>
+    <p>I denne sektion kan man oprette / ændre / slette (potentielle) deltagere, som ikke har registreret sig på hjemmesiden, men 
+        skal modtage invitationer m.m. på email, og dermed skal deres email adresse være registreret. Email adresserne tilføjes 
+        listen ovenfor.</p>
+    <p>Når/hvis nogen af disse registrerer sig på hjemmesiden, bør de fjernes fra denne liste for ikke at 
+        være registreret dobbelt.</p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="25%">Navn</th>
+                <th width="35%">Adresse</th>
+                <th width="20%">email</th>
+                <th width="10%">Telefon</th>
+                <th ng-show="role < 2" width="10%">Slet / Ændre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="nauser in nausers">
+                <td>{{ nauser.name.firstname }} {{ nauser.name.middlename }} {{ nauser.name.surname }} </td>
+                <td><span>{{nauser.address.street}} {{nauser.address.houseno}}</span>
+                    <span ng-show="!nauser.address.floor">, </span>
+                    <span ng-show="nauser.address.floor">, {{nauser.address.floor}}</span>
+                    <span ng-show="nauser.address.direction">{{nauser.address.direction}}</span>
+                    <span>{{nauser.address.zip}} {{nauser.address.town}}</span>
+                </td>
+                <td><a href="mailto:{{ nauser.email }}">{{ nauser.email }}</a></td>
+                <td>{{ nauser.phone }}</td>
+                <td ng-show="role < 2">
+                    <a class="btn btn-primary" ng-click="editNauserToggle(nauser)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="removeNauser(nauser)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr>
+<div class="row actions" ng-show="!showAddNauser && !showEditNauser">
+    <hr>
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" ng-click="addNauserToggle()">Indtast ny deltager</a>
+    </div>
+</div>
+<hr>
+<div ng-show="showAddNauser">
+    <form name="formAddNauser" class="formAddNauser" id="formAddNauser" ng-submit="addNauser()" novalidate>
+        <h3 class="form-signin-heading">Brugernavn (email)</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail">Email adresse</label>
+                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required autofocus>
+                <i ng-show="formAddNauser.inputEmail.$error.email">Indtast korrekt email format. </i>
+                <i ng-show="formAddNauser.inputEmail.$error.required">Skal indtastes. </i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Navn</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Fornavn</label>
+                <input type="text" class="form-control" ng-model="firstname" name="firstname" placeholder="Fornavn" required>
+                <i ng-show="formAddNauser.firstname.$error.required">Skal indtastes. </i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mellemnavn</label>
+                <input type="text" class="form-control" ng-model="middlename" name="middlename" placeholder="Mellemnavn">
+            </div>
+            <div class="form-group col-md-3">
+                <label>Efternavn</label>
+                <input type="text" class="form-control" ng-model="surname" name="surname" placeholder="Efternavn" required>
+                <i ng-show="formAddNauser.surname.$error.required">Skal indtastes. </i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Adresse</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Gade</label>
+                <input type="text" class="form-control" ng-model="street" name="street" placeholder="Gade">
+            </div>
+            <div class="form-group col-md-1">
+                <label>Husnummer</label>
+                <input type="text" class="form-control" ng-model="houseno" name="houseno" placeholder="nr">
+            </div>
+            <div class="form-group col-md-1">
+                <label>Etage</label>
+                <select class="form-control" ng-model="floor" name="floor">
+                    <option ng-repeat="floor in floors" value="{{floor.floor}}">{{floor.floor}}</option>
+                </select>
+            </div>
+            <div class="form-group col-md-1">
+                <label>tv/mf/th</label>
+                <select class="form-control" ng-model="direction" name="direction">
+                    <option ng-repeat="direction in directions" value="{{direction.dir}}">{{direction.dir}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" class="form-control" ng-model="zip" name="zip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" class="form-control" ng-model="town" name="town" placeholder="By">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Land</label>
+                <select class="form-control" ng-model="country" name="country">
+                    <option ng-repeat="country in countries" value="{{country.name}}">{{country.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Telefon</label>
+                <input type="text" class="form-control" ng-model="phone" name="phone" placeholder="Telefonnummer">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formAddNauser.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="form-group col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="addNauserToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="showEditNauser">
+    <form name="formEditNauser" class="formEditNauser" id="formEditNauser" ng-submit="editNauser()" novalidate>
+        <h3 class="form-signin-heading">Brugernavn (email)</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail">Email adresse</label>
+                <input type="email" id="editInputEmail" class="form-control" ng-model="editInputEmail" placeholder="Email adresse" required autofocus>
+                <i ng-show="formEditNauser.inputEmail.$error.email">Indtast korrekt email format. </i>
+                <i ng-show="formEditNauser.inputEmail.$error.required">Skal indtastes. </i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Navn</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Fornavn</label>
+                <input type="text" class="form-control" ng-model="editFirstname" name="editFirstname" placeholder="Fornavn" required>
+                <i ng-show="formEditNauser.firstname.$error.required">Skal indtastes. </i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mellemnavn</label>
+                <input type="text" class="form-control" ng-model="editMiddlename" name="editMiddlename" placeholder="Mellemnavn">
+            </div>
+            <div class="form-group col-md-3">
+                <label>Efternavn</label>
+                <input type="text" class="form-control" ng-model="editSurname" name="editSurname" placeholder="Efternavn" required>
+                <i ng-show="formEditNauser.surname.$error.required">Skal indtastes. </i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Adresse</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Gade</label>
+                <input type="text" class="form-control" ng-model="editStreet" name="editStreet" placeholder="Gade">
+            </div>
+            <div class="form-group col-md-1">
+                <label>Husnummer</label>
+                <input type="text" class="form-control" ng-model="editHouseno" name="editHouseno" placeholder="nr">
+            </div>
+            <div class="form-group col-md-1">
+                <label>Etage</label>
+                <select class="form-control" ng-model="editFloor" name="editFloor">
+                    <option ng-repeat="floor in floors" value="{{floor.floor}}">{{floor.floor}}</option>
+                </select>
+            </div>
+            <div class="form-group col-md-1">
+                <label>tv/mf/th</label>
+                <select class="form-control" ng-model="editDirection" name="editDirection">
+                    <option ng-repeat="direction in directions" value="{{direction.dir}}">{{direction.dir}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" class="form-control" ng-model="editZip" name="editZip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" class="form-control" ng-model="editTown" name="editTown" placeholder="By">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Land</label>
+                <select class="form-control" ng-model="editCountry" name="editCountry">
+                    <option ng-repeat="country in countries" value="{{country.name}}">{{country.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Telefon</label>
+                <input type="text" class="form-control" ng-model="editPhone" name="editPhone" placeholder="Telefonnummer">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formEditNauser.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="form-group col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="editNauserToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
 </div>

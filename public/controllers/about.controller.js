@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('aboutCtrl', ['$scope', 'AuthService', function($scope, AuthService) {
+.controller('aboutCtrl', ['$scope', 'AuthService', 'YearService', function($scope, AuthService, YearService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -13,7 +13,13 @@ angular.module('familielejr')
     setTimeout(function(){
         angular.element(document.querySelector( '#about' ) ).addClass('active');
     }, 1000);
-/* 
+
+    var invyear = YearService.myYear(7,20);
+    var pastyear = invyear - 1;
+    $scope.invyear = invyear;
+    $scope.pastyear = pastyear;
+
+    /* 
     $scope.keyPressed = "Nothing";
     $scope.testKeyPress1 = function($event) {
         console.log(`testKeyPress1`);

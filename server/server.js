@@ -24,6 +24,7 @@ var expenses = require('./routes/expenses');
 var incomes = require('./routes/incomes');
 var fiscalyears = require('./routes/fiscalyears');
 var docs = require('./routes/docs');
+var nonactiveusers = require('./routes/nonactiveusers');
 
 // aws.config.region = 'eu-west-2';
 // const S3_BUCKET = process.env.S3_BUCKET;
@@ -49,6 +50,7 @@ app.use('/expenses', expenses);
 app.use('/incomes', incomes);
 app.use('/fiscalyears', fiscalyears);
 app.use('/docs', docs);
+app.use('/nonactiveusers', nonactiveusers);
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

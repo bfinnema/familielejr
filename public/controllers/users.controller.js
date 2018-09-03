@@ -211,7 +211,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
 
 }])
 
-.controller('usersCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', function($scope, $http, $location, $route, $window, AuthService) {
+.controller('usersCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'ProfileService', 
+function($scope, $http, $location, $route, $window, AuthService, ProfileService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -220,6 +221,10 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
             $scope.role = AuthService.userRole();
         };
     });
+
+    $scope.countries = ProfileService.countries();
+    $scope.floors = ProfileService.floors();
+    $scope.directions = ProfileService.directions();
 
     $http({
         method: 'GET',
@@ -230,25 +235,45 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
     }).then(function(response) {
         // console.log(`UsersStatus: ${response.status}`);
         $scope.users = response.data;
-        $scope.allEmails = "";
-        for (var i=0; i<response.data.length; i++) {
-            // console.log(`Email address: ${response.data[i].email}`);
-            $scope.allEmails += response.data[i].email;
-            if (i+1 < response.data.length) {
-                $scope.allEmails += ", ";
-            };
-        };
-
         // console.log($scope.users);
         // $scope.users.sort(function(a,b) {a.email - b.email});
         // console.log($scope.users);
+
+        return $http({
+            method: 'GET',
+            url: 'nonactiveusers',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(response) {
+        $scope.nausers = response.data;
+        $scope.allEmails = "";
+        for (var i=0; i<$scope.users.length; i++) {
+            // console.log(`Email address: ${$scope.users[i].email}`);
+            $scope.allEmails += $scope.users[i].email;
+            if (i+1 < $scope.users.length) {
+                $scope.allEmails += ", ";
+            };
+        };
+        if ($scope.nausers.length > 0) {
+            $scope.allEmails += ", ";
+        };
+
+        for (var j=0; j<$scope.nausers.length; j++) {
+            // console.log(`Email address, nauser: ${$scope.nausers[j].email}`);
+            $scope.allEmails += $scope.nausers[j].email;
+            if (j+1 < $scope.nausers.length) {
+                $scope.allEmails += ", ";
+            };
+        };
 
         angular.element(document.querySelector( '#admin' ) ).addClass('active');
         angular.element(document.querySelector( '#organizer' ) ).addClass('active');
         angular.element(document.querySelector( '#usersorg' ) ).addClass('active');
         angular.element(document.querySelector( '#usersadmin' ) ).addClass('active');
     }, function errorCallback(response) {
-        console.log(`getUserStatus: ${response.status}`);
+        console.log(`getUsersStatus: ${response.status}`);
     });
 
     $scope.removeUser = function(id) {
@@ -296,6 +321,102 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
                 console.log(`Status: ${response.status}`);
             });
         };
+    };
+
+    $scope.addNauserToggle = function() {
+        if ($scope.showAddNauser) {
+            $scope.showAddNauser = false;
+        } else {
+            $scope.showAddNauser = true;
+        };
+    };
+
+    $scope.editNauserToggle = function(nauser) {
+        if ($scope.showEditNauser) {
+            $scope.showEditNauser = false;
+        } else {
+            $scope.showEditNauser = true;
+        };
+        $scope.editInputEmail = nauser.email;
+        $scope.editFirstname = nauser.name.firstname;
+        $scope.editMiddlename = nauser.name.middlename;
+        $scope.editSurname = nauser.name.surname;
+        $scope.editStreet = nauser.address.street;
+        $scope.editHouseno = nauser.address.houseno;
+        $scope.editFloor = nauser.address.floor;
+        $scope.editDirection = nauser.address.direction;
+        $scope.editZip = nauser.address.zip;
+        $scope.editTown = nauser.address.town;
+        $scope.editCountry = nauser.address.country;
+        $scope.editPhone = nauser.phone;
+        $scope.editID = nauser._id;
+    };
+
+    $scope.addNauser = function() {
+        var method = 'POST';
+        var url = 'nonactiveusers';
+        var name = {
+            firstname: $scope.firstname, middlename: $scope.middlename, surname: $scope.surname
+        };
+
+        var addr = {
+            street: $scope.street, houseno: $scope.houseno, floor: $scope.floor, direction: $scope.direction, zip: $scope.zip, town: $scope.town, country: $scope.country
+        };
+        
+		var data = {
+            email: $scope.inputEmail,
+            name: name,
+			address: addr,
+            phone: $scope.phone
+		};
+        apiCall(method, url, data);
+    };
+
+    $scope.editNauser = function() {
+        var method = 'PATCH';
+        var url = '/nonactiveusers/'+$scope.editID;
+        var name = {
+            firstname: $scope.editFirstname, middlename: $scope.editMiddlename, surname: $scope.editSurname
+        };
+
+        var addr = {
+            street: $scope.editStreet, houseno: $scope.editHouseno, floor: $scope.editFloor, direction: $scope.editDirection, zip: $scope.editZip, town: $scope.editTown, country: $scope.editCountry
+        };
+        
+		var data = {
+            email: $scope.editInputEmail,
+            name: name,
+			address: addr,
+            phone: $scope.editPhone
+		};
+        apiCall(method, url, data);
+    };
+
+    $scope.removeNauser = function(nauser) {
+        if ($window.confirm('Bekræft venligst at du vil slette deltageren '+nauser.name.firstname)) {
+            var method = 'DELETE';
+            var url = 'nonactiveusers/'+nauser._id;
+            var data = '';
+            apiCall(method, url, data);
+        };
+    };
+
+    apiCall = function(method, url, data) {
+        $http({
+            method: method,
+            url: url,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: data
+        }).then(function(response) {
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data._id);
+            $location.path('/usersadmin');
+            $route.reload();
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
     };
 
 }])

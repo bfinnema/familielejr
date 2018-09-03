@@ -494,7 +494,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             // console.log(`Status: ${response.status}`);
             // console.log(response.data._id);
             $scope.errorHappened = false;
-            $location.path('/eventregistrationall');
+            $location.path('/eventregistrationall/'+invyear);
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);

@@ -172,20 +172,6 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
                 console.log(`Status: ${response.status}`);
             });
         };
-        
-/*         
-        return $http({
-            method: 'PATCH',
-            url: 'fiscalyears/'+$scope.fiscalyear._id,
-            headers: {
-                'x-auth': localStorage.userToken
-            },
-            data: data
-        });
-    }).then(function(response) {
-        // console.log(`THE END: Status: ${response.status}`);
- */
-
     }, function errorCallback(response) {
         console.log(`Error Status: ${response.status}`);
     });

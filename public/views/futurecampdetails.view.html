@@ -1,7 +1,7 @@
 <div ng-include="'navigation.html'"></div>
 
 <div>
-	<a href="#!home">Tilbage</a>
+	<a href="#!futurecamps">Tilbage</a>
     <h1>Familielejr i {{camp.year}}</h1>
     <hr>
     <div class="row">
@@ -18,7 +18,7 @@
                     <p>{{organizer.orgname}}</p>
                 </div>
             </div>
-            <div ng-if="camp.organizers.length < 1">
+            <div ng-show="camp.organizers.length < 1">
                 <p>Der er kke nogen arrangører</p>
             </div>
         </div>

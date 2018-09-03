@@ -1,8 +1,16 @@
 <div ng-include="'navigation.html'"></div>
 
-<div class="blog-header">
-    <h1 class="blog-title">Flensburg Familielejren</h1>
-    <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
+<div class="blog-header row">
+    <div class="col-sm-8">
+        <h1 class="blog-title">Flensburg Familielejren</h1>
+        <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
+    </div>
+    <div class="col-sm-2">
+        
+    </div>
+    <div class="col-sm-2">
+        <img height="100px" src="images/fl3-favicon.png">
+    </div>
 </div>
 <hr>
 <div class="row">
@@ -17,56 +25,72 @@
                 fra {{startday}} den {{startdate}}. {{startmonth}} kl. {{invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{invitation.endtime | date:'HH:mm' : 'CET' }}.
                 </p>
                 <div class="col-md-4">
-                    <a class="btn btn-success" href="#!eventinfo">Mere information</a>
+                    <a class="btn btn-success" href="#!eventinfo">Invitation og mere information</a>
                 </div>
                 <div class="col-md-4">
                     <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
                 </div>
             </div>
             <div ng-show="!invitationExists">
-                <p>Invitation til næste lejr er ikke udsendt endnu</p>
+                <p>Invitation til næste lejr er ikke udsendt endnu. Tålmodighed - den kommer!</p>
             </div>
         </div>
         <br>
         <hr>
-        <br>
         <div class="blog-post">
         <h2 class="blog-post-title">Kommende Familielejre</h2>
+        <p class="blog-post-meta">Kør musen over en lejr for at se underholdningsudvalget.</p>
             <div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th width="8%">År</th>
-                            <th width="25%">Lejr</th>
-                            <th width="15%">Startdato</th>
-                            <th width="15%">Slutdato</th>
-                            <th width="29%">Arrangører</th>
-                            <th width="8%">Detaljer</th>
+                            <th width="32%">Lejr</th>
+                            <th width="14%">Startdato</th>
+                            <th width="14%">Slutdato</th>
+                            <th width="32%">Arrangører</th>
+                            <!-- <th width="21%">Underholdning</th> -->
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="camp in camps">
+                        <tr ng-repeat="camp in camps" ng-mouseover="hoverIn(camp.year)" ng-mouseleave="hoverOut(camp.year)">
                             <td>{{ camp.year }}</td>
                             <td>{{ camp.camp }}, {{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</td>
                             <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
                             <td>{{ camp.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
-                            <td><i ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </i></td>
+                            <td>
+                                <i ng-repeat="organizer in camp.organizers">{{organizer.orgname}}, </i>
+                                <i ng-show="showCommittees[camp.year]" ng-repeat="committee in camp.committees">
+                                    <p>{{committee.name}}: <i ng-repeat="member in committee.members">{{member.membername}}, </i></p>
+                                </i>
+                            </td>
+<!-- 
                             <td>
                                 <a class="btn btn-primary" href="#!futurecamps/details/{{camp._id}}">
                                     <i class="glyphicon glyphicon-zoom-in"></i>
                                 </a>
                             </td>
+ -->                            
+                            <!-- <td><i ng-repeat="member in camp.committees[0].members">{{member.membername}}, </i></td> -->
+
+                        </tr>
+                        <tr ng-show="camps.length < 1">
+                            <td></td><td>Der er ikke nogen fremtidige lejre</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+<!-- 
             <div ng-if="camps == false">
                 <tr>
                     <td></td><td>Der er ikke nogen fremtidige lejre</td>
                 </tr>
             </div>
+ -->            
+<!--  
             <br>
             <p>Tryk på "detaljer" knappen ud for en kommende familielejr for at se, om der er nedsat et underholdnings-udvalg eller andre udvalg og hvem, der i så fald er i udvalget.</p>
+ -->            
         </div>
 
     </div><!-- /.blog-main -->
