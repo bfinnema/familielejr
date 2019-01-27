@@ -250,11 +250,19 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
         $scope.nausers = response.data;
         $scope.allEmails = "";
         for (var i=0; i<$scope.users.length; i++) {
-            // console.log(`Email address: ${$scope.users[i].email}`);
             $scope.allEmails += $scope.users[i].email;
             if (i+1 < $scope.users.length) {
                 $scope.allEmails += ", ";
             };
+            $scope.users[i].RemPopoverIsVisible = false;
+            $scope.users[i].PwdPopoverIsVisible = false;
+            $scope.users[i].R2PopoverIsVisible = false;
+            $scope.users[i].R1PopoverIsVisible = false;
+            $scope.users[i].R0PopoverIsVisible = false;
+            $scope.users[i].num = i;
+            // console.log(`Email address: ${$scope.users[i].email}, Num: ${$scope.users[i].num}`);
+            // console.log(`RemPopoverIsVisible: ${$scope.users[i].RemPopoverIsVisible}`);
+            // console.log(`R2PopoverIsVisible: ${$scope.users[i].R2PopoverIsVisible}`);
         };
         if ($scope.nausers.length > 0) {
             $scope.allEmails += ", ";
@@ -266,6 +274,9 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
             if (j+1 < $scope.nausers.length) {
                 $scope.allEmails += ", ";
             };
+            $scope.nausers[j].RemNauserPopoverIsVisible = false;
+            $scope.nausers[j].EditNauserPopoverIsVisible = false;
+            $scope.nausers[j].num = j;
         };
 
         angular.element(document.querySelector( '#admin' ) ).addClass('active');
@@ -419,6 +430,69 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
         });
     };
 
+    $scope.showPopoverEdit = function(x) {
+        $scope.users[x].EditPopoverIsVisible = true;
+    };
+      
+      $scope.hidePopoverEdit = function (x) {
+        $scope.users[x].EditPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverRem = function(x) {
+        $scope.users[x].RemPopoverIsVisible = true; 
+    };
+      
+      $scope.hidePopoverRem = function (x) {
+        $scope.users[x].RemPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverPwd = function(x) {
+        $scope.users[x].PwdPopoverIsVisible = true; 
+    };
+      
+      $scope.hidePopoverPwd = function (x) {
+        $scope.users[x].PwdPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverR2 = function(x) {
+        $scope.users[x].R2PopoverIsVisible = true; 
+    };
+      
+      $scope.hidePopoverR2 = function (x) {
+        $scope.users[x].R2PopoverIsVisible = false;
+    };
+
+    $scope.showPopoverR1 = function(x) {
+        $scope.users[x].R1PopoverIsVisible = true; 
+    };
+      
+      $scope.hidePopoverR1 = function (x) {
+        $scope.users[x].R1PopoverIsVisible = false;
+    };
+
+    $scope.showPopoverR0 = function(x) {
+        $scope.users[x].R0PopoverIsVisible = true; 
+    };
+      
+      $scope.hidePopoverR0 = function (x) {
+        $scope.users[x].R0PopoverIsVisible = false;
+    };
+
+    $scope.showPopoverEditNauser = function(x) {
+        $scope.nausers[x].EditNauserPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverEditNauser = function (x) {
+        $scope.nausers[x].EditNauserPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverRemNauser = function(x) {
+        $scope.nausers[x].RemNauserPopoverIsVisible = true; 
+    };
+      
+    $scope.hidePopoverRemNauser = function (x) {
+        $scope.nausers[x].RemNauserPopoverIsVisible = false;
+    };
 }])
 
 .controller('userpwdCtrl', ['$scope', '$http', '$location', '$routeParams', 'AuthService', function($scope, $http, $location, $routeParams, AuthService) {

@@ -63,12 +63,14 @@
             <li id="organizer" ng-show="isLoggedIn && role < 2" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
                 <ul class="dropdown-menu">
+                    <li id="organizerinstruction"><a href="#!organizerinstruction">Vejledning til arrangører</a></li>
                     <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
                     <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
                     <li id="eventregall"><a href="#!eventregistrationall/1000">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="accounting"><a href="#!accounting/1000">Regnskab</a></li>
-                    <li id="usersorg"><a href="#!usersadmin">Brugere</a></li>
+                    <li id="usersorg"><a href="#!usersadmin">Navne/adresser/email</a></li>
+                    <li id="usersorg"><a href="#!usersadmin#emailaddr">Send email til alle</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">

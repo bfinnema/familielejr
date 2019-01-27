@@ -412,3 +412,31 @@ form .progress {
     border: 3px solid black;
     border-radius: 10px;
 }
+
+.mypopover {
+    position: absolute;
+    z-index: 100;
+    background-color: rgb(243, 217, 161);
+    color: black;
+}
+
+.mypopover2 {
+    position: absolute;
+    z-index: 100;
+    background-color: rgb(182, 243, 223);
+    color: black;
+}
+
+.ul1organizerinstruction {
+    margin-left: 20px
+}
+
+.ul2organizerinstruction {
+    margin-left: 20px
+}
+
+.organizerinstructionlink {
+    color: red;
+    text-align: center;
+    border: solid black;
+}

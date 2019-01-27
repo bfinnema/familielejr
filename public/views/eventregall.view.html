@@ -71,19 +71,21 @@
                 <td ng-show="role != 2" align="right">{{ registration.fee | number:0 }}</td>
                 <td ng-show="role != 2 && !fyLocked">
                     <a class="btn btn-primary" ng-click="editRegistrationToggle(registration)">
-                        <i class="glyphicon glyphicon-edit"></i>
+                        <i class="glyphicon glyphicon-edit" ng-mouseover="showPopoverEditRegistration(registration.num)" ng-mouseleave="hidePopoverEditRegistration(registration.num)"></i>
+                        <div class="mypopover" ng-show="registration.EditRegistrationPopoverIsVisible">Ændre tilmelding for {{registration.name}}</div>
                     </a>
                     <a class="btn btn-primary" ng-click="adminRemoveReg(registration)">
-                        <i class="glyphicon glyphicon-trash"></i>
+                        <i class="glyphicon glyphicon-trash" ng-mouseover="showPopoverRemRegistration(registration.num)" ng-mouseleave="hidePopoverRemRegistration(registration.num)"></i>
+                        <div class="mypopover" ng-show="registration.RemRegistrationPopoverIsVisible">Slet tilmelding for {{registration.name}}</div>
                     </a>
                 </td>
                 <td ng-show="role != 2 && !fyLocked">
                     <input type="checkbox" ng-model="registration.paid" id="paid" ng-change="paidStatus(registration)">
                 </td>
             </tr>
-            <tr ng-show="role != 2">
+            <tr ng-show="role != 2 && registrations.length > 0">
                 <td>Total deltagergebyr</td>
-                <td></td>
+                <td> </td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -93,7 +95,7 @@
                 <td ng-show="role != 2 && !fyLocked"></td>
                 <td ng-show="role != 2 && !fyLocked"></td>
             </tr>
-            <tr ng-show="role != 2">
+            <tr ng-show="role != 2 && registrations.length > 0">
                 <td>Totalt indbetalt</td>
                 <td></td>
                 <td></td>
@@ -105,13 +107,11 @@
                 <td ng-show="role != 2 && !fyLocked"></td>
                 <td ng-show="role != 2 && !fyLocked"></td>
             </tr>
+            <tr ng-show="registrations.length == 0">
+                <td>Der er ikke tilmeldt nogen endnu</td>
+            </tr>
         </tbody>
     </table>
-</div>
-<div ng-show="!registrations[0]">
-    <tr>
-        <td></td><td>Der er ikke tilmeldt nogen endnu</td>
-    </tr>
 </div>
 <div ng-show="editRegistration">
     <h3 class="heading">Ændre tilmeldingen af {{editRegname}}</h3>

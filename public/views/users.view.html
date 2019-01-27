@@ -1,8 +1,18 @@
 <div ng-include="'navigation.html'"></div>
 
-<div>
-    <h2>Liste over brugere ({{users.length}})</h2>
-    <hr>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Liste over brugere ({{users.length}})</h2>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-primary" href="#!usersadmin#emailaddr">Alle Email adresser</a>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-warning" href="#!usersadmin#nonactiveusers">Ikke registrerede</a>
+    </div>
+</div>
+<hr>
+<div class="row">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -38,39 +48,44 @@
                     </a>
  -->                    
                     <a class="btn btn-primary" ng-click="removeUser(user._id)">
-                        <i class="glyphicon glyphicon-trash"></i>
+                        <i class="glyphicon glyphicon-trash" ng-mouseover="showPopoverRem(user.num)" ng-mouseleave="hidePopoverRem(user.num)"></i>
+                        <div class="mypopover" ng-show="user.RemPopoverIsVisible">Slet brugeren {{user.name.firstname}}</div>
                     </a>
                     <a class="btn btn-primary" href="#!users/forgottenpassword/{{user._id}}">
-                        <i class="glyphicon glyphicon-sunglasses"></i>
+                        <i class="glyphicon glyphicon-sunglasses" ng-mouseover="showPopoverPwd(user.num)" ng-mouseleave="hidePopoverPwd(user.num)"></i>
+                        <div class="mypopover" ng-show="user.PwdPopoverIsVisible">Ændre kodeord for {{user.name.firstname}}</div>
                     </a>
                 </td>
                 <td ng-show="role == 0">
                     <a ng-show="user.role != 2" class="btn btn-primary" ng-click="changeRole(user._id, 2, user.name.firstname)">
-                        <i class="glyphicon glyphicon-info-sign"></i>
+                        <i class="glyphicon glyphicon-info-sign" ng-mouseover="showPopoverR2(user.num)" ng-mouseleave="hidePopoverR2(user.num)"></i>
+                        <div class="mypopover" ng-show="user.R2PopoverIsVisible">Ændre rolle for {{user.name.firstname}} til Bruger</div>
                     </a>
                     <a ng-show="user.role != 1" class="btn btn-primary" ng-click="changeRole(user._id, 1, user.name.firstname)">
-                        <i class="glyphicon glyphicon-paperclip"></i>
+                        <i class="glyphicon glyphicon-paperclip" ng-mouseover="showPopoverR1(user.num)" ng-mouseleave="hidePopoverR1(user.num)"></i>
+                        <div class="mypopover" ng-show="user.R1PopoverIsVisible">Ændre rolle for {{user.name.firstname}} til Arrangør</div>
                     </a>
                     <a ng-show="user.role != 0" class="btn btn-primary" ng-click="changeRole(user._id, 0, user.name.firstname)">
-                        <i class="glyphicon glyphicon-wrench"></i>
+                        <i class="glyphicon glyphicon-wrench" ng-mouseover="showPopoverR0(user.num)" ng-mouseleave="hidePopoverR0(user.num)"></i>
+                        <div class="mypopover" ng-show="user.R0PopoverIsVisible">Ændre rolle for {{user.name.firstname}} til Administrator</div>
                     </a>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
-<div ng-show="role == 0">
+<div class="row" ng-show="role == 0">
     <p>Tegnforklaring: 
-        <i class="glyphicon glyphicon-edit"></i> Ændre brugerdetaljer. 
         <i class="glyphicon glyphicon-trash"></i> Slet brugeren. 
+        <i class="glyphicon glyphicon-sunglasses"></i> Ændre kodeord for brugeren. 
         <i class="glyphicon glyphicon-info-sign"></i> Ændre rolle til bruger. 
         <i class="glyphicon glyphicon-paperclip"></i> Ændre rolle til arrangør. 
         <i class="glyphicon glyphicon-wrench"></i> Ændre rolle til administrator.
     </p>
 </div>
 <hr>
-<div>
-    <h2><a href="mailto:{{allEmails}}">Send email til alle brugere</a></h2>
+<div id="emailaddr">
+    <h2><a href="mailto:{{allEmails}}">Send email til alle</a></h2>
     <p>Denne link åbner et nyt email i dit favorit email program</p>
     <br>
     <h3>Liste over alle email adresser. Kan kopieres over i "Til" feltet i dit email program, hvis linken ovenfor ikke virker for dig.</h3>
@@ -80,10 +95,10 @@
 <hr>
 <br>
 <div id="nonactiveusers">
-    <h2>Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden</h2>
+    <h2>Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden ({{nausers.length}})</h2>
     <p>I denne sektion kan man oprette / ændre / slette (potentielle) deltagere, som ikke har registreret sig på hjemmesiden, men 
         skal modtage invitationer m.m. på email, og dermed skal deres email adresse være registreret. Email adresserne tilføjes 
-        listen ovenfor.</p>
+        listen ovenfor, således at det er nemt at sende til alle.</p>
     <p>Når/hvis nogen af disse registrerer sig på hjemmesiden, bør de fjernes fra denne liste for ikke at 
         være registreret dobbelt.</p>
     <table class="table table-striped">
@@ -109,10 +124,12 @@
                 <td>{{ nauser.phone }}</td>
                 <td ng-show="role < 2">
                     <a class="btn btn-primary" ng-click="editNauserToggle(nauser)">
-                        <i class="glyphicon glyphicon-edit"></i>
+                        <i class="glyphicon glyphicon-edit" ng-mouseover="showPopoverEditNauser(nauser.num)" ng-mouseleave="hidePopoverEditNauser(nauser.num)"></i>
+                        <div class="mypopover" ng-show="nauser.EditNauserPopoverIsVisible">Ændre detaljer for {{nauser.name.firstname}}</div>
                     </a>
                     <a class="btn btn-primary" ng-click="removeNauser(nauser)">
-                        <i class="glyphicon glyphicon-trash"></i>
+                        <i class="glyphicon glyphicon-trash" ng-mouseover="showPopoverRemNauser(nauser.num)" ng-mouseleave="hidePopoverRemNauser(nauser.num)"></i>
+                        <div class="mypopover" ng-show="nauser.RemNauserPopoverIsVisible">Slet {{nauser.name.firstname}}</div>
                     </a>
                 </td>
             </tr>

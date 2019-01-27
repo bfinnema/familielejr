@@ -94,20 +94,20 @@
             <td>{{ registration.fee | number:0 }}</td>
             <td>
                 <a class="btn btn-primary" ng-click="editRegistrationToggle(registration)">
-                    <i class="glyphicon glyphicon-edit"></i>
+                    <i class="glyphicon glyphicon-edit" ng-mouseover="showPopoverEdit(registration.num)" ng-mouseleave="hidePopoverEdit(registration.num)"></i>
+                    <div class="mypopover2" ng-show="registration.EditPopoverIsVisible">Ændre tilmelding for {{registration.name}}</div>
                 </a>
                 <a class="btn btn-primary" ng-click="removeReg(registration)">
-                    <i class="glyphicon glyphicon-trash"></i>
+                    <i class="glyphicon glyphicon-trash" ng-mouseover="showPopoverRem(registration.num)" ng-mouseleave="hidePopoverRem(registration.num)"></i>
+                    <div class="mypopover2" ng-show="registration.RemPopoverIsVisible">Slet tilmelding for {{registration.name}}</div>
                 </a>
             </td>
         </tr>
+        <tr ng-show="registrations.length == 0">
+            <td>Du har ikke tilmeldt nogen endnu</td>
+        </tr>
     </tbody>
 </table>
-<div ng-if="registrations == false">
-    <tr>
-        <td></td><td>Du har ikke tilmeldt nogen endnu</td>
-    </tr>
-</div>
 <br>
 <p ng-show="registrations"> PS: Prisen er anslået. Arrangørerne kan ændre den :-)</p>
 <div ng-show="editRegistration">

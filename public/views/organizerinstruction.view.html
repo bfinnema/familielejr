@@ -1,0 +1,128 @@
+<div ng-include="'navigation.html'"></div>
+
+<div class="blog-header">
+    <h1 class="blog-title">Vejledning til arrangører</h1>
+    <p class="lead blog-description">Hjemmesiden indeholder et antal værktøjer til at håndtere indbydelse, tilmelding, 
+        regnskab m.m. Dette er en vejledning til arrangører af familielejren, som ønsker at bruge disse
+        værktøjer eller en del af dem. </p>
+</div>
+<hr>
+<div class="row">
+    <div class="col-sm-8 blog-main">
+        <div class="blog-post">
+        <!-- <h2 class="blog-post-title">Om familielejren</h2> -->
+        <p class="blog-post-meta">Opdateret Januar 2019 af <a href="#">Bo</a>, som også kan kontaktes, hvis du har brug 
+            for hjælp til at bruge hjemmesiden.</p>
+        <ol class="list-group">
+            <li class="list-group-item">
+                <h4>Invitation på hjemmesiden</h4>
+                <p>Det er muligt at oprette en invitation på hjemmesiden. Klik på "Arrangør" menuen og vælg 
+                    <a href="#!invitationadmin">"Administrer invitation"</a>. Du kan nu udfylde et antal felter med 
+                    information om lejren. (Nogen af felterne 
+                    er for-udfyldt med information, som kommer fra oprettelsen af "fremtidige lejre"). Når du er 
+                    færdig med at udfylde felterne, klikker du på knappen "Send invitationen", hvorefter den bliver 
+                    tilgængelig under menuen "Næste familielejr" -> <a href="#!eventinfo">"Invitation"</a>.</p>
+            </li>
+            <li class="list-group-item">
+                <h4>Invitation på email</h4>
+                <p>Selvom der oprettes en invitation på hjemmesiden, er det stadig nødvendigt også at sende invitationen 
+                    på email, eventuelt med et vedhæftet word dokument eller lignende, for at gøre opmærksom på invitationen
+                    på hjemmesiden, og fordi ikke alle er registreret på hjemmesiden.</p>
+                <p>Når du skal sende et email, har du brug for at få alle email adresserne ind i "Til:" feltet. Dem finder 
+                    du under Arrangør menuen -> <a href="#!usersadmin#emailaddr">"Send email til alle"</a>. Der er to måder at 
+                    kopiere email adresserne over:
+                    <ul class="ul1organizerinstruction">
+                        <li>
+                            Klik på linket "Send email til alle". Dermed åbner et nyt email i dit standard email program, og 
+                            alle adresserne er i "Til:" feltet. Nemt!
+                        </li>
+                        <li>
+                            Hvis det ikke virker for dig, eller du vil anvende et andet email program, kan du kopiere alle 
+                            email adresserne fra "Liste over alle email adresser" lige under, og indsætte dem manuelt i 
+                            "Til:" feltet.
+                        </li>
+                    </ul>
+                </p>
+                <p>BEMÆRK: Email adresse listen indeholder både dem, der har registreret sig på hjemmesiden og dem der ikke 
+                    har, hvor vi kender email adressen "på anden vis". Hvis der er behov for at tilføje personer til listen 
+                    over "ikke-registrerede", kan det gøres ved at klikke på knappen "Tilføj deltager" nederst på siden.</p>
+            </li>
+            <li class="list-group-item">
+                <h4>Tilmelding af deltagere</h4>
+                <p>Deltagere, som er registreret på hjemmesiden, kan tilmelde sig på hjemmesiden under "Næste Familielejr" 
+                    -> <a href="#!eventregistration">Tilmelding</a>.</p>
+                <p>Deltagere, som ikke er registreret på hjemmesiden, tilmelder sig til en arrangør via email, telefon, sms 
+                    eller andet. Som arrangør kan du derefter tilmelde deltageren på hjemmesiden under 
+                    <a href="#!eventregistration">Tilmelding</a> (samme sted) for at holde listen over deltagere komplet.</p>
+            </li>
+            <li class="list-group-item">
+                <h4>Deltagerliste og deltager pris</h4>
+                <p>Du kan se den samlede deltagerliste under "Arrangør" -> <a href="#!eventregistrationall/1000">"Administrer tilmeldinger"</a>. 
+                I denne liste kan du også se prisen per deltager. Denne pris er udregnet ud fra priserne per voksen og 
+                per barn, som du har oplyst i invitationen.</p>
+                <p>Før familielejren og under familielejren kommer der helt sikkert ændringer til deltagerlisten. Nogle 
+                    kommer ikke alligevel, nogle kommer senere eller tidligere, nogle tager tidligere eller senere hjem, nogle, 
+                    som ikke har tilmeldt sig, kommer til. Det er vigtigt, at disse ændringer indføres i tilmeldingerne, sådan 
+                    at udregningen af deltager pris bliver korrekt. Den overføres direkte til regnskabet, når deltageren har betalt.</p>
+                <p>Ændringer til tilmeldinger kan udføres under <a href="#!eventregistrationall/1000">"Administrer tilmeldinger"</a>. 
+                    Klik på "ændre-tegnet" ud for en tilmeldt. Klik på skraldespanden for at slette en tilmelding.</p>
+            </li>
+            <li class="list-group-item">
+                <h4>Deltagerbetaling</h4>
+                <p>Når en deltager betaler, kan du udfylde check-boksen yderst til højre for deltageren i deltagerlisten 
+                    (<a href="#!eventregistrationall/1000">"Administrer tilmeldinger"</a>). Check samtidig, at oplysningerne 
+                    om varighed af ophold er korrekte. Når du har checket "betalt" for deltageren, overføres beløbet til 
+                    regnskabet</p>
+            </li>
+            <li class="list-group-item">
+                <h4>Regnskab</h4>
+                <p>Hjemmesiden indeholder også en side med regnskab for årets familielejr. Meningen er, at det skal være så 
+                    nemt som muligt at lave regnskab. Du finder regnskabet under Arrangør menuen -> 
+                    <a href="#!accounting/1000">"Regnskab"</a>. Som eksempel, kan du se regnskabet for 2018 
+                    <a href="#!accounting/2018">her</a>.</p>
+                <p>Her er en oversigt over, hvad regnskabet indeholder:
+                    <ul class="ul1organizerinstruction">
+                        <li>
+                            <strong>Beholdning ved årets start.</strong> Dette er forrige års "Forventet beholdning efter årets 
+                            lejr", som overføres.
+                        </li>
+                        <li>
+                            <strong>Indtægter</strong>, består af:
+                            <ul class="ul2organizerinstruction">
+                                <li>
+                                    Indtægter fra deltagergebyr. Dette beløb er summen af deltagergebyr for alle deltagere og 
+                                    overføres automatisk fra deltagerlisten.
+                                </li>
+                                <li>
+                                    Andre indtægter kan være f.eks. salg af drikkevarer og salg af pant. Disse indtægter 
+                                    indtastes ved at klikke på knappen "Indtast ny indtægt" i nederste del af regnskabssiden.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Udgifter.</strong>> Dette er f.eks. depositum for lejr, leje af lejr og køb af madvarer, 
+                            drikkevarer, m.m. Disse udgifter indtastes ved at klikke på knappen "Indtast ny udgift" i nederste 
+                            del af regnskabssiden.
+                        </li>
+                        <li>
+                            <strong>Årets resultat.</strong> Udregnes som indtægter minus udgifter.
+                        </li>
+                        <li>
+                            <strong>Forventet beholdning efter årets lejr.</strong> Udregnes som "Beholdning ved årets start" plus 
+                            "Årets resultat".
+                        </li>
+                    </ul>
+                </p>
+                <p><strong>Afslutning af regnskab.</strong> Når alle indtægter og udgifter er lagt fast og registreret, kan 
+                    du lukke regnskabet med knappen "Luk regnskabet" for at indikere til alle og specielt næste års 
+                    arrangører, at det er færdigt. Skulle der komme ændringer, kan regnskabet genåbnes med knappen "Genåben 
+                    regnskabet".</p>
+            </li>
+        </ol>
+        <p>Jeg håber denne instruktion er en hjælp. Hvis der er noget, du synes kræver uddybning eller forbedring, så sig 
+            det endelig til mig.</p>
+        </div><!-- /.blog-post -->
+    </div><!-- /.blog-main -->
+
+    <div ng-include="'sidebar.html'"></div>
+</div><!-- /.row -->

@@ -23,7 +23,7 @@
             <div class="form-group col-md-10">
                 <label>Fotografi:</label>
                 <input id="fileSelected" type="file" ngf-select ng-model="picFile" ng-change="checkImageReplica(picFile)" name="picFile"    
-                        accept="image/*" ngf-max-size="10MB" required
+                        accept="image/*,video/*" ngf-max-size="10MB" required
                         ngf-model-invalid="errorFile">
                 <i ng-show="photouploadForm.file.$error.required">*Skal vælges</i><br>
                 <i ng-show="photouploadForm.file.$error.maxSize">Filen er for stor 

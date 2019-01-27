@@ -39,6 +39,11 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
         // console.log(`Status: ${response.status}`);
         // console.log(response.data);
         $scope.registrations = response.data;
+        for (var i=0; i<$scope.registrations.length; i++) {
+            $scope.registrations[i].num = i;
+            $scope.registrations[i].EditPopoverIsVisible = false;
+            $scope.registrations[i].RemPopoverIsVisible = false;
+        }
 
         $http({
             method: 'GET',
@@ -203,6 +208,26 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
         $scope.editRegistration = false;
     };
 
+    $scope.showPopoverEdit = function(x) {
+        $scope.registrations[x].EditPopoverIsVisible = true;
+        // console.log(`EditPopoverVisible`);
+    };
+      
+      $scope.hidePopoverEdit = function (x) {
+        $scope.registrations[x].EditPopoverIsVisible = false;
+        // console.log(`EditPopoverNOTVisible`);
+    };
+
+    $scope.showPopoverRem = function(x) {
+        $scope.registrations[x].RemPopoverIsVisible = true; 
+        // console.log(`RemPopoverVisible`);
+    };
+      
+      $scope.hidePopoverRem = function (x) {
+        $scope.registrations[x].RemPopoverIsVisible = false;
+        // console.log(`RemPopoverNOTVisible`);
+    };
+
 }])
 
 .controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'NumDaysService', 'EventregService', 
@@ -262,6 +287,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         $scope.feePaidSum = 0;
         for (var i=0; i<$scope.registrations.length; i++) {
             //console.log(`Navn: ${$scope.registrations[i].name}, Arr: ${$scope.registrations[i].arrivalday}, Dep: ${$scope.registrations[i].departureday}`);
+            $scope.registrations[i].RemRegistrationPopoverIsVisible = false;
+            $scope.registrations[i].EditRegistrationPopoverIsVisible = false;
+            $scope.registrations[i].num = i;
+
             $scope.feeSum += $scope.registrations[i].fee;
             if ($scope.registrations[i].paid) {
                 $scope.feePaidSum += $scope.registrations[i].fee;
@@ -580,6 +609,22 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         // console.log(`The new fy is: ${$scope.fy}`);
 		$location.path('/eventregistrationall/'+$scope.fy);
         $route.reload();
+    };
+
+    $scope.showPopoverEditRegistration = function(x) {
+        $scope.registrations[x].EditRegistrationPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverEditRegistration = function (x) {
+        $scope.registrations[x].EditRegistrationPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverRemRegistration = function(x) {
+        $scope.registrations[x].RemRegistrationPopoverIsVisible = true; 
+    };
+      
+    $scope.hidePopoverRemRegistration = function (x) {
+        $scope.registrations[x].RemRegistrationPopoverIsVisible = false;
     };
     
 }])

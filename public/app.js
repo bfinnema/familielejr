@@ -20,6 +20,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'homeCtrl',
             access: {restricted: true}
         }).
+        when('/organizerinstruction', {
+            templateUrl: 'views/organizerinstruction.view.html',
+            controller: 'organizerinstructionCtrl',
+            access: {restricted: true}
+        }).
         when('/login', {
             templateUrl: 'views/login.view.html',
             controller: 'loginCtrl',
