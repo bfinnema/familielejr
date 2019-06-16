@@ -71,10 +71,10 @@ function($scope, $http, $location, $window, AuthService, YearService) {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Success. Status: ${response.status}`);
+                // console.log(`Success. Status: ${response.status}`);
 
                 if (response.data) {
-                    console.log(`Received the futurecamp`);
+                    // console.log(`Received the futurecamp`);
                     response.data.futurecamp.headline = 'Invitation til familielejr';
                     $scope.invitation = response.data.futurecamp;
                     $scope.startdateView = new Date($scope.invitation.startdate);
@@ -83,7 +83,7 @@ function($scope, $http, $location, $window, AuthService, YearService) {
                     $scope.organizerBtnShow = [false,true,false,false,false];
                     $scope.organizerShow = [true,false,false,false,false];
                     $scope.numOrgLines = $scope.invitation.organizers.length;
-                    console.log(`numOrgLines: ${$scope.numOrgLines}`);
+                    // console.log(`numOrgLines: ${$scope.numOrgLines}`);
                     for (var i=0; i<$scope.numOrgLines; i++) {
                         $scope.organizerShow[i] = true;
                         $scope.organizerBtnShow[i] = false;
@@ -105,7 +105,7 @@ function($scope, $http, $location, $window, AuthService, YearService) {
     });
 
     $scope.showOrgLine = function() {
-        console.log("Entering showOrgline. numOrgLines: "+$scope.numOrgLines);
+        // console.log("Entering showOrgline. numOrgLines: "+$scope.numOrgLines);
         if ($scope.organizers[$scope.numOrgLines]) {
             // console.log("numOrgLines: "+$scope.numOrgLines+", Organizer: "+$scope.organizers[$scope.numOrgLines]);
             $scope.numOrgLines = $scope.numOrgLines + 1;
@@ -217,8 +217,8 @@ function($scope, $http, $location, $window, AuthService, YearService) {
 
 }])
 
-.controller('eventinfoCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', 'YearService', 
-function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearService) {
+.controller('eventinfoCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', 'YearService', 'ConfigService', 
+function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearService, ConfigService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -226,6 +226,11 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.isLoggedIn = true;
             $scope.role = AuthService.userRole();
         };
+    });
+
+    ConfigService.getConfig().then(function() {
+        $scope.api_key = ConfigService.getGoogleMapKey();
+        // console.log(`api_key: ${$scope.api_key}`);
     });
 
     setTimeout(function(){
@@ -270,10 +275,11 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.deadlinemonth = months[dl.getMonth()];
 
             var encodedAddress = encodeURIComponent($scope.invitation.address.street+" "+$scope.invitation.address.zip+" "+$scope.invitation.address.town+" Denmark");
-            // console.log(encodedAddress);
+            // console.log(`encodedAddress: ${encodedAddress}`);
+            // console.log(`api_key: ${$scope.api_key}`);
             $http({
                 method: 'GET',
-                url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`
+                url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${$scope.api_key}`
             }).then(function(response) {
                 // console.log(`Googleapis status: ${response.status}`);
                 // console.log(response.data);
@@ -291,7 +297,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
                 };
 
                 uiGmapGoogleMapApi.then(function (maps) {
-                    // console.log('Google Maps loaded');
+                    console.log('Google Maps loaded');
                     // maps.visualRefresh = true;
                     $scope.map = {
                         center: {

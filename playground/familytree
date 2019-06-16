@@ -207,3 +207,534 @@ db.familytrees.insert(
 		]
     }
 )
+
+
+
+db.pseudowires.update(
+    {_id: ObjectId("5c73ecd14a380c630dc67723")},
+    {
+        $set: {
+            subinterfaces: {
+                subinterface_id: 30,
+				status: "Free",
+				timestamp : ISODate("2019-02-25T13:25:37.726Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc217"),
+				vlan_id: 217,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc218"),
+				vlan_id: 218,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc219"),
+				vlan_id: 219,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc220"),
+				vlan_id: 220,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc221"),
+				vlan_id: 221,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc222"),
+				vlan_id: 222,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc223"),
+				vlan_id: 223,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc224"),
+				vlan_id: 224,
+				status: "Reserved",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "3",
+				subscription_id : "Reserved for manual corner case, Subscriber 3"
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc225"),
+				vlan_id: 225,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc226"),
+				vlan_id: 226,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc227"),
+				vlan_id: 227,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc228"),
+				vlan_id: 228,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc229"),
+				vlan_id: 229,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc230"),
+				vlan_id: 230,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc231"),
+				vlan_id: 231,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc232"),
+				vlan_id: 232,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc233"),
+				vlan_id: 233,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc234"),
+				vlan_id: 234,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc235"),
+				vlan_id: 235,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc236"),
+				vlan_id: 236,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc237"),
+				vlan_id: 237,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc238"),
+				vlan_id: 238,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc239"),
+				vlan_id: 239,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc240"),
+				vlan_id: 240,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc241"),
+				vlan_id: 241,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc242"),
+				vlan_id: 242,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc243"),
+				vlan_id: 243,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc244"),
+				vlan_id: 244,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc245"),
+				vlan_id: 245,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc246"),
+				vlan_id: 246,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc247"),
+				vlan_id: 247,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)
+db.vlanpools.update(
+    {_id: ObjectId("5ca5c889a27a62558685d17d")},
+    {
+        $push: {
+            vlans: {
+				_id : ObjectId("5c925ed2b946f039760dc248"),
+				vlan_id: 248,
+				status: "Free",
+				timestamp : ISODate("2019-03-20T15:40:02.735Z"),
+				subscriber_id : "",
+				subscription_id : ""
+            }
+        }
+    },
+    {new: true}
+)

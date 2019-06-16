@@ -506,7 +506,7 @@ angular.module('familielejr')
                 $scope.surname[i] = family.persons[i].surname;
                 if (family.persons[i].birth != null) {$scope.birth[i] = new Date(family.persons[i].birth);};
                 if (family.persons[i].pass != null) {$scope.passdate[i] = new Date(family.persons[i].pass);};
-                console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
+                // console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
             };
 /* 
             console.log(`BtnShow: ${$scope.BtnShow}`);
@@ -638,7 +638,7 @@ angular.module('familielejr')
     editNames = function() {
         // console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
         var persons = personArr(numLines);
-        console.log(`Persons: ${persons}`);
+        // console.log(`Persons: ${JSON.stringify(persons)}`);
 
         var data = {
             level: $scope.editAtLevel,
@@ -659,10 +659,10 @@ angular.module('familielejr')
         }).then(function(response) {
             initForms();
             if ($scope.showL3Family != 0) {
-                console.log(`There is a L3 family open. Fetch it again to show the changes.`);
+                // console.log(`There is a L3 family open. Fetch it again to show the changes.`);
                 getL3Family();
             } else {
-                console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
+                // console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
                 $route.reload();
             };
         }, function errorCallback(response) {
@@ -782,7 +782,7 @@ angular.module('familielejr')
     };
 
     function initForms() {
-        console.log(`Initiating edit Names Form and Add Names Form.`);
+        // console.log(`Initiating edit Names Form and Add Names Form.`);
         $scope.editNamesForm = false;
         $scope.addNamesForm = false;
         $scope.headLine = "**";

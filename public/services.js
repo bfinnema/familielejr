@@ -202,3 +202,34 @@ function ($q, $timeout, $http) {
         return numDays;
     };
 }])
+
+.factory('ConfigService',
+['$http', function ($http) {
+
+    var googleMapKey = "";
+
+    // return available functions for use in the controllers
+    return ({
+        getGoogleMapKey: getGoogleMapKey,
+        getConfig: getConfig
+    });
+
+    function getGoogleMapKey() {
+        return googleMapKey;
+    };
+
+    function getConfig() {
+        return $http({
+            method: 'GET',
+            url: 'config.json'
+        }).then(function(response) {
+            console.log(`getConfig: ${response.status}`);
+            console.log(response.data.googleMapKey);
+            googleMapKey = response.data.googleMapKey;
+        }, function errorCallback(response) {
+            console.log(`getConfig error status: ${response.status}`);
+            user = false;
+        });
+    };
+
+}])
