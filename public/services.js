@@ -223,8 +223,8 @@ function ($q, $timeout, $http) {
             method: 'GET',
             url: 'config.json'
         }).then(function(response) {
-            console.log(`getConfig: ${response.status}`);
-            console.log(response.data.googleMapKey);
+            // console.log(`getConfig: ${response.status}`);
+            // console.log(response.data.googleMapKey);
             googleMapKey = response.data.googleMapKey;
         }, function errorCallback(response) {
             console.log(`getConfig error status: ${response.status}`);

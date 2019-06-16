@@ -230,7 +230,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
 
     ConfigService.getConfig().then(function() {
         $scope.api_key = ConfigService.getGoogleMapKey();
-        console.log(`api_key: ${$scope.api_key}`);
+        // console.log(`api_key: ${$scope.api_key}`);
     });
 
     setTimeout(function(){
@@ -275,14 +275,14 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.deadlinemonth = months[dl.getMonth()];
 
             var encodedAddress = encodeURIComponent($scope.invitation.address.street+" "+$scope.invitation.address.zip+" "+$scope.invitation.address.town+" Denmark");
-            console.log(`encodedAddress: ${encodedAddress}`);
-            console.log(`api_key: ${$scope.api_key}`);
+            // console.log(`encodedAddress: ${encodedAddress}`);
+            // console.log(`api_key: ${$scope.api_key}`);
             $http({
                 method: 'GET',
                 url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${$scope.api_key}`
             }).then(function(response) {
-                console.log(`Googleapis status: ${response.status}`);
-                console.log(response.data);
+                // console.log(`Googleapis status: ${response.status}`);
+                // console.log(response.data);
                 if (response.error) {
                     console.log('Unable to connect to Google servers');
                 } else if (response.data.status === 'ZERO_RESULTS') {
@@ -291,7 +291,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
                     $scope.googleaddress = response.data.results[0].formatted_address,
                     $scope.latitude = response.data.results[0].geometry.location.lat,
                     $scope.longitude = response.data.results[0].geometry.location.lng
-                    console.log(`Google address: ${$scope.googleaddress}, ${$scope.latitude}, ${$scope.longitude}`);
+                    // console.log(`Google address: ${$scope.googleaddress}, ${$scope.latitude}, ${$scope.longitude}`);
                 } else {
                     console.log('Hej');
                 };
