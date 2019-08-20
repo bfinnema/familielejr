@@ -16,7 +16,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,20);
+    var invyear = YearService.myYear(7,30);
     // console.log(`Invyear in eventregCtrl: ${invyear}`);
     $scope.invitationyear = invyear;
 
@@ -247,7 +247,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }, 1000);
 
     var invyear = $routeParams.year;
-    var currentYear = YearService.myYear(7,22);
+    var currentYear = YearService.myYear(7,30);
     if (invyear < 1990) {
         invyear = currentYear;
     };
