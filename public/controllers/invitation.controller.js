@@ -241,7 +241,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var invyear = YearService.myYear(7,20);
+    var invyear = YearService.myYear(7,30);
     // console.log(`Event info Ctrl = Invitation. Invyear: ${invyear}`);
     $scope.invyear = invyear;
     var invitationExists = false;
