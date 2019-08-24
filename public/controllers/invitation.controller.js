@@ -16,7 +16,7 @@ function($scope, $http, $location, $window, AuthService, YearService) {
         angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,20);
+    var invyear = YearService.myYear(7,30);
     $scope.invyear = invyear;
     // console.log(`Invitation Admin Ctrl. Invyear: ${invyear}`);
     var invitationExists = false;
