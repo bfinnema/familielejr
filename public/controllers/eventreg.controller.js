@@ -456,7 +456,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             },
             data: data
         }).then(function(response) {
-            $location.path('/eventregistrationall');
+            $location.path('/eventregistrationall/1000');
             // $route.reload();
         }, function errorCallback(response) {
             console.log(`editEventregStatus: ${response.status}`);
