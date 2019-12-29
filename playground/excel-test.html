@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TEST WITH EXCEL</title>
+    </head>
+    <body>
+        <h1>En tabel</h1>
+        <table name="table1" id="table1">
+            <thead>
+                <tr>
+                    <th>Fornavn</th>
+                    <th>Efternavn</th>
+                    <th>Gade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Jens</td>
+                    <td>Hansen</td>
+                    <td>Lurvevej</td>
+                </tr>
+                <tr>
+                    <td>Kjeld</td>
+                    <td>Jensen</td>
+                    <td>Arsøvej</td>
+                </tr>
+                <tr>
+                    <td>Lise</td>
+                    <td>Petersen</td>
+                    <td>Denvej</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="makeExcelFile('table1')">Make Excel File</button>
+        <script type="text/javascript" src="../public/js/libs/table-to-excel-master/dist/tableToExcel.js"></script>
+        <script type="text/javascript" src="makeExcelFile.js"></script>
+    </body>
+</html>

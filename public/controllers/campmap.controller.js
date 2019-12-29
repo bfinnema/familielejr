@@ -160,7 +160,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Bisseruplejren",
             "address": "Gammel Strandvej 135, 4243 Rude",
-            "years": "2015, 2017",
+            "years": "2015, 2017, 2019",
             "website": "http://www.bisseruplejren.dk/"
         },
         {

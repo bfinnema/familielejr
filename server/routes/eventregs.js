@@ -45,7 +45,7 @@ router.patch('/:id', authenticate, (req, res) => {
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
-  }
+  };
 
   if (_.isBoolean(body.paid) && body.paid) {
     body.paidAt = new Date().getTime();
@@ -58,7 +58,7 @@ router.patch('/:id', authenticate, (req, res) => {
   Eventreg.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventreg) => {
     if (!eventreg) {
       return res.status(404).send();
-    }
+    };
 
     res.json(eventreg);
   }).catch((e) => {
@@ -79,7 +79,7 @@ router.patch('/fee/:id', authenticate, (req, res) => {
       if (!eventreg) {
           console.log(`Eventreg not found`);
           return res.status(404).send();
-      }
+      };
 
       res.json(eventreg);
   }).catch((e) => {
@@ -124,6 +124,7 @@ router.get('/all', (req, res) => {
 router.get('/all/year/:year', (req, res) => {
   var year = req.params.year;
   Eventreg.find({year: year}).then((eventregs) => {
+    // console.log(`Regs: ${eventregs[0].name}`);
     res.json(eventregs);
   }, (e) => {
     res.status(400).send(e);
@@ -136,7 +137,7 @@ router.delete('/:id', authenticate, (req, res) => {
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
-  }
+  };
 
   Eventreg.findOneAndRemove({
     _id: id,
@@ -144,7 +145,7 @@ router.delete('/:id', authenticate, (req, res) => {
   }).then((eventreg) => {
     if (!eventreg) {
       return res.status(404).send();
-    }
+    };
 
     res.json(eventreg);
   }).catch((e) => {
@@ -158,7 +159,7 @@ router.delete('/admin/:id', authenticate, (req, res) => {
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
-  }
+  };
 
   if (req.user.role < 2) {
     Eventreg.findOneAndRemove({
@@ -166,7 +167,7 @@ router.delete('/admin/:id', authenticate, (req, res) => {
     }).then((eventreg) => {
       if (!eventreg) {
         return res.status(404).send();
-      }
+      };
   
       res.json(eventreg);
     }).catch((e) => {

@@ -60,6 +60,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'usersCtrl',
             access: {restricted: true}
         }).
+        when('/usersprint', {
+            templateUrl: 'views/usersprint.view.html',
+            controller: 'usersCtrl',
+            access: {restricted: true}
+        }).
         when('/users/edit/:id', {
             templateUrl: 'views/useredit.view.html',
             controller: 'usereditCtrl',
@@ -77,6 +82,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         }).
         when('/eventregistrationall/:year', {
             templateUrl: 'views/eventregall.view.html',
+            controller: 'eventregallCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventregistrationallprint/:year', {
+            templateUrl: 'views/eventregallprint.view.html',
             controller: 'eventregallCtrl',
             access: {restricted: true}
         }).

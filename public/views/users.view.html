@@ -4,16 +4,16 @@
     <div class="col-md-6">
         <h2>Liste over brugere ({{users.length}})</h2>
     </div>
-    <div class="col-md-2">
-        <a class="btn btn-primary" href="#!usersadmin#emailaddr">Alle Email adresser</a>
+    <!-- <div class="col-md-2">
+        <a class="btn btn-primary" href="#emailaddr" target="_self">Alle Email adresser</a>
     </div>
     <div class="col-md-2">
-        <a class="btn btn-warning" href="#!usersadmin#nonactiveusers">Ikke registrerede</a>
-    </div>
+        <a class="btn btn-warning" href="#nonactiveusers" target="_self">Ikke registrerede</a>
+    </div> -->
 </div>
 <hr>
 <div class="row">
-    <table class="table table-striped">
+    <table class="table table-striped" name="registered" id="registered">
         <thead>
             <tr>
                 <th width="15%">Navn</th>
@@ -84,24 +84,26 @@
     </p>
 </div>
 <hr>
-<div id="emailaddr">
-    <h2><a href="mailto:{{allEmails}}">Send email til alle</a></h2>
+<div>
+    <h2 name="emailaddr" id="emailaddr"><a href="mailto:{{allEmails}}">Send email til alle</a></h2>
     <p>Denne link åbner et nyt email i dit favorit email program</p>
-    <br>
     <h3>Liste over alle email adresser. Kan kopieres over i "Til" feltet i dit email program, hvis linken ovenfor ikke virker for dig.</h3>
     <p>{{allEmails}}</p>
 </div>
-<br>
+<div class="row">
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" href="#!usersprint" target="_blank">Print- og Excel-venlig brugerliste</a>
+    </div>
+</div>
 <hr>
-<br>
-<div id="nonactiveusers">
-    <h2>Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden ({{nausers.length}})</h2>
+<div>
+    <h2 name="nonactiveusers" id="nonactiveusers">Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden ({{nausers.length}})</h2>
     <p>I denne sektion kan man oprette / ændre / slette (potentielle) deltagere, som ikke har registreret sig på hjemmesiden, men 
         skal modtage invitationer m.m. på email, og dermed skal deres email adresse være registreret. Email adresserne tilføjes 
         listen ovenfor, således at det er nemt at sende til alle.</p>
     <p>Når/hvis nogen af disse registrerer sig på hjemmesiden, bør de fjernes fra denne liste for ikke at 
         være registreret dobbelt.</p>
-    <table class="table table-striped">
+    <table class="table table-striped" name="notregistered" id="notregistered">
         <thead>
             <tr>
                 <th width="25%">Navn</th>
@@ -138,9 +140,11 @@
 </div>
 <hr>
 <div class="row actions" ng-show="!showAddNauser && !showEditNauser">
-    <hr>
     <div class="col-md-4">
-        <a class="btn btn-success btn-lg btn-block" ng-click="addNauserToggle()">Indtast ny deltager</a>
+        <a class="btn btn-info btn-lg btn-block" ng-click="addNauserToggle()">Indtast ny deltager</a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" href="#!usersprint" target="_blank">Print- og Excel-venlig liste</a>
     </div>
 </div>
 <hr>

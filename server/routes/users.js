@@ -156,7 +156,7 @@ router.get('/user/:id', authenticate, (req, res) => {
 });
 
 router.get('/count', (req, res) => {
-  User.find({}).count().then((count) => {
+  User.find({}).countDocuments().then((count) => {
     // console.log(`Number of users: ${count}`);
     res.json(count);
   }, (e) => {

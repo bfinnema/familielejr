@@ -627,5 +627,17 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         $scope.registrations[x].RemRegistrationPopoverIsVisible = false;
     };
     
+    // Not currently used
+    $scope.showPopoverExcelFileInfo = function() {
+        console.log(`Show`);
+        $scope.ExcelFileInfoPopoverIsVisible = true; 
+    };
+      
+    // Not currently used
+    $scope.hidePopoverExcelFileInfo = function () {
+        console.log(`Hide`);
+        $scope.ExcelFileInfoPopoverIsVisible = false;
+    };
+    
 }])
 

@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-md-6">
+        <h2>Liste over brugere ({{users.length}})</h2>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <table class="table table-striped" name="registered" id="registered">
+        <thead>
+            <tr>
+                <th width="20%">Navn</th>
+                <th width="40%">Adresse</th>
+                <th width="25%">email</th>
+                <th width="15%">Telefon</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in users">
+                <td>{{ user.name.firstname }} {{ user.name.middlename }} {{ user.name.surname }} </td>
+                <td><span>{{user.address.street}} {{user.address.houseno}}</span>
+                    <span ng-show="!user.address.floor">, </span>
+                    <span ng-show="user.address.floor">, {{user.address.floor}}</span>
+                    <span ng-show="user.address.direction">{{user.address.direction}}</span>
+                    <span>{{user.address.zip}} {{user.address.town}}</span>
+                </td>
+                <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                <td>{{ user.phone }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr>
+<div>
+    <h2>Deltagere i Familielejren, som ikke har registreret sig på hjemmesiden ({{nausers.length}})</h2>
+    <table class="table table-striped" name="notregistered" id="notregistered">
+        <thead>
+            <tr>
+                <th width="20%">Navn</th>
+                <th width="40%">Adresse</th>
+                <th width="25%">email</th>
+                <th width="15%">Telefon</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="nauser in nausers">
+                <td>{{ nauser.name.firstname }} {{ nauser.name.middlename }} {{ nauser.name.surname }} </td>
+                <td><span>{{nauser.address.street}} {{nauser.address.houseno}}</span>
+                    <span ng-show="!nauser.address.floor">, </span>
+                    <span ng-show="nauser.address.floor">, {{nauser.address.floor}}</span>
+                    <span ng-show="nauser.address.direction">{{nauser.address.direction}}</span>
+                    <span>{{nauser.address.zip}} {{nauser.address.town}}</span>
+                </td>
+                <td><a href="mailto:{{ nauser.email }}">{{ nauser.email }}</a></td>
+                <td>{{ nauser.phone }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr>
+<div class="row actions">
+    <div class="col-md-6">
+        <a class="btn btn-info btn-lg btn-block" onclick="makeExcelFile('registered', 'registrerede.xlsx', 'registrerede')">Hent liste over registrerede i Excel format</a>
+    </div>
+    <div class="col-md-6">
+        <a class="btn btn-danger btn-lg btn-block" onclick="makeExcelFile('notregistered', 'ikke-registrerede.xlsx', 'ikke-registrerede')">Hent liste over ikke-registrerede i Excel format</a>
+    </div>
+</div>

@@ -3,7 +3,7 @@
 <div ng-show="role != 2">
     <h2>Oversigt over deltagelse i Familielejr {{ invitationyear }}</h2>
     <hr>
-    <table class="table table-striped">
+    <table class="table table-striped" name="oversigt" id="oversigt">
         <thead>
             <tr>
                 <th width="25%"></th>
@@ -42,9 +42,11 @@
 </div>
 <hr>
 <div>
-    <h2>Liste over alle tilmeldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
+    <div class="col-md-8">
+        <h2>Liste over alle tilmeldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
+    </div>
     <hr>
-    <table class="table table-striped">
+    <table class="table table-striped" name="deltagerliste" id="deltagerliste">
         <thead>
             <tr>
                 <th width="15%">Navn</th>
@@ -166,14 +168,17 @@
 </div>
 <div class="row" ng-show="role != 2 && !fyLocked && !editRegistration">
     <div class="col-md-4">
-        <a class="btn btn-info btn-lg btn-block" ng-click="recalcFees()">Genudregn deltager betalinger</a>
+        <a class="btn btn-info btn-lg btn-block" ng-click="recalcFees()">Genudregn "Totalt indbetalt"</a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" href="#!eventregistrationallprint/{{ invitationyear }}" target="_blank">Print- og Excel-venlig deltagerliste</a>
     </div>
 </div>
 <hr>
 <div class="row" ng-show="!editRegistration">
     <div class="col-md-4">
         <form name="otherFy">
-            <label>Se et tilmeldinger fra et andet år:</label>
+            <label>Se tilmeldinger fra et andet år:</label>
             <select class="form-control" ng-model="theOtherFy" name="theOtherFy" ng-change="newFy()">
                 <option ng-repeat="fy in fys" value="{{fy.fy}}">{{fy.fy}}</option>
             </select>

@@ -1,0 +1,63 @@
+<div>
+    <div class="col-md-8">
+        <h2>Liste over alle tilmeldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
+    </div>
+    <hr>
+    <table class="table table-striped" name="deltagerliste" id="deltagerliste">
+        <thead>
+            <tr>
+                <th width="16%">Navn</th>
+                <th width="13%">Voksen / Barn</th>
+                <th width="15%">Ankomst</th>
+                <th width="5%">~tid</th>
+                <th width="19%">Afgang</th>
+                <th width="5%">~tid</th>
+                <th width="16%">Tilmeldt af</th>
+                <th ng-show="role != 2" width="6%">Pris</th>
+                <th ng-show="role != 2 && !fyLocked" width="5%">Betalt</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="registration in registrations">
+                <td>{{ registration.name }}</td>
+                <td>{{ registration.agegroup }}</td>
+                <td>{{ registration.arrivalday }}</td>
+                <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.departureday }}</td>
+                <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.registeree }}</td>
+                <td ng-show="role != 2" align="right">{{ registration.fee | number:0 }}</td>
+                <td ng-show="role != 2 && !fyLocked" align="center">
+                    <span ng-show="registration.paid">X</span>
+                </td>
+            </tr>
+            <tr ng-show="role != 2 && registrations.length > 0">
+                <td>Total deltagergebyr</td>
+                <td> </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right">{{feeSum}}</td>
+                <td ng-show="role != 2 && !fyLocked"></td>
+                <td ng-show="role != 2 && !fyLocked"></td>
+            </tr>
+            <tr ng-show="role != 2 && registrations.length > 0">
+                <td>Totalt indbetalt</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right">{{feePaidSum}}</td>
+                <td ng-show="role != 2 && !fyLocked"></td>
+                <td ng-show="role != 2 && !fyLocked"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row" ng-show="role != 2 && !fyLocked && !editRegistration">
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg btn-block" onclick="makeExcelFile('deltagerliste', 'deltagerliste.xlsx', 'deltagerliste')">Hent Deltagerliste i Excel format</a>
+    </div>
+</div>

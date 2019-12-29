@@ -143,7 +143,7 @@ router.get('/my/count/:year', authenticate, (req, res) => {
   // console.log(`My docs year ${year}, user: ${req.user._id}`);
   Doc.find({
     _creator: req.user._id, year: year
-  }).count().then((count) => {
+  }).countDocuments().then((count) => {
     var result = {"year":year,"count":count};
     res.json(result);
   }, (e) => {
@@ -156,7 +156,7 @@ router.get('/count/:year', authenticate, (req, res) => {
   // console.log(`My docs year ${year}, user: ${req.user._id}`);
   Doc.find({
     year: year
-  }).count().then((count) => {
+  }).countDocuments().then((count) => {
     var result = {"year":year,"count":count};
     res.json(result);
   }, (e) => {
