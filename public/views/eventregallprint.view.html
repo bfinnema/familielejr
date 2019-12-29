@@ -28,18 +28,18 @@
                 <td>{{ registration.registeree }}</td>
                 <td ng-show="role != 2" align="right">{{ registration.fee | number:0 }}</td>
                 <td ng-show="role != 2 && !fyLocked" align="center">
-                    <span ng-show="registration.paid">X</span>
+                    <span ng-if="registration.paid">X</span>
                 </td>
             </tr>
             <tr ng-show="role != 2 && registrations.length > 0">
                 <td>Total deltagergebyr</td>
-                <td> </td>
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td align="right">{{feeSum}}</td>
-                <td ng-show="role != 2 && !fyLocked"></td>
                 <td ng-show="role != 2 && !fyLocked"></td>
             </tr>
             <tr ng-show="role != 2 && registrations.length > 0">
@@ -49,8 +49,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td align="right">{{feePaidSum}}</td>
-                <td ng-show="role != 2 && !fyLocked"></td>
                 <td ng-show="role != 2 && !fyLocked"></td>
             </tr>
         </tbody>
