@@ -152,8 +152,7 @@ function ($q, $timeout, $http) {
 
     function departureDays() {
         return [
-            {"departureday": "Søndag efter frokost"},
-            {"departureday": "Søndag efter morgenmad"},
+            {"departureday": "Søndag"},
             {"departureday": "Lørdag formiddag"},
             {"departureday": "Lørdag eftermiddag"},
             {"departureday": "Lørdag efter aftensmad"},
@@ -190,7 +189,7 @@ function ($q, $timeout, $http) {
 
     function numDays(arrival, departure) {
         var numDays = 1;
-        if (departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!") {
+        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!") {
             if (arrival == "Fredag" || arrival == "Lørdag formiddag") {
                 numDays = 2;
             };

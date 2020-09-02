@@ -26,7 +26,7 @@
                 <td>{{ registration.departureday }}</td>
                 <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
                 <td>{{ registration.registeree }}</td>
-                <td ng-show="role != 2" align="right">{{ registration.fee | number:0 }}</td>
+                <td ng-show="role != 2" align="right" data-t="n">{{ registration.fee | number:0 }}</td>
                 <td ng-show="role != 2 && !fyLocked" align="center">
                     <span ng-if="registration.paid">X</span>
                 </td>
@@ -39,7 +39,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td align="right">{{feeSum}}</td>
+                <td align="right" data-t="n">{{feeSum}}</td>
                 <td ng-show="role != 2 && !fyLocked"></td>
             </tr>
             <tr ng-show="role != 2 && registrations.length > 0">
@@ -50,8 +50,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td align="right">{{feePaidSum}}</td>
+                <td align="right" data-t="n">{{feePaidSum}}</td>
                 <td ng-show="role != 2 && !fyLocked"></td>
+            </tr>
+            <tr ng-show="registrations.length > 0">
+                <td>NB: Dette er en kopi, som ikke indeholder eventuelle opdateringer og nye registreringer. Den sande version er på hjemmesiden.</td>
             </tr>
         </tbody>
     </table>
