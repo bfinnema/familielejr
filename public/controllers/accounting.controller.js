@@ -18,12 +18,12 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
         fy = currentYear;
     };
     $scope.fy = fy;
-    // console.log(`Fiscalyear: ${$scope.fy}`);
+    console.log(`Fiscalyear: ${$scope.fy}`);
     var pastyear = fy-1;
 
-    var invyear = YearService.myYear(7,19);
+    /* var invyear = YearService.myYear(7,19);
     $scope.invyear = invyear;
-    // console.log(`invyear: ${$scope.invyear}`);
+    console.log(`invyear: ${$scope.invyear}`); */
 
     var fys = [];
     var firstyear = 2018;

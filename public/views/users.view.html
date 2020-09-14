@@ -90,7 +90,7 @@
     <h3>Liste over alle email adresser. Kan kopieres over i "Til" feltet i dit email program, hvis linken ovenfor ikke virker for dig.</h3>
     <p>{{allEmails}}</p>
 </div>
-<div class="row">
+<div class="row" ng-show="role < 2">
     <div class="col-md-4">
         <a class="btn btn-success btn-lg btn-block" href="#!usersprint" target="_blank">Print- og Excel-venlig brugerliste</a>
     </div>
@@ -139,7 +139,7 @@
     </table>
 </div>
 <hr>
-<div class="row actions" ng-show="!showAddNauser && !showEditNauser">
+<div class="row actions" ng-show="!showAddNauser && !showEditNauser && role < 2">
     <div class="col-md-4">
         <a class="btn btn-info btn-lg btn-block" ng-click="addNauserToggle()">Indtast ny deltager</a>
     </div>

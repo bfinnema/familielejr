@@ -29,11 +29,11 @@
                     <li id="myphotooverview"><a href="#!photooverview/my">Billedoversigt, mine billeder</a></li>
                     <li id="myphotos"><a href="#!myphotoalbum/0">Alle mine billeder</a></li>
                     <li id="photoupload"><a href="#!photoupload">Upload af billeder</a></li>
+                    <li><a href="#!photoalbum/2020">2020</a></li>
                     <li><a href="#!photoalbum/2019">2019</a></li>
                     <li><a href="#!photoalbum/2018">2018</a></li>
                     <li><a href="#!photoalbum/2017">2017</a></li>
                     <li><a href="#!photoalbum/2016">2016</a></li>
-                    <li><a href="#!photoalbum/2015">2015</a></li>
                 </ul>
             </li>
             <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
@@ -60,17 +60,17 @@
                     <li id="changepassword"><a href="#!changepassword">Ændre kodeord</a></li>
                 </ul>
             </li>
-            <li id="organizer" ng-show="isLoggedIn && role < 2" class="dropdown">
+            <li id="organizer" ng-show="isLoggedIn && role < 3" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="organizerinstruction"><a href="#!organizerinstruction">Vejledning til arrangører</a></li>
-                    <li id="invitationadmin"><a href="#!invitationadmin">Administrer invitation</a></li>
-                    <li id="futurecamps"><a href="#!futurecamps">Fremtidige lejre</a></li>
+                    <li id="invitationadmin" ng-show="role < 2"><a href="#!invitationadmin">Administrer invitation</a></li>
+                    <li id="futurecamps" ng-show="role < 2"><a href="#!futurecamps">Fremtidige lejre</a></li>
                     <li id="eventregall"><a href="#!eventregistrationall/1000">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
                     <li id="accounting"><a href="#!accounting/1000">Regnskab</a></li>
                     <li id="usersorg"><a href="#!usersadmin">Navne/adresser/email</a></li>
-                    <li id="usersorg"><a href="#!usersadmin#emailaddr">Send email til alle</a></li>
+                    <li id="usersorg" ng-show="role < 2"><a href="#!usersadmin#emailaddr">Send email til alle</a></li>
                 </ul>
             </li>
             <li id="admin" ng-show="isLoggedIn && role < 1" class="dropdown">

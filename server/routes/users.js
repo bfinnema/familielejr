@@ -130,7 +130,7 @@ router.delete('/me/token', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  if (req.user.role < 2) {
+  if (req.user.role < 3) {
     User.find({}).then((users) => {
       res.json(users);
     }, (e) => {

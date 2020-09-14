@@ -239,6 +239,17 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             "address": "Gl. Fønsvej 3, 5580 Nørre Aaby",
             "years": "2012",
             "website": "http://hyttefortegnelsen.dk/hytte/foensborg/"
+        },
+        {
+            "id": 15,
+            "coords": {
+                "latitude": 55.455648,
+                "longitude": 9.6850173
+            },
+            "name": "Frydenborg",
+            "address": "Frydenborgvej 40, 6092 Sønder Stenderup",
+            "years": "2020",
+            "website": "https://www.frydenborglejren.dk/"
         }
     ];
 
