@@ -127,6 +127,21 @@ function ($q, $timeout, $http) {
     
 }])
 
+.factory('SearchService',[function() {
+    return({
+        searchcriterias: searchcriterias
+    });
+
+    function searchcriterias() {
+        return [
+            {"name": "Fornavn"},
+            {"name": "Efternavn"},
+            {"name": "email"}
+        ];
+    };
+
+}])
+
 .factory('EventregService',[function() {
     return({
         ageGroups: ageGroups,

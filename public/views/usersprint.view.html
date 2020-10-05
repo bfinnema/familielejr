@@ -8,7 +8,24 @@
     <table class="table table-striped" name="registered" id="registered">
         <thead>
             <tr>
-                <th width="20%">Navn</th>
+                <th width="20%">Navn
+                    <a ng-click="sortByName('firstname','up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFnUp()" ng-mouseleave="hidePopoverSortFnUp()"></span>
+                        <div class="mypopover" ng-show="FnUpPopoverIsVisible">Sortere efter fornavn, op</div>
+                    </a>
+                    <a ng-click="sortByName('firstname','down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFnDn()" ng-mouseleave="hidePopoverSortFnDn()"></span>
+                        <div class="mypopover" ng-show="FnDnPopoverIsVisible">Sortere efter fornavn, ned</div>
+                    </a>
+                    <a ng-click="sortByName('surname','up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortSnUp()" ng-mouseleave="hidePopoverSortSnUp()"></span>
+                        <div class="mypopover" ng-show="SnUpPopoverIsVisible">Sortere efter efternavn, op</div>
+                    </a>
+                    <a ng-click="sortByName('surname','down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortSnDn()" ng-mouseleave="hidePopoverSortSnDn()"></span>
+                        <div class="mypopover" ng-show="SnDnPopoverIsVisible">Sortere efter efternavn, ned</div>
+                    </a>
+                </th>
                 <th width="40%">Adresse</th>
                 <th width="25%">email</th>
                 <th width="15%">Telefon</th>
@@ -17,12 +34,13 @@
         <tbody>
             <tr ng-repeat="user in users">
                 <td>{{ user.name.firstname }} {{ user.name.middlename }} {{ user.name.surname }} </td>
-                <td><span>{{user.address.street}} {{user.address.houseno}}</span>
+                <!-- <td><span>{{user.address.street}} {{user.address.houseno}}</span>
                     <span ng-show="!user.address.floor">, </span>
                     <span ng-show="user.address.floor">, {{user.address.floor}}</span>
                     <span ng-show="user.address.direction">{{user.address.direction}}</span>
                     <span>{{user.address.zip}} {{user.address.town}}</span>
-                </td>
+                </td> -->
+                <td>{{user.fullAddress}}</td>
                 <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
                 <td>{{ user.phone }}</td>
             </tr>
@@ -35,7 +53,24 @@
     <table class="table table-striped" name="notregistered" id="notregistered">
         <thead>
             <tr>
-                <th width="20%">Navn</th>
+                <th width="20%">Navn
+                    <a ng-click="sortByName('firstname','up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFnUp()" ng-mouseleave="hidePopoverSortFnUp()"></span>
+                        <div class="mypopover" ng-show="FnUpPopoverIsVisible">Sortere efter fornavn, op</div>
+                    </a>
+                    <a ng-click="sortByName('firstname','down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFnDn()" ng-mouseleave="hidePopoverSortFnDn()"></span>
+                        <div class="mypopover" ng-show="FnDnPopoverIsVisible">Sortere efter fornavn, ned</div>
+                    </a>
+                    <a ng-click="sortByName('surname','up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortSnUp()" ng-mouseleave="hidePopoverSortSnUp()"></span>
+                        <div class="mypopover" ng-show="SnUpPopoverIsVisible">Sortere efter efternavn, op</div>
+                    </a>
+                    <a ng-click="sortByName('surname','down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortSnDn()" ng-mouseleave="hidePopoverSortSnDn()"></span>
+                        <div class="mypopover" ng-show="SnDnPopoverIsVisible">Sortere efter efternavn, ned</div>
+                    </a>
+                </th>
                 <th width="40%">Adresse</th>
                 <th width="25%">email</th>
                 <th width="15%">Telefon</th>
@@ -44,12 +79,13 @@
         <tbody>
             <tr ng-repeat="nauser in nausers">
                 <td>{{ nauser.name.firstname }} {{ nauser.name.middlename }} {{ nauser.name.surname }} </td>
-                <td><span>{{nauser.address.street}} {{nauser.address.houseno}}</span>
+                <!-- <td><span>{{nauser.address.street}} {{nauser.address.houseno}}</span>
                     <span ng-show="!nauser.address.floor">, </span>
                     <span ng-show="nauser.address.floor">, {{nauser.address.floor}}</span>
                     <span ng-show="nauser.address.direction">{{nauser.address.direction}}</span>
                     <span>{{nauser.address.zip}} {{nauser.address.town}}</span>
-                </td>
+                </td> -->
+                <td>{{nauser.fullAddress}}</td>
                 <td><a href="mailto:{{ nauser.email }}">{{ nauser.email }}</a></td>
                 <td>{{ nauser.phone }}</td>
             </tr>

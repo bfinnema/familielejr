@@ -68,7 +68,7 @@ function($scope, $http, $location, AuthService, ProfileService) {
 
 }])
 
-.controller('profileCtrl', ['$scope', '$http', '$location', '$route', 'AuthService', 'ProfileService', 
+.controller('profileCtrl', ['$scope', '$http', '$location', '$route', 'AuthService', 'ProfileService',
 function($scope, $http, $location, $route, AuthService, ProfileService) {
 
     $scope.countries = ProfileService.countries();
@@ -211,8 +211,8 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
 
 }])
 
-.controller('usersCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'ProfileService', 
-function($scope, $http, $location, $route, $window, AuthService, ProfileService) {
+.controller('usersCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'ProfileService', 'SearchService',
+function($scope, $http, $location, $route, $window, AuthService, ProfileService, SearchService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -225,67 +225,95 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
     $scope.countries = ProfileService.countries();
     $scope.floors = ProfileService.floors();
     $scope.directions = ProfileService.directions();
+    $scope.searchcriterias = SearchService.searchcriterias();
 
-    $http({
-        method: 'GET',
-        url: '/users',
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        // console.log(`UsersStatus: ${response.status}`);
-        $scope.users = response.data;
-        // console.log($scope.users);
-        // $scope.users.sort(function(a,b) {a.email - b.email});
-        // console.log($scope.users);
+    $scope.searching = false;
+    $scope.sorting = false;
+    $scope.sortBy = "fornavn";
+    $scope.sortDirection = "nedad";
 
-        return $http({
+    getUsers = function(sortOrNot, sortBy, sortDirection, searchOrNot, searchCriteria, searchText) {
+        var usersUrl = '/users';
+        var nausersUrl = '/nonactiveusers';
+        if (sortOrNot) {
+            usersUrl = `${usersUrl}/sort/${sortBy}/${sortDirection}`;
+            nausersUrl = `${nausersUrl}/sort/${sortBy}/${sortDirection}`;
+        } else if (searchOrNot) {
+            usersUrl = `${usersUrl}/search/${searchCriteria}/${searchText}`;
+            nausersUrl = `${nausersUrl}/search/${searchCriteria}/${searchText}`;
+        };
+        // console.log(`usersUrl: ${usersUrl}, nausersUrl: ${nausersUrl}`);
+        
+        $http({
             method: 'GET',
-            url: 'nonactiveusers',
+            url: usersUrl,
             headers: {
                 'x-auth': localStorage.userToken
             }
+        }).then(function(response) {
+            // console.log(`UsersStatus: ${response.status}`);
+            $scope.users = response.data;
+            // if ($scope.users.length>0) {console.log($scope.users[0].name.firstname);};
+    
+            return $http({
+                method: 'GET',
+                url: nausersUrl,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(response) {
+            // console.log(`NonactiveUsersStatus: ${response.status}`);
+            $scope.nausers = response.data;
+            // if ($scope.nausers.length > 0) {console.log($scope.nausers[0].name.firstname);};
+            
+            $scope.allEmails = "";
+            for (var i=0; i<$scope.users.length; i++) {
+                $scope.allEmails += $scope.users[i].email;
+                if (i+1 < $scope.users.length) {
+                    $scope.allEmails += ", ";
+                };
+                $scope.users[i].RemPopoverIsVisible = false;
+                $scope.users[i].PwdPopoverIsVisible = false;
+                $scope.users[i].R2PopoverIsVisible = false;
+                $scope.users[i].R1PopoverIsVisible = false;
+                $scope.users[i].R0PopoverIsVisible = false;
+                $scope.users[i].num = i;
+                // console.log(`Email address: ${$scope.users[i].email}, Num: ${$scope.users[i].num}`);
+                // console.log(`RemPopoverIsVisible: ${$scope.users[i].RemPopoverIsVisible}`);
+                // console.log(`R2PopoverIsVisible: ${$scope.users[i].R2PopoverIsVisible}`);
+                if ($scope.users[i].hasOwnProperty('address')) {
+                    $scope.users[i].fullAddress = aggregateAddress($scope.users[i].address);
+                };
+            };
+            if ($scope.nausers.length > 0) {
+                $scope.allEmails += ", ";
+            };
+    
+            for (var j=0; j<$scope.nausers.length; j++) {
+                // console.log(`Email address, nauser: ${$scope.nausers[j].email}`);
+                $scope.allEmails += $scope.nausers[j].email;
+                if (j+1 < $scope.nausers.length) {
+                    $scope.allEmails += ", ";
+                };
+                $scope.nausers[j].RemNauserPopoverIsVisible = false;
+                $scope.nausers[j].EditNauserPopoverIsVisible = false;
+                $scope.nausers[j].num = j;
+                if ($scope.nausers[j].hasOwnProperty('address')) {
+                    $scope.nausers[j].fullAddress = aggregateAddress($scope.nausers[j].address);
+                };
+            };
+    
+            angular.element(document.querySelector( '#admin' ) ).addClass('active');
+            angular.element(document.querySelector( '#organizer' ) ).addClass('active');
+            angular.element(document.querySelector( '#usersorg' ) ).addClass('active');
+            angular.element(document.querySelector( '#usersadmin' ) ).addClass('active');
+        }, function errorCallback(response) {
+            console.log(`getUsersStatus: ${response.status}`);
         });
-    }).then(function(response) {
-        $scope.nausers = response.data;
-        $scope.allEmails = "";
-        for (var i=0; i<$scope.users.length; i++) {
-            $scope.allEmails += $scope.users[i].email;
-            if (i+1 < $scope.users.length) {
-                $scope.allEmails += ", ";
-            };
-            $scope.users[i].RemPopoverIsVisible = false;
-            $scope.users[i].PwdPopoverIsVisible = false;
-            $scope.users[i].R2PopoverIsVisible = false;
-            $scope.users[i].R1PopoverIsVisible = false;
-            $scope.users[i].R0PopoverIsVisible = false;
-            $scope.users[i].num = i;
-            // console.log(`Email address: ${$scope.users[i].email}, Num: ${$scope.users[i].num}`);
-            // console.log(`RemPopoverIsVisible: ${$scope.users[i].RemPopoverIsVisible}`);
-            // console.log(`R2PopoverIsVisible: ${$scope.users[i].R2PopoverIsVisible}`);
-        };
-        if ($scope.nausers.length > 0) {
-            $scope.allEmails += ", ";
-        };
+    };
 
-        for (var j=0; j<$scope.nausers.length; j++) {
-            // console.log(`Email address, nauser: ${$scope.nausers[j].email}`);
-            $scope.allEmails += $scope.nausers[j].email;
-            if (j+1 < $scope.nausers.length) {
-                $scope.allEmails += ", ";
-            };
-            $scope.nausers[j].RemNauserPopoverIsVisible = false;
-            $scope.nausers[j].EditNauserPopoverIsVisible = false;
-            $scope.nausers[j].num = j;
-        };
-
-        angular.element(document.querySelector( '#admin' ) ).addClass('active');
-        angular.element(document.querySelector( '#organizer' ) ).addClass('active');
-        angular.element(document.querySelector( '#usersorg' ) ).addClass('active');
-        angular.element(document.querySelector( '#usersadmin' ) ).addClass('active');
-    }, function errorCallback(response) {
-        console.log(`getUsersStatus: ${response.status}`);
-    });
+    getUsers(false, "none", "none", false, "none", "none");
 
     $scope.removeUser = function(id) {
         if ($window.confirm('Bekræft venligst at du vil slette brugeren')) {
@@ -345,22 +373,34 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
     $scope.editNauserToggle = function(nauser) {
         if ($scope.showEditNauser) {
             $scope.showEditNauser = false;
+            $scope.editFirstname = null;
+            $scope.editMiddlename = null;
+            $scope.editSurname = null;
+            $scope.editStreet = null;
+            $scope.editHouseno = null;
+            $scope.editFloor = null;
+            $scope.editDirection = null;
+            $scope.editZip = null;
+            $scope.editTown = null;
+            $scope.editCountry = null;
+            $scope.editPhone = null;
+            $scope.editID = null;
         } else {
             $scope.showEditNauser = true;
+            $scope.editInputEmail = nauser.email;
+            $scope.editFirstname = nauser.name.firstname;
+            $scope.editMiddlename = nauser.name.middlename;
+            $scope.editSurname = nauser.name.surname;
+            $scope.editStreet = nauser.address.street;
+            $scope.editHouseno = nauser.address.houseno;
+            $scope.editFloor = nauser.address.floor;
+            $scope.editDirection = nauser.address.direction;
+            $scope.editZip = nauser.address.zip;
+            $scope.editTown = nauser.address.town;
+            $scope.editCountry = nauser.address.country;
+            $scope.editPhone = nauser.phone;
+            $scope.editID = nauser._id;
         };
-        $scope.editInputEmail = nauser.email;
-        $scope.editFirstname = nauser.name.firstname;
-        $scope.editMiddlename = nauser.name.middlename;
-        $scope.editSurname = nauser.name.surname;
-        $scope.editStreet = nauser.address.street;
-        $scope.editHouseno = nauser.address.houseno;
-        $scope.editFloor = nauser.address.floor;
-        $scope.editDirection = nauser.address.direction;
-        $scope.editZip = nauser.address.zip;
-        $scope.editTown = nauser.address.town;
-        $scope.editCountry = nauser.address.country;
-        $scope.editPhone = nauser.phone;
-        $scope.editID = nauser._id;
     };
 
     $scope.addNauser = function() {
@@ -430,6 +470,40 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
         });
     };
 
+    $scope.sortByName = function(sortBy, sortDirection) {
+        $scope.sorting = true;
+        $scope.searching = false;
+        $scope.searchcriteria = null;
+        $scope.searchtext = "";
+        // console.log(`sortBy: ${sortBy}, sortDirection: ${sortDirection}`);
+        if (sortBy == "surname") {
+            $scope.sortBy = "efternavn";
+        } else {
+            $scope.sortBy = "fornavn";
+        };
+        if (sortDirection == "up") {
+            $scope.sortDirection = "opad";
+        } else {
+            $scope.sortDirection = "nedad";
+        };
+        getUsers(true, sortBy, sortDirection, false, "none", "none");
+    };
+
+    $scope.searchUser = function() {
+        $scope.searching = true;
+        $scope.sorting = false;
+        // console.log(`Criteria: ${$scope.searchcriteria}, Text: ${$scope.searchtext}`);
+        getUsers(false, "none", "none", true, $scope.searchcriteria, $scope.searchtext);
+    };
+
+    $scope.resetSortSearch = function() {
+        $scope.searching = false;
+        $scope.sorting = false;
+        $scope.searchcriteria = null;
+        $scope.searchtext = "";
+        getUsers(false, "none", "none", false, "none", "none");
+    };
+
     $scope.showPopoverEdit = function(x) {
         $scope.users[x].EditPopoverIsVisible = true;
     };
@@ -493,6 +567,66 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService)
     $scope.hidePopoverRemNauser = function (x) {
         $scope.nausers[x].RemNauserPopoverIsVisible = false;
     };
+
+    $scope.showPopoverSortFnUp = function() {
+        $scope.FnUpPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortFnUp = function () {
+        $scope.FnUpPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverSortFnDn = function() {
+        $scope.FnDnPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortFnDn = function () {
+        $scope.FnDnPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverSortSnUp = function() {
+        $scope.SnUpPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortSnUp = function () {
+        $scope.SnUpPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverSortSnDn = function() {
+        $scope.SnDnPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortSnDn = function () {
+        $scope.SnDnPopoverIsVisible = false;
+    };
+
+    aggregateAddress = function(addressObj) {
+        var fullAddress = "";
+        if (addressObj.hasOwnProperty('street')) {
+            fullAddress = addressObj.street;
+        };
+        if (addressObj.hasOwnProperty('houseno')) {
+            fullAddress = fullAddress + " " + addressObj.houseno;
+        };
+        if (addressObj.hasOwnProperty('floor')) {
+            if (fullAddress != "") {fullAddress = fullAddress + ", ";}
+            fullAddress = fullAddress + addressObj.floor;
+        };
+        if (addressObj.hasOwnProperty('direction')) {
+            if (fullAddress != "") {fullAddress = fullAddress + " ";}
+            fullAddress = fullAddress + addressObj.direction;
+        };
+        if (addressObj.hasOwnProperty('zip')) {
+            if (fullAddress != "") {fullAddress = fullAddress + ", ";}
+            fullAddress = fullAddress + addressObj.zip;
+        };
+        if (addressObj.hasOwnProperty('town')) {
+            if (fullAddress != "") {fullAddress = fullAddress + " ";}
+            fullAddress = fullAddress + addressObj.town;
+        };
+        return fullAddress;
+    };
+
 }])
 
 .controller('userpwdCtrl', ['$scope', '$http', '$location', '$routeParams', 'AuthService', function($scope, $http, $location, $routeParams, AuthService) {

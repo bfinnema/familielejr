@@ -33,6 +33,50 @@ router.get('/', authenticate, (req, res) => {
     });
 });
 
+router.get('/sort/:sortBy/:sortDirection', authenticate, (req, res) => {
+    // console.log(`NAusers. sortBy: ${req.params.sortBy}, sortDirection: ${req.params.sortDirection}`);
+    var sd = 1;
+    if (req.params.sortDirection == "up") {sd = -1};
+    // console.log(`NA sd: ${sd}`);
+    if (req.params.sortBy == "firstname") {
+        Nauser.find({}).sort({"name.firstname": sd ,"name.surname": sd}).then((nonactiveusers) => {
+            res.json(nonactiveusers);
+        }, (e) => {
+            res.status(400).send(e);
+        });
+    } else {
+        Nauser.find({}).sort({"name.surname": sd ,"name.firstname": sd}).then((nonactiveusers) => {
+            res.json(nonactiveusers);
+        }, (e) => {
+            res.status(400).send(e);
+        });
+    };
+});
+
+router.get('/search/:searchCriteria/:searchText', authenticate, (req, res) => {
+    // console.log(`searchCriteria: ${req.params.searchCriteria}, searchText: ${req.params.searchText}`);
+    var sd = 1;
+    if (req.params.searchCriteria == "Fornavn") {
+        Nauser.find({"name.firstname": req.params.searchText}).sort({"name.surname": sd}).then((nonactiveusers) => {
+            res.json(nonactiveusers);
+        }, (e) => {
+            res.status(400).send(e);
+        });
+    } else if (req.params.searchCriteria == "Efternavn") {
+        Nauser.find({"name.surname": req.params.searchText}).sort({"name.firstname": sd}).then((nonactiveusers) => {
+            res.json(nonactiveusers);
+        }, (e) => {
+            res.status(400).send(e);
+        });
+    } else {
+        Nauser.find({"email": req.params.searchText}).then((nonactiveusers) => {
+            res.json(nonactiveusers);
+        }, (e) => {
+            res.status(400).send(e);
+        });
+    };
+});
+
 router.get('/:id', authenticate, (req, res) => {
     var id = req.params.id;
 

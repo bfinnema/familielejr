@@ -230,8 +230,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'NumDaysService', 'EventregService', 
-function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, NumDaysService, EventregService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'NumDaysService', 'EventregService',  'SearchService',
+function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, NumDaysService, EventregService, SearchService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -270,6 +270,11 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     var childFee = 100;
     var smallChildFee = 0;
 
+    $scope.searching = false;
+    $scope.sorting = false;
+    $scope.sortBy = "fornavn";
+    $scope.sortDirection = "nedad";
+
     $http({
         method: 'GET',
         url: 'eventregs/all/year/' + invyear
@@ -299,7 +304,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             if ($scope.registrations[i].arrivalday == "Fredag") {
                 $scope.dinners[ag][0] += 1;
                 $scope.friday[ag] += 1;
-                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][0] += 1;
                     $scope.breakfasts[ag][1] += 1;
@@ -307,7 +312,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                     $scope.lunchs[ag][1] += 1;
                     $scope.saturday[ag] += 1;
                     $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][0] += 1;
                     $scope.breakfasts[ag][1] += 1;
@@ -328,14 +333,14 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                     $scope.saturday[ag] += 1;
                 };
             } else if ($scope.registrations[i].arrivalday == "Lørdag formiddag") {
-                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][1] += 1;
                     $scope.lunchs[ag][0] += 1;
                     $scope.lunchs[ag][1] += 1;
                     $scope.saturday[ag] += 1;
                     $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][1] += 1;
                     $scope.lunchs[ag][0] += 1;
@@ -350,13 +355,13 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                     $scope.saturday[ag] += 1;
                 };
             } else if ($scope.registrations[i].arrivalday == "Lørdag eftermiddag") {
-                if ($scope.registrations[i].departureday == "Søndag efter frokost" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][1] += 1;
                     $scope.lunchs[ag][1] += 1;
                     $scope.saturday[ag] += 1;
                     $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad") {
+                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
                     $scope.dinners[ag][1] += 1;
                     $scope.breakfasts[ag][1] += 1;
                     $scope.saturday[ag] += 1;
@@ -411,6 +416,55 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
+
+    $scope.sortByName = function(sortDirection) {
+        $scope.sorting = true;
+        $scope.searching = false;
+        $scope.searchtext = "";
+        // console.log(`sortDirection: ${sortDirection}`);
+        if (sortDirection == "up") {
+            $scope.sortDirection = "opad";
+        } else {
+            $scope.sortDirection = "nedad";
+        };
+        getEventregs(true, sortDirection, false, "none");
+    };
+
+    $scope.searchUser = function() {
+        $scope.searching = true;
+        $scope.sorting = false;
+        // console.log(`Text: ${$scope.searchtext}`);
+        getEventregs(false, "none", true, $scope.searchtext);
+    };
+
+    $scope.resetSortSearch = function() {
+        $scope.searching = false;
+        $scope.sorting = false;
+        $scope.searchtext = "";
+        getEventregs(false, "none", false, "none");
+    };
+
+    getEventregs = function(sortOrNot, sortDirection, searchOrNot, searchText) {
+        var url = "eventregs/all/";
+        if (sortOrNot) {
+            url = `${url}sort/${$scope.invitationyear}/${sortDirection}`;
+        } else if (searchOrNot) {
+            url = `${url}search/${$scope.invitationyear}/${searchText}`;
+        } else {
+            url = `${url}year/${$scope.invitationyear}`;
+        };
+        // console.log(`url: ${url}`);
+        $http({
+            method: 'GET',
+            url: url
+        }).then(function(response) {
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data);
+            $scope.registrations = response.data;
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
 
     $scope.adminRemoveReg = function(registration) {
         if ($window.confirm('Bekræft venligst at du vil slette tilmelding af '+registration.name)) {
@@ -627,6 +681,22 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         $scope.registrations[x].RemRegistrationPopoverIsVisible = false;
     };
     
+    $scope.showPopoverSortFnUp = function() {
+        $scope.FnUpPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortFnUp = function () {
+        $scope.FnUpPopoverIsVisible = false;
+    };
+
+    $scope.showPopoverSortFnDn = function() {
+        $scope.FnDnPopoverIsVisible = true;
+    };
+      
+    $scope.hidePopoverSortFnDn = function () {
+        $scope.FnDnPopoverIsVisible = false;
+    };
+
     // Not currently used
     $scope.showPopoverExcelFileInfo = function() {
         console.log(`Show`);

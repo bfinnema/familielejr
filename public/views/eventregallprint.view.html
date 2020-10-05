@@ -6,7 +6,16 @@
     <table class="table table-striped" name="deltagerliste" id="deltagerliste">
         <thead>
             <tr>
-                <th width="16%">Navn</th>
+                <th width="16%">Navn
+                    <a ng-click="sortByName('up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFnUp()" ng-mouseleave="hidePopoverSortFnUp()"></span>
+                        <div class="mypopover" ng-show="FnUpPopoverIsVisible">Sortere efter navn, op</div>
+                    </a>
+                    <a ng-click="sortByName('down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFnDn()" ng-mouseleave="hidePopoverSortFnDn()"></span>
+                        <div class="mypopover" ng-show="FnDnPopoverIsVisible">Sortere efter navn, ned</div>
+                    </a>
+                </th>
                 <th width="13%">Voksen / Barn</th>
                 <th width="15%">Ankomst</th>
                 <th width="5%">~tid</th>

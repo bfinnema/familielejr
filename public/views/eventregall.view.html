@@ -1,6 +1,6 @@
 <div ng-include="'navigation.html'"></div>
 
-<div ng-show="role != 2">
+<div class="row" ng-show="role != 2">
     <h2>Oversigt over deltagelse i Familielejr {{ invitationyear }}</h2>
     <hr>
     <table class="table table-striped" name="oversigt" id="oversigt">
@@ -40,16 +40,48 @@
         </tbody>
     </table>
 </div>
-<hr>
-<div>
-    <div class="col-md-8">
+<div class="row">
+    <div class="col-md-7">
         <h2>Liste over alle tilmeldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
     </div>
-    <hr>
+    <div class="col-md-5">
+        <form name="formSearchUser" class="formSearchUser" id="formSearchUser" ng-submit="searchUser()" novalidate>
+            <div class="form-group col-md-8">
+                <label>Søgetekst: Fornavn, efternavn eller del af</label>
+                <input type="text" class="form-control" ng-model="searchtext" name="searchtext" placeholder="tekst til søgning" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Søg.....</label>
+                <button ng-disabled="formSearchUser.$invalid" class="btn btn-primary" type="submit">... og du skal finde</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row" ng-show="sorting || searching">
+    <div class="col-md-4" ng-show="sorting">
+        <h4>Sorteret {{sortDirection}}</h4>
+    </div>
+    <div class="col-md-4" ng-show="searching">
+        <h4>Søgning på navn med teksten: {{searchtext}}</h4>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-info" ng-click="resetSortSearch()">Tilbage</a>
+    </div>
+</div>
+<div class="row">
     <table class="table table-striped" name="deltagerliste" id="deltagerliste">
         <thead>
             <tr>
-                <th width="15%">Navn</th>
+                <th width="15%">Navn
+                    <a ng-click="sortByName('up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFnUp()" ng-mouseleave="hidePopoverSortFnUp()"></span>
+                        <div class="mypopover" ng-show="FnUpPopoverIsVisible">Sortere efter navn, op</div>
+                    </a>
+                    <a ng-click="sortByName('down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFnDn()" ng-mouseleave="hidePopoverSortFnDn()"></span>
+                        <div class="mypopover" ng-show="FnDnPopoverIsVisible">Sortere efter navn, ned</div>
+                    </a>
+                </th>
                 <th width="12%">Voksen / Barn</th>
                 <th width="14%">Ankomst</th>
                 <th width="5%">~tid</th>

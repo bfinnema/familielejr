@@ -131,6 +131,34 @@ router.get('/all/year/:year', (req, res) => {
   });
 });
 
+// Get all event registrations for one year, sorted
+router.get('/all/sort/:year/:sortDirection', (req, res) => {
+  var year = req.params.year;
+  // console.log(`sortDirection: ${req.params.sortDirection}`);
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
+  // console.log(`sd: ${sd}`);
+  Eventreg.find({year: year}).sort({name:sd}).then((eventregs) => {
+    // console.log(`Regs: ${eventregs[0].name}`);
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// Search registrations for one year
+router.get('/all/search/:year/:searchText', (req, res) => {
+  var year = req.params.year;
+  // console.log(`searchText: ${req.params.searchText}`);
+  var sd = 1;
+  Eventreg.find({year: year, name: {"$regex":req.params.searchText}}).sort({name:sd}).then((eventregs) => {
+    // console.log(`Regs: ${eventregs[0].name}`);
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 // The creator of an event registration deletes the registration
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;

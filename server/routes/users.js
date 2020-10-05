@@ -141,6 +141,58 @@ router.get('/', authenticate, (req, res) => {
   };
 });
 
+router.get('/sort/:sortBy/:sortDirection', authenticate, (req, res) => {
+  // console.log(`sortBy: ${req.params.sortBy}, sortDirection: ${req.params.sortDirection}`);
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
+  // console.log(`sd: ${sd}`);
+  if (req.user.role < 3) {
+    if (req.params.sortBy == "firstname") {
+      User.find({}).sort({"name.firstname": sd ,"name.surname": sd}).then((users) => {
+        res.json(users);
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    } else {
+      User.find({}).sort({"name.surname": sd ,"name.firstname": sd}).then((users) => {
+        res.json(users);
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    };
+  } else {
+    res.status(401).send();
+  };
+});
+
+router.get('/search/:searchCriteria/:searchText', authenticate, (req, res) => {
+  // console.log(`searchCriteria: ${req.params.searchCriteria}, searchText: ${req.params.searchText}`);
+  var sd = 1;
+  if (req.user.role < 3) {
+    if (req.params.searchCriteria == "Fornavn") {
+      User.find({"name.firstname": req.params.searchText}).sort({"name.surname": sd}).then((users) => {
+        res.json(users);
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    } else if (req.params.searchCriteria == "Efternavn") {
+      User.find({"name.surname": req.params.searchText}).sort({"name.firstname": sd}).then((users) => {
+        res.json(users);
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    } else {
+      User.find({"email": req.params.searchText}).then((users) => {
+        res.json(users);
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    };
+  } else {
+    res.status(401).send();
+  };
+});
+
 router.get('/user/:id', authenticate, (req, res) => {
   var id = req.params.id;
   if (req.user.role < 2) {
