@@ -97,6 +97,7 @@ function ($q, $timeout, $http) {
 
     function floors() {
         return [
+            {"floor": ""},
             {"floor": "st."},
             {"floor": "1."},
             {"floor": "2."},
@@ -119,6 +120,7 @@ function ($q, $timeout, $http) {
 
     function directions() {
         return [
+            {"dir": ""},
             {"dir": "th."},
             {"dir": "tv."},
             {"dir": "mf."}
