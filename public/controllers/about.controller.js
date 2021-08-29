@@ -14,7 +14,7 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#about' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,20);
+    var invyear = YearService.myYear("about");
     var pastyear = invyear - 1;
     $scope.invyear = invyear;
     $scope.pastyear = pastyear;

@@ -45,14 +45,32 @@ var InvitationSchema = new mongoose.Schema({
         receiver: {type: String, required: true},
         email: {type: String},
         phone: {type: String},
-        deadline: {type: Date, required: true},
+        deadline: {type: Date, required: true}
     },
     bring: {
         type: String
     },
     payment: {
-        adult: {type: Number, required: true},
-        child: {type: Number, required: true},
+        priceModel: {type: String, required: false},
+        adult: {type: Number, required: false},
+        child: {type: Number, required: false},
+        newpricemodel: {
+            adult: [
+                {
+                    price: {type: Number}
+                }
+            ],
+            child: [
+                {
+                    price: {type: Number}
+                }
+            ],
+            smallchild: [
+                {
+                    price: {type: Number}
+                }
+            ]
+        },
         meansofpayment: {
             mobilepay: {type: Boolean, required: true},
             bankpay: {type: Boolean, required: true},
@@ -64,7 +82,7 @@ var InvitationSchema = new mongoose.Schema({
                 regno: {type: String},
                 account: {type: String}
             },
-            cash: {type: String},
+            cash: {type: String}
         }
     },
     text2: {

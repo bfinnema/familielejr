@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 'NumDaysService', 'EventregService', 
-function($scope, $http, $location, $route, $window, AuthService, YearService, NumDaysService, EventregService) {
+.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 'EventPriceService', 'EventregService', 
+function($scope, $http, $location, $route, $window, AuthService, YearService, EventPriceService, EventregService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -16,7 +16,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,30);
+    var invyear = YearService.myYear("default");
     // console.log(`Invyear in eventregCtrl: ${invyear}`);
     $scope.invitationyear = invyear;
 
@@ -25,9 +25,6 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
     $scope.departuredays = EventregService.departureDays();
 
     $scope.editRegistration = false;
-    var adultFee = 180;
-    var childFee = 100;
-    var smallChildFee = 0;
 
     $http({
         method: 'GET',
@@ -53,14 +50,11 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
             }
         }).then(function(response) {
             // console.log(`Success, invitation fetched. Status: ${response.status}`);
-            // console.log(response.data);
+            // console.log(response.data.year);
             if (response.data) {
                 // console.log(response.data.enddate, response.data.startdate);
                 $scope.invitation = response.data;
                 invitationExists = true;
-                adultFee = $scope.invitation.payment.adult;
-                childFee = $scope.invitation.payment.child;
-                // console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
             } else {
                 console.log('Invitation does not exist');
             };
@@ -77,15 +71,12 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
     $scope.addEventreg = function() {
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        var numDays = NumDaysService.numDays($scope.arrivalday ,$scope.departureday);
+        // var numDays = EventPriceService.numDays($scope.arrivalday ,$scope.departureday);
         // console.log(`numDays in eventreg: ${numDays}`);
-        if ($scope.agegroup == "Voksen") {
-            eventFee = numDays * adultFee;
-        } else if ($scope.agegroup == "Barn under 12") {
-            eventFee = numDays * childFee;
-        } else {
-            eventFee = numDays * smallChildFee;
-        };
+
+        eventFee = EventPriceService.eventFee($scope.arrivalday ,$scope.departureday, $scope.agegroup, $scope.invitation.payment);
+        console.log(`Event Fee: ${eventFee}`);
+
         var eventreg = {
             name: $scope.regname,
             agegroup: $scope.agegroup,
@@ -162,17 +153,12 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
     };
 
     $scope.editEventreg = function() {
-        // console.log(`Name: ${$scope.regname}`)
+        console.log(`Name: ${$scope.editRegname}`)
         var eventFee = 0;
-        var numDays = NumDaysService.numDays($scope.editArrivalday ,$scope.editDepartureday);
-        // console.log(`numDays in edit eventreg: ${numDays}`);
-        if ($scope.editAgegroup == "Voksen") {
-            eventFee = numDays * adultFee;
-        } else if ($scope.editAgegroup == "Barn under 12") {
-            eventFee = numDays * childFee;
-        } else {
-            eventFee = numDays * smallChildFee;
-        };
+
+        eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
+        console.log(`Event Fee: ${eventFee}`);
+
         var eventreg = {
             name: $scope.editRegname,
             agegroup: $scope.editAgegroup,
@@ -230,8 +216,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Nu
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'NumDaysService', 'EventregService',  'SearchService',
-function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, NumDaysService, EventregService, SearchService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'EventPriceService', 'EventregService',  'SearchService',
+function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, EventPriceService, EventregService, SearchService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -247,7 +233,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }, 1000);
 
     var invyear = $routeParams.year;
-    var currentYear = YearService.myYear(7,30);
+    var currentYear = YearService.myYear("default");
     if (invyear < 1990) {
         invyear = currentYear;
     };
@@ -266,9 +252,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     $scope.arrivaldays = EventregService.arrivalDays();
     $scope.departuredays = EventregService.departureDays();
     $scope.editRegistration = false;
-    var adultFee = 180;
-    var childFee = 100;
-    var smallChildFee = 0;
 
     $scope.searching = false;
     $scope.sorting = false;
@@ -280,7 +263,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         url: 'eventregs/all/year/' + invyear
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
-        // console.log(response.data);
         $scope.registrations = response.data;
         $scope.dinners = [[0,0],[0,0]];
         $scope.breakfasts = [[0,0],[0,0]];
@@ -291,7 +273,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         $scope.feeSum = 0;
         $scope.feePaidSum = 0;
         for (var i=0; i<$scope.registrations.length; i++) {
-            //console.log(`Navn: ${$scope.registrations[i].name}, Arr: ${$scope.registrations[i].arrivalday}, Dep: ${$scope.registrations[i].departureday}`);
+            // console.log(`Navn: ${$scope.registrations[i].name}, Arr: ${$scope.registrations[i].arrivalday}, Dep: ${$scope.registrations[i].departureday}`);
             $scope.registrations[i].RemRegistrationPopoverIsVisible = false;
             $scope.registrations[i].EditRegistrationPopoverIsVisible = false;
             $scope.registrations[i].num = i;
@@ -393,26 +375,38 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         console.log(`Børn. Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`);
  */        
 
-        $http({
+        return $http({
             method: 'GET',
             url: '/fiscalyears/year/'+invyear,
             headers: {
                 'x-auth': localStorage.userToken
             }
-        }).then(function(response) {
-            // console.log(`Success. Status: ${response.status}`);
-            $scope.fiscalyear = response.data;
-            if ($scope.fiscalyear.locked) {
-                $scope.fyLocked = true;
-                // console.log(`FY is locked`);
-            } else {
-                // console.log(`FY is NOT locked`);
-            };
-            // console.log($scope.expenses[0]);
-        }, function errorCallback(response) {
-            console.log(`Fiscalyear Error. Status: ${response.status}`);
         });
-
+    }).then(function(fiscalyear) {
+        // console.log(`Success. Status: ${fiscalyear.status}`);
+        if (fiscalyear.locked) {
+            $scope.fyLocked = true;
+            // console.log(`FY is locked`);
+        } else {
+            // console.log(`FY is NOT locked`);
+        };
+        return $http({
+            method: 'GET',
+            url: '/invitations/year/'+invyear,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(invitation) {
+        // console.log(`Success, invitation fetched. Status: ${invitation.status}`);
+        // console.log(invitation.data.year);
+        if (invitation.data) {
+            // console.log(invitation.data.enddate, invitation.data.startdate);
+            $scope.invitation = invitation.data;
+            invitationExists = true;
+        } else {
+            console.log('Invitation does not exist');
+        };
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
@@ -543,17 +537,12 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     };
 
     $scope.editEventreg = function() {
-        // console.log(`Name: ${$scope.regname}`)
+        console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        var numDays = NumDaysService.numDays($scope.editArrivalday ,$scope.editDepartureday);
-        // console.log(`numDays in edit eventregall: ${numDays}`);
-        if ($scope.editAgegroup == "Voksen") {
-            eventFee = numDays * adultFee;
-        } else if ($scope.editAgegroup == "Barn under 12") {
-            eventFee = numDays * childFee;
-        } else {
-            eventFee = numDays * smallChildFee;
-        };
+
+        eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
+        console.log(`Event Fee: ${eventFee}`);
+
         var eventreg = {
             name: $scope.editRegname,
             agegroup: $scope.editAgegroup,
@@ -591,61 +580,28 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
 
     $scope.recalcFees = function() {
 
-        $http({
-            method: 'GET',
-            url: '/invitations/year/'+invyear,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(response) {
-            // console.log(`Success, invitation fetched. Status: ${response.status}`);
-            // console.log(response.data);
-            if (response.data) {
-                console.log(response.data.enddate, response.data.startdate);
-                $scope.invitation = response.data;
-                invitationExists = true;
-                adultFee = $scope.invitation.payment.adult;
-                childFee = $scope.invitation.payment.child;
-                // console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
-            } else {
-                // console.log('Invitation does not exist');
-                // console.log(`Voksne: ${adultFee}, Børn: ${childFee}`);
-            };
+        // console.log(`In recalcfees: Adult, two days: ${priceModel.adult[1].price}`);
 
-            for (var i=0; i<$scope.registrations.length; i++) {
-                var eventFee = 0;
-                var numDays = NumDaysService.numDays($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday);
-                // console.log(`numDays in recalcFees, participant ${$scope.registrations[i].name}: ${numDays}`);
-                if ($scope.registrations[i].agegroup == "Voksen") {
-                    eventFee = numDays * adultFee;
-                    // console.log(`Voksen`);
-                } else if ($scope.registrations[i].agegroup == "Barn under 12") {
-                    eventFee = numDays * childFee;
-                    // console.log(`Barn under 12`);
-                } else {
-                    eventFee = numDays * smallChildFee;
-                    // console.log(`Lille barn`);
-                };
+        for (var i=0; i<$scope.registrations.length; i++) {
+            var eventFee = 0;
+            eventFee = EventPriceService.eventFee($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday, $scope.registrations[i].agegroup, $scope.invitation.payment);
+            console.log(`Event Fee in recalcFees: ${eventFee}`);
+    
+            $http({
+                method: 'PATCH',
+                url: 'eventregs/fee/'+$scope.registrations[i]._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: {eventFee: eventFee}
+            }).then(function(response) {
+                // console.log(`Status of recalcFee ${i}: ${response.status}`);
+                // console.log(response.data._id);
+            }, function errorCallback(response) {
+                console.log(`Error Status, recalcFee ${i}: ${response.status}`);
+            });
+        };
             
-                $http({
-                    method: 'PATCH',
-                    url: 'eventregs/fee/'+$scope.registrations[i]._id,
-                    headers: {
-                        'x-auth': localStorage.userToken
-                    },
-                    data: {eventFee: eventFee}
-                }).then(function(response) {
-                    // console.log(`Status of recalcFee ${i}: ${response.status}`);
-                    // console.log(response.data._id);
-                }, function errorCallback(response) {
-                    console.log(`Error Status, recalcFee ${i}: ${response.status}`);
-                });
-            };
-            
-        }, function errorCallback(response) {
-            console.log(`Error. Status: ${response.status}`);
-        });
-
         setTimeout(function(){
             $location.path('/eventregistrationall/'+invyear);
             $route.reload();

@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('invitationadminCtrl', ['$scope', '$http', '$location', '$window', 'AuthService', 'YearService', 
-function($scope, $http, $location, $window, AuthService, YearService) {
+.controller('invitationadminCtrl', ['$scope', '$http', '$location', '$window', 'AuthService', 'YearService', 'EventPriceService',
+function($scope, $http, $location, $window, AuthService, YearService, EventPriceService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -16,11 +16,12 @@ function($scope, $http, $location, $window, AuthService, YearService) {
         angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear(7,30);
+    var invyear = YearService.myYear("default");
     $scope.invyear = invyear;
     // console.log(`Invitation Admin Ctrl. Invyear: ${invyear}`);
     var invitationExists = false;
     $scope.invitationExists = invitationExists;
+    var priceModel = EventPriceService.eventPriceDefault();
 
     $http({
         method: 'GET',
@@ -45,6 +46,12 @@ function($scope, $http, $location, $window, AuthService, YearService) {
             $scope.starttimeView = new Date($scope.invitation.starttime);
             $scope.endtimeView = new Date($scope.invitation.endtime);
             $scope.deadlinedateView = new Date($scope.invitation.registration.deadline);
+            $scope.adultoneday = $scope.invitation.payment.newpricemodel.adult[0].price;
+            $scope.adulttwodays = $scope.invitation.payment.newpricemodel.adult[1].price;
+            $scope.childoneday = $scope.invitation.payment.newpricemodel.child[0].price;
+            $scope.childtwodays = $scope.invitation.payment.newpricemodel.child[1].price;
+            $scope.smallchildoneday = $scope.invitation.payment.newpricemodel.smallchild[0].price;
+            $scope.smallchildtwodays = $scope.invitation.payment.newpricemodel.smallchild[1].price;
 
             $scope.organizers = ["","","","",""];
             $scope.organizerBtnShow = [false,true,false,false,false];
@@ -90,6 +97,12 @@ function($scope, $http, $location, $window, AuthService, YearService) {
                         if (i<4) {$scope.organizerBtnShow[i+1] = true;};
                         $scope.organizers[i] = $scope.invitation.organizers[i].orgname;
                     };
+                    $scope.adultoneday = priceModel.adult[0].price;
+                    $scope.adulttwodays = priceModel.adult[1].price;
+                    $scope.childoneday = priceModel.child[0].price;
+                    $scope.childtwodays = priceModel.child[1].price;
+                    $scope.smallchildoneday = priceModel.smallchild[0].price;
+                    $scope.smallchildtwodays = priceModel.smallchild[1].price;
 
                     if ($scope.numOrgLines > 0) {$scope.numOrgLines -= 1;};
                     // console.log(`numOrgLines: ${$scope.numOrgLines}`);
@@ -136,9 +149,21 @@ function($scope, $http, $location, $window, AuthService, YearService) {
         if (!$scope.mobilepay) {$scope.mobilepay = false};
         if (!$scope.bankpay) {$scope.bankpay = false};
         if (!$scope.cash) {$scope.cash = false};
+        var priceModel = {adult:[], child:[], smallchild:[]};
+        priceModel.adult.push({"price": $scope.adultoneday});
+        priceModel.adult.push({"price": $scope.adulttwodays});
+        priceModel.child.push({"price": $scope.childoneday});
+        priceModel.child.push({"price": $scope.childtwodays});
+        priceModel.smallchild.push({"price": $scope.smallchildoneday});
+        priceModel.smallchild.push({"price": $scope.smallchildtwodays});
+        // console.log(`Child, one day: ${priceModel.child[0].price}`);
         var payment = {
-            adult: $scope.invitation.payment.adult,
-            child: $scope.invitation.payment.child,
+            priceModel: "new",
+            // adult: $scope.invitation.payment.adult,
+            // child: $scope.invitation.payment.child,
+            adult: 180,
+            child: 100,
+            newpricemodel: priceModel,
             meansofpayment: {
                 mobilepay: $scope.mobilepay,
                 bankpay: $scope.bankpay,
@@ -153,6 +178,8 @@ function($scope, $http, $location, $window, AuthService, YearService) {
                 cash: "Kontant afregning på lejren"
             }
         };
+        // console.log(`Adult, one day: ${payment.newpricemodel.adult[0].price}`);
+
         if ($scope.mobilepay) {
             payment.paymentinfo.mobilepay = $scope.invitation.payment.paymentinfo.mobilepay;
         };
@@ -241,7 +268,7 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
-    var invyear = YearService.myYear(7,30);
+    var invyear = YearService.myYear("default");
     // console.log(`Event info Ctrl = Invitation. Invyear: ${invyear}`);
     $scope.invyear = invyear;
     var invitationExists = false;
@@ -273,6 +300,20 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.deadlineday = days[dl.getDay()];
             $scope.deadlinedate = dl.getDate();
             $scope.deadlinemonth = months[dl.getMonth()];
+
+            $scope.priceModelType = "old";
+            if ($scope.invitation.payment.priceModel) {
+                if ($scope.invitation.payment.priceModel == "new") {
+                    console.log(`priceModel there: New`);
+                    $scope.priceModelType = "new";
+                } else {
+                    console.log(`priceModel there: Old`);
+                    $scope.priceModelType = "old";
+                };
+            } else {
+                console.log(`priceModel not there`);
+                $scope.priceModelType = "old";
+            };
 
             var encodedAddress = encodeURIComponent($scope.invitation.address.street+" "+$scope.invitation.address.zip+" "+$scope.invitation.address.town+" Denmark");
             // console.log(`encodedAddress: ${encodedAddress}`);

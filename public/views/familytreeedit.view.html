@@ -15,7 +15,7 @@
 		<li>
             <a>
                 <span ng-repeat="person in familytree.persons">
-                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                    {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                 </span>
             </a>
@@ -26,7 +26,7 @@
 				<li ng-repeat="l1family in familytree.secondlevel">
                     <a href="#!familytreeedit/{{l1family._family_id}}">
                         <span ng-repeat="person in l1family.persons">
-                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                            {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                         </span>
                     </a>

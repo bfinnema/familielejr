@@ -15,7 +15,7 @@
 		<li>
             <a href="#!familytree">
                 <span ng-repeat="person in l1family.persons">
-                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                    {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                 </span>
             </a>
@@ -23,7 +23,7 @@
 				<li ng-repeat="l2family in l1family.thirdlevel">
                     <a ng-click="showLevel3(l2family._family_id)">
                         <span ng-repeat="person in l2family.persons">
-                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                            {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                         </span>
                     </a>
@@ -31,7 +31,7 @@
 						<li ng-show="showL3Family == l2family._family_id" ng-repeat="l3family in L3Familytree">
                             <a>
                                 <span ng-repeat="person in l3family.persons">
-                                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                    {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                                 </span>
                             </a>
@@ -39,7 +39,7 @@
 								<li ng-repeat="l4family in l3family.secondlevel">
                                     <a>
                                         <span ng-repeat="person in l4family.persons">
-                                            {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                            {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                                         </span>
                                     </a>
@@ -47,7 +47,7 @@
                                         <li ng-repeat="l5family in l4family.thirdlevel">
                                             <a>
                                                 <span ng-repeat="person in l5family.persons">
-                                                    {{person.firstname}} {{person.middlename}} {{person.surname}}<br>
+                                                    {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                                                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                                                 </span>
                                             </a>

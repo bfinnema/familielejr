@@ -95,15 +95,39 @@
                 <input type="text" class="form-control" ng-model="invitation.bring" name="bring" placeholder="Ting det anbefales at medbringe">
             </div>
         </div>
-        <h3 class="form-signin-heading">Betaling</h3>
+        <h3 class="form-signin-heading">Priser</h3>
         <div class="row">
-            <div class="form-group col-md-4">
+            <!-- <div class="form-group col-md-4">
                 <label>Pris per voksen:</label>
                 <input type="number" class="form-control" ng-model="invitation.payment.adult" name="priceadult" required>
             </div>
             <div class="form-group col-md-4">
                 <label>Pris per barn:</label>
                 <input type="number" class="form-control" ng-model="invitation.payment.child" name="pricechild" required>
+            </div> -->
+            <div class="form-group col-md-2">
+                <label>Voksen, en dag:</label>
+                <input type="number" class="form-control" ng-model="adultoneday" name="priceadult" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Voksen, to dage:</label>
+                <input type="number" class="form-control" ng-model="adulttwodays" name="pricechild" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Barn, 3-12, en dag:</label>
+                <input type="number" class="form-control" ng-model="childoneday" name="priceadult" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Barn, 3-12, to dage:</label>
+                <input type="number" class="form-control" ng-model="childtwodays" name="pricechild" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Barn under 3, en dag:</label>
+                <input type="number" class="form-control" ng-model="smallchildoneday" name="priceadult" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Barn under 3, to dage:</label>
+                <input type="number" class="form-control" ng-model="smallchildtwodays" name="pricechild" required>
             </div>
         </div>
         <h4 class="form-signin-heading">Betalingsmuligheder</h4>

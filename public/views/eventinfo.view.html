@@ -32,8 +32,11 @@
         <div class="well well-sm">
             <h4>Pris:</h4>
             <ul style="list-style-type:none">
-                <li>Per voksen, per dag: {{invitation.payment.adult}} kr.</li>
-                <li>Per barn, per dag: {{invitation.payment.child}} kr.</li>
+                <li ng-show="priceModelType == 'old'">Per voksen, per dag: {{invitation.payment.adult}} kr.</li>
+                <li ng-show="priceModelType == 'old'">Per barn, per dag: {{invitation.payment.child}} kr.</li>
+                <li ng-show="priceModelType == 'new'">Per voksen: En dag: {{invitation.payment.newpricemodel.adult[0].price}} kr. To dage: {{invitation.payment.newpricemodel.adult[1].price}} kr.</li>
+                <li ng-show="priceModelType == 'new'">Per barn 3-12: En dag: {{invitation.payment.newpricemodel.child[0].price}} kr. To dage: {{invitation.payment.newpricemodel.child[1].price}} kr.</li>
+                <li ng-show="priceModelType == 'new'">Per barn under 3: En dag: {{invitation.payment.newpricemodel.smallchild[0].price}} kr. To dage: {{invitation.payment.newpricemodel.smallchild[1].price}} kr.</li>
             </ul>
             <p>Betalingsmuligheder:</p>
             <ul style="list-style-type:none">

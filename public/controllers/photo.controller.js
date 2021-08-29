@@ -10,6 +10,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     for (var y=currentyear; y>=firstyear; y--) {
         $scope.years.push({"year": y.toString()});
     };
+    $scope.years.push({"year": "historiske"});
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -34,6 +35,9 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         var folder = $scope.year;
         var operation = 'putObject';
         var picturetext = 'Familielejr '+$scope.year;
+        if (folder == "historiske") {
+            picturetext = 'Fra Flensburg familiens historie';
+        };
         if ($scope.picturetext) {picturetext = $scope.picturetext;};
 
         $http({
@@ -910,18 +914,34 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
             $scope.years.push(response.data);
-            // console.log(`Year: ${y.toString()}, Count: ${response.data}`);
+            // console.log(`Year: ${y.toString()}, Count: ${response.data.count}`);
             $scope.total += response.data.count;
-            angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
-            if ($scope.mypictures) {
-                angular.element(document.querySelector( '#myphotooverview' ) ).addClass('active');
-            } else {
-                angular.element(document.querySelector( '#globalphotooverview' ) ).addClass('active');
-            };
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
     };
+
+    $http({
+        method: 'GET',
+        url: photosurl+'historiske',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        // console.log(`Status: ${response.status}`);
+        $scope.years.push(response.data);
+        // console.log(`Year: Historiske, Count: ${response.data.count}`);
+        $scope.total += response.data.count;
+        $scope.historiccount = response.data.count;
+        angular.element(document.querySelector( '#photoalbum' ) ).addClass('active');
+        if ($scope.mypictures) {
+            angular.element(document.querySelector( '#myphotooverview' ) ).addClass('active');
+        } else {
+            angular.element(document.querySelector( '#globalphotooverview' ) ).addClass('active');
+        };
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
 
 }])
 

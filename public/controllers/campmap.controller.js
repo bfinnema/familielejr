@@ -304,7 +304,7 @@ function($scope, $http, AuthService, YearService) {
         };
     });
 
-    var invyear = YearService.myYear(7,20);
+    var invyear = YearService.myYear("camplist");
     // console.log(`List of past camps. Invyear: ${invyear}`);
 
     $http({

@@ -73,7 +73,8 @@
     </form>
 </div>
 <div class="col-md-6" ng-show="showImagesList">
-    <h3 class="heading">Billeder du allerede har uploaded, taget i {{year}}:</h3>
+    <h3 ng-show="year != 'historiske'" class="heading">Billeder du allerede har uploaded, taget i {{year}}:</h3>
+    <h3 ng-show="year == 'historiske'" class="heading">Historiske billeder du allerede har uploaded:</h3>
     <table class="table table-striped">
         <thead>
             <tr>
