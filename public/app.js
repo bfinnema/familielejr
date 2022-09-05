@@ -149,6 +149,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
+        when('/slideshow/:year', {
+            templateUrl: 'views/slideshow.view.html',
+            controller: 'slideshowCtrl',
+            access: {restricted: true}
+        }).
         when('/myphotoalbum', {
             templateUrl: 'views/myphotoalbum.view.html',
             controller: 'myphotoalbumCtrl',
@@ -212,6 +217,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/expenses', {
             templateUrl: 'views/expenses.view.html',
             controller: 'expensesCtrl',
+            access: {restricted: true}
+        }).
+        when('/groceries', {
+            templateUrl: 'views/groceries.view.html',
+            controller: 'groceriesCtrl',
             access: {restricted: true}
         }).
         when('/archive', {

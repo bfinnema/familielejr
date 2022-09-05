@@ -189,6 +189,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             $scope.imagesExist = true;
             // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
             $scope.mainImageObj = $scope.images[0];
+            console.log(`Name: ${$scope.mainImageObj.filename}, Filetype: ${$scope.mainImageObj.filetype}`);
             getImage(0);
             
             for (x=0; x<$scope.images.length; x++) {
@@ -338,10 +339,10 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             method: 'GET',
             url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
-            // console.log("Signed request: "+response.data.signedRequest);
+            console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
             $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            // console.log(`mainImage: ${$scope.mainImage}`);
+            console.log(`mainImage: ${$scope.mainImage}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -501,6 +502,221 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         };
     };
     
+    function detectClient() {
+        $scope.userClientFullDesc = navigator.userAgent;
+        console.log(navigator.userAgent);
+        if (navigator.userAgent.match(/Android/i)) {
+            $scope.userClient = "ANDROID";
+        } else if (navigator.userAgent.match(/iPhone/i)) {
+            $scope.userClient = "IPHONE";
+        } else if (navigator.userAgent.match(/iPad/i)) {
+            $scope.userClient = "IPAD";
+        } else {
+            $scope.userClient = "BROWSER";
+        };
+    };
+}])
+
+// The slideshowCtrl was made for picture slide show, but it did not work properly, so it is not used.
+.controller('slideshowCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
+
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
+        };
+    });
+
+    $scope.innerWidth = window.innerWidth;
+    $scope.innerHeight = window.innerHeight;
+    detectClient();
+    $scope.screenSizeIndex = screenSizing();
+    console.log(`Screen Size detected: ${$scope.screenSizeIndex}`);
+    var currentPhoto = 0;
+    $scope.year = $routeParams.year;
+    console.log(`Photos from year ${$scope.year}`)
+
+    $http({
+        method: 'GET',
+        url: '/photos/year/'+$routeParams.year,
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(response) {
+        console.log(`Status: ${response.status}`);
+        $scope.images = response.data;
+        if (!response.data[0]) {
+            console.log('No photos for year '+$scope.year)
+            $scope.imagesExist = false;
+        } else {
+            $scope.imagesExist = true;
+            $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
+            $scope.mainImageObj = $scope.images[0];
+            console.log(`Name: ${$scope.mainImageObj.filename}, Filetype: ${$scope.mainImageObj.filetype}`);
+            getImage(0);
+            
+            for (x=0; x<$scope.images.length; x++) {
+                $scope.images[x].num = x;
+                console.log(`orientation: ${$scope.images[x].orientation}`);
+                if (!$scope.images[x].orientation) {
+                    $scope.images[x].orientation = 0;
+                };
+                console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+            };
+            setTimeout(function(){
+                imageFormatting();
+            }, 500);
+        };
+        var i=0;
+        function photoLoop() {
+            setTimeout(function() {
+                console.log(`Photo number ${i}`);
+                $scope.mainImageObj = $scope.images[i];
+                getImage(i);
+                i++;
+                if (i<$scope.images.length) {
+                    photoLoop();
+                };
+            }, 3000)
+        };
+        photoLoop();
+    
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+
+    /* function photoLoop(currentPhoto) {
+        setTimeout(function() {
+            console.log(`Photo number ${currentPhoto}`);
+            $scope.mainImageObj = $scope.images[currentPhoto];
+            getImage(currentPhoto);
+            currentPhoto++;
+            if (currentPhoto<$scope.images.length) {
+                photoLoop();
+            };
+        }, 3000)
+    }; */
+
+    $scope.nextImage = function() {
+        if (currentPhoto < $scope.images.length-1) {
+            currentPhoto = currentPhoto + 1;
+        }
+        else {currentPhoto = 0};
+        // $scope.mainImage = $scope.images[currentPhoto].path + $scope.images[currentPhoto].filename; // Old method
+        $scope.mainImageObj = $scope.images[currentPhoto];
+        if ($scope.images[currentPhoto].signedRequest) {  // if ($scope.signedRequests[currentPhoto] !="") {
+            $scope.mainImage = $scope.images[currentPhoto].signedRequest;
+            // console.log(`nextImage: signedRequest in image: ${$scope.images[currentPhoto].signedRequest}`);
+        } else {
+            getImage(currentPhoto);
+        };
+        setTimeout(function(){
+            imageFormatting();
+        }, 500);
+    // console.log(`Current Photo: ${$scope.mainImageObj.num}, ${$scope.mainImageObj.filename}`);
+    };
+
+    function getImage(photoNum) {
+        var operation = 'getObject';
+        var filename = $scope.images[photoNum].filename;
+        var filetype = $scope.images[photoNum].filetype;
+        var folder = $scope.images[photoNum].year;
+        $http({
+            method: 'GET',
+            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+        }).then(function(response) {
+            console.log("Signed request: "+response.data.signedRequest);
+            $scope.mainImage = response.data.signedRequest;
+            $scope.images[photoNum].signedRequest = response.data.signedRequest;
+            console.log(`mainImage: ${$scope.mainImage}`);
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
+
+    function screenSizing() {
+        var screenSizes = [
+            {"screenHeight": 400},
+            {"screenHeight": 520},
+            {"screenHeight": 680},
+            {"screenHeight": 780},
+            {"screenHeight": 930},
+            {"screenHeight": 1080}
+        ];
+
+        var screenSizeIndex = 0;
+        for (var s=0; s<screenSizes.length; s++) {
+            // console.log(`screenSizing, innerHeight: ${window.innerHeight}, ${screenSizes[s].screenHeight}`);
+            if (window.innerHeight > screenSizes[s].screenHeight) {
+                screenSizeIndex = s;
+                // console.log(`Bigger!`);
+            };
+        };
+        // console.log(`screenSizeIndex: ${screenSizeIndex}`);
+        return screenSizeIndex;
+    };
+
+    function imageFormatting() {
+
+        var imageFormats = [
+            {"whRelation": 0.6},
+            {"whRelation": 1.3},
+            {"whRelation": 1.7}
+        ];
+
+        var classMapDivHor = [
+            ['div-horizontal-520-ver','div-horizontal-680-ver','div-horizontal-780-ver','div-horizontal-930-ver','div-horizontal-1080-ver','div-horizontal-1081-ver'],
+            ['div-horizontal-520-4-3','div-horizontal-680-4-3','div-horizontal-780-4-3','div-horizontal-930-4-3','div-horizontal-1080-4-3','div-horizontal-1081-4-3'],
+            ['div-horizontal-520-16-9','div-horizontal-680-16-9','div-horizontal-780-16-9','div-horizontal-930-16-9','div-horizontal-1080-16-9','div-horizontal-1081-16-9']
+        ];
+        var classMapImgHor = [
+            ['img-horizontal-520-ver','img-horizontal-680-ver','img-horizontal-780-ver','img-horizontal-930-ver','img-horizontal-1080-ver','img-horizontal-1081-ver'],
+            ['img-horizontal-520-4-3','img-horizontal-680-4-3','img-horizontal-780-4-3','img-horizontal-930-4-3','img-horizontal-1080-4-3','img-horizontal-1081-4-3'],
+            ['img-horizontal-520-16-9','img-horizontal-680-16-9','img-horizontal-780-16-9','img-horizontal-930-16-9','img-horizontal-1080-16-9','img-horizontal-1081-16-9']
+        ];
+
+        var classMapDivVer = [
+            ['div-vertical-520-ver','div-vertical-680-ver','div-vertical-780-ver','div-vertical-930-ver','div-vertical-1080-ver','div-vertical-1081-ver']
+        ];
+        var classMapImgVer = [
+            ['img-vertical-520-ver','img-vertical-680-ver','img-vertical-780-ver','img-vertical-930-ver','img-vertical-1080-ver','img-vertical-1081-ver']
+        ];
+
+        if ($scope.images[currentPhoto].orientation == 0) {
+            var imgWidth = document.getElementById("photo-img").naturalWidth;
+            var imgHeight = document.getElementById("photo-img").naturalHeight;
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            var imgWidth = document.getElementById("photo-img-ver").naturalWidth;
+            var imgHeight = document.getElementById("photo-img-ver").naturalHeight;
+        } else {
+
+        };
+        var whr = imgWidth/imgHeight;
+        // console.log(`Width: ${imgWidth}, Height: ${imgHeight}, Relation: ${whr}`);
+        $scope.imgWidth = imgWidth; $scope.imgHeight = imgHeight;
+
+        var imageFormatIndex = 0;
+        for (var f=0; f<imageFormats.length; f++) {
+            // console.log(`f: ${f}, imageFormat: ${imageFormats[f].whRelation}`);
+            if (whr > imageFormats[f].whRelation) {imageFormatIndex = f};
+        };
+
+        // console.log(`In imageFormatting. ${$scope.images[currentPhoto].num}: ${$scope.images[currentPhoto].filename}, orientation: ${$scope.images[currentPhoto].orientation}`);
+        if ($scope.images[currentPhoto].orientation == 0) {
+            // console.log(`Class to be selected for horizontal img, DIV: ${classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]}, IMG: ${classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div') ).addClass(classMapDivHor[imageFormatIndex][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img') ).addClass(classMapImgHor[imageFormatIndex][$scope.screenSizeIndex]);
+        } else if ($scope.images[currentPhoto].orientation == 1 || $scope.images[currentPhoto].orientation == -1) {
+            // console.log(`Class to be selected for vertical img, DIV: ${classMapDivVer[0][$scope.screenSizeIndex]}, IMG: ${classMapImgVer[0][$scope.screenSizeIndex]}`);
+            angular.element(document.querySelector('#photo-div-ver') ).addClass(classMapDivVer[0][$scope.screenSizeIndex]);
+            angular.element(document.querySelector('#photo-img-ver') ).addClass(classMapImgVer[0][$scope.screenSizeIndex]);
+        } else {
+            
+        };
+        
+    };
+
     function detectClient() {
         $scope.userClientFullDesc = navigator.userAgent;
         console.log(navigator.userAgent);

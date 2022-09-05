@@ -67,25 +67,38 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
     });
 
     $scope.errorHappened = false;
+
+    $scope.attendPositive = function() {
+        $scope.willnotattend = false;
+    };
+    
+    $scope.attendNegative = function() {
+        $scope.willattend = false;
+    };
     
     $scope.addEventreg = function() {
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
-        // var numDays = EventPriceService.numDays($scope.arrivalday ,$scope.departureday);
-        // console.log(`numDays in eventreg: ${numDays}`);
+        var willattend = true;
 
-        eventFee = EventPriceService.eventFee($scope.arrivalday ,$scope.departureday, $scope.agegroup, $scope.invitation.payment);
-        console.log(`Event Fee: ${eventFee}`);
-
+        if ($scope.willnotattend) {
+            willattend = false;
+        } else {
+            eventFee = EventPriceService.eventFee($scope.arrivalday ,$scope.departureday, $scope.agegroup, $scope.invitation.payment);
+            // console.log(`Event Fee: ${eventFee}`);
+        };
+        
         var eventreg = {
             name: $scope.regname,
             agegroup: $scope.agegroup,
             year: invyear,
+            willattend: willattend,
             arrivalday: $scope.arrivalday,
             arrivaltime: $scope.arrivaltime,
             departureday: $scope.departureday,
             departuretime: $scope.departuretime,
-            fee: eventFee
+            fee: eventFee,
+            diet: $scope.diet
         };
 
         $http({
@@ -136,6 +149,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         };
         $scope.editRegname = registration.name;
         $scope.editAgegroup = registration.agegroup;
+        $scope.willattend = registration.willattend;
+        $scope.willnotattend = !registration.willattend;
         $scope.editArrivalday = registration.arrivalday;
         if (registration.arrivaltime == null) {
             $scope.editArrivaltime = null;
@@ -148,26 +163,34 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         } else {
             $scope.editDeparturetime = new Date(registration.departuretime);
         };
+        $scope.editDiet = registration.diet;
         $scope.editPaid = registration.paid;
         $scope.editID = registration._id;
     };
 
     $scope.editEventreg = function() {
-        console.log(`Name: ${$scope.editRegname}`)
+        // console.log(`Name: ${$scope.editRegname}`);
         var eventFee = 0;
+        var willattend = true;
 
-        eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
-        console.log(`Event Fee: ${eventFee}`);
+        if ($scope.willnotattend) {
+            willattend = false
+        } else {
+            eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
+            // console.log(`Event Fee: ${eventFee}`);
+        };
 
         var eventreg = {
             name: $scope.editRegname,
             agegroup: $scope.editAgegroup,
             year: invyear,
+            willattend: willattend,
             arrivalday: $scope.editArrivalday,
             arrivaltime: $scope.editArrivaltime,
             departureday: $scope.editDepartureday,
             departuretime: $scope.editDeparturetime,
             fee: eventFee,
+            diet: $scope.editDiet,
             paid: $scope.editPaid
         };
 
@@ -283,74 +306,76 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                 $scope.feePaidSum += $scope.registrations[i].fee;
             };
             if ($scope.registrations[i].agegroup == "Voksen") {ag = 0;} else {ag = 1;};
-            if ($scope.registrations[i].arrivalday == "Fredag") {
-                $scope.dinners[ag][0] += 1;
-                $scope.friday[ag] += 1;
-                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][0] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.lunchs[ag][1] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][0] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][0] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
-                    $scope.breakfasts[ag][0] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag formiddag") {
-                    $scope.breakfasts[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                };
-            } else if ($scope.registrations[i].arrivalday == "Lørdag formiddag") {
-                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.lunchs[ag][1] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
-                    $scope.lunchs[ag][0] += 1;
-                    $scope.saturday[ag] += 1;
-                };
-            } else if ($scope.registrations[i].arrivalday == "Lørdag eftermiddag") {
-                if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.lunchs[ag][1] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.breakfasts[ag][1] += 1;
-                    $scope.saturday[ag] += 1;
-                    $scope.sunday[ag] += 1;
-                } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                    $scope.dinners[ag][1] += 1;
-                    $scope.saturday[ag] += 1;
+            if ($scope.registrations[i].willattend) {
+                if ($scope.registrations[i].arrivalday == "Fredag") {
+                    $scope.dinners[ag][0] += 1;
+                    $scope.friday[ag] += 1;
+                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][0] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.lunchs[ag][1] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][0] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][0] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
+                        $scope.breakfasts[ag][0] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag formiddag") {
+                        $scope.breakfasts[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                    };
+                } else if ($scope.registrations[i].arrivalday == "Lørdag formiddag") {
+                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.lunchs[ag][1] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
+                        $scope.lunchs[ag][0] += 1;
+                        $scope.saturday[ag] += 1;
+                    };
+                } else if ($scope.registrations[i].arrivalday == "Lørdag eftermiddag") {
+                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.lunchs[ag][1] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.breakfasts[ag][1] += 1;
+                        $scope.saturday[ag] += 1;
+                        $scope.sunday[ag] += 1;
+                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
+                        $scope.dinners[ag][1] += 1;
+                        $scope.saturday[ag] += 1;
+                    };
                 };
             };
 /* 
@@ -491,6 +516,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             arrivaltime: registration.arrivaltime,
             departureday: registration.departureday,
             departuretime: registration.departuretime,
+            diet: registration.diet,
             _creator: registration._creator,
             registeree: registration.registeree,
             paid: registration.paid
@@ -512,6 +538,14 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
 
     };
 
+    $scope.attendPositive = function() {
+        $scope.willnotattend = false;
+    };
+    
+    $scope.attendNegative = function() {
+        $scope.willattend = false;
+    };
+    
     $scope.editRegistrationToggle = function(registration) {
         if ($scope.editRegistration) {
             $scope.editRegistration = false;
@@ -520,6 +554,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         };
         $scope.editRegname = registration.name;
         $scope.editAgegroup = registration.agegroup;
+        $scope.willattend = registration.willattend;
+        $scope.willnotattend = !registration.willattend;
         $scope.editArrivalday = registration.arrivalday;
         if (registration.arrivaltime == null) {
             $scope.editArrivaltime = null;
@@ -532,25 +568,33 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         } else {
             $scope.editDeparturetime = new Date(registration.departuretime);
         };
+        $scope.editDiet = registration.diet;
         $scope.editPaid = registration.paid;
         $scope.editID = registration._id;
     };
 
     $scope.editEventreg = function() {
-        console.log(`Name: ${$scope.regname}`)
+        console.log(`In AllEventReg controller, editEventreg. Name: ${$scope.editRegname}`)
         var eventFee = 0;
+        var willattend = true;
 
-        eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
-        console.log(`Event Fee: ${eventFee}`);
+        if ($scope.willnotattend) {
+            willattend = false
+        } else {
+            eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
+            console.log(`Arrivalday: ${$scope.editArrivalday}, Departureday: ${$scope.editDepartureday}, Event Fee: ${eventFee}`);
+        };
 
         var eventreg = {
             name: $scope.editRegname,
             agegroup: $scope.editAgegroup,
             year: invyear,
+            willattend: willattend,
             arrivalday: $scope.editArrivalday,
             arrivaltime: $scope.editArrivaltime,
             departureday: $scope.editDepartureday,
             departuretime: $scope.editDeparturetime,
+            diet: $scope.editDiet,
             fee: eventFee,
             paid: $scope.editPaid
         };

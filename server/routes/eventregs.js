@@ -15,11 +15,13 @@ router.post('/', authenticate, (req, res) => {
     name: req.body.name,
     agegroup: req.body.agegroup,
     year: req.body.year,
+    willattend: req.body.willattend,
     arrivalday: req.body.arrivalday,
     arrivaltime: req.body.arrivaltime,
     departureday: req.body.departureday,
     departuretime: req.body.departuretime,
     fee: req.body.fee,
+    diet: req.body.diet,
     _creator: req.user._id,
     registeree: registeree
   });
@@ -34,8 +36,8 @@ router.post('/', authenticate, (req, res) => {
 // Change an Eventreg. Is used for registering that a participant has paid the camp fee.
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['name', 'agegroup', 'year', 'arrivalday', 'arrivaltime', 'departureday', 'departuretime', 'fee', '_creator', 'registeree', 'paid']);
-  // console.log(`Patching Eventreg, name: ${body.name}, Registeree: ${body.registeree}, Paid? ${body.paid}`);
+  var body = _.pick(req.body, ['name', 'agegroup', 'year', 'willattend', 'arrivalday', 'arrivaltime', 'departureday', 'departuretime', 'fee', 'diet', '_creator', 'registeree', 'paid']);
+  // console.log(`Patching Eventreg, name: ${body.name}, Registeree: ${req.user.name.firstname}, Arrivalday: ${body.arrivalday}, Departureday: ${body.departureday}, Paid? ${body.paid}`);
 
   var uploader = req.user.name.firstname;
   if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};

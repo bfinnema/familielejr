@@ -41,19 +41,33 @@
     <form name="eventregForm" ng-submit="addEventreg()">
         <div class="row">
             <div class="form-group col-md-4">
+                <label>Deltager i famililejr {{invitationyear}}</label>
+                <input type="checkbox" ng-model="willattend" id="willattend" ng-change="attendPositive()">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Deltager ikke i famililejr {{invitationyear}}</label>
+                <input type="checkbox" ng-model="willnotattend" id="willnotattend" ng-change="attendNegative()">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
                 <label>Navn</label>
                 <input type="text" class="form-control" ng-model="regname" name="regname" placeholder="Navn" autofocus required>
                 <i ng-show="eventregForm.regname.$error.required">*Skal udfyldes</i>
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
                 <label>Barn / Voksen</label>
                 <select class="form-control" ng-model="agegroup" name="agegroup" required>
                     <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
                 </select>
                 <i ng-show="eventregForm.agegroup.$error.required">*Skal udfyldes</i>
             </div>
+            <div ng-show="willattend" class="form-group col-md-4">
+                <label>Diæt / fødevareallergier</label>
+                <input type="text" class="form-control" ng-model="diet" name="diet" placeholder="Diæt">
+            </div>
         </div>
-        <div class="row">
+        <div ng-show="willattend" class="row">
             <div class="form-group col-md-2">
                 <label>Ankomst</label>
                 <select class="form-control" ng-model="arrivalday" name="arrivalday" required>
@@ -79,7 +93,7 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Tilmeld</button>
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Tilmeld / Afmeld</button>
             </div>
             <div class="col-md-2">
                 <a class="btn btn-warning btn-lg btn-block" href="#!">Afbryd</a>
@@ -93,12 +107,13 @@
     <thead>
         <tr>
             <th width="20%">Navn</th>
-            <th width="15%">Voksen / Barn</th>
-            <th width="15%">Ankomst</th>
-            <th width="8%">~tid</th>
-            <th width="15%">Afgang</th>
-            <th width="8%">~tid</th>
-            <th width="9%">~pris</th>
+            <th width="12%">Voksen / Barn</th>
+            <th width="18%">Ankomst</th>
+            <!-- <th width="7%">~tid</th> -->
+            <th width="18%">Afgang</th>
+            <!-- <th width="7%">~tid</th> -->
+            <th width="6%">~pris</th>
+            <th width="16%">Diæt</th>
             <th width="10%">Ændre/Slet</th>
         </tr>
     </thead>
@@ -106,11 +121,13 @@
         <tr ng-repeat="registration in registrations">
             <td>{{ registration.name }}</td>
             <td>{{ registration.agegroup }}</td>
-            <td>{{ registration.arrivalday }}</td>
-            <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
-            <td>{{ registration.departureday }}</td>
-            <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+            <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+            <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
+            <!-- <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td> -->
+            <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+            <!-- <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td> -->
             <td>{{ registration.fee | number:0 }}</td>
+            <td>{{ registration.diet }}</td>
             <td>
                 <a class="btn btn-primary" ng-click="editRegistrationToggle(registration)">
                     <i class="glyphicon glyphicon-edit" ng-mouseover="showPopoverEdit(registration.num)" ng-mouseleave="hidePopoverEdit(registration.num)"></i>
@@ -134,19 +151,33 @@
     <form name="editEventregForm" ng-submit="editEventreg()">
         <div class="row">
             <div class="form-group col-md-4">
+                <label>Deltager i famililejr {{invitationyear}}</label>
+                <input type="checkbox" ng-model="willattend" id="willattend" ng-change="attendPositive()">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Deltager ikke i famililejr {{invitationyear}}</label>
+                <input type="checkbox" ng-model="willnotattend" id="willnotattend" ng-change="attendNegative()">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
                 <label>Navn</label>
                 <input type="text" class="form-control" ng-model="editRegname" name="editRegname" placeholder="Navn" autofocus required>
                 <i ng-show="editEventregForm.regname.$error.required">*Skal udfyldes</i>
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
                 <label>Barn / Voksen</label>
                 <select class="form-control" ng-model="editAgegroup" name="editAgegroup" required>
                     <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
                 </select>
-                <i ng-show="editEventregForm.agegroup.$error.required">*Skal udfyldes</i>
+                <i ng-show="editEventregForm.editAgegroup.$error.required">*Skal udfyldes</i>
+            </div>
+            <div ng-show="willattend" class="form-group col-md-4">
+                <label>Diæt / fødevareallergier</label>
+                <input type="text" class="form-control" ng-model="editDiet" name="editDiet" placeholder="Diæt">
             </div>
         </div>
-        <div class="row">
+        <div ng-show="willattend" class="row">
             <div class="form-group col-md-2">
                 <label>Ankomst</label>
                 <select class="form-control" ng-model="editArrivalday" name="editArrivalday" required>

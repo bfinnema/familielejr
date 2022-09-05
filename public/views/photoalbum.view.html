@@ -1,19 +1,30 @@
 <div ng-include="'navigation.html'"></div>
 
 <div class="page-header">
-    <h1>Billeder, {{ year }}. Antal: {{ images.length }}</h1>
+    <!-- <h1>Billeder, {{ year }}. Antal: {{ images.length }}  <a ng-show="imagesExist" class="btn btn-success" href="#!slideshow/{{year}}" target="_blank">Slideshow {{year}}</a></h1> -->
+
+    <div class="col-md-6">
+        <h1>Billeder, {{ year }}. Antal: {{ images.length }}</h1>
+    </div>
+
 </div>
 <div ng-show="imagesExist">
     <div ng-show="userClient == 'BROWSER'">
-        <div id="photo-div" ng-show="mainImageObj.orientation == 0">
+        <div id="photo-div" ng-show="mainImageObj.orientation == 0 && mainImageObj.filetype != 'video/mp4'">
             <a href="{{mainImage}}" target="_blank">
                 <img id="photo-img" src="{{mainImage}}">
             </a>
         </div>
-        <div id="photo-div-ver" ng-show="mainImageObj.orientation == 1">
+        <div id="photo-div-ver" ng-show="mainImageObj.orientation == 1 && mainImageObj.filetype != 'video/mp4'">
             <a href="{{mainImage}}" target="_blank">
                 <img id="photo-img-ver" src="{{mainImage}}">
             </a>
+        </div>
+        <div id="photo-div" ng-show="mainImageObj.filetype == 'video/mp4'">
+            <video width="1200" controls>
+                <source type="{{mainImageObj.filetype}}" src="{{mainImage}}">
+            </video>
+            <p>HEJ</p>
         </div>
     </div>
     <div ng-show="userClient != 'BROWSER'">

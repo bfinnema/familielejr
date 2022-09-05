@@ -440,3 +440,7 @@ form .progress {
     text-align: center;
     border: solid black;
 }
+
+.willnotattend {
+    color: red;
+}

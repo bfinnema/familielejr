@@ -160,7 +160,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Bisseruplejren",
             "address": "Gammel Strandvej 135, 4243 Rude",
-            "years": "2015, 2017, 2019",
+            "years": "2015, 2017, 2019, 2021",
             "website": "http://www.bisseruplejren.dk/"
         },
         {
@@ -204,7 +204,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Højbjerg",
             "address": "Langøvej 272, 5390 Martofte",
-            "years": "2018",
+            "years": "2018, 2022",
             "website": "http://sommerlejrfyn.dk"
         },
         {

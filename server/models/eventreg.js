@@ -13,6 +13,10 @@ var EventregSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    willattend: {
+        type: Boolean,
+        default: true
+    },
     arrivalday: {
         type: String
     },
@@ -24,6 +28,9 @@ var EventregSchema = new mongoose.Schema({
     },
     departuretime: {
         type: Date
+    },
+    diet: {
+        type: String
     },
     _creator: {
         type: mongoose.Schema.Types.ObjectId,

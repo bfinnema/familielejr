@@ -1,0 +1,132 @@
+<div ng-include="'navigation.html'"></div>
+
+<h2 class="heading">Indkøbsvejledning</h2>
+<p>Liste over varer, vi normalt køber til familielejren. For hver vare er det muligt at oplyse per år, hvormeget hvor meget der blev brugt.</p>
+<p> - Tryk på "Indtast ny vare" for at oprette en ny vare</p>
+<p> - Klik på et tal under et årstal for at ændre antallet</p>
+<p> - "Mål" kan være antal, kg, gram, liter, flasker, eller andet, du finder relevant</p>
+<p></p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="15%">Vare</th>
+            <th ng-repeat="year in yearsAll" width="7%">{{year.year}}</th>
+            <th width="5%">Mål</th>
+            <th width="10%">Ændre / Slet</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="grocery in groceries">
+            <td>{{ grocery.groceryname }}</td>
+            <td ng-repeat="log in grocery.logging">
+                <a ng-show="log.year < fy+1" ng-click="editLogToggle(grocery, log.year)">{{log.quantityconsumed}}</a>
+            </td>
+            <td>{{ grocery.measure }}</td>
+            <td>
+                <a class="btn btn-primary" ng-click="editGroceryToggle(grocery)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" ng-click="removeGrocery(grocery)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<div ng-show="newGrocery">
+    <h2>Indtast en ny vare</h2>
+    <form name="newGroceryForm" ng-submit="addGrocery()">
+        <div class="row">
+            <!-- 
+            <div class="form-group col-md-3">
+                <label>Type</label>
+                <select class="form-control" ng-model="grocerytype" name="grocerytype" required>
+                    <option ng-repeat="grocerytype in grocerytypes" value="{{grocerytype.grocerytype}}">{{grocerytype.grocerytype}}</option>
+                </select>
+            </div>
+            -->
+            <div class="form-group col-md-4">
+                <label>Vare</label>
+                <input type="text" class="form-control" ng-model="groceryname" name="groceryname" placeholder="Varens navn" autofocus required>
+                <i ng-show="newGroceryForm.groceryname.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mål (antal, kg, liter, ...)</label>
+                <input type="text" class="form-control" ng-model="measure" name="measure" placeholder="Mål" required>
+                <i ng-show="newGroceryForm.measure.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mængde forbrugt i {{fy}}</label>
+                <input type="number" step="0.01" class="form-control" ng-model="quantityconsumed" name="quantityconsumed" placeholder="Mængde" required>
+                <i ng-show="newGroceryForm.quantityconsumed.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newGroceryForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newGroceryToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editGrocery">
+    <h2>Ændre en vare</h2>
+    <form name="editGroceryForm" ng-submit="groceryEdit()">
+        <div class="row">
+            <!-- 
+            <div class="form-group col-md-3">
+                <label>Type</label>
+                <select class="form-control" ng-model="grocerytype" name="grocerytype" required>
+                    <option ng-repeat="grocerytype in grocerytypes" value="{{grocerytype.grocerytype}}">{{grocerytype.grocerytype}}</option>
+                </select>
+            </div>
+            -->
+            <div class="form-group col-md-4">
+                <label>Vare</label>
+                <input type="text" class="form-control" ng-model="editGroceryname" name="editGroceryname" placeholder="Varens navn" autofocus required>
+                <i ng-show="editGroceryForm.editGroceryname.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mål (antal, kg, liter, ...)</label>
+                <input type="text" class="form-control" ng-model="editMeasure" name="editMeasure" placeholder="Mål" required>
+                <i ng-show="editGroceryForm.editMeasure.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editGroceryForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editGroceryToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editLog">
+    <h2>Ændre mængder for {{editGroceryname}}, år {{editYear}}</h2>
+    <form name="editLoggingForm" ng-submit="loggingAdd()">
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Mængde forbrugt i {{editYear}}</label>
+                <input type="number" step="0.01" class="form-control" ng-model="editQuantityconsumed" name="editQuantityconsumed" placeholder="Mængde" required>
+                <i ng-show="editLoggingForm.editQuantityconsumed.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editLoggingForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editLogToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newGrocery && !editGrocery && !editLog">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newGroceryToggle()">Indtast ny vare</a>
+    </div>
+</div>

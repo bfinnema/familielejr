@@ -1,0 +1,27 @@
+<!-- THIS IS NOT IN USE -->
+<div ng-show="userClient == 'BROWSER'">
+    <div ng-show="mainImageObj.orientation == 0">
+        <a href="{{mainImage}}" target="_blank">
+            <img id="photo-img" src="{{mainImage}}">
+        </a>
+    </div>
+    <div ng-show="mainImageObj.orientation == 1">
+        <a href="{{mainImage}}" target="_blank">
+            <img id="photo-img-ver" src="{{mainImage}}">
+        </a>
+    </div>
+</div>
+<div ng-show="userClient != 'BROWSER'">
+    <div ng-show="mainImageObj.orientation == 0">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-responsive" src="{{mainImage}}">
+        </a>
+    </div>
+    <div class="div-vertical-mobile" ng-show="mainImageObj.orientation == 1">
+        <a href="{{mainImage}}" target="_blank">
+            <img class="img-vertical-mobile" src="{{mainImage}}">
+        </a>
+    </div>
+</div>
+<!-- id="photo-div"  -->
+<!-- id="photo-div-ver"  -->
