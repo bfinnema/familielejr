@@ -100,7 +100,7 @@
                 <td>{{ registration.agegroup }}</td>
                 <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
                 <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
-                    <!-- <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td> -->
+                <!-- <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td> -->
                 <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
                 <!-- <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td> -->
                 <td>{{ registration.diet }}</td>
@@ -116,7 +116,7 @@
                         <div class="mypopover" ng-show="registration.RemRegistrationPopoverIsVisible">Slet tilmelding for {{registration.name}}</div>
                     </a>
                 </td>
-                <td ng-show="role != 2 && !fyLocked">
+                <td ng-show="role != 2 && !fyLocked && registration.willattend">
                     <input type="checkbox" ng-model="registration.paid" id="paid" ng-change="paidStatus(registration)">
                 </td>
             </tr>

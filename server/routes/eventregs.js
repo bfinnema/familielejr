@@ -125,7 +125,7 @@ router.get('/all', (req, res) => {
 // Get all event registrations for one year
 router.get('/all/year/:year', (req, res) => {
   var year = req.params.year;
-  Eventreg.find({year: year}).then((eventregs) => {
+  Eventreg.find({year: year}).sort({willattend:-1}).then((eventregs) => {
     // console.log(`Regs: ${eventregs[0].name}`);
     res.json(eventregs);
   }, (e) => {

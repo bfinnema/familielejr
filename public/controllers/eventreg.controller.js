@@ -628,8 +628,11 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
 
         for (var i=0; i<$scope.registrations.length; i++) {
             var eventFee = 0;
-            eventFee = EventPriceService.eventFee($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday, $scope.registrations[i].agegroup, $scope.invitation.payment);
-            console.log(`Event Fee in recalcFees: ${eventFee}`);
+            if ($scope.registrations[i].willattend) {
+                eventFee = EventPriceService.eventFee($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday, $scope.registrations[i].agegroup, $scope.invitation.payment);
+                // console.log(`Event Fee in recalcFees: ${eventFee}`);
+            };
+            
     
             $http({
                 method: 'PATCH',

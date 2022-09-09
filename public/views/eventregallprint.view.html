@@ -16,12 +16,11 @@
                         <div class="mypopover" ng-show="FnDnPopoverIsVisible">Sortere efter navn, ned</div>
                     </a>
                 </th>
-                <th width="13%">Voksen / Barn</th>
+                <th width="12%">Voksen / Barn</th>
                 <th width="15%">Ankomst</th>
-                <th width="5%">~tid</th>
-                <th width="19%">Afgang</th>
-                <th width="5%">~tid</th>
-                <th width="16%">Tilmeldt af</th>
+                <th width="17%">Afgang</th>
+                <th width="14%">Diæt</th>
+                <th width="15%">Tilmeldt af</th>
                 <th ng-show="role != 2" width="6%">Pris</th>
                 <th ng-show="role != 2 && !fyLocked" width="5%">Betalt</th>
             </tr>
@@ -30,10 +29,10 @@
             <tr ng-repeat="registration in registrations">
                 <td>{{ registration.name }}</td>
                 <td>{{ registration.agegroup }}</td>
-                <td>{{ registration.arrivalday }}</td>
-                <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
-                <td>{{ registration.departureday }}</td>
-                <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+                <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+                <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
+                <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.diet }}</td>
                 <td>{{ registration.registeree }}</td>
                 <td ng-show="role != 2" align="right" data-t="n">{{ registration.fee | number:0 }}</td>
                 <td ng-show="role != 2 && !fyLocked" align="center">

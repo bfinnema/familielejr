@@ -149,4 +149,29 @@ angular.module('familielejr')
         };
     };
 
+    $scope.clearExecuted = function() {
+        for (i=0; i<$scope.todos.length; i++) {
+            var data = {
+                category: $scope.todos[i].category,
+                text: $scope.todos[i].text,
+                completed: false
+            };
+    
+            $http({
+                method: 'PATCH',
+                url: '/todos/'+$scope.todos[i]._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: data
+            }).then(function(response) {
+                console.log(response.status);
+            }, function errorCallback(response) {
+                console.log(`editUserStatus: ${response.status}`);
+            });
+        };
+        $location.path('/todolist');
+        $route.reload();
+    };
+
 }]);
