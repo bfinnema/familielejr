@@ -149,7 +149,7 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
-        when('/slideshow/:year', {
+        when('/slideshow/:year', { // not used at the moment
             templateUrl: 'views/slideshow.view.html',
             controller: 'slideshowCtrl',
             access: {restricted: true}
@@ -197,6 +197,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/futurecamps', {
             templateUrl: 'views/futurecamps.view.html',
             controller: 'futurecampsCtrl',
+            access: {restricted: true}
+        }).
+        when('/summaries', {
+            templateUrl: 'views/summaries.view.html',
+            controller: 'summariesCtrl',
             access: {restricted: true}
         }).
         when('/todolist', {

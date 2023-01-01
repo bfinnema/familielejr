@@ -195,8 +195,8 @@ function ($q, $timeout, $http) {
                 demarcationDate = defaultDemarcationDate;
                 break;
             case "eventRegAll":
-                demarcationMonth = defaultDemarcationMonth;
-                demarcationDate = defaultDemarcationDate;
+                demarcationMonth = 10;
+                demarcationDate = 1;
                 break;
             case "invitation":
                 demarcationMonth = defaultDemarcationMonth;

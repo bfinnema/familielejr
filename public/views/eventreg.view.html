@@ -41,11 +41,11 @@
     <form name="eventregForm" ng-submit="addEventreg()">
         <div class="row">
             <div class="form-group col-md-4">
-                <label>Deltager i famililejr {{invitationyear}}</label>
+                <label>Deltager i familielejr {{invitationyear}}</label>
                 <input type="checkbox" ng-model="willattend" id="willattend" ng-change="attendPositive()">
             </div>
             <div class="form-group col-md-4">
-                <label>Deltager ikke i famililejr {{invitationyear}}</label>
+                <label>Deltager ikke i familielejr {{invitationyear}}</label>
                 <input type="checkbox" ng-model="willnotattend" id="willnotattend" ng-change="attendNegative()">
             </div>
         </div>
@@ -70,7 +70,7 @@
         <div ng-show="willattend" class="row">
             <div class="form-group col-md-2">
                 <label>Ankomst</label>
-                <select class="form-control" ng-model="arrivalday" name="arrivalday" required>
+                <select class="form-control" ng-model="arrivalday" name="arrivalday" ng-required="willattend">
                     <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
                 </select>
                 <i ng-show="eventregForm.arrivalday.$error.required">*Skal udfyldes</i>
@@ -81,7 +81,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label>Afgang</label>
-                <select class="form-control" ng-model="departureday" name="departureday" required>
+                <select class="form-control" ng-model="departureday" name="departureday" ng-required="willattend">
                     <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
                 </select>
                 <i ng-show="eventregForm.departureday.$error.required">*Skal udfyldes</i>

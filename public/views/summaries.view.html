@@ -1,0 +1,181 @@
+<div ng-include="'navigation.html'"></div>
+
+<h2 class="heading">Referater fra generalforsamlingerne</h2>
+<hr>
+<div ng-repeat="summary in summaries">
+    <a class="btn btn-primary" ng-click="makeVisible(summary)">{{ summary.year }}</a>
+    <div ng-show="summary.visible">
+        <h3>Mødedato: {{ summary.meetingdate | date:'dd-MM-yyyy' }}</h3>
+        <p></p>
+        <h3>Dagsorden:</h3>
+        <div ng-repeat="agendaitem in summary.agenda">
+            <h4>{{ agendaitem.item }}</h4>
+        </div>
+        <h3>Referat:</h3>
+        <div ng-repeat="agendaitem in summary.agenda">
+            <h4>{{ agendaitem.item }}</h4>
+            <p>{{ agendaitem.description }}</p>
+            <p>Beslutning: {{ agendaitem.decision }}</p>
+        </div>
+        <a class="btn btn-primary" ng-click="editSummaryEntryToggle(summary)">Ændre referatet</a>
+        <a class="btn btn-danger" ng-click="removeSummary(summary)">Slet referatet</a>
+    </div>
+    <hr>
+</div>
+<div ng-if="summaries == false">
+    <tr>
+        <td></td><td>Der er ikke nogen referater endnu</td>
+    </tr>
+</div>
+<div ng-show="newSummaryEntry">
+    <form name="newSummaryForm" ng-submit="addSummary()" novalidate>
+        <h2 class="form-signin-heading">Opret nyt referat</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du oprette et nyt referat</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" autofocus required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mødedato</label>
+                <input type="date" class="form-control" ng-model="meetingdate" name="meetingdate" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Punkter på dagsordenen - op til 10</h3>
+        <div class="row">
+            <div ng-repeat="y in agendaItems">
+                <div ng-show="agendaItemShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Overskrift</label>
+                            <input type="text" class="form-control" ng-model="editSummary.agenda[y].item" placeholder="Overskrift">
+                        </div>
+                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                            <label for="headline" style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="editSummary.agenda[y].description" rows="5" placeholder="Beskrivelse...."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beslutninger</label>
+                            <textarea class="form-control" ng-model="editSummary.agenda[y].decision" rows="2" placeholder="Beslutninger...."></textarea>
+                        </div>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="newSummaryForm.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Opret referat</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="newSummaryEntryToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newSummaryEntry && !editSummaryEntry">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newSummaryEntryToggle()">Indtast nyt referat</a>
+    </div>
+</div>
+
+<div ng-show="editSummaryEntry">
+    <form name="editSummaryForm" ng-submit="summaryEdit()" novalidate>
+        <h2 class="form-signin-heading">Ret i et referat</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du ændre i det valgte referat</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="number" id="year" class="form-control" ng-model="editSummary.year" placeholder="År" autofocus required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mødedato</label>
+                <input type="date" class="form-control" ng-model="editMeetingdate" name="editMeetingdate" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Punkter på dagsordenen - op til 10</h3>
+        <div class="row">
+            <div ng-repeat="y in agendaItems">
+                <div ng-show="agendaItemShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Overskrift</label>
+                            <input type="text" class="form-control" ng-model="editSummary.agenda[y].item" placeholder="Overskrift">
+                        </div>
+                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                            <label for="headline" style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="editSummary.agenda[y].description" rows="5" placeholder="Beskrivelse...."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beslutninger</label>
+                            <textarea class="form-control" ng-model="editSummary.agenda[y].decision" rows="2" placeholder="Beslutninger...."></textarea>
+                        </div>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="editSummaryForm.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="editSummaryEntryToggle(summary)">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
