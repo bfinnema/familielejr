@@ -444,3 +444,21 @@ form .progress {
 .willnotattend {
     color: red;
 }
+
+.item-steps {
+    margin-left: 20px;
+    border: 1px solid darkblue;
+}
+
+.list-group-item {
+    display: list-item;
+    font-size: large;
+    background-color: lightblue;
+    border: 1px solid darkblue;
+}
+
+.summary-headline {
+    background-color: darkblue;
+    color: aliceblue;
+    border: 1px solid black;
+}

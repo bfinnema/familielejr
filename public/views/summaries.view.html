@@ -8,14 +8,17 @@
         <h3>Mødedato: {{ summary.meetingdate | date:'dd-MM-yyyy' }}</h3>
         <p></p>
         <h3>Dagsorden:</h3>
-        <div ng-repeat="agendaitem in summary.agenda">
+        <!-- <div ng-repeat="agendaitem in summary.agenda">
             <h4>{{ agendaitem.item }}</h4>
-        </div>
+        </div> -->
+        <ol class="item-steps list-group">
+            <li ng-repeat="agendaitem in summary.agenda" class="list-group-item">{{ agendaitem.item }}</li>
+        </ol>
         <h3>Referat:</h3>
-        <div ng-repeat="agendaitem in summary.agenda">
-            <h4>{{ agendaitem.item }}</h4>
-            <p>{{ agendaitem.description }}</p>
-            <p>Beslutning: {{ agendaitem.decision }}</p>
+        <div ng-repeat="agendaitem in summary.agenda" class="container">
+            <h4 class="summary-headline">{{ agendaitem.item }}</h4>
+            <p class="bg-info">{{ agendaitem.description }}</p>
+            <p class="bg-success">Beslutning: {{ agendaitem.decision }}</p>
         </div>
         <a class="btn btn-primary" ng-click="editSummaryEntryToggle(summary)">Ændre referatet</a>
         <a class="btn btn-danger" ng-click="removeSummary(summary)">Slet referatet</a>
