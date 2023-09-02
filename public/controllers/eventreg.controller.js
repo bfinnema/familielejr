@@ -256,7 +256,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }, 1000);
 
     var invyear = $routeParams.year;
-    var currentYear = YearService.myYear("default");
+    var currentYear = YearService.myYear("eventRegAll");
     if (invyear < 1990) {
         invyear = currentYear;
     };

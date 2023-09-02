@@ -27,6 +27,10 @@ var PhotoSchema = new mongoose.Schema({
   uploader: {
     type: String
   },
+  commonImage: {
+    type: Boolean,
+    default: false
+  },
   imagetext: [
     {
       textobj: {

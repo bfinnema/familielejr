@@ -185,8 +185,8 @@ function ($q, $timeout, $http) {
 
     function myYear(requester) {
         // console.log(`requester: ${requester}`);
-        var defaultDemarcationMonth = 7;
-        var defaultDemarcationDate = 30;
+        var defaultDemarcationMonth = 8;
+        var defaultDemarcationDate = 15;
         var demarcationMonth;
         var demarcationDate
         switch(requester) {
