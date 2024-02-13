@@ -185,7 +185,7 @@ function ($q, $timeout, $http) {
 
     function myYear(requester) {
         // console.log(`requester: ${requester}`);
-        var defaultDemarcationMonth = 8;
+        var defaultDemarcationMonth = 10;
         var defaultDemarcationDate = 15;
         var demarcationMonth;
         var demarcationDate
@@ -195,8 +195,8 @@ function ($q, $timeout, $http) {
                 demarcationDate = defaultDemarcationDate;
                 break;
             case "eventRegAll":
-                demarcationMonth = 10;
-                demarcationDate = 1;
+                demarcationMonth = defaultDemarcationMonth;
+                demarcationDate = defaultDemarcationDate;
                 break;
             case "invitation":
                 demarcationMonth = defaultDemarcationMonth;
@@ -211,13 +211,12 @@ function ($q, $timeout, $http) {
                 demarcationDate = defaultDemarcationDate;
                 break;
             case "accounting":
-                demarcationMonth = 10;
-                demarcationDate = 1;
-                // console.log(`Accounting!`);
+                demarcationMonth = defaultDemarcationMonth;
+                demarcationDate = defaultDemarcationDate;
                 break;
             case "camplist":
                 demarcationMonth = defaultDemarcationMonth;
-                demarcationDate = 20;
+                demarcationDate = defaultDemarcationDate;
                 break;
             case "futurecamps":
                 demarcationMonth = defaultDemarcationMonth;
