@@ -287,6 +287,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         $scope.registrations = response.data;
+        $scope.numAttendees = 0;
+        $scope.numNonAttendees = 0;
         $scope.dinners = [[0,0],[0,0]];
         $scope.breakfasts = [[0,0],[0,0]];
         $scope.lunchs = [[0,0],[0,0]];
@@ -307,6 +309,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             };
             if ($scope.registrations[i].agegroup == "Voksen") {ag = 0;} else {ag = 1;};
             if ($scope.registrations[i].willattend) {
+                $scope.numAttendees += 1;
                 if ($scope.registrations[i].arrivalday == "Fredag") {
                     $scope.dinners[ag][0] += 1;
                     $scope.friday[ag] += 1;
@@ -377,6 +380,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                         $scope.saturday[ag] += 1;
                     };
                 };
+            } else {
+                $scope.numNonAttendees += 1;
             };
 /* 
             console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);

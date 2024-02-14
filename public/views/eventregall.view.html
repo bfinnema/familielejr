@@ -42,7 +42,7 @@
 </div>
 <div class="row">
     <div class="col-md-7">
-        <h2>Liste over alle tilmeldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
+        <h2>Til- og fra-meldte ({{registrations.length}}) til Familielejr {{ invitationyear }}</h2>
     </div>
     <div class="col-md-5">
         <form name="formSearchUser" class="formSearchUser" id="formSearchUser" ng-submit="searchUser()" novalidate>
@@ -55,6 +55,11 @@
                 <button ng-disabled="formSearchUser.$invalid" class="btn btn-primary" type="submit">... og du skal finde</button>
             </div>
         </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-7">
+        <h3>{{numAttendees}} er tilmeldt og {{numNonAttendees}} er frameldt</h3>
     </div>
 </div>
 <div class="row" ng-show="sorting || searching">
