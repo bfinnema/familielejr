@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 var EventregSchema = new mongoose.Schema({
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     name: {
         type: String,
         required: true

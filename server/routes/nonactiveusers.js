@@ -15,6 +15,7 @@ router.post('/', authenticate, (req, res) => {
     registeree = registeree + ' ' + req.user.name.surname
     body.createdBy = registeree;
     body._creator = req.user._id;
+    body._tenant = req.user._tenant;
     var nauser = new Nauser(body);
 
     nauser.save().then((nonactiveuser) => {
@@ -26,7 +27,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    Nauser.find({}).then((nonactiveusers) => {
+    Nauser.find({_tenant: req.user._tenant}).then((nonactiveusers) => {
         res.json(nonactiveusers);
     }, (e) => {
         res.status(400).send(e);
@@ -39,13 +40,15 @@ router.get('/sort/:sortBy/:sortDirection', authenticate, (req, res) => {
     if (req.params.sortDirection == "up") {sd = -1};
     // console.log(`NA sd: ${sd}`);
     if (req.params.sortBy == "firstname") {
-        Nauser.find({}).sort({"name.firstname": sd ,"name.surname": sd}).then((nonactiveusers) => {
+        Nauser.find({
+            _tenant: req.user._tenant
+        }).sort({"name.firstname": sd ,"name.surname": sd}).then((nonactiveusers) => {
             res.json(nonactiveusers);
         }, (e) => {
             res.status(400).send(e);
         });
     } else {
-        Nauser.find({}).sort({"name.surname": sd ,"name.firstname": sd}).then((nonactiveusers) => {
+        Nauser.find({_tenant: req.user._tenant}).sort({"name.surname": sd ,"name.firstname": sd}).then((nonactiveusers) => {
             res.json(nonactiveusers);
         }, (e) => {
             res.status(400).send(e);
@@ -53,23 +56,24 @@ router.get('/sort/:sortBy/:sortDirection', authenticate, (req, res) => {
     };
 });
 
-router.get('/search/:searchCriteria/:searchText', authenticate, (req, res) => {
+router.get('/search/:searchCriteria/:searchText/:tenantName', authenticate, (req, res) => {
     // console.log(`searchCriteria: ${req.params.searchCriteria}, searchText: ${req.params.searchText}`);
+    var tenantName = req.params.tenantName;
     var sd = 1;
     if (req.params.searchCriteria == "Fornavn") {
-        Nauser.find({"name.firstname": req.params.searchText}).sort({"name.surname": sd}).then((nonactiveusers) => {
+        Nauser.find({"name.firstname": req.params.searchText, _tenant: req.user._tenant}).sort({"name.surname": sd}).then((nonactiveusers) => {
             res.json(nonactiveusers);
         }, (e) => {
             res.status(400).send(e);
         });
     } else if (req.params.searchCriteria == "Efternavn") {
-        Nauser.find({"name.surname": req.params.searchText}).sort({"name.firstname": sd}).then((nonactiveusers) => {
+        Nauser.find({"name.surname": req.params.searchText, _tenant: req.user._tenant}).sort({"name.firstname": sd}).then((nonactiveusers) => {
             res.json(nonactiveusers);
         }, (e) => {
             res.status(400).send(e);
         });
     } else {
-        Nauser.find({"email": req.params.searchText}).then((nonactiveusers) => {
+        Nauser.find({"email": req.params.searchText, _tenant: req.user._tenant}).then((nonactiveusers) => {
             res.json(nonactiveusers);
         }, (e) => {
             res.status(400).send(e);

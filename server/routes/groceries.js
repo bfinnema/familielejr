@@ -8,9 +8,10 @@ var {Grocery} = require('../models/grocery');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-    var body = _.pick(req.body, ['groceryname', 'grocerytype', 'logging', 'measure']);
+    var body = _.pick(req.body, ['groceryname', 'grocerytype', 'logging', 'measure', 'tenantName']);
     // console.log(`New Grocery, Vare: ${body.groceryname}, measure: ${body.measure}`);
     body._creator = req.user._id;
+    body._tenant = req.user._tenant;
     var grocery = new Grocery(body);
 
     grocery.save().then((doc) => {
@@ -21,7 +22,9 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    Grocery.find({}).then((groceries) => {
+    Grocery.find({
+        _tenant: req.user._tenant
+    }).then((groceries) => {
         res.json(groceries);
     }, (e) => {
         res.status(400).send(e);

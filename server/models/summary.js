@@ -5,8 +5,8 @@ var SummarySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    year: {
-        type: Number,
+    name: {
+        type: String,
         required: true,
         unique: true
     },
@@ -21,6 +21,10 @@ var SummarySchema = new mongoose.Schema({
             decision: {type: String}
         }
     ],
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     visible: {
         type: Boolean,
         default: false

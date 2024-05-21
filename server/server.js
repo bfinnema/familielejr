@@ -11,7 +11,7 @@ const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
 var {authenticate} = require('./middleware/authenticate');
-var routes = require('./routes/index');
+// var routes = require('./routes/index');
 var todos = require('./routes/todos');
 var games = require('./routes/games');
 var eventregs = require('./routes/eventregs');
@@ -27,6 +27,8 @@ var docs = require('./routes/docs');
 var nonactiveusers = require('./routes/nonactiveusers');
 var groceries = require('./routes/groceries');
 var summaries = require('./routes/summaries');
+var tenants = require('./routes/tenants');
+var abouts = require('./routes/abouts');
 
 // aws.config.region = 'eu-west-2';
 // const S3_BUCKET = process.env.S3_BUCKET;
@@ -39,7 +41,7 @@ app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 
-app.use('/', routes);
+// app.use('/', routes);
 app.use('/todos', todos);
 app.use('/games', games);
 app.use('/eventregs', eventregs);
@@ -55,6 +57,8 @@ app.use('/docs', docs);
 app.use('/nonactiveusers', nonactiveusers);
 app.use('/groceries', groceries);
 app.use('/summaries', summaries);
+app.use('/tenants', tenants);
+app.use('/abouts', abouts);
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

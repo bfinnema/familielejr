@@ -8,24 +8,31 @@ var {Summary} = require('../models/summary');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-  // console.log(`year: ${req.body.year}, meetingdate: ${req.body.meetingdate}, agenda point 0: ${req.body.agenda[0].item}`);
-    var summary = new Summary({
-        year: req.body.year,
-        agenda: req.body.agenda,
-        meetingdate: req.body.meetingdate,
-        visible: req.body.visible,
-        _creator: req.user._id
-    });
+  // console.log(`name: ${req.body.name}, meetingdate: ${req.body.meetingdate}, agenda point 0: ${req.body.agenda[0].item}`);
+  var summary = new Summary({
+      name: req.body.name,
+      _tenant: req.user._tenant,
+      agenda: req.body.agenda,
+      meetingdate: req.body.meetingdate,
+      visible: req.body.visible,
+      _creator: req.user._id
+  });
 
-    summary.save().then((doc) => {
-        res.send(doc);
-    }, (e) => {
-        res.status(400).send(e);
-    });
+  summary.save().then((doc) => {
+      res.send(doc);
+  }, (e) => {
+    // console.log(e);
+    console.log(`Error code: ${e.code}`);
+    if (e.code == 11000) {
+      res.status(409).send(e);
+    } else {
+      res.status(400).send(e);
+    };
+  });
 });
 
 router.get('/', authenticate, (req, res) => {
-  Summary.find({}).then((summaries) => {
+  Summary.find({_tenant: req.user._tenant}).then((summaries) => {
     res.json(summaries);
   }, (e) => {
     res.status(400).send(e);
@@ -74,7 +81,7 @@ router.delete('/:id', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['year', 'agenda', 'meetingdate', 'visible']);
+  var body = _.pick(req.body, ['name', 'agenda', 'meetingdate', 'visible']);
   // console.log(`Patching summary, agenda point: ${body.agenda}`);
 
   if (!ObjectID.isValid(id)) {
@@ -88,7 +95,12 @@ router.patch('/:id', authenticate, (req, res) => {
 
     res.json(summary);
   }).catch((e) => {
-    res.status(400).send();
+    console.log(`Error code: ${e.code}`);
+    if (e.code == 11000) {
+      res.status(409).send(e);
+    } else {
+      res.status(400).send(e);
+    };
   })
 });
 

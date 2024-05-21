@@ -35,6 +35,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'registerCtrl',
             access: {restricted: false}
         }).
+        when('/add-new_tenant', {
+            templateUrl: 'views/newtenant.view.html',
+            controller: 'newtenantCtrl',
+            access: {restricted: false}
+        }).
         when('/changepassword', {
             templateUrl: 'views/changepassword.view.html',
             controller: 'changepwdCtrl',
@@ -96,12 +101,12 @@ familielejr.config(['$routeProvider', function($routeProvider){
             access: {restricted: true}
         }).
         when('/familytree', {
-            templateUrl: 'views/familytree.view.html',
+            templateUrl: 'views/familytree.view.html',  // Handles level 0. There are up to six levels; 0, 1, 2, 3, 4, 5
             controller: 'familytreeCtrl',
             access: {restricted: true}
         }).
         when('/familytree/:_family_id', {
-            templateUrl: 'views/familytreesl.view.html',
+            templateUrl: 'views/familytreesl.view.html', // sl stands for 'second level', which is used when selecting a level 1 family
             controller: 'familytreeslCtrl',
             access: {restricted: true}
         }).
@@ -237,6 +242,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/docupload', {
             templateUrl: 'views/docupload.view.html',
             controller: 'docuploadCtrl',
+            access: {restricted: true}
+        }).
+        when('/tenants', {
+            templateUrl: 'views/tenants.view.html',
+            controller: 'tenantCtrl',
             access: {restricted: true}
         }).
 		otherwise({redirectTo: '/'})

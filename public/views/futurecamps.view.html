@@ -6,16 +6,18 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th width="8%">År</th>
+                <th width="10%">Navn</th>
+                <th width="6%">År</th>
                 <th width="28%">Lejr</th>
-                <th width="12%">Startdato</th>
-                <th width="12%">Slutdato</th>
+                <th width="9%">Startdato</th>
+                <th width="9%">Slutdato</th>
                 <th width="24%">Arrangører</th>
-                <th width="16%">Ændre / Se detaljer</th>
+                <th width="14%">Ændre / Se detaljer</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="camp in camps">
+                <td>{{ camp.eventName }}</td>
                 <td>{{ camp.year }}</td>
                 <td><a href="{{camp.website}}" target="_blank">{{ camp.camp }}</a>, <a href="https://www.google.com/maps/search/{{camp.address.street}},+{{camp.address.zip}}+{{camp.address.town}}" target="_blank">{{camp.address.street}}, {{camp.address.zip}} {{camp.address.town}}</a></td>
                 <td>{{ camp.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
@@ -48,47 +50,51 @@
             </div>
         </div>
         <div class="row">
+            <!-- <div class="form-group col-md-4">
+                <label for="eventName">Unikt navn</label>
+                <input type="text" id="eventName" class="form-control" ng-model="eventName" placeholder="Begivenhedens navn" autofocus required>
+            </div> -->
             <div class="form-group col-md-2">
                 <label for="year">År</label>
-                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" autofocus required>
+                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" required>
             </div>
         </div>
         <h3 class="form-signin-heading">Detaljer om lejren</h3>
         <div class="row">
             <div class="form-group col-md-4">
                 <label>Lejrens navn</label>
-                <input type="text" class="form-control" ng-model="camp" name="camp" placeholder="Lejrnavn">
+                <input type="text" id="camp" class="form-control" ng-model="camp" placeholder="Lejrnavn">
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-3">
                 <label>Gade</label>
-                <input type="text" class="form-control" ng-model="street" name="street" placeholder="Gadenavn">
+                <input type="text" id="street" class="form-control" ng-model="street" placeholder="Gadenavn">
             </div>
             <div class="form-group col-md-2">
                 <label>Postnummer</label>
-                <input type="text" class="form-control" ng-model="zip" name="zip" placeholder="Postnummer">
+                <input type="text" id="zip" class="form-control" ng-model="zip" placeholder="Postnummer">
             </div>
             <div class="form-group col-md-3">
                 <label>By</label>
-                <input type="text" class="form-control" ng-model="town" name="town" placeholder="By">
+                <input type="text" id="town" class="form-control" ng-model="town" placeholder="By">
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-4">
                 <label>Hjemmeside</label>
-                <input type="text" class="form-control" ng-model="website" name="website" placeholder="Hjemmeside">
+                <input type="text" id="website" class="form-control" ng-model="website" placeholder="Hjemmeside">
             </div>
         </div>
         <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
         <div class="row">
             <div class="form-group col-md-2">
                 <label>Startdato</label>
-                <input type="date" class="form-control" ng-model="startdate" name="startdate">
+                <input type="date" id="startdate" class="form-control" ng-model="startdate" name="startdate">
             </div>
             <div class="form-group col-md-2">
                 <label>Slutdato</label>
-                <input type="date" class="form-control" ng-model="enddate" name="enddate">
+                <input type="date" id="enddate" class="form-control" ng-model="enddate" name="enddate">
             </div>
         </div>
         <h3 class="form-signin-heading">Arrangører - op til 5</h3>
@@ -96,11 +102,11 @@
             <div ng-repeat="z in commMemArr">
                 <div class="form-group col-md-3" ng-show="organizerShow[z]">
                     <div class="col-md-10">
-                        <label for="headline">Arrangør {{z+1}}</label>
-                        <input type="text" class="form-control" ng-model="organizers[z]" placeholder="Navn på arrangør">
+                        <label">Arrangør {{z+1}}</label>
+                        <input type="text" id="organizers[z]" class="form-control" ng-model="organizers[z]" placeholder="Navn på arrangør">
                     </div>
                     <div ng-show="numOrgLines > 0" class="col-md-2">
-                        <label for="headline" style="color:white;">.</label>
+                        <label style="color:white;">.</label>
                         <a class="btn btn-danger" ng-click="removeOrganizer(z)">
                             <i class="glyphicon glyphicon-remove"></i>
                         </a>
@@ -121,7 +127,7 @@
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label>Udvalgets navn</label>
-                            <input type="text" class="form-control" ng-model="committeeName[y]" placeholder="Udvalgets navn">
+                            <input type="text" id="committeeName[y]" class="form-control" ng-model="committeeName[y]" placeholder="Udvalgets navn">
                         </div>
                     </div>
                     <div class="row">
@@ -134,11 +140,11 @@
                         <div ng-repeat="x in commMemArr">
                             <div class="form-group col-md-3" ng-show="commMemShow[y][x]">
                                 <div class="col-md-10">
-                                    <label for="headline">Udvalgsmedlem {{x+1}}</label>
-                                    <input type="text" class="form-control" ng-model="committeeMembers[y][x]" placeholder="Navn på udvalgsmedlem">
+                                    <label>Udvalgsmedlem {{x+1}}</label>
+                                    <input type="text" id="committeeMembers[y][x]" class="form-control" ng-model="committeeMembers[y][x]" placeholder="Navn på udvalgsmedlem">
                                 </div>
                                 <div ng-show="numCommMemLines[y] > 0" class="col-md-2">
-                                    <label for="headline" style="color:white;">.</label>
+                                    <label style="color:white;">.</label>
                                     <a class="btn btn-danger" ng-click="removeCommMem(y,x)">
                                         <i class="glyphicon glyphicon-remove"></i>
                                     </a>

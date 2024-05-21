@@ -25,6 +25,7 @@ router.post('/upload', authenticate, (req, res) => {
       var photo = new Photo({
         _creator: req.body.user,
         year: req.body.year,
+        _tenant: req.user._tenant,
         filename: fn,
         filetype: req.body.filetype,
         path: 'images/' + req.body.year + '/',
@@ -64,9 +65,28 @@ router.get('/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`Photos, year: ${year}`);
   Photo.find({
-    year: year
+    year: year,
+    _tenant: req.user._tenant
   }).then((photos) => {
     res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  console.log(`Photos, _id: ${id}`);
+
+  if (!ObjectID.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  };
+
+  Photo.findOne({
+    _id: id
+  }).then((photo) => {
+    res.json(photo);
   }, (e) => {
     res.status(400).send(e);
   });
@@ -112,7 +132,8 @@ router.get('/count/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`My photos year ${year}, user: ${req.user._id}`);
   Photo.find({
-    year: year
+    year: year,
+    _tenant: req.user._tenant
   }).countDocuments().then((count) => {
     var result = {"year":year,"count":count};
     res.json(result);

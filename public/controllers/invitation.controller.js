@@ -195,9 +195,13 @@ function($scope, $http, $location, $window, AuthService, YearService, EventPrice
             };
         };
 
+        if (!invitationExists) {
+            $scope.invitation.invitationName = $scope.invitation.headline.replaceAll(" ", "_").substring(0,25)+"_"+Math.floor(Math.random()*8998+1001);
+        }
 		var data = {
             headline: $scope.invitation.headline,
             year: $scope.invitation.year,
+            invitationName: $scope.invitation.invitationName,
             text1: $scope.invitation.text1,
             camp: $scope.invitation.camp,
 			address: addr,

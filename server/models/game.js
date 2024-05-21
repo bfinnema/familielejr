@@ -5,6 +5,10 @@ var GameSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     description: {
         type: String
     },

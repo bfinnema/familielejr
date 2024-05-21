@@ -10,6 +10,7 @@ var {authenticate} = require('../middleware/authenticate');
 router.post('/', authenticate, (req, res) => {
   var todo = new Todo({
     category: req.body.category,
+    _tenant: req.user._tenant,
     text: req.body.text,
     _creator: req.user._id
   });
@@ -22,7 +23,9 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  Todo.find({}).then((todos) => {
+  console.log(`Firstname: ${req.user.name.firstname}`);
+  console.log(`_tenant: ${req.user._tenant}`);
+  Todo.find({_tenant: req.user._tenant}).then((todos) => {
     res.json(todos);
   }, (e) => {
     res.status(400).send(e);

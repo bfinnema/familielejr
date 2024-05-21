@@ -5,6 +5,10 @@ var FiscalYear = mongoose.model('FiscalYear', {
         type: Number,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     description: {
         type: String
     },

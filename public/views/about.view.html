@@ -1,6 +1,6 @@
 <div ng-include="'navigation.html'"></div>
 
-<div class="blog-header">
+<!-- <div class="blog-header">
     <h1 class="blog-title">Flensburg Familielejren</h1>
     <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
 </div>
@@ -42,7 +42,7 @@
                 ligger en fuldstændig liste over deltagere på det pågældende års familielejr.</p>
             <hr>
             <h3>Mad</h3>
-            <p>Planlægningsholdet beslutter hvad vi skal spise, køber ind og laver madholde. Planlægningsholdet 
+            <p>Planlægningsholdet beslutter hvad vi skal spise, køber ind og laver madhold. Planlægningsholdet 
                 sørger for indkøb af drikkevarer (øl, sodavand og vin), som vi kan købe på familielejren.</p>
             <hr>
             <h3>Økonomi</h3>
@@ -58,9 +58,9 @@
                 Aktivitetsgruppen bestemmer selv hvor meget og hvad de vil arrangere. Aktivitetsgruppen må 
                 gerne involvere andre familiemedlemmer i planlægning og afvikling af aktiviteter.</p>
             <hr>
-        </div><!-- /.blog-post -->
+        </div> --><!-- /.blog-post -->
 
-        <p>{{keyPressed}}</p>
+        <!-- <p>{{keyPressed}}</p> -->
 <!-- 
         <div class="col-md-1">
             <a ng-click="testKeyPress1()" ng-keypress="testKeyPress1($event)"><span class="glyphicon glyphicon-chevron-left"></span></a>
@@ -74,7 +74,157 @@
             <span style="color:Red">Last Key Code: {{keyval}}</span>
         </div>
  -->        
+    <!-- </div> --> <!-- /.blog-main -->
+
+    <!-- <div ng-include="'sidebar.html'"></div> -->
+<!-- </div> --> <!-- /.row -->
+<hr>
+<div class="blog-header">
+    <h1 class="blog-title">{{ about.communityName }}</h1>
+    <p class="lead blog-description">{{ about.subHeading }}</p>
+</div>
+<hr>
+<div class="row">
+    <div class="col-sm-8 blog-main">
+        <div class="blog-post">
+            <a href="#!photoalbum/historiske"><h2 class="blog-title">Flere historiske billeder af Bygebjerg m.m.</h2></a>
+
+            <div id="photo-div" ng-show="userClient == 'BROWSER'">
+                <a href="{{mainImage}}" target="_blank">
+                    <img id="photo-img" src="{{mainImage}}">
+                </a>
+            </div>
+            <div ng-show="userClient != 'BROWSER'">
+                <a href="{{mainImage}}" target="_blank">
+                    <img class="img-responsive" src="{{mainImage}}">
+                </a>
+            </div>
+            <div class="col-md-4">
+                <p class="blog-post-meta">{{mainImageObj.imagetext[0].textobj.text}}</a></p>
+            </div>
+
+            <!-- <div class="row">
+                <img class="img-responsive" src="images/IMG_3357.jpg">
+            </div>
+            <p class="blog-post-meta">Niels, Else Marie, Hans, Grethe, Christian, Inger, Anna. Sidst i fyrrerne</a></p> -->
+            <h2 class="blog-post-title">Om {{ about.communityName }}</h2>
+            <p class="blog-post-meta">{{ about.metadata }}</p>
+            <div ng-repeat="textHeadline in about.textHeadlines">
+                <h3>{{ textHeadline.h3 }}</h3>
+                <div ng-repeat="p in textHeadline.paragraphs">
+                    <p>{{ p.paragraph }}</p>
+                </div>
+            </div>
+
+            <hr>
+        </div>
+        <div class="row actions" ng-show="!editAboutEntry">
+            <div class="col-md-4">
+                <a class="btn btn-info btn-lg btn-block" ng-click="editAboutEntryToggle()">Ændre teksten</a>
+            </div>
+        </div>
     </div><!-- /.blog-main -->
 
     <div ng-include="'sidebar.html'"></div>
 </div><!-- /.row -->
+<hr>
+<div ng-show="editAboutEntry">
+    <form name="formAbout" ng-submit="editAbout()" novalidate>
+        <h2 class="form-signin-heading">Ændre beskrivelsen af din forening / familie hjemmeside</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du indtaste en beskrivelse af din forening / familie hjemmeside</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="communityName">Navn</label>
+                <input type="text" id="communityName" class="form-control" ng-model="about.communityName" placeholder="Navn" autofocus required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="subHeading">Under-overskrift</label>
+                <input type="text" id="subHeading" class="form-control" ng-model="about.subHeading" placeholder="Under-overskrift" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="nextHeadline">Overskrift, næste begivenhed</label>
+                <input type="text" id="nextHeadline" class="form-control" ng-model="about.nextHeadline" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="upcomingHeadline">Overskrift, kommende begivenheder</label>
+                <input type="text" id="upcomingHeadline" class="form-control" ng-model="about.upcomingHeadline" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="metadata">Hvem er dokumentet skrevet af og hvornår</label>
+                <input type="text" id="metadata" class="form-control" ng-model="about.metadata" placeholder="Eksempel: Morten, september 2018" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Afsnit i dokumentet</h3>
+        <div class="row">
+            <div ng-repeat="y in headlinesArray">
+                <div ng-show="textHeadlineShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Afsnittets overskrift</label>
+                            <input type="text" id="textHeadlines[y]" class="form-control" ng-model="textHeadlines[y]" placeholder="Afsnittets overskrift">
+                        </div>
+                        <div ng-show="numHeadlines > 0" class="col-md-2">
+                            <label style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removeHeadline(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div ng-repeat="x in paragraphArray">
+                            <div class="form-group col-md-12" ng-show="paragraphShow[y][x]">
+                                <div class="col-md-10">
+                                    <label>Paragraf {{x+1}}</label>
+                                    <!-- <textarea class="form-control" id="paragraphs[y][x]" ng-model="about.textHeadlines[y].paragraphs[x].paragraph" rows="5" placeholder="Tekst"></textarea> -->
+                                    <textarea class="form-control" id="paragraphs[y][x]" ng-model="paragraphs[y][x]" rows="5" placeholder="Tekst"></textarea>
+                                </div>
+                                <div ng-show="numParagraphs[y] > 0" class="col-md-2">
+                                    <label style="color:white;">.</label>
+                                    <a class="btn btn-danger" ng-click="removeParagraph(y,x)">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <a class="btn btn-info" ng-show="paragraphBtnShow[y][1]" ng-click="showParagraph(y)">Tilføj paragraf</a>
+                        <a class="btn btn-info" ng-show="paragraphBtnShow[y][2]" ng-click="showParagraph(y)">Tilføj paragraf</a>
+                        <a class="btn btn-info" ng-show="paragraphBtnShow[y][3]" ng-click="showParagraph(y)">Tilføj paragraf</a>
+                        <a class="btn btn-info" ng-show="paragraphBtnShow[y][4]" ng-click="showParagraph(y)">Tilføj paragraf</a>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="headlineBtnShow[0]" ng-click="showHeadline()">Tilføj overskrift</a>
+            <a class="btn btn-info" ng-show="headlineBtnShow[1]" ng-click="showHeadline()">Tilføj overskrift</a>
+            <a class="btn btn-info" ng-show="headlineBtnShow[2]" ng-click="showHeadline()">Tilføj overskrift</a>
+            <a class="btn btn-info" ng-show="headlineBtnShow[3]" ng-click="showHeadline()">Tilføj overskrift</a>
+            <a class="btn btn-info" ng-show="headlineBtnShow[4]" ng-click="showHeadline()">Tilføj overskrift</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formAbout.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="editAboutEntryToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>

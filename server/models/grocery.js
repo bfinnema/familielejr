@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var Grocery = mongoose.model('Grocery', {
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     groceryname: {
         type: String,
         required: true

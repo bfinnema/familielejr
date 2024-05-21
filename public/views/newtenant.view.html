@@ -1,50 +1,91 @@
 <div ng-include="'navigation.html'"></div>
 
-<div ng-controller = "registerCtrl">
+<div ng-controller = "newtenantCtrl">
     <div class="row alert alert-danger" ng-show="!registrationAllowed">
         <h2>NOGET ER GALT. DER ER FOR MANGE BRUGERE. VI TRÆKKER NØDBREMSEN. DU KAN IKKE REGISTRERE DIG.</h2>
         <br>
     </div>
-    <form name="formRegister" class="formRegister" id="formRegister" ng-submit="registerUser()" novalidate>
-        <h2 class="form-signin-heading">Registrering</h2>
-        <!-- <h3 class="form-signin-heading">Familie / Forening</h3> -->
+    <form name="formTenant" class="formTenant" id="formTenant" ng-submit="addTenant()" novalidate>
+        <h2>Register a new tenant</h2>
         <div class="row">
+            <div class="form-group col-md-4">
+                <label>Tenant Name</label>
+                <input type="text" class="form-control" ng-model="tenantname" name="tenantname" placeholder="Tenant name" autofocus required>
+                <i ng-show="formTenant.tenantname.$error.required">*Must enter</i>
+            </div>
+            <div class="form-group col-md-8">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Description" required>
+                <i ng-show="formTenant.description.$error.required">*Must enter</i>
+            </div>
+        </div>
+        <h3>Subscriptions</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Events</label>
+                <input type="checkbox" class="form-control" ng-model="events" name="events">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Multiple Events</label>
+                <input type="checkbox" class="form-control" ng-model="multipleevents" name="multipleevents">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Family Tree</label>
+                <input type="checkbox" class="form-control" ng-model="familytree" name="familytree">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Photo Gallery</label>
+                <input type="checkbox" class="form-control" ng-model="photogallery" name="photogallery">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Summaries</label>
+                <input type="checkbox" class="form-control" ng-model="summaries" name="summaries">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Accounting</label>
+                <input type="checkbox" class="form-control" ng-model="accounting" name="accounting">
+            </div>
+        </div>
+
+        <h2 class="form-signin-heading">Bruger registrering</h2>
+        <!-- <h3 class="form-signin-heading">Familie / Forening</h3> -->
+        <!-- <div class="row">
             <div class="form-group col-md-2">
                 <label>Familie / Forening</label>
                 <select class="form-control" ng-model="_tenant" name="_tenant">
                     <option ng-repeat="tenant in tenants" value="{{tenant._id}}">{{tenant.tenantName}}</option>
                 </select>
-                <i ng-show="formRegister.tenantName.$error.required">Skal vælges. </i>
+                <i ng-show="formTenant.tenantName.$error.required">Skal vælges. </i>
             </div>
-        </div>
+        </div> -->
         <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
         <div class="row">
             <div class="form-group col-md-4">
                 <label for="inputEmail">Email adresse</label>
-                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required autofocus>
-                <i ng-show="formRegister.inputEmail.$error.email">Indtast korrekt email format. </i>
-                <i ng-show="formRegister.inputEmail.$error.required">Skal indtastes. </i>
+                <input type="email" id="inputEmail" class="form-control" ng-model="inputEmail" placeholder="Email adresse" required>
+                <i ng-show="formTenant.inputEmail.$error.email">Indtast korrekt email format. </i>
+                <i ng-show="formTenant.inputEmail.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-3">
                 <label for="inputPassword">Kodeord</label>
                 <input type="password" id="inputPassword" name="inputPassword" ng-model="inputPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Kodeord" required>
-                <i ng-show="formRegister.inputPassword.$error.minlength">Mindst 8 karakterer. </i>
-                <i ng-show="formRegister.inputPassword.$error.maxlength">Højst 12 karakterer. </i>
-                <i ng-show="formRegister.inputPassword.$error.required">Skal indtastes. </i>
+                <i ng-show="formTenant.inputPassword.$error.minlength">Mindst 8 karakterer. </i>
+                <i ng-show="formTenant.inputPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="formTenant.inputPassword.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-4">
                 <label>Hemmelighed (du har modtaget den i et email)</label>
                 <input type="text" class="form-control" ng-model="secret" name="secret" placeholder="Hemmelighed" required>
-                <i ng-show="formRegister.secret.$error.required">Skal indtastes. </i>
+                <i ng-show="formTenant.secret.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-3">
                 <label for="repeatPassword">Gentag kodeord</label>
                 <input type="password" id="repeatPassword" name="repeatPassword" ng-model="repeatPassword" ng-minlength="8" ng-maxlength="12" class="form-control" placeholder="Gentag kodeord" required>
-                <i ng-show="formRegister.repeatPassword.$error.minlength">Mindste længde: 8 karakterer. </i>
-                <i ng-show="formRegister.repeatPassword.$error.maxlength">Højst 12 karakterer. </i>
-                <i ng-show="formRegister.repeatPassword.$error.required">Skal indtastes. </i>
+                <i ng-show="formTenant.repeatPassword.$error.minlength">Mindste længde: 8 karakterer. </i>
+                <i ng-show="formTenant.repeatPassword.$error.maxlength">Højst 12 karakterer. </i>
+                <i ng-show="formTenant.repeatPassword.$error.required">Skal indtastes. </i>
                 <i class="notidentical hidden"><br>De to kodeord er ikke identiske</i>
             </div>
         </div>
@@ -53,7 +94,7 @@
             <div class="form-group col-md-2">
                 <label>Fornavn</label>
                 <input type="text" class="form-control" ng-model="firstname" name="firstname" placeholder="Fornavn" required>
-                <i ng-show="formRegister.firstname.$error.required">Skal indtastes. </i>
+                <i ng-show="formTenant.firstname.$error.required">Skal indtastes. </i>
             </div>
             <div class="form-group col-md-2">
                 <label>Mellemnavn</label>
@@ -62,7 +103,7 @@
             <div class="form-group col-md-3">
                 <label>Efternavn</label>
                 <input type="text" class="form-control" ng-model="surname" name="surname" placeholder="Efternavn" required>
-                <i ng-show="formRegister.surname.$error.required">Skal indtastes. </i>
+                <i ng-show="formTenant.surname.$error.required">Skal indtastes. </i>
             </div>
         </div>
         <h3 class="form-signin-heading">Adresse</h3>
@@ -113,7 +154,7 @@
         <br>
         <div class="row">
             <div class="form-group col-md-4">
-                <button ng-disabled="formRegister.$invalid || !registrationAllowed" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
+                <button ng-disabled="formTenant.$invalid || !registrationAllowed" class="btn btn-lg btn-primary btn-block" type="submit">Registrer</button>
             </div>
         </div>
     </form>

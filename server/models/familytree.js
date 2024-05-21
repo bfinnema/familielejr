@@ -5,11 +5,18 @@ var FamilytreeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  _tenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+  },
   level: {
     type: Number,
     required: true
   },
   klan: {
+    type: String
+  },
+  description: {
     type: String
   },
   _parent_id: {

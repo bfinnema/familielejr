@@ -18,6 +18,7 @@ angular.module('familielejr')
     $scope.editNamesForm = false;
     $scope.famIdBases = [0, 10, 200, 3000, 40000, 500000];
     $scope.nameArr = [0,1,2,3];
+    $scope.initiatingFamilytree = false;
 
     $http({
         method: 'GET',
@@ -26,25 +27,39 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        // console.log(`FamilytreeStatus: ${response.status}`);
-        $scope.familytree = response.data[0];
-        // console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
+        console.log(`FamilytreeStatus: ${response.status}`);
+        console.log(response.data)
         var lidBase = $scope.famIdBases[1];
         var newFamilyId = 0;
         var family_idArray = [];
-        for (x=0; x<$scope.familytree.secondlevel.length; x++) {
-            family_idArray[x] = $scope.familytree.secondlevel[x]._family_id;
-        };
-        if (family_idArray.length == 0) {
-            newFamilyId = lidBase;
-        } else {
-            family_idArray.sort();
-            if (newFamilyId == 0) {
-                newFamilyId = family_idArray[family_idArray.length-1]+10;
+        if (response.data.length == 0) {
+            console.log(`No familytree exists yet.`);
+            $scope.initiatingFamilytree = true;
+            $scope.newFamilyId = newFamilyId;
+            $scope.familytreeDescription = "Stamtræ er ikke startet. Klik på + og indtast navne";
+            // $location.path('/familytreeedit');
+        } else if (response.data.length == 1) {
+            console.log(`There is one family tree in the tenant`);
+            $scope.familytree = response.data[0];
+            $scope.familytreeDescription = $scope.familytree.description;
+            console.log($scope.familytree)
+            console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
+            for (x=0; x<$scope.familytree.secondlevel.length; x++) {
+                family_idArray[x] = $scope.familytree.secondlevel[x]._family_id;
             };
+            if (family_idArray.length == 0) {
+                newFamilyId = lidBase;
+            } else {
+                family_idArray.sort();
+                if (newFamilyId == 0) {
+                    newFamilyId = family_idArray[family_idArray.length-1]+10;
+                };
+            };
+            console.log(`newFamilyId: ${newFamilyId}`);
+            $scope.newFamilyId = newFamilyId;
+        } else {
+            console.log(`There are multiple family trees. Why?`);
         };
-        // console.log(`newFamilyId: ${newFamilyId}`);
-        $scope.newFamilyId = newFamilyId;
     }, function errorCallback(response) {
         console.log(`FamilytreeStatus: ${response.status}`);
     });
@@ -59,6 +74,7 @@ angular.module('familielejr')
     var numLines = 0;
 
     $scope.addFamily = function(level, parent_id) {
+        console.log(`Entering the addFamily function. level: ${level}, parent_id: ${parent_id}`);
         if ($scope.addNamesForm) {
             $scope.addNamesForm = false;
         } else {
@@ -70,7 +86,7 @@ angular.module('familielejr')
     };
 
     $scope.editFamily = function(family_id, level) {
-        // console.log(`Entering editFamily, family_id: ${family_id}`);
+        console.log(`Entering editFamily, family_id: ${family_id}, level: ${level}`);
         if ($scope.editNamesForm) {
             $scope.editNamesForm = false;
         } else {
@@ -83,28 +99,28 @@ angular.module('familielejr')
             $scope.passdate = [];
             $scope.BtnShow = [false,true,false,false];
             $scope.newnameShow = [true,false,false,false];
-            $scope.tree_id = $scope.familytree._id;
             $scope.parent_id = 0;
             $scope.family_id = family_id;
             $scope.editAtLevel = level;
             $scope.l2index = 0;
+            $scope.tree_id = $scope.familytree._id;
             console.log(`Family id from view: ${$scope.family_id}`);
             
             if (level == 0) {
                 var family = $scope.familytree;
                 $scope.numLines = family.persons.length;
-                // console.log(`Found family_id ${family._family_id}, numLines: ${$scope.numLines}`);
+                console.log(`Found family_id ${family._family_id}, numLines: ${$scope.numLines}`);
                 numLines = $scope.numLines;
             } else if (level == 1) {
-                // console.log(`**** Level 1 ****`);
+                console.log(`**** Level 1 ****`);
                 for (var j=0; j<$scope.familytree.secondlevel.length; j++) {
                     var f = $scope.familytree.secondlevel[j];
-                    // console.log(`family_id in loop: ${f._family_id}`);
+                    console.log(`family_id in loop: ${f._family_id}`);
                     if (family_id == f._family_id) {
                         var family = f;
                         $scope.numLines = f.persons.length;
                         $scope.family_id = f._family_id;
-                        // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
+                        console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
                         numLines = $scope.numLines;
                     };
                 };
@@ -120,16 +136,16 @@ angular.module('familielejr')
                 $scope.surname[i] = family.persons[i].surname;
                 if (family.persons[i].birth != null) {$scope.birth[i] = new Date(family.persons[i].birth);};
                 if (family.persons[i].pass != null) {$scope.passdate[i] = new Date(family.persons[i].pass);};
-                // console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
+                console.log(`In editFamily function. ${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
             };
             numLines -= 1; $scope.numLines = numLines;
         };
     };
 
     $scope.showLine = function() {
-        // console.log("Entering showline. numLines: "+numLines);
+        console.log("Entering showline. numLines: "+numLines);
         if ($scope.firstname[numLines]) {
-            // console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
+            console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
             numLines = numLines + 1; $scope.numLines = numLines;
             $scope.newnameShow[numLines] = true;
             $scope.BtnShow[numLines] = false;
@@ -164,32 +180,60 @@ angular.module('familielejr')
     };
     
     addNames = function() {
-        // console.log(`Entering addNames. numLines: ${numLines}`);
+        console.log(`Entering addNames. numLines: ${numLines}`);
         var persons = personArr(numLines);
-        console.log(`Persons: ${persons}`);
+        console.log(`Persons: ${JSON.stringify(persons)}`);
 
-        var data = {
-            _family_id: $scope.newFamilyId,
-            persons: persons
-        };
+        if ($scope.initiatingFamilytree) {
+            console.log(`New familytree, thus need to use POST`);
+            console.log(`Add at level 0`);
+            var data = {
+                _admin: "596345a3fc89f0d78cbc06fd",
+                level: $scope.addAtLevel,
+                _kid: 0,
+                klan: persons[0].firstname + "_root",
+                description: $scope.description,
+                _family_id: $scope.newFamilyId,
+                _parent_id: $scope.parent_id,
+                persons: persons
+            };
+            $http({
+                method: 'POST',
+                url: '/familytrees/',
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: data
+            }).then(function(response) {
+                $route.reload();
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        } else {
+            console.log(`Existing familytree, thus using PATCH`);
+            var data = {
+                _family_id: $scope.newFamilyId,
+                persons: persons
+            };
 
-        $http({
-            method: 'PATCH',
-            url: '/familytrees/' + $scope.familytree._id,
-            headers: {
-                'x-auth': localStorage.userToken
-            },
-            data: data
-        }).then(function(response) {
-            $route.reload();
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
+            $http({
+                method: 'PATCH',
+                url: '/familytrees/' + $scope.familytree._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: data
+            }).then(function(response) {
+                $route.reload();
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        }
 
     };
 
     editNames = function() {
-        // console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
+        console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
         var persons = personArr(numLines);
         console.log(`Persons: ${persons}`);
 
@@ -217,7 +261,7 @@ angular.module('familielejr')
     };
 
     $scope.deleteFamily = function(family_id, level, id) {
-        // console.log(`ID from view: ${id}`);
+        console.log(`Entering the deleteFamily function. ID from view: ${id}`);
         $scope.parent_id = 0;
 
         var data = {
@@ -295,15 +339,16 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        // console.log(`FamilytreeStatus: ${response.status}`);
+        console.log(`In familytreeslCtrl. FamilytreeStatus: ${response.status}`);
         $scope.familytree = response.data[0];
-        // console.log($scope.familytree);
-        // console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
+        $scope.familytreeDescription = $scope.familytree.description;
+        console.log($scope.familytree);
+        console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
         for (i=0; i<$scope.familytree.secondlevel.length; i++) {
             if ($scope.familytree.secondlevel[i]._family_id == family_id) {
                 $scope.l1family = $scope.familytree.secondlevel[i];
                 $scope.l1index = i;
-                // console.log(`l1family: ${$scope.l1family.persons}, l1index: ${$scope.l1index}`);
+                console.log(`l1family: ${JSON.stringify($scope.l1family.persons)}, l1index: ${$scope.l1index}`);
             };
         };
     }, function errorCallback(response) {
@@ -314,6 +359,7 @@ angular.module('familielejr')
     var numLines = 0; $scope.numLines = 0;
 
     $scope.addFamily = function(level, parent_id, tree_id) {
+        console.log(`Entering the addFamily function.`);
         if ($scope.addNamesForm) {
             $scope.addNamesForm = false;
         } else {
@@ -323,14 +369,14 @@ angular.module('familielejr')
             $scope.parent_id = parent_id;
             $scope.tree_id = tree_id;
             if (tree_id == 0) {$scope.tree_id = $scope.familytree._id}
-            // console.log(`addAtLevel: ${$scope.addAtLevel}`);
+            console.log(`addAtLevel: ${$scope.addAtLevel}`);
 
             if ($scope.addAtLevel == 2) {
-                // console.log(`**** Level 2 ****`);
+                console.log(`**** Level 2 ****`);
                 var addToFamily = $scope.l1family.thirdlevel;
                 calcNewFamId(level, parent_id, addToFamily);
             } else if ($scope.addAtLevel == 3) {
-                // console.log(`**** Level 3 ****`);
+                console.log(`**** Level 3 ****`);
                 $http({
                     method: 'GET',
                     url: '/familytrees/parent/' + parent_id,
@@ -338,7 +384,7 @@ angular.module('familielejr')
                         'x-auth': localStorage.userToken
                     }
                 }).then(function(response) {
-                    // console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
+                    console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
                     $scope.L3Familytree = response.data;
                     $scope.showL3Family = $scope.parent_id;
                     var addToFamily = $scope.L3Familytree;
@@ -347,7 +393,7 @@ angular.module('familielejr')
                     console.log(`FamilytreeStatus: ${response.status}`);
                 });
             } else if ($scope.addAtLevel == 4) {
-                // console.log(`**** Level 4 ****`);
+                console.log(`**** Level 4 ****`);
                 for (var x=0; x<$scope.L3Familytree.length; x++) {
                     if ($scope.L3Familytree[x]._family_id == parent_id) {
                         var addToFamily = $scope.L3Familytree[x].secondlevel;
@@ -355,14 +401,14 @@ angular.module('familielejr')
                 };
                 calcNewFamId(level, parent_id, addToFamily);
             } else if ($scope.addAtLevel == 5) {
-                // console.log(`**** Level 5 ****`);
+                console.log(`**** Level 5 ****`);
                 for (var x=0; x<$scope.L3Familytree.length; x++) {
                     if ($scope.L3Familytree[x]._id == tree_id) {
-                        // console.log(`Found L3Familytree!!`);
+                        console.log(`Found L3Familytree!!`);
                         for (var u=0; u<$scope.L3Familytree[x].secondlevel.length; u++) {
                             if ($scope.L3Familytree[x].secondlevel[u]._family_id == parent_id) {
                                 var addToFamily = $scope.L3Familytree[x].secondlevel[u].thirdlevel;
-                                // console.log(`addToFamily: ${addToFamily}`);
+                                console.log(`addToFamily: ${addToFamily}`);
                             };
                         };
                     };
@@ -376,9 +422,10 @@ angular.module('familielejr')
     };
 
     function calcNewFamId(level, parent_id, addToFamily) {
+        console.log(`Entering the calcNewFamId function`);
         var famIdBases = [0, 10, 200, 3000, 40000, 500000];
         var lidBase = famIdBases[level] + (parent_id - famIdBases[level-1])*10;
-        // console.log(`parent_id: ${parent_id}, lidBase: ${lidBase}`);
+        console.log(`parent_id: ${parent_id}, lidBase: ${lidBase}`);
         var newFamilyId = 0;
         var family_idArray = [];
         for (x=0; x<addToFamily.length; x++) {
@@ -392,11 +439,12 @@ angular.module('familielejr')
                 newFamilyId = family_idArray[family_idArray.length-1]+10;
             };
         };
-        // console.log(`newFamilyId: ${newFamilyId}`);
+        console.log(`newFamilyId: ${newFamilyId}`);
         $scope.newFamilyId = newFamilyId;
     };
 
     $scope.showLevel3 = function(parent_id) {
+        console.log(`Entering the showLevel3 function, parent_id: ${parent_id}`);
         if (parent_id == $scope.showL3Family) {
             $scope.showL3Family = 0;
         } else {
@@ -407,11 +455,11 @@ angular.module('familielejr')
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                // console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
+                console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
                 $scope.L3Familytree = response.data;
-                // console.log($scope.L3Familytree);
+                console.log($scope.L3Familytree);
                 $scope.showL3Family = parent_id;
-                // console.log(`showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
+                console.log(`showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
             }, function errorCallback(response) {
                 console.log(`FamilytreeStatus: ${response.status}`);
             });
@@ -420,7 +468,7 @@ angular.module('familielejr')
 
     $scope.editFamily = function(family_id, level) {
         $scope.family_id = family_id;
-        // console.log(`Entering editSecondLevelFamily, family_id: ${family_id}`);
+        console.log(`Entering editSecondLevelFamily, family_id: ${family_id}`);
         if ($scope.editNamesForm) {
             $scope.editNamesForm = false;
         } else {
@@ -438,55 +486,55 @@ angular.module('familielejr')
                 var family = $scope.l1family;
                 
             } else if (level == 2) {
-                // console.log(`**** Level 2 ****`);
+                console.log(`**** Level 2 ****`);
                 for (var j=0; j<$scope.l1family.thirdlevel.length; j++) {
                     var f = $scope.l1family.thirdlevel[j];
-                    // console.log(`L2. family_id in loop: ${f._family_id}`);
+                    console.log(`L2. family_id in loop: ${f._family_id}`);
                     if (family_id == f._family_id) {
                         var family = f;
                         $scope.l2index = j;
                         $scope.parent_id = $scope.l1family._family_id;
-                        // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
+                        console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
                     };
                 };
             } else if (level == 3) {
-                // console.log(`**** Level 3 ****`);
+                console.log(`**** Level 3 ****`);
                 for (var j=0; j<$scope.L3Familytree.length; j++) {
                     var f = $scope.L3Familytree[j];
-                    // console.log(`L3. family_id in loop: ${f._family_id}`);
+                    console.log(`L3. family_id in loop: ${f._family_id}`);
                     if (family_id == f._family_id) {
                         var family = f;
                         $scope.tree_id = f._id;
-                        // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
+                        console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
                     };
                 };
             } else if (level == 4) {
-                // console.log(`**** Level 4 ****`);
+                console.log(`**** Level 4 ****`);
                 for (var j=0; j<$scope.L3Familytree.length; j++) {
                     for (var i=0; i<$scope.L3Familytree[j].secondlevel.length; i++) {
                         var f = $scope.L3Familytree[j].secondlevel[i];
-                        // console.log(`L4. family_id in loop: ${f._family_id}`);
+                        console.log(`L4. family_id in loop: ${f._family_id}`);
                         if (family_id == f._family_id) {
                             var family = f;
                             $scope.tree_id = $scope.L3Familytree[j]._id;
-                            // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
+                            console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}`);
                         };
                     };
                 };
             } else if (level == 5) {
-                // console.log(`**** Level 5 ****`);
+                console.log(`**** Level 5 ****`);
                 for (var j=0; j<$scope.L3Familytree.length; j++) {
                     for (var i=0; i<$scope.L3Familytree[j].secondlevel.length; i++) {
                         for (var o=0; o<$scope.L3Familytree[j].secondlevel[i].thirdlevel.length; o++) {
                             var f = $scope.L3Familytree[j].secondlevel[i].thirdlevel[o];
-                            // console.log(`L5. family_id in loop: ${f._family_id}`);
+                            console.log(`L5. family_id in loop: ${f._family_id}`);
                             if (family_id == f._family_id) {
                                 var family = f;
                                 $scope.l1index = i;
                                 $scope.l2index = o;
                                 $scope.parent_id = $scope.L3Familytree[j].secondlevel[i]._family_id;
                                 $scope.tree_id = $scope.L3Familytree[j]._id;
-                                // console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}, l1index: ${$scope.l1index}, l2index: ${$scope.l2index}`);
+                                console.log(`Found family_id ${f._family_id}, numLines: ${$scope.numLines}, l1index: ${$scope.l1index}, l2index: ${$scope.l2index}`);
                             };
                         };
                     };
@@ -506,7 +554,7 @@ angular.module('familielejr')
                 $scope.surname[i] = family.persons[i].surname;
                 if (family.persons[i].birth != null) {$scope.birth[i] = new Date(family.persons[i].birth);};
                 if (family.persons[i].pass != null) {$scope.passdate[i] = new Date(family.persons[i].pass);};
-                // console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
+                console.log(`${$scope.firstname[i]}, ${$scope.middlename[i]}, ${$scope.surname[i]}`);
             };
 /* 
             console.log(`BtnShow: ${$scope.BtnShow}`);
@@ -518,9 +566,9 @@ angular.module('familielejr')
     };
 
     $scope.showLine = function() {
-        // console.log("Entering showline. numLines: "+numLines);
+        console.log("Entering showline. numLines: "+numLines);
         if ($scope.firstname[numLines]) {
-            // console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
+            console.log("numLines: "+numLines+", Person: "+$scope.firstname[numLines]);
             numLines = numLines + 1; $scope.numLines = numLines;
             $scope.newnameShow[numLines] = true;
             $scope.BtnShow[numLines] = false;
@@ -555,12 +603,12 @@ angular.module('familielejr')
     };
     
     addNames = function() {
-        // console.log(`Entering addNames. numLines: ${numLines}, addAtLevel: ${$scope.addAtLevel}`);
+        console.log(`Entering addNames. numLines: ${numLines}, addAtLevel: ${$scope.addAtLevel}`);
         var persons = personArr(numLines);
         console.log(`Persons: ${persons}`);
 
         if ($scope.addAtLevel == 1 || $scope.addAtLevel == 4) {
-            // console.log(`Add at level 4`);
+            console.log(`Add at level 1 or 4`);
             var data = {
                 _family_id: $scope.newFamilyId,
                 persons: persons
@@ -593,7 +641,7 @@ angular.module('familielejr')
                 },
                 data: data
             }).then(function(response) {
-                // console.log(`Added at level ${$scope.addAtLevel}`);
+                console.log(`Added at level ${$scope.addAtLevel}`);
                 if ($scope.addAtLevel == 5) {
                     reestablish();
                 } else {
@@ -604,12 +652,13 @@ angular.module('familielejr')
                 console.log(`Status: ${response.status}`);
             });
         } else {
-            // console.log(`Add at level 0 or 3`);
+            console.log(`Add at level 0 or 3`);
             var data = {
                 _admin: "596345a3fc89f0d78cbc06fd",
                 level: $scope.addAtLevel,
                 _kid: 0,
                 klan: $scope.l1family.persons[0].firstname,
+                description: $scope.familytreeDescription,
                 _family_id: $scope.newFamilyId,
                 _parent_id: $scope.parent_id,
                 persons: persons
@@ -636,9 +685,9 @@ angular.module('familielejr')
     };
 
     editNames = function() {
-        // console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
+        console.log(`Entering editNames. numLines: ${numLines}. FamilyId: ${$scope.family_id}`);
         var persons = personArr(numLines);
-        // console.log(`Persons: ${JSON.stringify(persons)}`);
+        console.log(`Persons: ${JSON.stringify(persons)}`);
 
         var data = {
             level: $scope.editAtLevel,
@@ -659,10 +708,10 @@ angular.module('familielejr')
         }).then(function(response) {
             initForms();
             if ($scope.showL3Family != 0) {
-                // console.log(`There is a L3 family open. Fetch it again to show the changes.`);
+                console.log(`There is a L3 family open. Fetch it again to show the changes.`);
                 getL3Family();
             } else {
-                // console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
+                console.log(`There is no L3 family open, so just reload to show the L2 changes.`);
                 $route.reload();
             };
         }, function errorCallback(response) {

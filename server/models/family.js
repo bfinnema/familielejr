@@ -5,6 +5,10 @@ var FamilySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  _tenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+  },
   level: {
     type: Number,
     required: true

@@ -23,6 +23,10 @@ var Todo = mongoose.model('Todo', {
     type: String,
     default: null
   },
+  _tenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+  },
   _creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true

@@ -8,8 +8,12 @@ var {Futurecamp} = require('../models/futurecamp');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
+  // console.log(`Firstname: ${req.user.name.firstname}`);
+  // console.log(`_tenant: ${req.user._tenant}`);
   var futurecamp = new Futurecamp({
     year: req.body.year,
+    eventName: req.body.eventName,
+    _tenant: req.user._tenant,
     camp: req.body.camp,
     address: req.body.address,
     website: req.body.website,
@@ -23,12 +27,19 @@ router.post('/', authenticate, (req, res) => {
   futurecamp.save().then((doc) => {
     res.send(doc);
   }, (e) => {
-    res.status(400).send(e);
+    console.log(`Error code: ${e.code}`);
+    if (e.code == 11000) {
+      res.status(409).send(e);
+    } else {
+      res.status(400).send(e);
+    };
   });
 });
 
 router.get('/', authenticate, (req, res) => {
-  Futurecamp.find({}).then((futurecamps) => {
+  Futurecamp.find({
+    _tenant: req.user._tenant
+  }).then((futurecamps) => {
     res.json(futurecamps);
   }, (e) => {
     res.status(400).send(e);
@@ -38,7 +49,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/future/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by GTYear section');
-  Futurecamp.find({'year':{'$gt':year}}).then((futurecamps) => {
+  Futurecamp.find({'year':{'$gt':year}, _tenant: req.user._tenant}).then((futurecamps) => {
     res.json(futurecamps);
   }, (e) => {
     res.status(400).send(e);
@@ -48,7 +59,7 @@ router.get('/future/:year', authenticate, (req, res) => {
 router.get('/past/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by LTEYear section');
-  Futurecamp.find({'year':{'$lt':year}}).then((futurecamps) => {
+  Futurecamp.find({'year':{'$lt':year}, _tenant: req.user._tenant}).then((futurecamps) => {
     res.json(futurecamps);
   }, (e) => {
     res.status(400).send(e);
@@ -80,6 +91,7 @@ router.get('/year/:year', authenticate, (req, res) => {
   // console.log('This is the find by Year section');
 
   Futurecamp.findOne({
+    _tenant: req.user._tenant,
     year: year
   }).then((futurecamp) => {
     if (!futurecamp) {
@@ -94,14 +106,14 @@ router.get('/year/:year', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['year', 'camp', 'address', 'website', 'startdate', 'enddate', 'organizers', 'committees']);
+  var body = _.pick(req.body, ['year', 'eventName', 'camp', 'address', 'website', 'startdate', 'enddate', 'organizers', 'committees']);
 
   if (!ObjectID.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   }
 
-  Futurecamp.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((futurecamp) => {
+  Futurecamp.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((futurecamp) => {
     if (!futurecamp) {
       console.log(`Futurecamp not found`);
       return res.status(404).send();
@@ -109,7 +121,12 @@ router.patch('/:id', authenticate, (req, res) => {
 
     res.send({futurecamp});
   }).catch((e) => {
-    res.status(400).send();
+    console.log(`Error code: ${e.code}`);
+    if (e.code == 11000) {
+      res.status(409).send(e);
+    } else {
+      res.status(400).send(e);
+    };
   })
 });
 

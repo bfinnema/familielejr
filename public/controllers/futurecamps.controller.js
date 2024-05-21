@@ -181,7 +181,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             };
         };
  
+        var eventName = $scope.camp.replaceAll(" ", "_")+"_"+String($scope.year)+"_"+Math.floor(Math.random()*8998+1001);
+
         var data = {
+            eventName: eventName,
             year: $scope.year,
             camp: $scope.camp,
             address: addr,
@@ -205,6 +208,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
+            console.log(`Error: ${response.body}`);
+            if (response.status == 409) {
+                $window.alert("Navnet på begivenheden findes allerede. Vær venlig at ændre det.");
+            };
         });
  
     };
@@ -366,6 +373,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     };
     
     $scope.removeCommMem = function(numComm, commMemNum) {
+        numCommMemLines = $scope.numCommMemLines;
         console.log("Entering removeCommMem. numOrgLines: "+$scope.numCommMemLines[numComm]);
         for (var i=commMemNum; i<$scope.numCommMemLines[numComm]; i++) {
             $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
@@ -408,7 +416,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
  
         var data = {
-            year: $scope.year,
+            eventName: $scope.camp.eventName,
+            year: $scope.camp.year,
             camp: $scope.camp.camp,
 			address: addr,
             website: $scope.camp.website,
@@ -430,6 +439,9 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $location.path('/futurecamps');
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
+            if (response.status == 409) {
+                $window.alert("Navnet på begivenheden findes allerede. Vær venlig at ændre det.");
+            };
         });
 
     };

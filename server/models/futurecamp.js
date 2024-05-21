@@ -5,8 +5,16 @@ var FuturecampSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     year: {
         type: Number,
+        required: true
+    },
+    eventName: {
+        type: String,
         required: true,
         unique: true
     },

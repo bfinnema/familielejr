@@ -1,12 +1,24 @@
 var mongoose = require('mongoose');
 
-var EventTemplateSchema = new mongoose.Schema({
+var EventSchema = new mongoose.Schema({
+    eventName: {
+        type: String,
+        required: true
+    },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
+    description: {
+        type: String,
+        required: false
+    },
     _creator: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
     }
 });
 
-var EventTemplate = mongoose.model('EventTemplate', EventTemplateSchema);
+var Event = mongoose.model('Event', EventSchema);
 
-module.exports = {EventTemplate};
+module.exports = {Event};
