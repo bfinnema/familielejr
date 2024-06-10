@@ -943,10 +943,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
             method: 'GET',
             url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
-            // console.log("Signed request: "+response.data.signedRequest);
+            console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
             $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            // console.log(`mainImage: ${$scope.mainImage}`);
+            console.log(`mainImage: ${$scope.mainImage}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
