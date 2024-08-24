@@ -35,42 +35,35 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         angular.element(document.querySelector( '#about' ) ).addClass('active');
         return $http({
             method: 'GET',
-            url: 'photos/' + $scope.about._photo,
+            url: '/photos/count/historiske',
             headers: {
                 'x-auth': localStorage.userToken
             }
         });
-    }).then(function(photo) {
-        $scope.photo = photo.data;
-        $scope.mainImageObj = $scope.photo;
-        console.log(`Filename: ${$scope.photo.filename}`);
-        detectClient();
-        getImage();
+    }).then(function(photocount) {
+        $scope.numHistoricPhotos += photocount.data.count;
+        console.log(`numHistoricPhotos: ${$scope.numHistoricPhotos}`);
+        if ($scope.about._photo) {
+            $http({
+                method: 'GET',
+                url: 'photos/' + $scope.about._photo,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(response) {
+                $scope.photo = response.data;
+                $scope.mainImageObj = $scope.photo;
+                console.log(`Filename: ${$scope.photo.filename}`);
+                detectClient();
+                getImage();
+            }, function errorCallback(response) {
+                console.log(`Error. Status: ${response.status}`);
+            });
+        };
+        
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
-
-    /* $scope.headlinesArray = [0,1,2,3,4];
-    $scope.paragraphArray = [0,1,2,3,4];
-
-    $scope.textHeadlines = ["","","","",""];
-    $scope.paragraphs = [["","","","",""],["","","","",""],["","","","",""],["","","","",""],["","","","",""]];
-    $scope.headlineBtnShow = [true,false,false,false,false];
-    $scope.textHeadlineShow = [false,false,false,false,false];
-    var numHeadlines = 0;
-    $scope.initHeadlines = false;
-
-    console.log(`----- paragraphs -----`);
-    for (var u=0; u<5; u++) {
-        for (var o=0; o<5; o++) {
-            console.log($scope.paragraphs[u][o]);
-        };
-    };
-
-    $scope.paragraphBtnShow = [[false,true,false,false,false],[false,true,false,false,false],[false,true,false,false,false],[false,true,false,false,false],[false,true,false,false,false]];
-    $scope.paragraphShow = [[true,false,false,false,false],[true,false,false,false,false],[true,false,false,false,false],[true,false,false,false,false],[true,false,false,false,false]];
-    var numParagraphs = [0,0,0,0,0];
-    $scope.numParagraphs = numParagraphs; */
 
     $scope.showHeadline = function() {
         console.log("Entering showHeadline. numHeadlines: "+$scope.numHeadlines);
@@ -81,6 +74,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $scope.headlineBtnShow[$scope.numHeadlines+1] = true;
             $scope.paragraphShow[$scope.numHeadlines][0] = true;
             $scope.paragraphBtnShow[$scope.numHeadlines][1] = true;
+            $scope.numParagraphs[$scope.numHeadlines] += 1;
             $scope.initHeadlines = true;
         }
         else if ($scope.textHeadlines[$scope.numHeadlines]) {
@@ -91,16 +85,18 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $scope.headlineBtnShow[$scope.numHeadlines+1] = true;
             $scope.paragraphShow[$scope.numHeadlines][0] = true;
             $scope.paragraphBtnShow[$scope.numHeadlines][1] = true;
+            $scope.numParagraphs[$scope.numHeadlines] += 1;
         }
         else {
             $window.alert("Du skal udfylde overskriften.");
         };
+        console.log("Exiting showHeadline. numHeadlines: "+$scope.numHeadlines);
         displayLogData($scope.numHeadlines);
     };
 
     $scope.removeHeadline = function(headlineNumber) {
         console.log("Entering removeHeadline. numHeadlines: "+$scope.numHeadlines);
-        displayLogData($scope.numHeadlines);
+        displayLogData(headlineNumber);
         for (var i=headlineNumber; i<$scope.numHeadlines; i++) {
             for (var j=0; j<$scope.paragraphs[i].length; j++) {
                 $scope.paragraphs[i][j] = $scope.paragraphs[i+1][j];
@@ -121,28 +117,32 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 $scope.paragraphBtnShow[$scope.numHeadlines][w] = true;
             };
         };
+        $scope.numHeadlines -= 1;
         $scope.textHeadlineShow[$scope.numHeadlines] = false;
         $scope.headlineBtnShow[$scope.numHeadlines] = true;
         $scope.headlineBtnShow[$scope.numHeadlines+1] = false;
-        $scope.numHeadlines -= 1;
         $scope.numParagraphs[$scope.numHeadlines] = 0;
         console.log("Exiting removeHeadline. numHeadlines: "+$scope.numHeadlines);
-        displayLogData($scope.numHeadlines);
+        displayLogData(headlineNumber);
     };
     
     $scope.showParagraph = function(headlineNumber) {
         var numParagraphs = $scope.numParagraphs;
+        var pgNo = numParagraphs[headlineNumber]-1;
         console.log("Entering showParagraph. numParagraphs for Headline: "+headlineNumber+": "+numParagraphs[headlineNumber]);
-        console.log(`${$scope.paragraphs[headlineNumber][numParagraphs[headlineNumber]]}`)
-        if ($scope.paragraphs[headlineNumber][numParagraphs[headlineNumber]]) {
-            console.log("numParagraphs for Headline: "+headlineNumber+": "+numParagraphs[headlineNumber]+", Paragraph: "+$scope.paragraphs[headlineNumber][numParagraphs[headlineNumber]]);
+        console.log(`Paragraph text, headline ${headlineNumber}, paragraph ${pgNo} :${$scope.paragraphs[headlineNumber][pgNo]}`)
+        if ($scope.paragraphs[headlineNumber][pgNo]) {
+            // console.log("numParagraphs for Headline: "+headlineNumber+": "+numParagraphs[headlineNumber]+", Paragraph: "+$scope.paragraphs[headlineNumber][pgNo]);
             console.log(`paragraphShow: ${$scope.paragraphShow[headlineNumber]}`);
             console.log(`paragraphBtnShow: ${$scope.paragraphBtnShow[headlineNumber]}`);
             console.log(`numParagraphs: ${numParagraphs}`);
             numParagraphs[headlineNumber] = numParagraphs[headlineNumber] + 1;
-            $scope.paragraphShow[headlineNumber][numParagraphs[headlineNumber]] = true;
-            $scope.paragraphBtnShow[headlineNumber][numParagraphs[headlineNumber]] = false;
-            $scope.paragraphBtnShow[headlineNumber][numParagraphs[headlineNumber]+1] = true;
+            pgNo += 1;
+            $scope.paragraphShow[headlineNumber][pgNo] = true;
+            $scope.paragraphBtnShow[headlineNumber][pgNo] = false;
+            if (numParagraphs[headlineNumber] < 5) {
+                $scope.paragraphBtnShow[headlineNumber][pgNo+1] = true;
+            };
             console.log(`paragraphShow: ${$scope.paragraphShow[headlineNumber]}`);
             console.log(`paragraphBtnShow: ${$scope.paragraphBtnShow[headlineNumber]}`);
             console.log(`numParagraphs: ${numParagraphs}`);
@@ -201,8 +201,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 $scope.textHeadlineShow[i] = true;
                 $scope.textHeadlines[i] = $scope.about.textHeadlines[i].h3;
                 numParagraphs[i] = $scope.about.textHeadlines[i].paragraphs.length;
+                console.log(`${numParagraphs[i]}, ${$scope.paragraphBtnShow[i].length}`);
                 if (numParagraphs[i] < $scope.paragraphBtnShow[i].length) {
-                    $scope.paragraphBtnShow[i][numParagraphs[i]+1] = true;
+                    $scope.paragraphBtnShow[i][numParagraphs[i]] = true;
+                    console.log(`paragraphBtnShow for ${i}: ${$scope.paragraphBtnShow[i]}`);
                 };
                 for (var j=0; j<numParagraphs[i]; j++) {
                     $scope.paragraphShow[i][j] = true;
@@ -210,28 +212,38 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 };
             };
 
-            for (var w=0; w<numHeadlines; w++) {
+            /* for (var w=0; w<numHeadlines; w++) {
                 if (numParagraphs[w] > 0) {
                     numParagraphs[w] -= 1;
                 };
-            };
+            }; */
             // if (numHeadlines > 0) {numHeadlines -= 1;};
 
             $scope.numParagraphs = numParagraphs;
             $scope.numHeadlines = numHeadlines;
 
-            console.log(`----- paragraphs -----`);
+            console.log(`----- DB -----`);
             for (var u=0; u<$scope.about.textHeadlines.length; u++) {
+                console.log(`${$scope.about.textHeadlines[u].h3}`);
                 for (var o=0; o<$scope.about.textHeadlines[u].paragraphs.length; o++) {
                     console.log($scope.about.textHeadlines[u].paragraphs[o].paragraph);
+                };
+            };
+            console.log(`----- Mem -----`);
+            for (var u=0; u<$scope.textHeadlines.length; u++) {
+                console.log(`${$scope.textHeadlines[u]}`);
+                for (var o=0; o<$scope.paragraphs[u].length; o++) {
+                    console.log($scope.paragraphs[u][o]);
                 };
             };
         };
     };
 
     displayLogData = function(headlineNumber) {
-        console.log(`Headline Text: ${$scope.textHeadlines[headlineNumber]}`);
+        console.log(`Headline Text for ${headlineNumber}: ${$scope.textHeadlines[headlineNumber]}`);
         console.log(`numParagraphs for Headline ${headlineNumber}: ${$scope.numParagraphs[headlineNumber]}`);
+        console.log(`headlineBtnShow: ${$scope.headlineBtnShow}`);
+        console.log(`textHeadlineShow: ${$scope.headlineBtnShow}`);
         console.log(`numParagraphs: ${$scope.numParagraphs}`);
         console.log(`paragraphShow: ${$scope.paragraphShow[headlineNumber]}`);
         console.log(`paragraphBtnShow: ${$scope.paragraphBtnShow[headlineNumber]}`);
@@ -246,7 +258,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         for (var x=0; x<$scope.numHeadlines+1; x++) {
             if ($scope.textHeadlines[x] != "") {
                 var pgfs = [];
-                for (var y=0; y<$scope.numParagraphs[x]+1; y++) {
+                for (var y=0; y<$scope.numParagraphs[x]; y++) {
                     pgfs.push({paragraph: $scope.paragraphs[x][y]});
                 };
                 var headline = {
@@ -256,7 +268,15 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 textHeadlines.push(headline);
             };
         };
- 
+
+        console.log(`----- Mem -----`);
+        for (var u=0; u<textHeadlines.length; u++) {
+            console.log(`${textHeadlines[u].h3}`);
+            for (var o=0; o<textHeadlines[u].paragraphs.length; o++) {
+                console.log(textHeadlines[u].paragraphs[o].paragraph);
+            };
+        };
+
         var data = {
             communityName: $scope.about.communityName,
             subHeading: $scope.about.subHeading,
@@ -266,6 +286,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
         
         if (textHeadlines.length > 0) {data.textHeadlines = textHeadlines;};
+
+        // console.log(`${STOP}`);
 
         $http({
             method: 'PATCH',
@@ -335,7 +357,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         console.log(`filename: ${filename}, filetype: ${filetype}, folder: ${folder}`);
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;

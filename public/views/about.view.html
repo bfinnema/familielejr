@@ -87,7 +87,7 @@
 <div class="row">
     <div class="col-sm-8 blog-main">
         <div class="blog-post">
-            <a href="#!photoalbum/historiske"><h2 class="blog-title">Flere historiske billeder af Bygebjerg m.m.</h2></a>
+            <a ng-show="numHistoricPhotos > 0" href="#!photoalbum/historiske"><h2 class="blog-title">Flere historiske billeder</h2></a>
 
             <div id="photo-div" ng-show="userClient == 'BROWSER'">
                 <a href="{{mainImage}}" target="_blank">
@@ -99,8 +99,10 @@
                     <img class="img-responsive" src="{{mainImage}}">
                 </a>
             </div>
-            <div class="col-md-4">
-                <p class="blog-post-meta">{{mainImageObj.imagetext[0].textobj.text}}</a></p>
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="blog-post-meta">{{mainImageObj.imagetext[0].textobj.text}}</a></p>
+                </div>
             </div>
 
             <!-- <div class="row">

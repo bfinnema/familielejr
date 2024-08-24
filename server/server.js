@@ -11,7 +11,7 @@ const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
 var {authenticate} = require('./middleware/authenticate');
-// var routes = require('./routes/index');
+var routes = require('./routes/index');
 var todos = require('./routes/todos');
 var games = require('./routes/games');
 var eventregs = require('./routes/eventregs');
@@ -41,7 +41,7 @@ app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 
-// app.use('/', routes);
+app.use('/', routes);
 app.use('/todos', todos);
 app.use('/games', games);
 app.use('/eventregs', eventregs);
