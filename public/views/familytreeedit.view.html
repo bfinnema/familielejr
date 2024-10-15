@@ -6,7 +6,7 @@
         <p class="lead blog-description">{{ familytreeDescription }}</p>
     </div>
     <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytree">Forlad edit</a>
+        <a class="btn btn-warning btn-block" href="#!familytree/0/{{ _L0_family_id }}">Forlad edit</a>
     </div>
 </div>
 
@@ -24,7 +24,7 @@
             </a>
 			<ul>
 				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytreeedit/{{l1family._family_id}}">
+                    <a href="#!familytreeedit/1/{{_L0_family_id}}/{{l1family._family_id}}">
                         <span ng-repeat="person in l1family.persons">
                             {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
@@ -38,7 +38,7 @@
                     </a>
                     <ul>
                         <li>
-                            <a class="btn btn-primary" href="#!familytreeedit/{{l1family._family_id}}">
+                            <a class="btn btn-primary" href="#!familytreeedit/1/{{_L0_family_id}}/{{l1family._family_id}}">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
                         </li>

@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('familytreeCtrl', ['$scope', '$http', '$window', '$route', '$location', 'AuthService', function($scope, $http, $window, $route, $location, AuthService) {
+.controller('familytreeCtrl', ['$scope', '$http', '$routeParams', '$window', '$route', '$location', 'AuthService', function($scope, $http, $routeParams, $window, $route, $location, AuthService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -19,6 +19,8 @@ angular.module('familielejr')
     $scope.famIdBases = [0, 10, 200, 3000, 40000, 500000];
     $scope.nameArr = [0,1,2,3];
     $scope.initiatingFamilytree = false;
+    $scope.newTreeEntry = false;
+    $scope._L0_family_id = $routeParams._L0_family_id;
 
     $http({
         method: 'GET',
@@ -38,13 +40,15 @@ angular.module('familielejr')
             $scope.newFamilyId = newFamilyId;
             $scope.familytreeDescription = "Stamtræ er ikke startet. Klik på + og indtast navne";
             // $location.path('/familytreeedit');
-        } else if (response.data.length == 1) {
-            console.log(`There is one family tree in the tenant`);
-            $scope.familytree = response.data[0];
-            $scope.familytreeDescription = $scope.familytree.description;
+        } else {
+            console.log(`There are one or more family trees in the tenant`);
+            $scope.familytrees = response.data;
+            $scope.familytree = response.data[$scope._L0_family_id];
+            // $scope.familytreeDescription = $scope.familytree.description;
             console.log($scope.familytree)
             console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
             for (x=0; x<$scope.familytree.secondlevel.length; x++) {
+                console.log(`Family ID in secondlevel in root tree: ${$scope.familytree.secondlevel[x]._family_id}`);
                 family_idArray[x] = $scope.familytree.secondlevel[x]._family_id;
             };
             if (family_idArray.length == 0) {
@@ -57,8 +61,6 @@ angular.module('familielejr')
             };
             console.log(`newFamilyId: ${newFamilyId}`);
             $scope.newFamilyId = newFamilyId;
-        } else {
-            console.log(`There are multiple family trees. Why?`);
         };
     }, function errorCallback(response) {
         console.log(`FamilytreeStatus: ${response.status}`);
@@ -72,6 +74,75 @@ angular.module('familielejr')
     $scope.BtnShow = [false,true,false,false];
     $scope.newnameShow = [true,false,false,false];
     var numLines = 0;
+
+    $scope.newFamilyTreeToggle = function() {
+        $scope.treeName = "";
+        if ($scope.newTreeEntry) {
+            $scope.newTreeEntry = false;
+        } else {
+            $scope.newTreeEntry = true;
+        };
+    };
+
+    $scope.generateFamilyTree = function() {
+
+        var klan_id = 0;
+        if (!$scope.initiatingFamilytree) {
+            klan_id = $scope.familytrees.length;
+            console.log(`The new klan_id is: ${klan_id}`);
+        };
+        var persons = [];
+        var person = {
+            firstname: $scope.newFirstname,
+            middlename: $scope.newMiddlename,
+            surname: $scope.newSurname,
+            birth: $scope.newBirth,
+            pass: $scope.newPassdate
+        };
+        persons.push(person);
+        console.log(`New familytree, klan_id: ${klan_id}`);
+        console.log(`Add at level 0`);
+        var data = {
+            // _admin: "596345a3fc89f0d78cbc06fd",     // _admin is added by the server
+            level: 0,
+            _kid: klan_id,
+            klan: $scope.newFirstname + "_root",
+            description: $scope.newDescription,
+            _family_id: klan_id,
+            _parent_id: 0,
+            persons: persons
+        };
+        $http({
+            method: 'POST',
+            url: '/familytrees/',
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: data
+        }).then(function(response) {
+            $route.reload();
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
+
+    $scope.changeTree = function() {
+        console.log(`In changeTree. Change to _id: ${$scope.tree_id}`);
+        if ($scope.tree_id == $scope.familytree._id) {
+            console.log(`Same familytree.`);
+        } else {
+            console.log(`New Familytree`);
+            for (var i=0; i<$scope.familytrees.length; i++) {
+                console.log(`${$scope.familytrees[i].description}: ${$scope.familytrees[i]._id}`);
+                if ($scope.tree_id == $scope.familytrees[i]._id) {
+                    $scope.familytree = $scope.familytrees[i];
+                    $scope._L0_family_id = $scope.familytree._family_id;
+                    console.log(`Selected ${$scope.familytrees[i].description}.`);
+                };
+            };
+            $route.reload;
+        };
+    };
 
     $scope.addFamily = function(level, parent_id) {
         console.log(`Entering the addFamily function. level: ${level}, parent_id: ${parent_id}`);
@@ -188,7 +259,7 @@ angular.module('familielejr')
             console.log(`New familytree, thus need to use POST`);
             console.log(`Add at level 0`);
             var data = {
-                _admin: "596345a3fc89f0d78cbc06fd",
+                // _admin: "596345a3fc89f0d78cbc06fd",    // _admin is added by the server
                 level: $scope.addAtLevel,
                 _kid: 0,
                 klan: persons[0].firstname + "_root",
@@ -325,7 +396,8 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#familytree' ) ).addClass('active');
     }, 1000);
 
-    var family_id = $routeParams._family_id;
+    $scope._L0_family_id = $routeParams._L0_family_id;
+    $scope._L1_family_id = $routeParams._L1_family_id;
     var level = 1;
     $scope.L3Familytree = [];
     $scope.showL3Family = 0;
@@ -340,12 +412,12 @@ angular.module('familielejr')
         }
     }).then(function(response) {
         console.log(`In familytreeslCtrl. FamilytreeStatus: ${response.status}`);
-        $scope.familytree = response.data[0];
+        $scope.familytree = response.data[$scope._L0_family_id];
         $scope.familytreeDescription = $scope.familytree.description;
         console.log($scope.familytree);
         console.log(`Klan: ${$scope.familytree.klan}, Person: ${$scope.familytree.persons[0].firstname}`);
         for (i=0; i<$scope.familytree.secondlevel.length; i++) {
-            if ($scope.familytree.secondlevel[i]._family_id == family_id) {
+            if ($scope.familytree.secondlevel[i]._family_id == $scope._L1_family_id) {
                 $scope.l1family = $scope.familytree.secondlevel[i];
                 $scope.l1index = i;
                 console.log(`l1family: ${JSON.stringify($scope.l1family.persons)}, l1index: ${$scope.l1index}`);
@@ -379,7 +451,7 @@ angular.module('familielejr')
                 console.log(`**** Level 3 ****`);
                 $http({
                     method: 'GET',
-                    url: '/familytrees/parent/' + parent_id,
+                    url: '/familytrees/parent_kid/' + parent_id +'/' + $scope.familytree._kid,
                     headers: {
                         'x-auth': localStorage.userToken
                     }
@@ -450,16 +522,18 @@ angular.module('familielejr')
         } else {
             $http({
                 method: 'GET',
-                url: '/familytrees/parent/' + parent_id,
+                url: '/familytrees/parent_kid/' + parent_id + '/' + $scope.familytree._kid,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`L3FamilytreeStatus: ${response.status}. New url working`);
+                console.log(`L3FamilytreeStatus: ${response.status}`);
                 $scope.L3Familytree = response.data;
                 console.log($scope.L3Familytree);
                 $scope.showL3Family = parent_id;
-                console.log(`showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
+                if ($scope.L3Familytree.length > 0) {
+                    console.log(`showL3Family: ${$scope.showL3Family}, Klan: ${$scope.L3Familytree[0].klan}, Person: ${$scope.L3Familytree[0].persons[0].firstname}`);
+                }
             }, function errorCallback(response) {
                 console.log(`FamilytreeStatus: ${response.status}`);
             });
@@ -603,9 +677,9 @@ angular.module('familielejr')
     };
     
     addNames = function() {
-        console.log(`Entering addNames. numLines: ${numLines}, addAtLevel: ${$scope.addAtLevel}`);
+        console.log(`Entering addNames. numLines: ${numLines}, addAtLevel: ${$scope.addAtLevel}. _kid: ${$scope.familytree._kid}`);
         var persons = personArr(numLines);
-        console.log(`Persons: ${persons}`);
+        var _kid = $scope.familytree._kid;
 
         if ($scope.addAtLevel == 1 || $scope.addAtLevel == 4) {
             console.log(`Add at level 1 or 4`);
@@ -654,9 +728,9 @@ angular.module('familielejr')
         } else {
             console.log(`Add at level 0 or 3`);
             var data = {
-                _admin: "596345a3fc89f0d78cbc06fd",
+                // _admin: "596345a3fc89f0d78cbc06fd",  // _admin is added by the server
                 level: $scope.addAtLevel,
-                _kid: 0,
+                _kid: _kid,
                 klan: $scope.l1family.persons[0].firstname,
                 description: $scope.familytreeDescription,
                 _family_id: $scope.newFamilyId,
@@ -847,7 +921,7 @@ angular.module('familielejr')
     function getL3Family() {
         $http({
             method: 'GET',
-            url: '/familytrees/parent/' + $scope.showL3Family,
+            url: '/familytrees/parent_kid/' + $scope.showL3Family + '/' + $scope.familytree._kid,
             headers: {
                 'x-auth': localStorage.userToken
             }

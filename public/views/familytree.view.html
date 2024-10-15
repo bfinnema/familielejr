@@ -1,13 +1,76 @@
 <div ng-include="'navigation.html'"></div>
 
 <div class="row">
-    <div class="blog-header col-md-6">
+    <div class="blog-header col-md-4">
         <h1 class="blog-title">Stamtræ</h1>
-        <p class="lead blog-description">{{ familytreeDescription }}</p>
+        <p class="lead blog-description">{{ familytree.description }}</p>
     </div>
-    <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytreeedit">Ændre stamtræet</a>
+    <div class="col-md-2">
+        <form name="otherTree">
+            <label>Se et andet stamtræ:</label>
+            <select class="form-control" ng-model="tree_id" name="tree_id" ng-change="changeTree()">
+                <option ng-repeat="ft in familytrees" value="{{ft._id}}">{{ft.description}}</option>
+            </select>
+        </form>
     </div>
+    <div class="col-md-2" ng-show="role == 0">
+        <label>--   </label>
+        <a class="btn btn-warning btn-block" href="#!familytreeedit/0/{{ _L0_family_id }}">Ændre stamtræet</a>
+    </div>
+    <div class="col-md-2" ng-show="role == 0 && !newTreeEntry">
+        <label>--   </label>
+        <a class="btn btn-success btn-block" ng-click="newFamilyTreeToggle()">Opret nyt stamtræ</a>
+    </div>
+</div>
+
+<div ng-show="newTreeEntry">
+    <form name="formTree" ng-submit="generateFamilyTree()" novalidate>
+        <h2 class="form-signin-heading">Opret nyt stamtræ</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du som administrator oprette et nyt stamtræ</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Beskrivelse af stamtræet</label>
+                <input type="text" id="newDescription" class="form-control" ng-model="newDescription" placeholder="Beskrivelse" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Indtast stam-moder / -fader</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Fornavn</label>
+                <input type="text" id="newFirstname" class="form-control" ng-model="newFirstname" placeholder="Fornavn" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Mellemnavn</label>
+                <input type="text" id="newMiddlename" class="form-control" ng-model="newMiddlename" placeholder="Mellemnavn">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Efternavn</label>
+                <input type="text" id="newSurname" class="form-control" ng-model="newSurname" placeholder="Efternavn">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Født</label>
+                <input type="date" class="form-control" ng-model="newBirth">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Bortgang</label>
+                <input type="date" class="form-control" ng-model="newPassdate">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formTree.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Opret stamtræ</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="newFamilyTreeToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
 </div>
 
 <div class="tree row">
@@ -21,7 +84,7 @@
             </a>
 			<ul>
 				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytree/{{l1family._family_id}}">
+                    <a href="#!familytree/1/{{_L0_family_id}}/{{l1family._family_id}}">
                         <span ng-repeat="person in l1family.persons">
                             {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
