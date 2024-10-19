@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -46,7 +46,7 @@ router.patch('/:id', authenticate, (req, res) => {
   body.paymentRegisteredBy = uploader;
   // console.log(`paymentRegisteredBy: ${body.paymentRegisteredBy}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
@@ -73,7 +73,7 @@ router.patch('/fee/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Calculated fee: ${req.body.eventFee}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
       console.log(`id is not valid`);
       return res.status(404).send();
   };
@@ -170,7 +170,7 @@ router.get('/all/search/:year/:searchText', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
@@ -192,12 +192,12 @@ router.delete('/:id', authenticate, (req, res) => {
 router.delete('/admin/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
   if (req.user.role < 2) {
-    Eventreg.findOneAndRemove({
+    Eventreg.findOneAndDelete({
       _id: id
     }).then((eventreg) => {
       if (!eventreg) {

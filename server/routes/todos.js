@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -35,7 +35,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -55,11 +55,11 @@ router.get('/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Todo.findOneAndRemove({
+  Todo.findOneAndDelete({
     _id: id
   }).then((todo) => {
     if (!todo) {
@@ -82,7 +82,7 @@ router.patch('/:id', authenticate, (req, res) => {
   uploader = uploader + ' ' + req.user.name.surname;
   body.completedBy = uploader;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 

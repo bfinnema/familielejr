@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -62,7 +62,7 @@ router.get('/noauth', (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -82,11 +82,11 @@ router.get('/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Tenant.findOneAndRemove({
+  Tenant.findOneAndDelete({
     _id: id
   }).then((tenant) => {
     if (!tenant) {
@@ -104,7 +104,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var body = _.pick(req.body, ['tenantName', 'description', 'subscriptions']);
   // console.log(`Patching tenant, nsme: ${body.tenantName}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -124,7 +124,7 @@ router.patch('/noauth/:id', (req, res) => {
   var body = _.pick(req.body, ['_admin', '_creator']);
   console.log(`Patching tenant, _admin id: ${body._admin}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 

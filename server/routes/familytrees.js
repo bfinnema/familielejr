@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -101,7 +101,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`id: ${id}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -131,7 +131,7 @@ router.patch('/l2/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`familytree/l2. id: ${id}, _parent_id: ${req.body._parent_id}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -161,7 +161,7 @@ router.patch('/edit/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`familytree/edit, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
   // console.log(`Persons, firstname: ${req.body.persons[0].firstname}`);
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
@@ -201,7 +201,7 @@ router.patch('/delete/:id', authenticate, (req, res) => {
   // console.log(`id: ${id}`);
   // console.log(`familytree/delete, id: ${id}, _family_id: ${req.body._family_id}, _parent_id: ${req.body._parent_id}, L1Index: ${req.body.l1index}, L2Index: ${req.body.l2index}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -249,11 +249,11 @@ router.patch('/delete/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Familytree.findOneAndRemove({
+  Familytree.findOneAndDelete({
     _id: id
   }).then((familytree) => {
     if (!familytree) {

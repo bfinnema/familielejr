@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -42,7 +42,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -62,11 +62,11 @@ router.get('/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Summary.findOneAndRemove({
+  Summary.findOneAndDelete({
     _id: id
   }).then((summary) => {
     if (!summary) {
@@ -84,7 +84,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var body = _.pick(req.body, ['name', 'agenda', 'meetingdate', 'visible']);
   // console.log(`Patching summary, agenda point: ${body.agenda}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 

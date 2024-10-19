@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -63,7 +63,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -174,11 +174,11 @@ router.get('/count/:year', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Doc.findOneAndRemove({
+  Doc.findOneAndDelete({
     _id: id,
     _creator: req.user._id
   }).then((doc) => {
@@ -196,12 +196,12 @@ router.delete('/:id', authenticate, (req, res) => {
 router.delete('/admindelete/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
   if (req.user.role == 0) {
-    Doc.findOneAndRemove({
+    Doc.findOneAndDelete({
       _id: id
     }).then((doc) => {
       if (!doc) {
@@ -223,7 +223,7 @@ router.patch('/orientation/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Rotation: ${req.body.orientation}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   };

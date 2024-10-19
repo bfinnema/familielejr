@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -78,7 +78,7 @@ router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Photos, _id: ${id}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   };
@@ -145,11 +145,11 @@ router.get('/count/:year', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Photo.findOneAndRemove({
+  Photo.findOneAndDelete({
     _id: id,
     _creator: req.user._id
   }).then((photo) => {
@@ -167,12 +167,12 @@ router.delete('/:id', authenticate, (req, res) => {
 router.delete('/admindelete/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
   if (req.user.role == 0) {
-    Photo.findOneAndRemove({
+    Photo.findOneAndDelete({
       _id: id
     }).then((photo) => {
       if (!photo) {
@@ -194,7 +194,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Comment: ${req.body.text}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   }
@@ -227,7 +227,7 @@ router.patch('/orientation/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Rotation: ${req.body.orientation}`);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   };

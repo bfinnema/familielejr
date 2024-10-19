@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -254,7 +254,7 @@ router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(id);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
     // console.log('ID not accepted');
   };
@@ -262,7 +262,7 @@ router.delete('/:id', authenticate, (req, res) => {
   if (req.user._id == id) {console.log('You cannot delete yourself');};
 
   if (req.user.role == 0 && req.user._id != id) {
-    User.findOneAndRemove({
+    User.findOneAndDelete({
       _id: id
     }).then((user) => {
       if (!user) {

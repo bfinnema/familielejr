@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -37,7 +37,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
@@ -67,11 +67,11 @@ router.get('/year/:year', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
     var id = req.params.id;
 
-    if (!ObjectID.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).send();
     }
 
-    Expense.findOneAndRemove({
+    Expense.findOneAndDelete({
         _id: id
     }).then((expense) => {
         if (!expense) {
@@ -95,7 +95,7 @@ router.patch('/:id', authenticate, (req, res) => {
     body.registeree = uploader;
     body._creator = req.user._id;
 
-    if (!ObjectID.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).send();
     }
 

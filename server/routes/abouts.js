@@ -1,4 +1,4 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -71,7 +71,7 @@ router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log('This is the findById section');
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
@@ -92,7 +92,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['communityName', 'subHeading', 'nextHeadline', 'upcomingHeadline', 'metadata', 'textHeadlines']);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   }
@@ -119,7 +119,7 @@ router.patch('/noauth/:id', (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['_creator']);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   };
@@ -144,11 +144,11 @@ router.patch('/noauth/:id', (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   };
 
-  About.findOneAndRemove({
+  About.findOneAndDelete({
     _id: id,
     _creator: req.user._id
   }).then((about) => {
@@ -166,11 +166,11 @@ router.delete('/tenant/:_tenant', authenticate, (req, res) => {
   var _tenant = req.params._tenant;
   console.log(`Tenant ID: ${_tenant}`);
 
-  if (!ObjectID.isValid(_tenant)) {
+  if (!ObjectId.isValid(_tenant)) {
     return res.status(404).send();
   };
 
-  About.findOneAndRemove({
+  About.findOneAndDelete({
     _tenant: _tenant
   }).then((about) => {
     if (!about) {
