@@ -1,6 +1,6 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
 
@@ -59,7 +59,7 @@ router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log('This is the findById section');
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
     console.log('Invalid Id');
   }
@@ -96,7 +96,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['year', 'camp', 'address', 'website', 'startdate', 'enddate', 'organizers', 'committees']);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   }
@@ -116,11 +116,11 @@ router.patch('/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
-  Futurecamp.findOneAndRemove({
+  Futurecamp.findOneAndDelete({
     _id: id,
     _creator: req.user._id
   }).then((futurecamp) => {

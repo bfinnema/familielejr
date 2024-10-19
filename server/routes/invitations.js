@@ -1,6 +1,6 @@
-const {ObjectID} = require('mongodb');
+const {ObjectId} = require('mongodb');
 const _ = require('lodash');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
 
@@ -57,7 +57,7 @@ router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['headline', 'year', 'text1', 'camp', 'address', 'startdate', 'starttime', 'enddate', 'endtime', 'registration', 'bring', 'payment', 'text2', 'organizers']);
 
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
     return res.status(404).send();
   }

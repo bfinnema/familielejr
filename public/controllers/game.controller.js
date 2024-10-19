@@ -20,7 +20,7 @@ angular.module('familielejr')
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`GamesStatus: ${response.status}`);
+        // console.log(`GamesStatus: ${response.status}`);
         $scope.games = response.data;
     }, function errorCallback(response) {
         console.log(`GamesStatus: ${response.status}`);
@@ -118,8 +118,8 @@ angular.module('familielejr')
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $location.path('/games');
                 $route.reload();
             }, function errorCallback(response) {
