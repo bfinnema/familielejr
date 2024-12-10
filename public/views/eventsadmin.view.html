@@ -1,0 +1,201 @@
+
+<div ng-include="'navigation.html'"></div>
+
+<div ng-show="!newEventEntry">
+    <h2>Liste over fremtidige begivenheder, {{ showEventtype }}</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="10%">Navn</th>
+                <th width="8%">Kategori</th>
+                <th width="26%">Sted</th>
+                <th width="9%">Startdato</th>
+                <th width="9%">Slutdato</th>
+                <th width="24%">Arrangører</th>
+                <th width="14%">Ændre / Se detaljer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="event in events">
+                <td>{{ event.eventName }}</td>
+                <td>
+                    <a ng-click="findEventsOfType()">{{ event.eventtypeName }}</a>
+                </td>
+                <td><a href="{{event.website}}" target="_blank">{{ event.venue }}</a>, <a href="https://www.google.com/maps/search/{{event.address.street}},+{{event.address.zip}}+{{event.address.town}}" target="_blank">{{event.address.street}}, {{event.address.zip}} {{event.address.town}}</a></td>
+                <td>{{ event.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                <td>{{ event.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                <td><span ng-repeat="organizer in event.organizers">{{organizer.orgname}}, </span></td>
+                <td>
+                    <a class="btn btn-primary" href="#!eventsadmin/edit/{{event._id}}">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" href="#!eventsadmin/details/{{event._id}}">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="events == false">
+    <tr>
+        <td></td><td>Der er ikke nogen fremtidige begivenheder endnu</td>
+    </tr>
+</div>
+<hr>
+<div ng-show="newEventEntry">
+    <form name="formFutureEvent" ng-submit="generateFutureEvent()" novalidate>
+        <h2 class="form-signin-heading">Opret ny begivenhed</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du som arrangør oprette en ny, fremtidig begivenhed</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Type af begivenhed</label>
+                <select class="form-control" ng-model="selectEventtype" name="selectEventtype" required>
+                    <option ng-repeat="eventtype in eventtypes" value="{{eventtype._id}}">{{eventtype.eventtypeName}}</option>
+                </select>
+                <i ng-show="formFutureEvent.selectEventtype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Begivenhedens navn</label>
+                <input type="text" id="eventName" class="form-control" ng-model="eventName" placeholder="Begivenhedens navn">
+                <i ng-show="formFutureEvent.eventName.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Detaljer om stedet</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Navn</label>
+                <input type="text" id="venue" class="form-control" ng-model="venue" placeholder="Stedets navn">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Gade</label>
+                <input type="text" id="street" class="form-control" ng-model="street" placeholder="Gadenavn">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" id="zip" class="form-control" ng-model="zip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" id="town" class="form-control" ng-model="town" placeholder="By">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Hjemmeside</label>
+                <input type="text" id="website" class="form-control" ng-model="website" placeholder="Hjemmeside">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Startdato</label>
+                <input type="date" id="startdate" class="form-control" ng-model="startdate" name="startdate">
+                <i ng-show="formFutureEvent.startdate.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Slutdato</label>
+                <input type="date" id="enddate" class="form-control" ng-model="enddate" name="enddate">
+                <i ng-show="formFutureEvent.enddate.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Arrangører - op til 5</h3>
+        <div class="row">
+            <div ng-repeat="z in commMemArr">
+                <div class="form-group col-md-3" ng-show="organizerShow[z]">
+                    <div class="col-md-10">
+                        <label">Arrangør {{z+1}}</label>
+                        <input type="text" id="organizers[z]" class="form-control" ng-model="organizers[z]" placeholder="Navn på arrangør">
+                    </div>
+                    <div ng-show="numOrgLines > 0" class="col-md-2">
+                        <label style="color:white;">.</label>
+                        <a class="btn btn-danger" ng-click="removeOrganizer(z)">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-info" ng-show="organizerBtnShow[1]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[2]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[3]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[4]" ng-click="showOrgLine()">Tilføj arrangør</a>
+        </div>
+        <h3 class="form-signin-heading">Aktivitetsudvalg - der kan oprettes op til tre</h3>
+        <div class="row">
+            <div ng-repeat="y in commArr">
+                <div ng-show="committeeShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Udvalgets navn</label>
+                            <input type="text" id="committeeName[y]" class="form-control" ng-model="committeeName[y]" placeholder="Udvalgets navn">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="committeeDesc[y]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div ng-repeat="x in commMemArr">
+                            <div class="form-group col-md-3" ng-show="commMemShow[y][x]">
+                                <div class="col-md-10">
+                                    <label>Udvalgsmedlem {{x+1}}</label>
+                                    <input type="text" id="committeeMembers[y][x]" class="form-control" ng-model="committeeMembers[y][x]" placeholder="Navn på udvalgsmedlem">
+                                </div>
+                                <div ng-show="numCommMemLines[y] > 0" class="col-md-2">
+                                    <label style="color:white;">.</label>
+                                    <a class="btn btn-danger" ng-click="removeCommMem(y,x)">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][1]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][2]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][3]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][4]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="committeeBtnShow[0]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+            <a class="btn btn-info" ng-show="committeeBtnShow[1]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+            <a class="btn btn-info" ng-show="committeeBtnShow[2]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formFutureEvent.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Opret begivenhed</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="newEventEntryToggle()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newEventEntry">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newEventEntryToggle()">Indtast ny begivenhed</a>
+    </div>
+</div>

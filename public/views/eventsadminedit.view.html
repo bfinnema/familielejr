@@ -1,0 +1,140 @@
+<div ng-include="'navigation.html'"></div>
+
+<div ng-controller = "eventsadmineditCtrl">
+    <form name="formEditEvent" ng-submit="editEvent()" novalidate>
+        <h2 class="form-signin-heading">Ændre fremtidig begivenhed</h2>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Type af begivenhed</label>
+                <select class="form-control" ng-model="selectEventtype" name="selectEventtype" required>
+                    <option ng-repeat="eventtype in eventtypes" value="{{eventtype._id}}">{{eventtype.eventtypeName}}</option>
+                </select>
+                <i ng-show="formEditEvent.selectEventtype.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="year">År</label>
+                <input type="number" id="year" class="form-control" ng-model="event.year" required>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Detaljer om stedet</h3>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Stedets navn</label>
+                <input type="text" id="venue" class="form-control" ng-model="event.venue" placeholder="Stedets navn">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Gade</label>
+                <input type="text" id="event.address.street" class="form-control" ng-model="event.address.street" placeholder="Gadenavn">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" id="event.address.zip" class="form-control" ng-model="event.address.zip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" id="event.address.town" class="form-control" ng-model="event.address.town" placeholder="By">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Hjemmeside</label>
+                <input type="text" id="event.website" class="form-control" ng-model="event.website" placeholder="Hjemmeside">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Startdato</label>
+                <input type="date" id="startdateView" class="form-control" ng-model="startdateView" name="startdate">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Slutdato</label>
+                <input type="date" id="enddateView" class="form-control" ng-model="enddateView" name="enddate">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Arrangører</h3>
+        <div class="row">
+            <div ng-repeat="z in commMemArr">
+                <div class="form-group col-md-3" ng-show="organizerShow[z]">
+                    <div class="col-md-10">
+                        <label>Arrangør {{z+1}}</label>
+                        <input type="text" id="organizers[z]" class="form-control" ng-model="organizers[z]" placeholder="Navn på arrangør">
+                    </div>
+                    <div ng-show="numOrgLines > 0" class="col-md-2">
+                        <label style="color:white;">.</label>
+                        <a class="btn btn-danger" ng-click="removeOrganizer(z)">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-info form-group" ng-show="organizerBtnShow[1]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info form-group" ng-show="organizerBtnShow[2]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[3]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            <a class="btn btn-info" ng-show="organizerBtnShow[4]" ng-click="showOrgLine()">Tilføj arrangør</a>
+        </div>
+        <h3 class="form-signin-heading">Aktivitetsudvalg - der kan oprettes op til tre</h3>
+        <div class="row">
+            <div ng-repeat="y in commArr">
+                <div ng-show="committeeShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Udvalgets navn</label>
+                            <input type="text" id="committeeName[y]" class="form-control" ng-model="committeeName[y]" placeholder="Udvalgets navn">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" id="committeeDesc" ng-model="committeeDesc[y]" rows="3" placeholder="Beskrivelse, noter, beslutninger, m.m."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div ng-repeat="x in commMemArr">
+                            <div class="form-group col-md-3" ng-show="commMemShow[y][x]">
+                                <div class="col-md-10">
+                                    <label">Udvalgsmedlem {{x+1}}</label>
+                                    <input type="text" id="committeeMembers[y][x]" class="form-control" ng-model="committeeMembers[y][x]" placeholder="Navn på udvalgsmedlem">
+                                </div>
+                                <div ng-show="numCommMemLines[y]" class="col-md-2">
+                                    <label" style="color:white;">.</label>
+                                    <a class="btn btn-danger" ng-click="removeCommMem(y,x)">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][1]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][2]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][3]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                        <a class="btn btn-info" ng-show="commMemBtnShow[y][4]" ng-click="showCommMemLine(y)">Tilføj udvalgsmedlem</a>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="committeeBtnShow[0]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+            <a class="btn btn-info" ng-show="committeeBtnShow[1]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+            <a class="btn btn-info" ng-show="committeeBtnShow[2]" ng-click="showCommLine()">Tilføj aktivitetsudvalg</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formEditEvent.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Ændre begivenhed</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" href="#!eventsadmin">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>

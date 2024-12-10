@@ -29,12 +29,12 @@ function($scope, $http, AuthService, YearService) {
         headers: {
             'x-auth': localStorage.userToken
         }
-    }).then(function(response) {
-        // console.log(`Success. Status: ${response.status}`);
-        if (response.data) {
+    }).then(function(invitation) {
+        // console.log(`Success. Status: ${invitation.status}`);
+        if (invitation.data) {
             invitationExists = true;
             $scope.invitationExists = invitationExists;
-            $scope.invitation = response.data;
+            $scope.invitation = invitation.data;
             var sd = new Date($scope.invitation.startdate);
             $scope.startday = days[sd.getDay()];
             $scope.startdate = sd.getDate();
@@ -53,29 +53,37 @@ function($scope, $http, AuthService, YearService) {
             if ($scope.invitation.organizers[3]) {$scope.organizer4 = $scope.invitation.organizers[3].name;};
             if ($scope.invitation.organizers[4]) {$scope.organizer5 = $scope.invitation.organizers[4].name;};
         } else {
-            // console.log('Invitation does not exist');
+            console.log('Invitation does not exist');
         };
-    }, function errorCallback(response) {
-        console.log(`Error. Status: ${response.status}`);
-    });
-
-    $http({
-        method: 'GET',
-        url: '/futurecamps/future/' + pastyear,
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        // console.log(`Success. Status: ${response.status}`);
-        if (response.data) {
-            $scope.camps = response.data;
+        return $http({
+            method: 'GET',
+            url: '/futurecamps/future/' + pastyear,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(futurecamps) {
+        // console.log(`Success. Status: ${futurecamps.status}`);
+        if (futurecamps.data) {
+            $scope.camps = futurecamps.data;
             for (var i=0; i<$scope.camps.length; i++) {
                 $scope.showCommittees[$scope.camps[i].year] = false;
-                // console.log(`Year: ${$scope.camps[i].year}, showC: ${$scope.showCommittees[$scope.camps[i].year]}`);
+                console.log(`Year: ${$scope.camps[i].year}, showC: ${$scope.showCommittees[$scope.camps[i].year]}`);
             };
         } else {
-            console.log('No future camps');
+            // console.log('No future camps');
         };
+        return $http({
+            method: 'GET',
+            url: 'tenants/mytenant',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(tenant) {
+        // console.log(`Success. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenantDescription = tenant.data.description;
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });

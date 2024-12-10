@@ -23,8 +23,8 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  console.log(`Firstname: ${req.user.name.firstname}`);
-  console.log(`_tenant: ${req.user._tenant}`);
+  // console.log(`Firstname: ${req.user.name.firstname}`);
+  // console.log(`_tenant: ${req.user._tenant}`);
   Todo.find({_tenant: req.user._tenant}).then((todos) => {
     res.json(todos);
   }, (e) => {

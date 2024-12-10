@@ -1,84 +1,5 @@
 <div ng-include="'navigation.html'"></div>
 
-<!-- <div class="blog-header">
-    <h1 class="blog-title">Flensburg Familielejren</h1>
-    <p class="lead blog-description">For efterkommere af Anna og Niels Flensburg.</p>
-</div>
-<hr>
-<div class="row">
-    <div class="col-sm-8 blog-main">
-        <div class="blog-post">
-            <a href="#!photoalbum/historiske"><h2 class="blog-title">Flere historiske billeder af Bygebjerg m.m.</h2></a>
-            <div class="row">
-                <img class="img-responsive" src="images/IMG_3357.jpg">
-            </div>
-            <p class="blog-post-meta">Niels, Else Marie, Hans, Grethe, Christian, Inger, Anna. Sidst i fyrrerne</a></p>
-            <h2 class="blog-post-title">Om familielejren</h2>
-            <p class="blog-post-meta">Skrevet september 2018 af Morten. Opdateret af Bo August 2021</p>
-
-            <p>I 1993 fik Anna og Niels Flensburgs børn, Christian, Grethe, Else Marie, Inger og Hans den ide, 
-                at de gerne ville samle alle deres børn, svigerbørn og børnebørn i en stor flok én gang om året. 
-                De havde selv mødtes meget med deres fætre og kusiner på Bygebjerg da de var børn, og det 
-                sammenhold og de relationer ville de gerne give videre til de næste generationer.</p>
-            <p>De bookede Hejls Lejrskole fra lørdag til søndag en weekend i maj 1993, og de sendte 
-                invitationer ud til hele familien. Alle der kunne og havde lyst, kom til familielejren, 
-                og efter weekenden var alle enige om, at det skulle vi gøre igen. Vi blev også enige om, 
-                at den skulle udvides til hele weekenden, fordi et døgn var for kort tid til at nå de 
-                forskellige aktiviteter.</p>
-            <p>På Bygebjerg havde de altid leget Røvere og soldater, og det blev besluttet, at det altid 
-                skal være en del af familielejren. Samtidig var adgang til havet med bademuligheder også 
-                meget vigtigt. Et løb med poster og rundbold er også noget vi har lavet de fleste år.</p>
-            <p>Lejrskolen har været afholdt hvert år siden 1993, og det er en hel weekend, som så vidt det 
-                kan lade sig gøre, ligger i august.</p>
-            <hr>
-            <h3>Planlægning</h3>
-            <p>Der udpeges en planlægningsgruppe 3 til 4 år frem. Planlægningsgruppen sørger for at 
-                reservere en lejrskole et års tid i forvejen, så datoen kan meldes ud på familielejren 
-                året før. De sender en invitation ud i løbet af foråret, og eventuelt en påmindelse. 
-                Det sker på mail, men invitationen ligger også på Facebook gruppen og på denne hjemmeside. 
-                Planlægningsgruppen står for tilmeldinger, og de sker fortrinsvis via hjemmesiden, hvor 
-                alle familiemedlemmer kan oprette en profil og tilmelde sig lejrskolen. Hvis nogen tilmelder 
-                sig på anden måde, kan planlægningsgruppen oprette en tilmelding på hjemmesiden, hvor der så 
-                ligger en fuldstændig liste over deltagere på det pågældende års familielejr.</p>
-            <hr>
-            <h3>Mad</h3>
-            <p>Planlægningsholdet beslutter hvad vi skal spise, køber ind og laver madhold. Planlægningsholdet 
-                sørger for indkøb af drikkevarer (øl, sodavand og vin), som vi kan købe på familielejren.</p>
-            <hr>
-            <h3>Økonomi</h3>
-            <p>Planlægningsgruppen modtager betaling for familielejren og står for alle udgifter. 
-                Vi har oparbejdet en opsparing omtrent svarende til prisen for en familielejr. Derfor behøver 
-                man ikke betale for sin deltagelse før man møder op på familielejren.</p>
-            <p>Prisen for at deltage afhænger af ankomst- og afgangs-tidspunkt. Årets priser kan ses i invitationen.</p>
-            <hr>
-            <h3>Aktiviteter</h3>
-            <p>Vi udpeger en lille gruppe et til to år i forvejen, som står for aktiviteter på familielejren. 
-                Vi har besluttet, at det er foregående års arrangører, som står for underholdning og aktiviteter på 
-                årets familielejr.
-                Aktivitetsgruppen bestemmer selv hvor meget og hvad de vil arrangere. Aktivitetsgruppen må 
-                gerne involvere andre familiemedlemmer i planlægning og afvikling af aktiviteter.</p>
-            <hr>
-        </div> --><!-- /.blog-post -->
-
-        <!-- <p>{{keyPressed}}</p> -->
-<!-- 
-        <div class="col-md-1">
-            <a ng-click="testKeyPress1()" ng-keypress="testKeyPress1($event)"><span class="glyphicon glyphicon-chevron-left"></span></a>
-        </div>
-        <div class="col-md-1">
-            <a ng-click="testKeyPress2()" ng-keydown="$event.keyCode === 108 && testKeyPress2()"><span class="glyphicon glyphicon-chevron-right"></span></a>
-        </div>
-        
-        <div class="col-md-2">
-            Enter Text: <input type="text" ng-keypress="getkeys($event)" ng-model="ftxt"><br /><br />
-            <span style="color:Red">Last Key Code: {{keyval}}</span>
-        </div>
- -->        
-    <!-- </div> --> <!-- /.blog-main -->
-
-    <!-- <div ng-include="'sidebar.html'"></div> -->
-<!-- </div> --> <!-- /.row -->
-<hr>
 <div class="blog-header">
     <h1 class="blog-title">{{ about.communityName }}</h1>
     <p class="lead blog-description">{{ about.subHeading }}</p>
@@ -105,10 +26,6 @@
                 </div>
             </div>
 
-            <!-- <div class="row">
-                <img class="img-responsive" src="images/IMG_3357.jpg">
-            </div>
-            <p class="blog-post-meta">Niels, Else Marie, Hans, Grethe, Christian, Inger, Anna. Sidst i fyrrerne</a></p> -->
             <h2 class="blog-post-title">Om {{ about.communityName }}</h2>
             <p class="blog-post-meta">{{ about.metadata }}</p>
             <div ng-repeat="textHeadline in about.textHeadlines">
@@ -148,6 +65,14 @@
             <div class="form-group col-md-6">
                 <label for="subHeading">Under-overskrift</label>
                 <input type="text" id="subHeading" class="form-control" ng-model="about.subHeading" placeholder="Under-overskrift" required>
+            </div>
+        </div>
+        <div ng-show="numHistoricPhotos > 0" class="row">
+            <div class="form-group col-md-2">
+                <label>Vælg foto (valgfrit)</label>
+                <select class="form-control" ng-model="_photo" name="_photo">
+                    <option ng-repeat="image in images" value="{{image._id}}">{{image.filename}}</option>
+                </select>
             </div>
         </div>
         <div class="row">

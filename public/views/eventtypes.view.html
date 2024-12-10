@@ -1,0 +1,244 @@
+<div ng-include="'navigation.html'"></div>
+
+<h2 class="heading">Begivenheds kategorier</h2>
+<p>Disse kategorier bruges til generel information. Begivenheder oprettes på baggrund af en begivenheds kategori.</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="12%">Navn</th>
+            <th width="25%">Beskrivelse</th>
+            <th width="8%">Start år</th>
+            <th width="10%">Tidsskema</th>
+            <th width="35%">Deltagerkategorier</th>
+            <th width="10%">Slet / Ændre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="eventtype in eventtypes">
+            <td>{{ eventtype.eventtypeName }}</td>
+            <td>{{ eventtype.description }}</td>
+            <td>{{ eventtype.startYear }}</td>
+            <td>{{ eventtype.schedule }}</td>
+            <td>
+                <p ng-repeat="partCat in eventtype.participantCategories">
+                    {{ partCat.name }}: <i ng-show="partCat.minAge>0">{{ partCat.minAge }} år - </i>
+                    <i ng-show="partCat.maxAge>0 && partCat.maxAge<100">- {{ partCat.maxAge }} år</i>
+                    <i ng-show="eventtype.charge">. Fuld pris: {{ partCat.priceFull }}</i>
+                    <i ng-show="eventtype.charge">, Dagspris: {{ partCat.priceDay }} </i>
+                </p>
+            </td>
+            <td>
+                <a class="btn btn-primary" ng-click="editEventtypeToggle(eventtype)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" ng-click="removeEventtype(eventtype)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<div ng-show="newEventtype">
+    <h2>Indtast en ny begivenhedskategori</h2>
+    <form name="newEventtypeForm" ng-submit="addEventtype()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Vare</label>
+                <input type="text" class="form-control" ng-model="eventtypeName" name="eventtypeName" placeholder="Kategoriens navn" autofocus required>
+                <i ng-show="newEventtypeForm.eventtypeName.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="freeEvent">Gratis begivenhed</label>
+                <input type="checkbox" ng-model="freeEvent" id="freeEvent">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="description" name="description" rows="2" placeholder="Beskrivelse" required></textarea>
+                <i ng-show="newEventtypeForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="startYear">Start år</label>
+                <input type="number" id="startYear" class="form-control" ng-model="startYear" placeholder="År">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Tidsskema</label>
+                <select class="form-control" ng-model="schedule" name="schedule" required>
+                    <option ng-repeat="schedule in schedules" value="{{schedule.schedule}}">{{schedule.schedule}}</option>
+                </select>
+                <i ng-show="newEventtypeForm.schedule.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Deltager kategorier - op til 10</h3>
+        <div class="row">
+            <div ng-repeat="y in partCats">
+                <div ng-show="partCatShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Kategorinavn</label>
+                            <input type="text" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].name" placeholder="Navn">
+                        </div>
+                        <div ng-show="numPartCats > 0" class="col-md-2">
+                            <label style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removePartCat(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <label>Active? </label>
+                            <input type="checkbox" ng-model="eventtypeToEdit.participantCategories[y].active" id="babyActive">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="minAge">Minimum alder</label>
+                            <input type="number" id="minAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].minAge" placeholder="Min. Alder">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="maxAge">Maximum alder</label>
+                            <input type="number" id="maxAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].maxAge" placeholder="Max Alder">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="priceFull">Fuld Pris</label>
+                            <input type="number" id="priceFull" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceFull" placeholder="Fuld pris">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="priceDay">Pris en dag</label>
+                            <input type="number" id="priceDay" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceDay" placeholder="Pris for en dag">
+                        </div>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="partCatsBtnShow[1]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[2]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[3]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[4]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[5]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[6]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newEventtypeForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newEventtypeToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editEventtype">
+    <h2>Ændre en begivenhedskategori</h2>
+    <form name="editEventtypeForm" ng-submit="eventtypeEdit()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Vare</label>
+                <input type="text" class="form-control" ng-model="eventtypeToEdit.eventtypeName" name="eventtypeName" placeholder="Kategoriens navn" autofocus required>
+                <i ng-show="newEventtypeForm.eventtypeName.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Gratis begivenhed</label>
+                <input type="checkbox" ng-model="editFreeEvent" id="editFreeEvent">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label>Beskrivelse</label>
+                <textarea class="form-control" ng-model="eventtypeToEdit.description" name="description" rows="2" placeholder="Beskrivelse" required></textarea>
+                <i ng-show="newEventtypeForm.description.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="startYear">Start år</label>
+                <input type="number" id="startYear" class="form-control" ng-model="eventtypeToEdit.startYear" placeholder="Første år">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Tidsskema</label>
+                <select class="form-control" ng-model="eventtypeToEdit.schedule" name="schedule" required>
+                    <option ng-repeat="schedule in schedules" value="{{schedule.schedule}}">{{schedule.schedule}}</option>
+                </select>
+                <i ng-show="newEventtypeForm.schedule.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Deltager kategorier - op til 10</h3>
+        <div class="row">
+            <div ng-repeat="y in partCats">
+                <div ng-show="partCatShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Kategorinavn</label>
+                            <input type="text" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].name" placeholder="Navn">
+                        </div>
+                        <div ng-show="numPartCats > 0" class="col-md-2">
+                            <label style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removePartCat(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <label>Active? </label>
+                            <input type="checkbox" ng-model="eventtypeToEdit.participantCategories[y].active" id="babyActive">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="minAge">Minimum alder</label>
+                            <input type="number" id="minAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].minAge" placeholder="Min. Alder">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="maxAge">Maximum alder</label>
+                            <input type="number" id="maxAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].maxAge" placeholder="Max Alder" ng-change="ageChanged('babyMax')">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="priceFull">Fuld Pris</label>
+                            <input type="number" id="priceFull" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceFull" placeholder="Fuld pris">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="priceDay">Pris en dag</label>
+                            <input type="number" id="priceDay" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceDay" placeholder="Pris for en dag">
+                        </div>
+                    </div>
+                <hr>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <a class="btn btn-info" ng-show="partCatsBtnShow[1]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[2]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[3]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[4]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[5]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[6]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editEventtypeForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editEventtypeToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newEventtype && !editEventtype">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newEventtypeToggle()">Indtast ny begivenhedskategori</a>
+    </div>
+</div>

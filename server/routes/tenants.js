@@ -8,7 +8,7 @@ var {Tenant} = require('../models/tenant');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-  console.log(`In tenants. name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
+  // console.log(`In tenants. name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
   var tenant = new Tenant({
       tenantName: req.body.tenantName,
       description: req.body.description,
@@ -27,7 +27,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.post('/noauth', (req, res) => {
-  console.log(`name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
+  // console.log(`name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
   var tenant = new Tenant({
       tenantName: req.body.tenantName,
       description: req.body.description,
@@ -46,6 +46,17 @@ router.post('/noauth', (req, res) => {
 router.get('/', authenticate, (req, res) => {
   Tenant.find({}).then((tenants) => {
     res.json(tenants);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/mytenant', authenticate, (req, res) => {
+  // console.log(`Getting mytenant. Firstname: ${req.user.name.firstname}`);
+  Tenant.findOne({
+    _id: req.user._tenant
+  }).then((tenant) => {
+    res.json(tenant);
   }, (e) => {
     res.status(400).send(e);
   });
@@ -122,7 +133,7 @@ router.patch('/:id', authenticate, (req, res) => {
 router.patch('/noauth/:id', (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['_admin', '_creator']);
-  console.log(`Patching tenant, _admin id: ${body._admin}`);
+  // console.log(`Patching tenant, _admin id: ${body._admin}`);
 
   if (!ObjectId.isValid(id)) {
     return res.status(404).send();

@@ -34,7 +34,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.post('/noauth', (req, res) => {
-  console.log(`In abouts. communityName: ${req.body.communityName}`);
+  // console.log(`In abouts. communityName: ${req.body.communityName}`);
   var about = new About({
     _tenant: req.body._tenant,
     communityName: req.body.communityName,
@@ -90,7 +90,19 @@ router.patch('/:id', authenticate, (req, res) => {
   // console.log(`Firstname: ${req.user.name.firstname}`);
   // console.log(`_tenant: ${req.user._tenant}`);
   var id = req.params.id;
+  var _photo = req.body._photo;
   var body = _.pick(req.body, ['communityName', 'subHeading', 'nextHeadline', 'upcomingHeadline', 'metadata', 'textHeadlines']);
+  // console.log(`_photo: ${_photo}`);
+  // console.log(body);
+  
+  if (_photo != "none") {
+    if (ObjectId.isValid(_photo)) {
+      // console.log(`_photo id is valid`);
+      body._photo = _photo;
+    };
+  } else {
+    // console.log(`${_photo} is not a valid image id.`);
+  };
 
   if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);
@@ -115,7 +127,7 @@ router.patch('/:id', authenticate, (req, res) => {
 });
 
 router.patch('/noauth/:id', (req, res) => {
-  console.log(`_creator: ${req.body._creator}`);
+  // console.log(`_creator: ${req.body._creator}`);
   var id = req.params.id;
   var body = _.pick(req.body, ['_creator']);
 

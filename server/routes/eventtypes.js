@@ -1,0 +1,94 @@
+const {ObjectId} = require('mongodb');
+const _ = require('lodash');
+const express = require('express');
+const router = express.Router();
+
+var {Eventtype} = require('../models/eventtype');
+var {authenticate} = require('../middleware/authenticate');
+
+router.post('/', authenticate, (req, res) => {
+    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'participantCategories']);
+    body._creator = req.user._id;
+    body._tenant = req.user._tenant;
+    var eventtype = new Eventtype(body);
+
+    eventtype.save().then((doc) => {
+        res.json(doc);
+    }, (e) => {
+        res.status(400).send(e);
+    });
+});
+
+router.get('/', authenticate, (req, res) => {
+    Eventtype.find({
+        _tenant: req.user._tenant
+    }).then((eventtypes) => {
+        res.json(eventtypes);
+    }, (e) => {
+        res.status(400).send(e);
+    });
+});
+
+router.get('/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Eventtype.findOne({
+    _id: id
+  }).then((eventtype) => {
+    if (!eventtype) {
+      return res.status(404).send();
+    }
+
+    res.json(eventtype);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+router.delete('/:id', authenticate, (req, res) => {
+    var id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Eventtype.findOneAndDelete({
+        _id: id
+    }).then((eventtype) => {
+        if (!eventtype) {
+        return res.status(404).send();
+    }
+
+        res.json(eventtype);
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
+router.patch('/:id', authenticate, (req, res) => {
+    var id = req.params.id;
+    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'participantCategories']);
+    console.log(`Patching Eventtype, Description: ${body.description}, Name: ${body.eventtypeName}`);
+
+    body._creator = req.user._id;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Eventtype.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventtype) => {
+        if (!eventtype) {
+        return res.status(404).send();
+        }
+
+        res.json(eventtype);
+    }).catch((e) => {
+        res.status(400).send();
+    })
+});
+
+module.exports = router;

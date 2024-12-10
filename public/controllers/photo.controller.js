@@ -42,7 +42,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
 
         $http({
             method: 'GET',
-            url: `/photos/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`,
+            url: `/photos/s3ops/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`,
             headers: {
                 'x-auth': localStorage.userToken
             }

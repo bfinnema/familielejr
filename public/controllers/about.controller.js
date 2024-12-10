@@ -41,7 +41,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             }
         });
     }).then(function(photocount) {
-        $scope.numHistoricPhotos += photocount.data.count;
+        $scope.numHistoricPhotos = photocount.data.count;
         console.log(`numHistoricPhotos: ${$scope.numHistoricPhotos}`);
         if ($scope.about._photo) {
             $http({
@@ -222,6 +222,29 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $scope.numParagraphs = numParagraphs;
             $scope.numHeadlines = numHeadlines;
 
+            $http({
+                method: 'GET',
+                url: '/photos/year/historiske',
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(response) {
+                console.log(`Historic photos, Status: ${response.status}`);
+                $scope.images = response.data;
+                if (!response.data[0]) {
+                    console.log('No historic photos')
+                    $scope.imagesExist = false;
+                } else {
+                    $scope.imagesExist = true;
+                    for (x=0; x<$scope.images.length; x++) {
+                        $scope.images[x].num = x;
+                        console.log(`${$scope.images[x].num}: ${$scope.images[x].filename}, orientation: ${$scope.images[x].orientation}`);
+                    };
+                };
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+
             console.log(`----- DB -----`);
             for (var u=0; u<$scope.about.textHeadlines.length; u++) {
                 console.log(`${$scope.about.textHeadlines[u].h3}`);
@@ -286,6 +309,12 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
         
         if (textHeadlines.length > 0) {data.textHeadlines = textHeadlines;};
+        console.log(`Photo selected: ${$scope._photo}`);
+        if ($scope._photo) {
+            data._photo = $scope._photo;
+        } else {
+            data._photo = "none";
+        };
 
         // console.log(`${STOP}`);
 

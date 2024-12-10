@@ -222,6 +222,10 @@ function ($q, $timeout, $http) {
                 demarcationMonth = defaultDemarcationMonth;
                 demarcationDate = defaultDemarcationDate;
                 break;
+            case "eventsadmin":
+                demarcationMonth = defaultDemarcationMonth;
+                demarcationDate = defaultDemarcationDate;
+                break;
             case "home":
                 demarcationMonth = defaultDemarcationMonth;
                 demarcationDate = defaultDemarcationDate;
@@ -347,10 +351,10 @@ function ($q, $timeout, $http) {
 
     function eventPriceDefault() {
         var eventPriceDefault = {adult:[], child:[], smallchild:[]};
-        eventPriceDefault.adult.push({"price": 220});
-        eventPriceDefault.adult.push({"price": 360});
-        eventPriceDefault.child.push({"price": 110});
-        eventPriceDefault.child.push({"price": 200});
+        eventPriceDefault.adult.push({"price": 270});
+        eventPriceDefault.adult.push({"price": 440});
+        eventPriceDefault.child.push({"price": 140});
+        eventPriceDefault.child.push({"price": 250});
         eventPriceDefault.smallchild.push({"price": 0});
         eventPriceDefault.smallchild.push({"price": 0});
         // console.log(`In Services. Adult, one day: ${eventPriceDefault.adult[0].price}`);

@@ -101,8 +101,8 @@ function($scope, $http, $location, ProfileService) {
                 url: 'tenants/noauth',
                 data: tenant
             }).then(function(tenant_response) {
-                console.log(`Tenant Status: ${tenant_response.status}`);
-                console.log(`Tenant ID: ${tenant_response.data._id}`);
+                // console.log(`Tenant Status: ${tenant_response.status}`);
+                // console.log(`Tenant ID: ${tenant_response.data._id}`);
                 $scope._tenant = tenant_response.data._id;
                 about._tenant = $scope._tenant;
                 return $http({
@@ -111,26 +111,19 @@ function($scope, $http, $location, ProfileService) {
                     data: about
                 });
             }).then(function(about_response) {
-                console.log(`About Status 1: ${about_response.status}`);
-                console.log(`About ID 1: ${about_response.data._id}`);
+                // console.log(`About Status 1: ${about_response.status}`);
                 $scope.aboutID = about_response.data._id;
-                console.log(`Tenant ID: ${$scope._tenant}`);
-                console.log(`tenantAdmin name: ${tenantAdmin.name}`);
-                console.log(`tenantAdmin email: ${tenantAdmin.email}`);
+                // console.log(`Tenant ID: ${$scope._tenant}`);
                 tenantAdmin._tenant = $scope._tenant;
-                console.log(`tenantAdmin name: ${tenantAdmin.name}`);
-                console.log(`tenantAdmin email: ${tenantAdmin.email}`);
                 return $http({
                     method: 'POST',
                     url: '/users',
                     data: tenantAdmin
                 });
             }).then(function(user_response) {
-                console.log(`User Status: ${user_response.status}`);
-                console.log(`User ID: ${user_response.data._id}`);
-                localStorage.userToken = response.headers()['x-auth'];
-                localStorage.familielejrUserId = response.data._id;
-                $location.path('/home');
+                // console.log(`User Status: ${user_response.status}`);
+                localStorage.userToken = user_response.headers()['x-auth'];
+                localStorage.familielejrUserId = user_response.data._id;
                 $scope.isLoggedIn = true;
                 var tenant = {
                     _creator: user_response.data._id,
@@ -138,14 +131,14 @@ function($scope, $http, $location, ProfileService) {
                 };
                 $scope._creator = user_response.data._id;
                 $scope._admin = user_response.data._id;
+                // console.log(`Now patching tenant with _creator ${tenant._creator} and _admin ${tenant._admin}`);
                 return $http({
                     method: 'PATCH',
                     url: 'tenants/noauth/'+$scope._tenant,
                     data: tenant
                 });
             }).then(function(tenant2_response) {
-                console.log(`Second Tenant Status: ${tenant2_response.status}`);
-                console.log(`Tenant ID second time: ${tenant2_response.data._id}`);
+                // console.log(`Second Tenant Status: ${tenant2_response.status}`);
                 var about = {
                     _creator: $scope._creator
                 };
@@ -155,27 +148,12 @@ function($scope, $http, $location, ProfileService) {
                     data: about
                 });
             }).then(function(about2_response) {
-                console.log(`About Status: ${about2_response.status}`);
-                console.log(`About ID: ${about2_response.data._id}`);
+                // console.log(`About Status: ${about2_response.status}`);
                 $location.path('/home');
-                // $route.reload();
             }, function errorCallback(response) {
-                console.log(`User Status: ${response.status}`);
+                console.log(`Error Status, new tenant and admin: ${response.status}`);
                 alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
             });
-    
-            /* $http.post('/users', data).then(function(response) {
-                // console.log(response.headers());
-                // console.log('Status: ' + response.status);
-                // console.log(response.data._id, response.data.email);
-                localStorage.userToken = response.headers()['x-auth'];
-                localStorage.familielejrUserId = response.data._id;
-                $location.path('/home');
-                $scope.isLoggedIn = true;
-            }, function errorCallback(response) {
-                console.log(`getUserStatus: ${response.status}`);
-                alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
-            }); */
         };
     };
 }])
@@ -287,20 +265,33 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         headers: {
             'x-auth': token
         }
-    }).then(function(response) {
-        // console.log(`profileUserStatus: ${response.status}`);
-        // console.log(response.data._id, response.data.email);
-        if (response.data._id === localStorage.familielejrUserId) {
+    }).then(function(user) {
+        // console.log(`profileUserStatus: ${user.status}`);
+        // console.log(user.data._id, user.data.email);
+        if (user.data._id === localStorage.familielejrUserId) {
             $scope.isLoggedIn = true;
-            $scope.user = response.data;
-            $scope.role = response.data.role;
+            $scope.user = user.data;
+            $scope.role = user.data.role;
             // console.log(`Role: ${$scope.role}`);
-            // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}`);
+            // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}, ${$scope.user._id}`);
+            // console.log(`Tenant _id: ${$scope.user._tenant}`);
         } else {
             alert('Something fishy...');
         };
         angular.element(document.querySelector( '#myprofile' ) ).addClass('active');
         angular.element(document.querySelector( '#myaccount' ) ).addClass('active');
+
+        return $http({
+            method: 'GET',
+            url: 'tenants/' + $scope.user._tenant,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(tenant) {
+        // console.log(`tenantStatus: ${tenant.status}`);
+        $scope.tenant = tenant.data.tenant;
+        // console.log(`Tenant name: ${$scope.tenant.tenantName}`);
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });

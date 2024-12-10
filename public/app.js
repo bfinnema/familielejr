@@ -154,11 +154,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
-        when('/slideshow/:year', { // not used at the moment
+        /* when('/slideshow/:year', { // not used at the moment
             templateUrl: 'views/slideshow.view.html',
             controller: 'slideshowCtrl',
             access: {restricted: true}
-        }).
+        }). */
         when('/myphotoalbum', {
             templateUrl: 'views/myphotoalbum.view.html',
             controller: 'myphotoalbumCtrl',
@@ -204,6 +204,26 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'futurecampsCtrl',
             access: {restricted: true}
         }).
+        when('/eventtypes', {
+            templateUrl: 'views/eventtypes.view.html',
+            controller: 'eventtypesCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin', {
+            templateUrl: 'views/eventsadmin.view.html',
+            controller: 'eventsadminCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin/edit/:id', {
+            templateUrl: 'views/eventsadminedit.view.html',
+            controller: 'eventsadmineditCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin/details/:id', {
+            templateUrl: 'views/eventsadmindetails.view.html',
+            controller: 'eventsadmindetailsCtrl',
+            access: {restricted: true}
+        }).
         when('/summaries', {
             templateUrl: 'views/summaries.view.html',
             controller: 'summariesCtrl',
@@ -224,11 +244,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'accountingCtrl',
             access: {restricted: true}
         }).
-        when('/expenses', {
+        /* when('/expenses', {
             templateUrl: 'views/expenses.view.html',
             controller: 'expensesCtrl',
             access: {restricted: true}
-        }).
+        }). */
         when('/groceries', {
             templateUrl: 'views/groceries.view.html',
             controller: 'groceriesCtrl',

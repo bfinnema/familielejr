@@ -1,4 +1,4 @@
-angular.module('familielejr')
+/* angular.module('familielejr')
 
 .controller('expensesCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 
 function($scope, $http, $location, $route, $window, AuthService, YearService) {
@@ -141,4 +141,4 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
     };
 
-}]);
+}]); */
