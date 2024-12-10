@@ -5,6 +5,10 @@ var DocSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     year: {
         type: String
     },

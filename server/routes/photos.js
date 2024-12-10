@@ -25,6 +25,7 @@ router.post('/upload', authenticate, (req, res) => {
       var photo = new Photo({
         _creator: req.body.user,
         year: req.body.year,
+        _tenant: req.user._tenant,
         filename: fn,
         filetype: req.body.filetype,
         path: 'images/' + req.body.year + '/',
@@ -64,9 +65,28 @@ router.get('/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`Photos, year: ${year}`);
   Photo.find({
-    year: year
+    year: year,
+    _tenant: req.user._tenant
   }).then((photos) => {
     res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`Photos, _id: ${id}`);
+
+  if (!ObjectId.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  };
+
+  Photo.findOne({
+    _id: id
+  }).then((photo) => {
+    res.json(photo);
   }, (e) => {
     res.status(400).send(e);
   });
@@ -97,7 +117,7 @@ router.get('/my/:year', authenticate, (req, res) => {
 
 router.get('/my/count/:year', authenticate, (req, res) => {
   var year = req.params.year;
-  // console.log(`My photos year ${year}, user: ${req.user._id}`);
+  // console.log(`Count of my photos year ${year}, user: ${req.user._id}`);
   Photo.find({
     _creator: req.user._id, year: year
   }).countDocuments().then((count) => {
@@ -110,9 +130,10 @@ router.get('/my/count/:year', authenticate, (req, res) => {
 
 router.get('/count/:year', authenticate, (req, res) => {
   var year = req.params.year;
-  // console.log(`My photos year ${year}, user: ${req.user._id}`);
+  // console.log(`Count Photos year ${year}, user: ${req.user._id}`);
   Photo.find({
-    year: year
+    year: year,
+    _tenant: req.user._tenant
   }).countDocuments().then((count) => {
     var result = {"year":year,"count":count};
     res.json(result);
@@ -223,7 +244,7 @@ router.patch('/orientation/:id', authenticate, (req, res) => {
   });
 });
 
-router.get('/sign-s3', (req, res) => {
+router.get('/s3ops/sign-s3', authenticate, (req, res) => {
   const s3 = new aws.S3();
   const fileName = req.query['file_name'];
   const fileType = req.query['file_type'];
@@ -256,12 +277,16 @@ router.get('/sign-s3', (req, res) => {
   });
 });
 
-router.get('/sign-s3-getimage', (req, res) => {
+router.get('/s3ops/sign-s3-getimage', authenticate, (req, res) => {
+  // console.log(`In sign-s3-getimage. fileName: ${req.query['file_name']}`);
   const s3 = new aws.S3();
   const fileName = req.query['file_name'];
   const fileType = req.query['file_type'];
   const folder = req.query['folder'];
   const operation = req.query['operation'];
+
+  // console.log(`File name: ${fileName}, fileType: ${fileType}, folder: ${folder}, operation: ${operation}`);
+  // console.log(`S3_BUCKET: ${S3_BUCKET}`);
   
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
@@ -269,6 +294,8 @@ router.get('/sign-s3-getimage', (req, res) => {
     Key: albumPhotosKey + fileName,
     Expires: 1800
   };
+
+  // console.log(`Key in s3Params: ${s3Params.Key}`);
 
   s3.getSignedUrl(operation, s3Params, (err, data) => {
     if(err){
@@ -284,7 +311,7 @@ router.get('/sign-s3-getimage', (req, res) => {
   });
 });
 
-router.get('/sign-s3-deleteimage', (req, res) => {
+router.get('/s3ops/sign-s3-deleteimage', authenticate, (req, res) => {
   const s3 = new aws.S3();
   const fileName = req.query['file_name'];
   const fileType = req.query['file_type'];

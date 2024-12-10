@@ -283,7 +283,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
 
     $http({
         method: 'GET',
-        url: 'eventregs/all/year/' + invyear
+        url: 'eventregs/all/year/' + invyear,
+        headers: {
+            'x-auth': localStorage.userToken
+        }
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         $scope.registrations = response.data;
@@ -480,7 +483,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         // console.log(`url: ${url}`);
         $http({
             method: 'GET',
-            url: url
+            url: url,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
             // console.log(response.data);

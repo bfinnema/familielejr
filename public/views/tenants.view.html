@@ -1,0 +1,148 @@
+<div ng-include="'navigation.html'"></div>
+
+<h2 class="heading">Tenants</h2>
+<p></p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="15%">Tenant Name</th>
+            <th width="40%">Description</th>
+            <th width="20%">Subscriptions</th>
+            <th width="15%">Administrator</th>
+            <th width="10%">Ændre / Slet</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="tenant in tenants">
+            <td>{{ tenant.tenantName }}</td>
+            <td>{{ tenant.description }}</td>
+            <td>
+                <p>Events: <input type="checkbox" ng-model="tenant.subscriptions.events.subscribe" id="events" ng-change="eventSubscription(tenant)"> </p>
+                <p>Multiple Events: <input type="checkbox" ng-model="tenant.subscriptions.events.multipleEventsPerYear" id="multipleEvents" ng-change="multipleEventSubscription(tenant)"> </p>
+                <p>Familytree: <input type="checkbox" ng-model="tenant.subscriptions.familyTree" id="familyTree" ng-change="familyTreeSubscription(tenant)"> </p>
+                <p>Photo Gallery: <input type="checkbox" ng-model="tenant.subscriptions.photoGallery" id="photoGallery" ng-change="photoGallerySubscription(tenant)"> </p>
+                <p>Summaries: <input type="checkbox" ng-model="tenant.subscriptions.summaries" id="summaries" ng-change="summariesSubscription(tenant)"> </p>
+                <p>Accounting: <input type="checkbox" ng-model="tenant.subscriptions.accounting" id="accounting" ng-change="accountingSubscription(tenant)"> </p>
+            </td>
+            <td></td>
+            <td>
+                <a class="btn btn-primary" ng-click="editTenantToggle(tenant)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a class="btn btn-primary" ng-click="removeTenant(tenant)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<div ng-show="newTenant">
+    <h2>Register a new tenant</h2>
+    <form name="newTenantForm" ng-submit="addTenant()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Tenant Name</label>
+                <input type="text" class="form-control" ng-model="tenantname" name="tenantname" placeholder="Tenant name" autofocus required>
+                <i ng-show="newTenantForm.tenantname.$error.required">*Must enter</i>
+            </div>
+            <div class="form-group col-md-8">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="description" name="description" placeholder="Description" required>
+                <i ng-show="newTenantForm.description.$error.required">*Must enter</i>
+            </div>
+        </div>
+        <h3>Subscriptions</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Events</label>
+                <input type="checkbox" class="form-control" ng-model="events" name="events">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Multiple Events</label>
+                <input type="checkbox" class="form-control" ng-model="multipleevents" name="multipleevents">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Family Tree</label>
+                <input type="checkbox" class="form-control" ng-model="familytree" name="familytree">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Photo Gallery</label>
+                <input type="checkbox" class="form-control" ng-model="photogallery" name="photogallery">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Summaries</label>
+                <input type="checkbox" class="form-control" ng-model="summaries" name="summaries">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Accounting</label>
+                <input type="checkbox" class="form-control" ng-model="accounting" name="accounting">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="newTenantForm.$invalid" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="newTenantToggle()">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-show="editTenant">
+    <h2>Change a Tenant</h2>
+    <form name="editTenantForm" ng-submit="tenantEdit()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Tenant Name</label>
+                <input type="text" class="form-control" ng-model="tenantToEdit.tenantName" name="tenantToEdit.tenantName" autofocus required>
+                <i ng-show="editTenantForm.tenantToEdit.tenantName.$error.required">*Must enter</i>
+            </div>
+            <div class="form-group col-md-8">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="tenantToEdit.description" name="tenantToEdit.description" required>
+                <i ng-show="editTenantForm.tenantToEdit.description.$error.required">*Must enter</i>
+            </div>
+        </div>
+        <h3>Subscriptions</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Events</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.events.subscribe" name="events">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Multiple Events</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.events.multipleEventsPerYear" name="multipleevents">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Family Tree</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.familyTree" name="familytree">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Photo Gallery</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.photogallery" name="photogallery">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Summaries</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.summaries" name="summaries">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Accounting</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.accounting" name="accounting">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editTenantForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editTenantToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!newTenant && !editTenant">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newTenantToggle()">Register a new Tenant</a>
+    </div>
+</div>

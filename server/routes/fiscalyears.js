@@ -13,7 +13,8 @@ router.post('/', authenticate, (req, res) => {
     if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
     registeree = registeree + ' ' + req.user.name.surname
     body._creator = req.user._id;
-    body.registeree = registeree
+    body.registeree = registeree;
+    body._tenant = req.user._tenant;
     var fiscalyear = new FiscalYear(body);
 
     fiscalyear.save().then((doc) => {
@@ -24,7 +25,9 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    FiscalYear.find({}).then((fiscalyears) => {
+    FiscalYear.find({
+        _tenant: req.user._tenant
+    }).then((fiscalyears) => {
         res.json(fiscalyears);
     }, (e) => {
         res.status(400).send(e);
@@ -52,9 +55,12 @@ router.get('/:id', authenticate, (req, res) => {
 });
 
 // Get fiscalyear for one year
-router.get('/year/:year', (req, res) => {
-    var year = req.params.year;
+router.get('/year/:year', authenticate, (req, res) => {
+//   console.log(`Firstname: ${req.user.name.firstname}`);
+//   console.log(`_tenant: ${req.user._tenant}`);
+  var year = req.params.year;
     FiscalYear.findOne({
+        _tenant: req.user._tenant,
         year: year
     }).then((fiscalyear) => {
         if (!fiscalyear) {

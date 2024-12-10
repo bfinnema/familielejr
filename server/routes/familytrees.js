@@ -8,17 +8,14 @@ var {Familytree} = require('../models/familytree');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-  // console.log(`admin: ${req.body._admin}, level: ${req.body.level}, parent: ${req.body._parent_id}, family: ${req.body._family_id}, klan: ${req.body.klan}, _kid: ${req.body._kid}, ${req.body.persons[0].firstname}`);
-
-  if (!ObjectId.isValid(req.body._admin)) {
-    console.log(`Admin ID not valid: ${req.body._admin}`);
-    // return res.status(404).send();
-  }
+  // console.log(`Tenant: ${req.user._tenant}, level: ${req.body.level}, parent: ${req.body._parent_id}, family: ${req.body._family_id}, klan: ${req.body.klan}, description: ${req.body.description}, _kid: ${req.body._kid}, ${req.body.persons[0].firstname}`);
 
   var familytree = new Familytree({
-    _admin: req.body._admin,
+    _admin: req.user._id,
+    _tenant: req.user._tenant,
     level: req.body.level,
     klan: req.body.klan,
+    description: req.body.description,
     _kid: req.body._kid,
     _parent_id: req.body._parent_id,
     _family_id: req.body._family_id,
@@ -28,12 +25,15 @@ router.post('/', authenticate, (req, res) => {
   familytree.save().then((doc) => {
     res.send(doc);
   }, (e) => {
+    console.log(e)
     res.status(400).send(e);
   });
 });
 
 router.get('/', authenticate, (req, res) => {
-  Familytree.find({}).then((familytrees) => {
+  Familytree.find({
+    _tenant: req.user._tenant
+  }).then((familytrees) => {
     // console.log(`Familytree: ${familytrees[0]}`);
     res.json(familytrees);
   }, (e) => {
@@ -46,7 +46,28 @@ router.get('/:level', authenticate, (req, res) => {
   // console.log(`Klan: ${klan}`);
 
   Familytree.find({
+    _tenant: req.user._tenant,
     level: level
+  }).then((familytrees) => {
+    if (!familytrees) {
+      return res.status(404).send();
+    }
+
+    res.json(familytrees);
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+router.get('/parent_kid/:parent_id/:kid', authenticate, (req, res) => {
+  var _parent_id = req.params.parent_id;
+  var _kid = req.params.kid;
+  // console.log(`_parent_id: ${_parent_id}. _kid: ${_kid}`);
+
+  Familytree.find({
+    _tenant: req.user._tenant,
+    _parent_id: _parent_id,
+    _kid: _kid
   }).then((familytrees) => {
     if (!familytrees) {
       return res.status(404).send();
@@ -63,6 +84,7 @@ router.get('/parent/:parent_id', authenticate, (req, res) => {
   // console.log(`Klan: ${klan}`);
 
   Familytree.find({
+    _tenant: req.user._tenant,
     _parent_id: _parent_id
   }).then((familytrees) => {
     if (!familytrees) {

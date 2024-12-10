@@ -1,0 +1,51 @@
+<div ng-include="'navigation.html'"></div>
+
+<div>
+	<a href="#!eventsadmin">Tilbage</a>
+    <h1>{{event.eventName}}, år: {{event.year}}</h1>
+    <h2>Kategori: {{event.eventtypeName}}</h2>
+    <hr>
+    <div class="row">
+        <h2>Sted: {{event.venue}}</h2>
+        <div class="col-md-4">
+            <h3>Adresse:</h3>
+            <p>{{event.address.street}}
+            <p>{{event.address.zip}} {{event.address.town}}</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Arrangører</h3>
+            <div ng-if="event.organizers">
+                <div ng-repeat="organizer in event.organizers">
+                    <p>{{organizer.orgname}}</p>
+                </div>
+            </div>
+            <div ng-show="event.organizers.length < 1">
+                <p>Der er kke nogen arrangører</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Datoer</h3>
+            <p>Startdato: {{event.startdate | date:'dd-MM-yyyy' : 'CET' }}</p>
+            <p>Slutdato: {{event.enddate | date:'dd-MM-yyyy' : 'CET' }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <h2>Udvalg</h2>
+        <div ng-if="event.committees">
+            <div class="col-md-4" ng-repeat="committee in event.committees">
+                <h3>Navn: {{committee.name}}</h3>
+                <p>Beskrivelse: {{committee.description}}</p>
+                <h3>Deltagere:</h3>
+                <p ng-repeat="member in committee.members">{{member.membername}}</p>
+            </div>
+        </div>
+        <div ng-if="event.committees.length < 1">
+            <p>Der er ikke oprettet nogen udvalg.</p>
+        </div>
+    </div>
+    <hr>
+	<div ng-show="role < 2" class="actions">
+		<a href="#!eventsadmin/edit/{{event._id}}" class="btn btn-default">Ændre begivenheden</a>
+		<a href="#" class="btn btn-danger" ng-click="removeEvent()">Slet begivenheden</a>
+	</div>
+</div>

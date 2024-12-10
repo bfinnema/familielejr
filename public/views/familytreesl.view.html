@@ -3,17 +3,17 @@
 <div class="row">
     <div class="blog-header col-md-6">
         <h1 class="blog-title">Stamtræ</h1>
-        <p class="lead blog-description">Det Flensburgske stamtræ</p>
+        <p class="lead blog-description">{{ familytreeDescription }}</p>
     </div>
     <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytreeedit/{{l1family._family_id}}">Ændre stamtræet</a>
+        <a class="btn btn-warning btn-block" href="#!familytreeedit/1/{{_L0_family_id}}/{{l1family._family_id}}">Ændre stamtræet</a>
     </div>
 </div>
 
 <div class="tree row">
 	<ul>
 		<li>
-            <a href="#!familytree">
+            <a href="#!familytree/0/{{ _L0_family_id }}">
                 <span ng-repeat="person in l1family.persons">
                     {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>

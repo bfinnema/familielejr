@@ -3,14 +3,11 @@
 <h2 class="heading">Referater fra generalforsamlingerne</h2>
 <hr>
 <div ng-repeat="summary in summaries">
-    <a class="btn btn-primary" ng-click="makeVisible(summary)">{{ summary.year }}</a>
+    <a class="btn btn-primary" ng-click="makeVisible(summary)">{{ summary.name }}</a>
     <div ng-show="summary.visible">
         <h3>Mødedato: {{ summary.meetingdate | date:'dd-MM-yyyy' }}</h3>
         <p></p>
         <h3>Dagsorden:</h3>
-        <!-- <div ng-repeat="agendaitem in summary.agenda">
-            <h4>{{ agendaitem.item }}</h4>
-        </div> -->
         <ol class="item-steps list-group">
             <li ng-repeat="agendaitem in summary.agenda" class="list-group-item">{{ agendaitem.item }}</li>
         </ol>
@@ -40,8 +37,8 @@
         </div>
         <div class="row">
             <div class="form-group col-md-2">
-                <label for="year">År</label>
-                <input type="number" id="year" class="form-control" ng-model="year" placeholder="År" autofocus required>
+                <label for="name">Unikt navn</label>
+                <input type="text" id="name" class="form-control" ng-model="name" placeholder="Navn" autofocus required>
             </div>
             <div class="form-group col-md-2">
                 <label>Mødedato</label>
@@ -119,8 +116,8 @@
         </div>
         <div class="row">
             <div class="form-group col-md-2">
-                <label for="year">År</label>
-                <input type="number" id="year" class="form-control" ng-model="editSummary.year" placeholder="År" autofocus required>
+                <label for="name">Unikt navn</label>
+                <input type="text" id="name" class="form-control" ng-model="editSummary.name" placeholder="Navn" autofocus required>
             </div>
             <div class="form-group col-md-2">
                 <label>Mødedato</label>

@@ -5,8 +5,16 @@ var InvitationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     year: {
         type: Number,
+        required: true
+    },
+    invitationName: {
+        type: String,
         required: true,
         unique: true
     },

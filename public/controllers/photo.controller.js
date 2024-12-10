@@ -42,7 +42,10 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
 
         $http({
             method: 'GET',
-            url: `/photos/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             // console.log(response);
             // console.log(response.data.url);
@@ -267,7 +270,10 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
 
             $http({
                 method: 'GET',
-                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/s3ops/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
             }).then(function(response) {
                 console.log(response.data.signedRequest);
 
@@ -323,7 +329,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 }
             };
             $scope.mainImageObj.imagetext.push(newtextobj);
-            console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
+            // console.log(`${JSON.stringify($scope.mainImageObj.imagetext)}`);
             $scope.mycomment = '';
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
@@ -337,12 +343,15 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         var folder = $scope.images[photoNum].year;
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
-            console.log("Signed request: "+response.data.signedRequest);
+            // console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
             $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            console.log(`mainImage: ${$scope.mainImage}`);
+            // console.log(`mainImage: ${$scope.mainImage}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -624,7 +633,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         var folder = $scope.images[photoNum].year;
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
         }).then(function(response) {
             console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
@@ -849,7 +858,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
 
             $http({
                 method: 'GET',
-                url: `/photos/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`
+                url: `/photos/s3ops/sign-s3-deleteimage?file_name=${image.filename}&file_type=${image.filetype}&folder=${image.year}&operation=${'deleteObject'}`,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
             }).then(function(response) {
                 // console.log(response.data.signedRequest);
 
@@ -941,12 +953,15 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
         var folder = $scope.images[photoNum].year;
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
-            // console.log("Signed request: "+response.data.signedRequest);
+            console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
             $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            // console.log(`mainImage: ${$scope.mainImage}`);
+            console.log(`mainImage: ${$scope.mainImage}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -1170,7 +1185,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
 
         $http({
             method: 'GET',
-            url: `/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
+            url: `/s3ops/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             console.log(response);
             console.log(response.data.url);

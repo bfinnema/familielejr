@@ -7,6 +7,16 @@
     </div>
     <form name="formRegister" class="formRegister" id="formRegister" ng-submit="registerUser()" novalidate>
         <h2 class="form-signin-heading">Registrering</h2>
+        <!-- <h3 class="form-signin-heading">Familie / Forening</h3> -->
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Familie / Forening</label>
+                <select class="form-control" ng-model="_tenant" name="_tenant">
+                    <option ng-repeat="tenant in tenants" value="{{tenant._id}}">{{tenant.tenantName}}</option>
+                </select>
+                <i ng-show="formRegister.tenantName.$error.required">Skal vælges. </i>
+            </div>
+        </div>
         <h3 class="form-signin-heading">Brugernavn (email) og kodeord</h3>
         <div class="row">
             <div class="form-group col-md-4">

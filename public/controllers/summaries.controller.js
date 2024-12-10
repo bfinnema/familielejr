@@ -12,8 +12,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     });
 
     var invyear = YearService.myYear("futurecamps");
-    var pastyear = invyear - 1;
-    // console.log(`summariesCtrl: Invyear: ${invyear}, Pastyear: ${pastyear}`);
+    // console.log(`summariesCtrl: Invyear: ${invyear}`);
     $scope.newSummaryEntry = false;
     $scope.editSummaryEntry = false;
 
@@ -44,7 +43,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     $scope.numAgendaItems = 0;
     var numAgendaItems
     $scope.editSummary = {
-        "year": invyear,
+        "name": "Referat-"+invyear.toString()+"-1",
         "meetingdate": new Date(),
         "visible": false
     };
@@ -138,7 +137,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
 
         var data = {
-            year: $scope.year,
+            name: $scope.name,
             meetingdate: $scope.meetingdate,
             visible: false,
         };
@@ -157,6 +156,9 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
+            if (response.status == 409) {
+                $window.alert("Navnet på referatet findes allerede. Vær venlig at ændre det.");
+            };
         });
  
     };
@@ -168,8 +170,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         }; */
 
         var data = {
-            year: $scope.year,
-            meetingdate: $scope.meetingdate,
+            name: $scope.editSummary.name,
+            meetingdate: $scope.editMeetingdate,
             agenda: $scope.editSummary.agenda,
             visible: false,
         };
@@ -186,8 +188,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
+            if (response.status == 409) {
+                $window.alert("Navnet på referatet findes allerede. Vær venlig at ændre det.");
+            };
         });
- 
     };
 
     $scope.removeSummary = function(summary) {

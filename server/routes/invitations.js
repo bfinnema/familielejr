@@ -11,6 +11,8 @@ router.post('/', authenticate, (req, res) => {
   var invitation = new Invitation({
     headline: req.body.headline,
     year: req.body.year,
+    invitationName: req.body.invitationName,
+    _tenant: req.user._tenant,
     text1: req.body.text1,
     camp: req.body.camp,
     address: req.body.address,
@@ -37,6 +39,7 @@ router.post('/', authenticate, (req, res) => {
 router.get('/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   Invitation.findOne({
+    _tenant: req.user._tenant,
     year: year
   }).then((invitation) => {
     res.json(invitation);
@@ -46,7 +49,9 @@ router.get('/year/:year', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  Invitation.find({}).then((invitations) => {
+  Invitation.find({
+    _tenant: req.user._tenant
+  }).then((invitations) => {
     res.json(invitations);
   }, (e) => {
     res.status(400).send(e);

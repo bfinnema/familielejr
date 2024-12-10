@@ -15,6 +15,7 @@ router.post('/', authenticate, (req, res) => {
     name: req.body.name,
     agegroup: req.body.agegroup,
     year: req.body.year,
+    _tenant: req.user._tenant,
     willattend: req.body.willattend,
     arrivalday: req.body.arrivalday,
     arrivaltime: req.body.arrivaltime,
@@ -92,6 +93,7 @@ router.patch('/fee/:id', authenticate, (req, res) => {
 // Get all event registrations for all years submitted by a specific member
 router.get('/', authenticate, (req, res) => {
   Eventreg.find({
+    _tenant: req.user._tenant,
     _creator: req.user._id
   }).then((eventregs) => {
     res.json(eventregs);
@@ -104,6 +106,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:year', authenticate, (req, res) => {
   var year = req.params.year;
   Eventreg.find({
+    _tenant: req.user._tenant,
     _creator: req.user._id,
     year: year
   }).then((eventregs) => {
@@ -114,8 +117,10 @@ router.get('/:year', authenticate, (req, res) => {
 });
 
 // Get all event registrations for all years
-router.get('/all', (req, res) => {
-  Eventreg.find({}).then((eventregs) => {
+router.get('/all', authenticate, (req, res) => {
+  Eventreg.find({
+    _tenant: req.user._tenant
+  }).then((eventregs) => {
     res.json(eventregs);
   }, (e) => {
     res.status(400).send(e);
@@ -123,9 +128,9 @@ router.get('/all', (req, res) => {
 });
 
 // Get all event registrations for one year
-router.get('/all/year/:year', (req, res) => {
+router.get('/all/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
-  Eventreg.find({year: year}).sort({willattend:-1}).then((eventregs) => {
+  Eventreg.find({_tenant: req.user._tenant, year: year}).sort({willattend:-1}).then((eventregs) => {
     // console.log(`Regs: ${eventregs[0].name}`);
     res.json(eventregs);
   }, (e) => {
@@ -134,13 +139,13 @@ router.get('/all/year/:year', (req, res) => {
 });
 
 // Get all event registrations for one year, sorted
-router.get('/all/sort/:year/:sortDirection', (req, res) => {
+router.get('/all/sort/:year/:sortDirection', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`sortDirection: ${req.params.sortDirection}`);
   var sd = 1;
   if (req.params.sortDirection == "up") {sd = -1};
   // console.log(`sd: ${sd}`);
-  Eventreg.find({year: year}).sort({name:sd}).then((eventregs) => {
+  Eventreg.find({_tenant: req.user._tenant, year: year}).sort({name:sd}).then((eventregs) => {
     // console.log(`Regs: ${eventregs[0].name}`);
     res.json(eventregs);
   }, (e) => {
@@ -149,11 +154,11 @@ router.get('/all/sort/:year/:sortDirection', (req, res) => {
 });
 
 // Search registrations for one year
-router.get('/all/search/:year/:searchText', (req, res) => {
+router.get('/all/search/:year/:searchText', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`searchText: ${req.params.searchText}`);
   var sd = 1;
-  Eventreg.find({year: year, name: {"$regex":req.params.searchText}}).sort({name:sd}).then((eventregs) => {
+  Eventreg.find({_tenant: req.user._tenant ,year: year, name: {"$regex":req.params.searchText}}).sort({name:sd}).then((eventregs) => {
     // console.log(`Regs: ${eventregs[0].name}`);
     res.json(eventregs);
   }, (e) => {

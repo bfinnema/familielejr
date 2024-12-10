@@ -3,10 +3,10 @@
 <div class="row">
     <div class="blog-header col-md-6">
         <h1 class="blog-title">Stamtræ</h1>
-        <p class="lead blog-description">Det Flensburgske stamtræ</p>
+        <p class="lead blog-description">{{ familytreeDescription }}</p>
     </div>
     <div class="col-md-4" ng-show="role == 0">
-        <a class="btn btn-warning btn-block" href="#!familytree">Forlad edit</a>
+        <a class="btn btn-warning btn-block" href="#!familytree/0/{{ _L0_family_id }}">Forlad edit</a>
     </div>
 </div>
 
@@ -19,12 +19,12 @@
                     <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
                 </span>
             </a>
-            <a class="btn btn-primary" ng-click="editFamily(familytree._family_id, 0)">
+            <a class="btn btn-primary" ng-show="!initiatingFamilytree" ng-click="editFamily(familytree._family_id, 0)">
                 <i class="glyphicon glyphicon-edit"></i>
             </a>
 			<ul>
 				<li ng-repeat="l1family in familytree.secondlevel">
-                    <a href="#!familytreeedit/{{l1family._family_id}}">
+                    <a href="#!familytreeedit/1/{{_L0_family_id}}/{{l1family._family_id}}">
                         <span ng-repeat="person in l1family.persons">
                             {{person.firstname}} {{person.middlename}}<br> {{person.surname}}<br>
                             <i ng-show="person.birth || person.pass">{{ person.birth | date:'dd-MM-yyyy' : 'CET' }} {{ person.pass | date:'dd-MM-yyyy' : 'CET' }}<br></i>
@@ -38,14 +38,14 @@
                     </a>
                     <ul>
                         <li>
-                            <a class="btn btn-primary" href="#!familytreeedit/{{l1family._family_id}}">
+                            <a class="btn btn-primary" href="#!familytreeedit/1/{{_L0_family_id}}/{{l1family._family_id}}">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a class="btn btn-primary" ng-click="addFamily(1,familytree._family_id)">
+                    <a class="btn btn-primary" ng-show="!initiatingFamilytree" ng-click="addFamily(1,familytree._family_id)">
                         <i class="glyphicon glyphicon-plus"></i>
                     </a>
                 </li>
@@ -62,7 +62,12 @@
 <div ng-show="addNamesForm || editNamesForm">
     <hr>
     <form name="form-addname" class="form-addname" ng-submit="addOrEditNames()">
-        <h2 class="form-signin-heading">{{ headLine }}</h2>
+        <div class="form-group col-md-6" ng-show="initiatingFamilytree">
+            <label>Beskrivelse af stamtræet</label>
+            <input type="text" class="form-control" ng-model="description" placeholder="Beskrivelse">
+        </div>
+        <div class="row"><p>.</p></div>
+        <h2 class="row form-signin-heading">{{ headLine }}</h2>
         <div ng-repeat="x in nameArr">
             <div ng-show="newnameShow[x]">
                 <h3 class="form-signin-heading">Person {{x+1}}</h3>

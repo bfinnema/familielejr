@@ -35,6 +35,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'registerCtrl',
             access: {restricted: false}
         }).
+        when('/add-new_tenant', {
+            templateUrl: 'views/newtenant.view.html',
+            controller: 'newtenantCtrl',
+            access: {restricted: false}
+        }).
         when('/changepassword', {
             templateUrl: 'views/changepassword.view.html',
             controller: 'changepwdCtrl',
@@ -95,22 +100,22 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventinfoCtrl',
             access: {restricted: true}
         }).
-        when('/familytree', {
-            templateUrl: 'views/familytree.view.html',
+        when('/familytree/0/:_L0_family_id', {
+            templateUrl: 'views/familytree.view.html',  // Handles level 0. There are up to six levels; 0, 1, 2, 3, 4, 5
             controller: 'familytreeCtrl',
             access: {restricted: true}
         }).
-        when('/familytree/:_family_id', {
-            templateUrl: 'views/familytreesl.view.html',
+        when('/familytree/1/:_L0_family_id/:_L1_family_id', {
+            templateUrl: 'views/familytreesl.view.html', // sl stands for 'second level', which is used when selecting a level 1 family
             controller: 'familytreeslCtrl',
             access: {restricted: true}
         }).
-        when('/familytreeedit', {
+        when('/familytreeedit/0/:_L0_family_id', {
             templateUrl: 'views/familytreeedit.view.html',
             controller: 'familytreeCtrl',
             access: {restricted: true}
         }).
-        when('/familytreeedit/:_family_id', {
+        when('/familytreeedit/1/:_L0_family_id/:_L1_family_id', {
             templateUrl: 'views/familytreesledit.view.html',
             controller: 'familytreeslCtrl',
             access: {restricted: true}
@@ -149,11 +154,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'photoalbumCtrl',
             access: {restricted: true}
         }).
-        when('/slideshow/:year', { // not used at the moment
+        /* when('/slideshow/:year', { // not used at the moment
             templateUrl: 'views/slideshow.view.html',
             controller: 'slideshowCtrl',
             access: {restricted: true}
-        }).
+        }). */
         when('/myphotoalbum', {
             templateUrl: 'views/myphotoalbum.view.html',
             controller: 'myphotoalbumCtrl',
@@ -199,6 +204,26 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'futurecampsCtrl',
             access: {restricted: true}
         }).
+        when('/eventtypes', {
+            templateUrl: 'views/eventtypes.view.html',
+            controller: 'eventtypesCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin', {
+            templateUrl: 'views/eventsadmin.view.html',
+            controller: 'eventsadminCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin/edit/:id', {
+            templateUrl: 'views/eventsadminedit.view.html',
+            controller: 'eventsadmineditCtrl',
+            access: {restricted: true}
+        }).
+        when('/eventsadmin/details/:id', {
+            templateUrl: 'views/eventsadmindetails.view.html',
+            controller: 'eventsadmindetailsCtrl',
+            access: {restricted: true}
+        }).
         when('/summaries', {
             templateUrl: 'views/summaries.view.html',
             controller: 'summariesCtrl',
@@ -219,11 +244,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'accountingCtrl',
             access: {restricted: true}
         }).
-        when('/expenses', {
+        /* when('/expenses', {
             templateUrl: 'views/expenses.view.html',
             controller: 'expensesCtrl',
             access: {restricted: true}
-        }).
+        }). */
         when('/groceries', {
             templateUrl: 'views/groceries.view.html',
             controller: 'groceriesCtrl',
@@ -237,6 +262,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/docupload', {
             templateUrl: 'views/docupload.view.html',
             controller: 'docuploadCtrl',
+            access: {restricted: true}
+        }).
+        when('/tenants', {
+            templateUrl: 'views/tenants.view.html',
+            controller: 'tenantCtrl',
             access: {restricted: true}
         }).
 		otherwise({redirectTo: '/'})

@@ -13,7 +13,8 @@ router.post('/', authenticate, (req, res) => {
     if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
     registeree = registeree + ' ' + req.user.name.surname
     body._creator = req.user._id;
-    body.registeree = registeree
+    body.registeree = registeree;
+    body._tenant = req.user._tenant;
     var expense = new Expense(body);
 
     expense.save().then((doc) => {
@@ -24,7 +25,9 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    Expense.find({}).then((expenses) => {
+    Expense.find({
+        _tenant: req.user._tenant
+    }).then((expenses) => {
         res.json(expenses);
     }, (e) => {
         res.status(400).send(e);
@@ -52,9 +55,9 @@ router.get('/:id', authenticate, (req, res) => {
 });
 
 // Get all expenses for one year
-router.get('/year/:year', (req, res) => {
+router.get('/year/:year', authenticate, (req, res) => {
     var year = req.params.year;
-    Expense.find({year: year}).then((expenses) => {
+    Expense.find({year: year, _tenant: req.user._tenant}).then((expenses) => {
         res.json(expenses);
     }, (e) => {
         res.status(400).send(e);

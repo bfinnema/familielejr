@@ -25,6 +25,7 @@ router.post('/upload', authenticate, (req, res) => {
       var doc = new Doc({
         _creator: req.body.user,
         year: req.body.year,
+        _tenant: req.body._tenant,
         filename: fn,
         filetype: req.body.filetype,
         category: req.body.category,
@@ -50,7 +51,9 @@ router.post('/upload', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  Doc.find({}).then((docs) => {
+  Doc.find({
+    _tenant: req.user._tenant
+  }).then((docs) => {
     res.json(docs);
   }, (e) => {
     res.status(400).send(e);
@@ -81,6 +84,7 @@ router.get('/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`Docs, year: ${year}`);
   Doc.find({
+    _tenant: req.user._tenant,
     year: year
   }).then((docs) => {
     res.json(docs);
@@ -94,6 +98,7 @@ router.get('/yearandcat/:year/:category', authenticate, (req, res) => {
   var category = req.params.category;
   // console.log(`Docs, year: ${year}, category: ${category}`);
   Doc.find({
+    _tenant: req.user._tenant,
     year: year,
     category: category
   }).then((docs) => {
@@ -104,10 +109,11 @@ router.get('/yearandcat/:year/:category', authenticate, (req, res) => {
 });
 
 router.get('/category/:category', authenticate, (req, res) => {
-    var category = req.params.category;
+  var category = req.params.category;
     // console.log(`Docs, category: ${category}`);
     Doc.find({
-        category: category
+      _tenant: req.user._tenant,
+      category: category
     }).then((docs) => {
       res.json(docs);
     }, (e) => {
@@ -155,6 +161,7 @@ router.get('/count/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`My docs year ${year}, user: ${req.user._id}`);
   Doc.find({
+    _tenant: req.user._tenant,
     year: year
   }).countDocuments().then((count) => {
     var result = {"year":year,"count":count};

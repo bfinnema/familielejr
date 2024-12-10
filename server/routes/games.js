@@ -13,6 +13,7 @@ router.post('/', authenticate, (req, res) => {
   registeree = registeree + ' ' + req.user.name.surname
   var game = new Game({
     name: req.body.name,
+    _tenant: req.user._tenant,
     description: req.body.description,
     _creator: req.user._id,
     createdBy: registeree
@@ -26,7 +27,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-  Game.find({}).then((games) => {
+  Game.find({_tenant: req.user._tenant}).then((games) => {
     res.json(games);
   }, (e) => {
     res.status(400).send(e);

@@ -2,14 +2,14 @@
 
 <div>
 	<a href="#!futurecamps">Tilbage</a>
-    <h1>Familielejr i {{camp.year}}</h1>
+    <h1>{{camp.eventName}}, år: {{camp.year}}</h1>
     <hr>
     <div class="row">
         <h2>Lejr: {{camp.camp}}</h2>
         <div class="col-md-4">
             <h3>Adresse:</h3>
             <p>{{camp.address.street}}
-            <p>{{user.address.zip}} {{camp.address.town}}</p>
+            <p>{{camp.address.zip}} {{camp.address.town}}</p>
         </div>
         <div class="col-md-4">
             <h3>Arrangører</h3>

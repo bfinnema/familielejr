@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('registerCtrl', ['$scope', '$http', '$location', 'AuthService', 'ProfileService', 
-function($scope, $http, $location, AuthService, ProfileService) {
+.controller('newtenantCtrl', ['$scope', '$http', '$location', 'ProfileService', 
+function($scope, $http, $location, ProfileService) {
 
     $scope.countries = ProfileService.countries();
     $scope.floors = ProfileService.floors();
@@ -12,13 +12,182 @@ function($scope, $http, $location, AuthService, ProfileService) {
 
     $http({
         method: 'GET',
-        url: '/users/count'
+        url: '/users/count/all'
     }).then(function(response) {
         // console.log(`Users count Status: ${response.status}`);
         // console.log(`Users count: ${response.data}`);
         $scope.userCount = response.data;
         if ($scope.userCount < $scope.maxUserCount) {
             $scope.registrationAllowed = true;
+            $http({
+                method: 'GET',
+                url: '/tenants/noauth'
+            }).then(function(response) {
+                // console.log(`Success. Status: ${response.status}`);
+                $scope.tenants = response.data;
+                // console.log($scope.tenants[0]);
+            }, function errorCallback(response) {
+                console.log(`Error. Status: ${response.status}`);
+            });
+        
+        } else {
+            console.log("Too many users. You cannot register");
+        };
+        angular.element(document.querySelector( '#register' ) ).addClass('active');
+    }, function errorCallback(response) {
+        console.log(`Users count Status: ${response.status}`);
+    });
+
+    $scope.addTenant = function() {
+        // console.log(`inputEmail: ${$scope.inputEmail}, inputPassword: ${$scope.inputPassword}`);
+
+        var subscriptions = {
+            events: {
+                subscribe: $scope.events,
+                multipleEventsPerYear: $scope.multipleevents
+            },
+            familyTree: $scope.familytree,
+            photoGallery: $scope.photogallery,
+            summaries: $scope.summaries,
+            accounting: $scope.accounting
+        };
+
+        var tenant = {
+            tenantName: $scope.tenantname,
+            description: $scope.description,
+            startYear: (new Date()).getFullYear(),
+            subscriptions: subscriptions
+        };
+
+        var textHeadlines = [];
+        var headline = {
+            h3: "Indtast dine egne overskrifter",
+            paragraphs: [{paragraph: "Din første paragraf"}, {paragraph: "Din anden paragraf"}]
+        };
+        textHeadlines.push(headline);
+ 
+        var about = {
+            communityName: $scope.tenantname,
+            subHeading: "Din sub-overskrift",
+            nextHeadline: "Din næste begivenhed",
+            upcomingHeadline: "Dine kommende begivenheder",
+            metadata: "Dine metadata",
+            textHeadlines: textHeadlines
+        };
+
+        var name = {
+            firstname: $scope.firstname, middlename: $scope.middlename, surname: $scope.surname
+        };
+
+        var addr = {
+            street: $scope.street, houseno: $scope.houseno, floor: $scope.floor, direction: $scope.direction, zip: $scope.zip, town: $scope.town, country: $scope.country
+        };
+        
+		var tenantAdmin = {
+            email: $scope.inputEmail,
+            password: $scope.inputPassword,
+            confirmpwd: $scope.repeatPassword,
+            role: 0, // The one who registers a new tenant is Admin of the tenant.
+            name: name,
+			address: addr,
+            phone: $scope.phone,
+            secret: $scope.secret
+		};
+
+        if ($scope.registrationAllowed) {
+
+            $http({
+                method: 'POST',
+                url: 'tenants/noauth',
+                data: tenant
+            }).then(function(tenant_response) {
+                // console.log(`Tenant Status: ${tenant_response.status}`);
+                // console.log(`Tenant ID: ${tenant_response.data._id}`);
+                $scope._tenant = tenant_response.data._id;
+                about._tenant = $scope._tenant;
+                return $http({
+                    method: 'POST',
+                    url: 'abouts/noauth',
+                    data: about
+                });
+            }).then(function(about_response) {
+                // console.log(`About Status 1: ${about_response.status}`);
+                $scope.aboutID = about_response.data._id;
+                // console.log(`Tenant ID: ${$scope._tenant}`);
+                tenantAdmin._tenant = $scope._tenant;
+                return $http({
+                    method: 'POST',
+                    url: '/users',
+                    data: tenantAdmin
+                });
+            }).then(function(user_response) {
+                // console.log(`User Status: ${user_response.status}`);
+                localStorage.userToken = user_response.headers()['x-auth'];
+                localStorage.familielejrUserId = user_response.data._id;
+                $scope.isLoggedIn = true;
+                var tenant = {
+                    _creator: user_response.data._id,
+                    _admin: user_response.data._id
+                };
+                $scope._creator = user_response.data._id;
+                $scope._admin = user_response.data._id;
+                // console.log(`Now patching tenant with _creator ${tenant._creator} and _admin ${tenant._admin}`);
+                return $http({
+                    method: 'PATCH',
+                    url: 'tenants/noauth/'+$scope._tenant,
+                    data: tenant
+                });
+            }).then(function(tenant2_response) {
+                // console.log(`Second Tenant Status: ${tenant2_response.status}`);
+                var about = {
+                    _creator: $scope._creator
+                };
+                return $http({
+                    method: 'PATCH',
+                    url: 'abouts/noauth/'+$scope.aboutID,
+                    data: about
+                });
+            }).then(function(about2_response) {
+                // console.log(`About Status: ${about2_response.status}`);
+                $location.path('/home');
+            }, function errorCallback(response) {
+                console.log(`Error Status, new tenant and admin: ${response.status}`);
+                alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
+            });
+        };
+    };
+}])
+
+.controller('registerCtrl', ['$scope', '$http', '$location', 'ProfileService', 
+function($scope, $http, $location, ProfileService) {
+
+    $scope.countries = ProfileService.countries();
+    $scope.floors = ProfileService.floors();
+    $scope.directions = ProfileService.directions();
+
+    $scope.maxUserCount = 100;
+    $scope.registrationAllowed = false;
+
+    $http({
+        method: 'GET',
+        url: '/users/count/all'
+    }).then(function(response) {
+        // console.log(`Users count Status: ${response.status}`);
+        // console.log(`Users count: ${response.data}`);
+        $scope.userCount = response.data;
+        if ($scope.userCount < $scope.maxUserCount) {
+            $scope.registrationAllowed = true;
+            $http({
+                method: 'GET',
+                url: '/tenants/noauth'
+            }).then(function(response) {
+                // console.log(`Success. Status: ${response.status}`);
+                $scope.tenants = response.data;
+                // console.log($scope.tenants[0]);
+            }, function errorCallback(response) {
+                console.log(`Error. Status: ${response.status}`);
+            });
+        
         } else {
             console.log("Too many users. You cannot register");
         };
@@ -46,7 +215,8 @@ function($scope, $http, $location, AuthService, ProfileService) {
             name: name,
 			address: addr,
             phone: $scope.phone,
-            secret: $scope.secret
+            secret: $scope.secret,
+            _tenant: $scope._tenant
 		};
 
         if ($scope.registrationAllowed) {
@@ -63,19 +233,24 @@ function($scope, $http, $location, AuthService, ProfileService) {
                 alert('Indtastede du korrekt hemmelighed? De to kodeord skal være identiske.');
             });
         };
-
     };
-
 }])
 
 .controller('profileCtrl', ['$scope', '$http', '$location', '$route', 'AuthService', 'ProfileService',
 function($scope, $http, $location, $route, AuthService, ProfileService) {
 
+    $scope.isLoggedIn = false;
+    AuthService.getUserStatus().then(function() {
+        if (AuthService.isLoggedIn()) {
+            $scope.isLoggedIn = true;
+            $scope.role = AuthService.userRole();
+        };
+    });
+
     $scope.countries = ProfileService.countries();
     $scope.floors = ProfileService.floors();
     $scope.directions = ProfileService.directions();
 
-    $scope.isLoggedIn = false;
     $scope.editProfile = false;
 
     var token;
@@ -90,20 +265,33 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         headers: {
             'x-auth': token
         }
-    }).then(function(response) {
-        // console.log(`profileUserStatus: ${response.status}`);
-        // console.log(response.data._id, response.data.email);
-        if (response.data._id === localStorage.familielejrUserId) {
+    }).then(function(user) {
+        // console.log(`profileUserStatus: ${user.status}`);
+        // console.log(user.data._id, user.data.email);
+        if (user.data._id === localStorage.familielejrUserId) {
             $scope.isLoggedIn = true;
-            $scope.user = response.data;
-            $scope.role = response.data.role;
+            $scope.user = user.data;
+            $scope.role = user.data.role;
             // console.log(`Role: ${$scope.role}`);
-            // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}`);
+            // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}, ${$scope.user._id}`);
+            // console.log(`Tenant _id: ${$scope.user._tenant}`);
         } else {
             alert('Something fishy...');
         };
         angular.element(document.querySelector( '#myprofile' ) ).addClass('active');
         angular.element(document.querySelector( '#myaccount' ) ).addClass('active');
+
+        return $http({
+            method: 'GET',
+            url: 'tenants/' + $scope.user._tenant,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(tenant) {
+        // console.log(`tenantStatus: ${tenant.status}`);
+        $scope.tenant = tenant.data.tenant;
+        // console.log(`Tenant name: ${$scope.tenant.tenantName}`);
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });

@@ -27,6 +27,10 @@ var docs = require('./routes/docs');
 var nonactiveusers = require('./routes/nonactiveusers');
 var groceries = require('./routes/groceries');
 var summaries = require('./routes/summaries');
+var tenants = require('./routes/tenants');
+var abouts = require('./routes/abouts');
+var eventtypes = require('./routes/eventtypes');
+var events = require('./routes/events');
 
 // aws.config.region = 'eu-west-2';
 // const S3_BUCKET = process.env.S3_BUCKET;
@@ -55,6 +59,10 @@ app.use('/docs', docs);
 app.use('/nonactiveusers', nonactiveusers);
 app.use('/groceries', groceries);
 app.use('/summaries', summaries);
+app.use('/tenants', tenants);
+app.use('/abouts', abouts);
+app.use('/eventtypes', eventtypes);
+app.use('/events', events);
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

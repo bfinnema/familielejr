@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var Expense = mongoose.model('Expense', {
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     year: {
         type: Number,
         required: true

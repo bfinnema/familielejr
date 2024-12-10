@@ -5,6 +5,10 @@ var Income = mongoose.model('Income', {
         type: Number,
         required: true
     },
+    _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     description: {
         type: String,
         required: true

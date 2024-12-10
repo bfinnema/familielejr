@@ -14,6 +14,7 @@ router.post('/', authenticate, (req, res) => {
     registeree = registeree + ' ' + req.user.name.surname
     body._creator = req.user._id;
     body.registeree = registeree
+    body._tenant = req.user._tenant;
     var income = new Income(body);
 
     income.save().then((doc) => {
@@ -24,7 +25,9 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.get('/', authenticate, (req, res) => {
-    Income.find({}).then((incomes) => {
+    Income.find({
+        _tenant: req.user._tenant
+    }).then((incomes) => {
         res.json(incomes);
     }, (e) => {
         res.status(400).send(e);
@@ -52,9 +55,9 @@ router.get('/:id', authenticate, (req, res) => {
 });
 
 // Get all incomes for one year
-router.get('/year/:year', (req, res) => {
+router.get('/year/:year', authenticate, (req, res) => {
     var year = req.params.year;
-    Income.find({year: year}).then((incomes) => {
+    Income.find({year: year, _tenant: req.user._tenant}).then((incomes) => {
         res.json(incomes);
     }, (e) => {
         res.status(400).send(e);

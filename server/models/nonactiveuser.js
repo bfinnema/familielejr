@@ -25,6 +25,10 @@ var NauserSchema = new mongoose.Schema({
     minlength: 5,
     unique: true
   },
+  _tenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+  },
   _creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
