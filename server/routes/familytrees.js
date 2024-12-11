@@ -174,7 +174,7 @@ router.patch('/edit/:id', authenticate, (req, res) => {
   } else if (req.body.level == 2 || req.body.level == 5) {
     setString = '{"secondlevel.'+req.body.l1index+'.thirdlevel.'+req.body.l2index+'.persons":'+JSON.stringify(req.body.persons)+'}';
   } else {
-    console.log(`Edit at level 0 or 3`);
+    // console.log(`Edit at level 0 or 3`);
   };
 
   // console.log(`Filter ${JSON.stringify(filter)}`);

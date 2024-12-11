@@ -308,14 +308,14 @@ function($scope, $http, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, YearServi
             $scope.priceModelType = "old";
             if ($scope.invitation.payment.priceModel) {
                 if ($scope.invitation.payment.priceModel == "new") {
-                    console.log(`priceModel there: New`);
+                    // console.log(`priceModel there: New`);
                     $scope.priceModelType = "new";
                 } else {
-                    console.log(`priceModel there: Old`);
+                    // console.log(`priceModel there: Old`);
                     $scope.priceModelType = "old";
                 };
             } else {
-                console.log(`priceModel not there`);
+                // console.log(`priceModel not there`);
                 $scope.priceModelType = "old";
             };
 

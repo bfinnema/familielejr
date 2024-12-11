@@ -9,11 +9,11 @@ var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', (req, res) => {
   var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret', '_tenant']);
-  console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
-  console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
-  console.log(`_tenant: ${body._tenant}`);
+  // console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
+  // console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
+  // console.log(`_tenant: ${body._tenant}`);
   if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
-    console.log('Secret approved and passwords equal.');
+    // console.log('Secret approved and passwords equal.');
     var user = new User(body);
 
     user.save().then(() => {
@@ -89,10 +89,10 @@ router.post('/me/password', authenticate, (req, res) => {
 // Forgotten password
 router.post('/password/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  console.log(`New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
+  // console.log(`New password: ${req.body.newpassword}, Repeat password: ${req.body.confirmnpwd}`);
   if (req.body.newpassword == req.body.confirmnpwd && req.user.role == 0) {
     User.findById(id).then((user) => {
-      console.log(`Found User: ${user.email}`);
+      // console.log(`Found User: ${user.email}`);
       user.password = req.body.newpassword;
       user.save().then((user) => {
         res.json(user);
@@ -217,7 +217,7 @@ router.get('/user/:id', authenticate, (req, res) => {
   var id = req.params.id;
   if (req.user.role < 2) {
     User.findById(id).then((user) => {
-      console.log(`Found User: ${user.email}`);
+      // console.log(`Found User: ${user.email}`);
       res.json(user);
     }, (e) => {
       res.status(400).send(e);

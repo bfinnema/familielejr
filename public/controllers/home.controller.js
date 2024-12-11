@@ -68,7 +68,7 @@ function($scope, $http, AuthService, YearService) {
             $scope.camps = futurecamps.data;
             for (var i=0; i<$scope.camps.length; i++) {
                 $scope.showCommittees[$scope.camps[i].year] = false;
-                console.log(`Year: ${$scope.camps[i].year}, showC: ${$scope.showCommittees[$scope.camps[i].year]}`);
+                // console.log(`Year: ${$scope.camps[i].year}, showC: ${$scope.showCommittees[$scope.camps[i].year]}`);
             };
         } else {
             // console.log('No future camps');

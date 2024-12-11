@@ -77,7 +77,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     };
     
     $scope.removeOrganizer = function(orgNum) {
-        console.log("Entering removeOrganizer. numOrgLines: "+numOrgLines);
+        // console.log("Entering removeOrganizer. numOrgLines: "+numOrgLines);
         for (var i=orgNum; i<numOrgLines; i++) {
             $scope.organizers[i] = $scope.organizers[i+1];
         };
@@ -132,7 +132,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     };
 
     $scope.removeCommMem = function(numComm, commMemNum) {
-        console.log("Entering removeCommMem. numOrgLines: "+numCommMemLines[numComm]);
+        // console.log("Entering removeCommMem. numOrgLines: "+numCommMemLines[numComm]);
         for (var i=commMemNum; i<numCommMemLines[numComm]; i++) {
             $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
         };
@@ -235,7 +235,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
 
         if (response.data) {
             // console.log(`Received the futurecamp`);
@@ -465,10 +465,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
 
         if (response.data) {
-            console.log(`Received the futurecamp`);
+            // console.log(`Received the futurecamp`);
             $scope.camp = response.data.futurecamp;
         } else {
             console.log('Camp not found');
@@ -488,8 +488,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $location.path('/futurecamps');
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
