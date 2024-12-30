@@ -216,6 +216,156 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
  
     };
 
+    $scope.convertToEvents = function() {
+        $http({
+            method: 'GET',
+            url: '/futurecamps',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(futurecamps) {
+            console.log(`Success fetching all futurecamps. Status: ${futurecamps.status}`);
+            $scope.allcamps = futurecamps.data;
+            return $http({
+                method: 'GET',
+                url: 'invitations',
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(invitations) {
+            console.log(`Success fetching invitation. Status: ${invitations.status}`);
+            $scope.invitations = invitations.data;
+
+            return $http({
+                method: 'GET',
+                url: 'eventtypes/eventtypeName/' + "Familielejr",
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(eventtype) {
+            console.log(`Success fetching eventtype. Status: ${eventtype.status}`);
+            console.log(`eventtype: ${JSON.stringify(eventtype)}`);
+            $scope.eventtype = eventtype.data;
+
+            for (i=0; i<$scope.allcamps.length; i++) {
+            // for (i=0; i<3; i++) {
+
+                var eventName = "Familielejr-" + String($scope.allcamps[i].year);
+                var fcinvitation = {
+                    headline: "Invitation til " + eventName,
+                    text1: "",
+                    registration: {
+                        receiver: "TBD",
+                        deadline: $scope.allcamps[i].startdate
+                    },
+                    bring: "",
+                    payment: {
+                        meansofpayment: {
+                            mobilepay: false,
+                            bankpay: false,
+                            cash: false
+                        }
+                    },
+                    active: false
+                };
+    
+                var oldinvitation = $scope.invitations.filter(obj => {
+                    return obj.year === $scope.allcamps[i].year
+                });
+
+                if (oldinvitation.length > 0) {
+                    var fcpayment = {
+                        meansofpayment: oldinvitation[0].payment.meansofpayment,
+                        paymentinfo: oldinvitation[0].payment.paymentinfo
+                    };
+                    fcinvitation.headline = oldinvitation[0].headline;
+                    fcinvitation.text1 = oldinvitation[0].text1 || "";
+                    fcinvitation.registration = oldinvitation[0].registration;
+                    fcinvitation.registration.requiresRegistration = true;
+                    fcinvitation.bring = oldinvitation[0].bring || "";
+                    fcinvitation.payment = fcpayment;
+                    fcinvitation.text2 = oldinvitation[0].text2 || "";
+                    console.log(`fcinvitation: ${JSON.stringify(fcinvitation)}`);
+                };
+
+                var event = {
+                    eventName: "Familielejr-" + String($scope.allcamps[i].year),
+                    _eventtype: $scope.eventtype._id,
+                    eventtypeName: $scope.eventtype.eventtypeName,
+                    year: $scope.allcamps[i].year,
+                    description: "Familielejr " + String($scope.allcamps[i].year),
+                    venue: $scope.allcamps[i].camp,
+                    address: $scope.allcamps[i].address,
+                    website: $scope.allcamps[i].website,
+                    startdate: $scope.allcamps[i].startdate,
+                    enddate: $scope.allcamps[i].enddate,
+                    organizers: $scope.allcamps[i].organizers,
+                    committees: $scope.allcamps[i].committees,
+                    invitation: fcinvitation
+                };
+                console.log(`Event: ${JSON.stringify(event)}`);
+
+                $http({
+                    method: 'POST',
+                    url: '/events',
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    },
+                    data: event
+                }).then(function(response) {
+                    $location.path('/eventsadmin');
+                    $route.reload();
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                    console.log(`Error: ${response.body}`);
+                    if (response.status == 409) {
+                        $window.alert("Navnet på begivenheden findes allerede. Vær venlig at ændre det.");
+                    };
+                });
+        
+            };
+        }, function errorCallback(response) {
+            console.log(`Error. Status: ${response.status}`);
+        });        
+    };
+
+    $scope.testArrayOfObjects = function() {
+        var jsObjects = [
+            {a: 1, b: 2}, 
+            {a: 3, b: 4}, 
+            {a: 5, b: 6}, 
+            {a: 7, b: 8}
+        ];
+
+        console.log(`${JSON.stringify(jsObjects)}`);
+        console.log(jsObjects);
+
+        var result = jsObjects.filter(obj => {
+            return obj.b === 12
+        });
+
+        if (result.length > 0) {
+            console.log(`${JSON.stringify(result)}`);
+            console.log(`Result: ${result[0].a}, ${result[0].b}`);
+        } else {
+            console.log(`No findings`);
+        };
+
+        var result2 = jsObjects.find(obj => {
+            return obj.b === 12
+        });
+
+        if (result2) {
+            console.log(`${JSON.stringify(result2)}`);
+            console.log(`Result: ${result2.a}, ${result2.b}`);
+        } else {
+            console.log(`No findings 2`);
+        }
+
+    };
+
 }])
 
 .controller('futurecampeditCtrl', ['$scope', '$http', '$location', '$routeParams', '$window', 'AuthService', function($scope, $http, $location, $routeParams, $window, AuthService) {

@@ -12,12 +12,13 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
     });
 
     var invyear = YearService.myYear("eventsadmin");
-    var pastyear = invyear - 1;
+    // var pastyear = invyear - 1;
+    var pastyear = 1992;
     console.log(`eventsadminCtrl: Invyear: ${invyear}, Pastyear: ${pastyear}`);
 
     $http({
         method: 'GET',
-        url: '/events/future/' + pastyear,
+        url: '/events/futureevents/',
         headers: {
             'x-auth': localStorage.userToken
         }
@@ -201,7 +202,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             text1: "",
             registration: {
                 receiver: "TBD",
-                deadline: $scope.startdate
+                deadline: $scope.startdate,
+                requiresRegistration: false
             },
             bring: "",
             payment: {

@@ -1,0 +1,202 @@
+<div ng-include="'navigation.html'"></div>
+
+<div ng-controller="invitation2adminCtrl">
+    <div ng-show="!eventSelected">
+        <form name="formSelectEvent" ng-submit="selectEvent()" novalidate>
+            <div class="form-group col-md-6 row">
+                <label>Vælg begivenhed, du vil oprette eller ændre invitation for:</label>
+                <select class="form-control" ng-model="selEvent" name="selEvent" required>
+                    <option ng-repeat="event in futureevents" value="{{event}}">{{event.eventName}}</option>
+                </select>
+                <i ng-show="formSelectEvent.selEvent.$error.required">*Skal udfyldes</i>
+            </div>
+            <br>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <button ng-disabled="formSelectEvent.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Vælg begivenhed</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div ng-show="eventSelected">
+
+        <form name="formInvitationEdit" ng-submit="generateInvitation()" novalidate>
+            <h2 class="form-signin-heading">Opsætning af invitation</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <p>Her kan du som arrangør oprette eller ændre en invitation baseret på et antal standard felter. Der er også mulighed for en indledende og en afsluttende blok med fritekst</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="headline">Overskrift</label>
+                    <input type="text" id="headline" class="form-control" ng-model="selectedEvent.invitation.headline" required>
+                </div>
+                <div class="checkbox col-md-2">
+                    <label>
+                        <input type="checkbox" ng-model="selectedEvent.invitation.active" id="active">Aktiver invitationen?
+                    </label>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Eventuel indledende tekst</h3>
+            <div class="row">
+                <div class="form-group col-md-8">
+                    <textarea class="form-control" ng-model="selectedEvent.invitation.text1" name="text1" rows="3"></textarea>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Detaljer om stedet</h3>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label>Navn</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.venue" name="venue" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label>Gade</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.address.street" name="street" placeholder="Gadenavn" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Postnummer</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.address.zip" name="zip" placeholder="Postnummer" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>By</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.address.town" name="town" placeholder="By" required>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Datoer og tidspunkter</h3>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Startdato</label>
+                    <input type="date" class="form-control" ng-model="startdateView" name="startdate" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Tid</label>
+                    <input type="time" class="form-control" ng-model="starttimeView" name="starttime" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Slutdato</label>
+                    <input type="date" class="form-control" ng-model="enddateView" name="enddate" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Tid</label>
+                    <input type="time" class="form-control" ng-model="endtimeView" name="endtime" required>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Tilmelding</h3>
+            <div class="row">
+                <div class="checkbox col-md-2">
+                    <label>
+                        <input type="checkbox" ng-model="selectedEvent.invitation.registration.requiresRegistration" id="requiresRegistration">Kræver tilmelding?
+                    </label>
+                </div>
+            </div>
+            <div class="row" ng-show="selectedEvent.invitation.registration.requiresRegistration">
+                <div class="form-group col-md-2">
+                    <label>Tilmeld til</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.registration.receiver" name="regreceiver" placeholder="Modtager" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control" ng-model="selectedEvent.invitation.registration.email" name="regemail" placeholder="Email adresse" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Telefon</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.registration.phone" name="regphone" placeholder="Telefonnummer" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>Tilmeldingsfrist</label>
+                    <input type="date" class="form-control" ng-model="deadlinedateView" name="deadline">
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Medbring</h3>
+            <div class="row">
+                <div class="form-group col-md-8">
+                    <label>Liste over ting, det anbefales folk at medbringe (valgfri):</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.bring" name="bring" placeholder="Ting det anbefales at medbringe">
+                </div>
+            </div>
+            <h4 class="form-signin-heading">Betalingsmuligheder</h4>
+            <div class="row">
+                <div class="checkbox col-md-2">
+                    <label>
+                        <input type="checkbox" ng-model="selectedEvent.invitation.payment.meansofpayment.mobilepay" id="mobilepay">Mobilepay?
+                    </label>
+                </div>
+                <div class="form-group col-md-4" ng-show="selectedEvent.invitation.payment.meansofpayment.mobilepay">
+                    <label>Mobilepay telefonnummer</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.payment.paymentinfo.mobilepay" id="mobpayphone" ng-required="mobilepay" placeholder="Telefonnummer">
+                </div>
+            </div>
+            <div class="row">
+                <div class="checkbox col-md-2">
+                    <label>
+                        <input type="checkbox" ng-model="selectedEvent.invitation.payment.meansofpayment.bankpay" id="bankpay">Bankoverførsel?
+                    </label>
+                </div>
+                <div class="form-group col-md-2" ng-show="selectedEvent.invitation.payment.meansofpayment.bankpay">
+                    <label>Reg. no.</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.payment.paymentinfo.bankaccount.regno" id="regno" ng-required="bankpay" placeholder="Reg. nummer">
+                </div>
+                <div class="form-group col-md-2" ng-show="bankpay">
+                    <label>Konto</label>
+                    <input type="text" class="form-control" ng-model="selectedEvent.invitation.payment.paymentinfo.bankaccount.account" id="account" ng-required="bankpay" placeholder="Konto nummer">
+                </div>
+            </div>
+            <div class="row">
+                <div class="checkbox col-md-2">
+                    <label>
+                        <input type="checkbox" ng-model="selectedEvent.invitation.payment.meansofpayment.cash" name="cash">Kontant afregning på lejren?
+                    </label>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Eventuelle afsluttende bemærkninger</h3>
+            <div class="row">
+                <div class="form-group col-md-8">
+                    <textarea class="form-control" ng-model="selectedEvent.invitation.text2" name="text2" rows="3"></textarea>
+                </div>
+            </div>
+            <h3 class="form-signin-heading">Arrangører</h3>
+            <div class="row">
+                <div class="form-group col-md-3" ng-show="organizerShow[0]">
+                    <label for="headline">Arrangør 1</label>
+                    <input type="text" class="form-control" ng-model="organizers[0]">
+                </div>
+                <div class="form-group col-md-3" ng-show="organizerShow[1]">
+                    <label for="headline">Arrangør 2</label>
+                    <input type="text" class="form-control" ng-model="organizers[1]">
+                </div>
+                <div class="form-group col-md-3" ng-show="organizerShow[2]">
+                    <label for="headline">Arrangør 3</label>
+                    <input type="text" class="form-control" ng-model="organizers[2]">
+                </div>
+                <div class="form-group col-md-3" ng-show="organizerShow[3]">
+                    <label for="headline">Arrangør 4</label>
+                    <input type="text" class="form-control" ng-model="organizers[3]">
+                </div>
+                <div class="form-group col-md-3" ng-show="organizerShow[4]">
+                    <label for="headline">Arrangør 5</label>
+                    <input type="text" class="form-control" ng-model="organizers[4]">
+                </div>
+            </div>
+            <div class="row">
+                <a class="btn btn-info" ng-show="organizerBtnShow[1]" ng-click="showOrgLine()">Tilføj arrangør</a>
+                <a class="btn btn-info" ng-show="organizerBtnShow[2]" ng-click="showOrgLine()">Tilføj arrangør</a>
+                <a class="btn btn-info" ng-show="organizerBtnShow[3]" ng-click="showOrgLine()">Tilføj arrangør</a>
+                <a class="btn btn-info" ng-show="organizerBtnShow[4]" ng-click="showOrgLine()">Tilføj arrangør</a>
+            </div>
+            <br>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <button ng-disabled="formInvitationEdit.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Send invitationen</button>
+                </div>
+                <div class="col-md-4">
+                    <a class="btn btn-danger btn-lg btn-block" href="#!eventinfo">Fortryd</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

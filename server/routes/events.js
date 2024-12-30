@@ -60,6 +60,65 @@ router.get('/future/:year', authenticate, (req, res) => {
   });
 });
 
+router.get('/futureevents', authenticate, (req, res) => {
+  // console.log('This is the find by gt date section');
+  var thisMoment = new Date();
+  // console.log(`This Moment: ${thisMoment}`);
+  Event.find({
+    startdate:{'$gt':thisMoment},
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/pastevents', authenticate, (req, res) => {
+  // console.log('This is the find by lt date section');
+  var thisMoment = new Date();
+  // console.log(`This Moment: ${thisMoment}`);
+  Event.find({
+    startdate:{'$lte':thisMoment},
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/futureactiveevents', authenticate, (req, res) => {
+  // console.log('Find by gt date and active invitation.');
+  var thisMoment = new Date();
+  // console.log(`This Moment: ${thisMoment}`);
+  Event.find({
+    startdate:{'$gt':thisMoment},
+    "invitation.active": true,
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/farevents', authenticate, (req, res) => {
+  // console.log('Find by gt date, active invitation and requires registration');
+  var thisMoment = new Date();
+  // console.log(`This Moment: ${thisMoment}`);
+  Event.find({
+    startdate:{'$gt':thisMoment},
+    "invitation.active": true,
+    "invitation.registration.requiresRegistration": true,
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/past/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by LTEYear section');
@@ -76,7 +135,6 @@ router.get('/:id', authenticate, (req, res) => {
 
   if (!ObjectId.isValid(id)) {
     return res.status(404).send();
-    console.log('Invalid Id');
   }
 
   Event.findById(id).then((event) => {
@@ -136,15 +194,15 @@ router.get('/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by Year section');
 
-  Event.findOne({
+  Event.find({
     _tenant: req.user._tenant,
     year: year
-  }).then((event) => {
-    if (!event) {
+  }).then((events) => {
+    if (!events) {
       return res.status(404).send();
     }
 
-    res.send({event});
+    res.json(events);
   }).catch((e) => {
     res.status(400).send();
   });

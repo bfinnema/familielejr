@@ -1,0 +1,70 @@
+<div ng-include="'navigation.html'"></div>
+
+<div class="row">
+    <div class="blog-header">
+        <h1 class="blog-title">{{event.invitation.headline}}</h1>
+    </div>
+    <hr>
+    <div class="col-sm-6">
+        <div class="well well-sm">
+            <h4>I år skal vi være i {{event.venue}}. Adressen er:</h4>
+            <p>{{event.address.street}}, {{event.address.zip}} {{event.address.town}}</p>
+        </div>
+        <div ng-show="event.invitation.text1" class="well well-sm">
+            <p>{{event.invitation.text1}}</p>
+        </div>
+        <div class="well well-sm">
+            <h4>Datoer og tidspunkter:</h4>
+            <p>{{startday}} den {{startdate}}. {{startmonth}} kl. {{event.invitation.starttime | date:'HH:mm' : 'CET' }} til {{endday}} den {{enddate}}. {{endmonth}} kl. {{event.invitation.endtime | date:'HH:mm' : 'CET' }}</p>
+        </div>
+        <div class="well well-sm">
+            <h4>Tilmelding:</h4>
+            <ul style="list-style-type:none">
+                <li>Senest {{deadlineday}} den {{deadlinedate}}. {{deadlinemonth}} til {{event.invitation.registration.receiver}}.</li>
+                <li>Email: {{event.invitation.registration.email}}, Telefon: {{event.invitation.registration.phone}}</li>
+            </ul>
+            <p><a class="btn btn-success" href="#!eventregistration">Eller tilmeld her på siden</a></p>
+        </div>
+        <div class="well well-sm" ng-show="event.invitation.bring">
+            <h4>Medbring:</h4>
+            <p>{{event.invitation.bring}}</p>
+        </div>
+        <div class="well well-sm" ng-show="eventtype.charge">
+            <h4>Pris:</h4>
+            <ul style="list-style-type:none">
+                <li ng-repeat="partCat in eventtype.participantCategories">
+                    {{ partCat.name }}: 
+                    <span ng-show="partCat.minAge>0">{{ partCat.minAge}}</span>
+                    <span ng-show="partCat.maxAge>100"> - . </span>
+                    <span ng-show="partCat.maxAge<100"> - {{ partCat.maxAge }}. </span>
+                    Fuld pris: {{ partCat.priceFull }}, En dag: {{ partCat.priceDay }}
+                </li>
+            </ul>
+            <p>Betalingsmuligheder:</p>
+            <ul style="list-style-type:none">
+                <li ng-show="event.invitation.payment.meansofpayment.cash">{{event.invitation.payment.paymentinfo.cash}}</li>
+                <li ng-show="event.invitation.payment.meansofpayment.mobilepay">Mobilepay til: {{event.invitation.payment.paymentinfo.mobilepay}}</li>
+                <li ng-show="event.invitation.payment.meansofpayment.bankpay">Overførsel til bankkonto: {{event.invitation.payment.paymentinfo.bankaccount.regno}} {{event.invitation.payment.paymentinfo.bankaccount.account}}</li>
+            </ul>
+        </div>
+        <div ng-show="event.invitation.text2" class="well well-sm">
+            <p>{{event.invitation.text2}}</p>
+        </div>
+        <div class="well well-sm">
+            <h4>Mange hilsener fra arrangørerne:</h4>
+            <ul style="list-style-type:none">
+                <li ng-repeat="organizer in event.organizers">{{organizer.orgname}}</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="eventinfo angular-google-map-container col-md-6">
+        <ui-gmap-google-map ng-if="map.center" center='map.center' zoom='map.zoom'>
+            <ui-gmap-window coords="MapOptions.markers.selected.coords" show="windowOptions.show" options="windowOptions" closeClick="closeClick()">
+                <div>{{ wincontent }}</div>
+            </ui-gmap-window>
+            <ui-gmap-markers models="markers" idkey="markers.id" coords="'coords'" click="onClick" events="markers.events"></ui-gmap-markers>
+        </ui-gmap-google-map>
+    </div>
+
+</div><!-- /.row -->

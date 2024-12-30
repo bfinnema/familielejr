@@ -100,7 +100,8 @@
     </div>
 </div>
 <div ng-show="!imagesExist">
-    <h3>Der er ikke nogen billeder fra {{ year }} endnu.<a href="#!photoupload"> Har du nogen at lægge op?</a></h3>
+    <h3 ng-show="!commonImages">Der er ikke nogen billeder fra {{ year }} endnu.<a href="#!photoupload"> Har du nogen at lægge op?</a></h3>
+    <h3 ng-show="commonImages">Der er ikke nogen fællesbilleder endnu.<a href="#!photoupload"> Har du nogen at lægge op?</a></h3>
 </div>
 
 <!-- 

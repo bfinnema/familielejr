@@ -18,8 +18,63 @@
 <div class="row">
 
     <div class="col-sm-8 blog-main">
-
+        <h2 class="blog-post-title">Invitationer</h2>
+        <div class="blog-post" ng-show="invitationExists2">
+            <div ng-repeat="activeInvitation in activeInvitations">
+                <h3 class="blog-post-title">{{ activeInvitation.eventName }}</h3>
+                <p>Vi skal være i 
+                {{activeInvitation.venue}}, {{activeInvitation.address.street}}, {{activeInvitation.address.zip}} {{activeInvitation.address.town}} 
+                fra {{activeInvitation.startdate | date:'dd-MM-yyyy' : 'CET' }} kl. {{activeInvitation.invitation.starttime | date:'HH:mm' : 'CET' }} til {{activeInvitation.enddate | date:'dd-MM-yyyy' : 'CET' }} kl. {{activeInvitation.invitation.endtime | date:'HH:mm' : 'CET' }}.
+                </p>
+                <div class="col-md-4">
+                    <a class="btn btn-success" href="#!invitation2display/{{activeInvitation._id}}">Invitation og mere information</a>
+                </div>
+                <div class="col-md-4">
+                    <a class="btn btn-success" href="#!eventregistration">Tilmelding her på siden</a>
+                </div>
+            </div>
+        </div>
+        <div ng-show="!invitationExists2">
+            <p>Der er ikke nogen invitationer for nuværende.</p>
+        </div>
+        <br>
+        <hr>
         <div class="blog-post">
+        <h2 class="blog-post-title">Kommende Begivenheder</h2>
+        <p class="blog-post-meta">Kør musen over en begivenhed for at se udvalg.</p>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="8%">År</th>
+                            <th width="32%">Sted</th>
+                            <th width="14%">Startdato</th>
+                            <th width="14%">Slutdato</th>
+                            <th width="32%">Arrangører</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="futureevent in futureevents" ng-mouseover="eventHoverIn(futureevent)" ng-mouseleave="eventHoverOut(futureevent)">
+                            <td>{{ futureevent.year }}</td>
+                            <td>{{ futureevent.venue }}, {{futureevent.address.street}}, {{futureevent.address.zip}} {{futureevent.address.town}}</td>
+                            <td>{{ futureevent.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                            <td>{{ futureevent.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
+                            <td>
+                                <i ng-repeat="organizer in futureevent.organizers">{{organizer.orgname}}, </i>
+                                <i ng-show="futureevent.showCommittees" ng-repeat="committee in futureevent.committees">
+                                    <p>{{committee.name}}: <i ng-repeat="member in committee.members">{{member.membername}}, </i></p>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr ng-show="futureevents.length < 1">
+                            <td></td><td>Der er ikke nogen fremtidige begivenheder</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- <div class="blog-post">
             <h2 class="blog-post-title">Næste Familielejr</h2>
             <div ng-show="invitationExists">
                 <p>Vi skal være i 
@@ -51,7 +106,6 @@
                             <th width="14%">Startdato</th>
                             <th width="14%">Slutdato</th>
                             <th width="32%">Arrangører</th>
-                            <!-- <th width="21%">Underholdning</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -66,15 +120,6 @@
                                     <p>{{committee.name}}: <i ng-repeat="member in committee.members">{{member.membername}}, </i></p>
                                 </i>
                             </td>
-<!-- 
-                            <td>
-                                <a class="btn btn-primary" href="#!futurecamps/details/{{camp._id}}">
-                                    <i class="glyphicon glyphicon-zoom-in"></i>
-                                </a>
-                            </td>
- -->                            
-                            <!-- <td><i ng-repeat="member in camp.committees[0].members">{{member.membername}}, </i></td> -->
-
                         </tr>
                         <tr ng-show="camps.length < 1">
                             <td></td><td>Der er ikke nogen fremtidige lejre</td>
@@ -82,18 +127,7 @@
                     </tbody>
                 </table>
             </div>
-<!-- 
-            <div ng-if="camps == false">
-                <tr>
-                    <td></td><td>Der er ikke nogen fremtidige lejre</td>
-                </tr>
-            </div>
- -->            
-<!--  
-            <br>
-            <p>Tryk på "detaljer" knappen ud for en kommende familielejr for at se, om der er nedsat et underholdnings-udvalg eller andre udvalg og hvem, der i så fald er i udvalget.</p>
- -->            
-        </div>
+        </div> -->
 
     </div><!-- /.blog-main -->
 

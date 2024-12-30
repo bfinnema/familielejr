@@ -27,6 +27,7 @@ router.post('/upload', authenticate, (req, res) => {
         year: req.body.year,
         _tenant: req.user._tenant,
         filename: fn,
+        commonImage: req.body.commonImage,
         filetype: req.body.filetype,
         path: 'images/' + req.body.year + '/',
         uploader: uploader,
@@ -66,6 +67,18 @@ router.get('/year/:year', authenticate, (req, res) => {
   // console.log(`Photos, year: ${year}`);
   Photo.find({
     year: year,
+    _tenant: req.user._tenant
+  }).then((photos) => {
+    res.json(photos);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/common', authenticate, (req, res) => {
+  // console.log(`Photos, looking for common images.`);
+  Photo.find({
+    commonImage: true,
     _tenant: req.user._tenant
   }).then((photos) => {
     res.json(photos);

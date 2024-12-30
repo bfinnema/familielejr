@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 'EventPriceService', 'EventregService', 
-function($scope, $http, $location, $route, $window, AuthService, YearService, EventPriceService, EventregService) {
+.controller('eventregCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'EventregService', 
+function($scope, $http, $location, $route, $window, AuthService, EventregService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -16,57 +16,97 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear("default");
-    // console.log(`Invyear in eventregCtrl: ${invyear}`);
-    $scope.invitationyear = invyear;
-
-    $scope.agegroups = EventregService.ageGroups();
-    $scope.arrivaldays = EventregService.arrivalDays();
-    $scope.departuredays = EventregService.departureDays();
+    // $scope.agegroups = EventregService.ageGroups();
+    // $scope.arrivaldays = EventregService.arrivalDays();
+    // $scope.departuredays = EventregService.departureDays();
 
     $scope.editRegistration = false;
+    $scope.invitationExists = false;
+    $scope.invitationSelected = false;
+    $scope.registrationsExist = false;
 
     $http({
         method: 'GET',
-        url: 'eventregs/' + invyear,
+        url: 'events/futureactiveevents',
         headers: {
             'x-auth': localStorage.userToken
         }
-    }).then(function(response) {
-        // console.log(`Status: ${response.status}`);
-        // console.log(response.data);
-        $scope.registrations = response.data;
-        for (var i=0; i<$scope.registrations.length; i++) {
-            $scope.registrations[i].num = i;
-            $scope.registrations[i].EditPopoverIsVisible = false;
-            $scope.registrations[i].RemPopoverIsVisible = false;
-        }
-
-        $http({
-            method: 'GET',
-            url: '/invitations/year/'+invyear,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(response) {
-            // console.log(`Success, invitation fetched. Status: ${response.status}`);
-            // console.log(response.data.year);
-            if (response.data) {
-                // console.log(response.data.enddate, response.data.startdate);
-                $scope.invitation = response.data;
-                invitationExists = true;
-            } else {
-                console.log('Invitation does not exist');
+    }).then(function(faevents) {
+        // console.log(`faevents Status: ${faevents.status}`);
+        if (faevents.data) {
+            $scope.faevents = faevents.data;
+            $scope.invitationExists = true;
+            if ($scope.faevents.length == 1) {
+                $scope.selectedInvitation = $scope.faevents[0];
+                $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                getInvitationData();
             };
-        }, function errorCallback(response) {
-            console.log(`Error. Status: ${response.status}`);
-        });
+        } else {
+            $scope.invitationExists = false;
+        };
 
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
 
-    $scope.errorHappened = false;
+    $scope.selectInvitation = function() {
+        $scope.selectedInvitation = JSON.parse($scope.selEvent);
+        getInvitationData();
+    };
+
+    getInvitationData = function() {
+        $scope.arrivalOptions = EventregService.arrivalOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
+        $scope.departureOptions = EventregService.departureOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
+        /* for (arrOpt in $scope.arrivalOptions) {
+            console.log(`Arrival option: ${$scope.arrivalOptions[arrOpt].arrivalOption}`);
+        };
+        for (depOpt in $scope.departureOptions) {
+            console.log(`Departure option: ${$scope.departureOptions[depOpt].departureOption}`);
+        }; */
+        $http({
+            method: 'GET',
+            url: '/eventtypes/'+$scope.selectedInvitation._eventtype,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(eventtype) {
+            // console.log(`Success, eventtype fetched. Status: ${eventtype.status}`);
+            if (eventtype.data) {
+                // console.log(`Eventtype Name: ${eventtype.data.eventtypeName}`);
+                $scope.eventtype = eventtype.data;
+                // console.log(`Eventtype Name: ${$scope.eventtype.eventtypeName}. Number categories: ${$scope.eventtype.participantCategories.length}`);
+                /* for (var u=0; u<$scope.eventtype.participantCategories.length; u++) {
+                    console.log(`Cat name: ${$scope.eventtype.participantCategories[u].name}`);
+                }; */
+                $scope.invitationSelected = true;
+            } else {
+                console.log('Eventtype does not exist');
+            };
+
+            return $http({
+                method: 'GET',
+                url: 'eventregs/event/' + $scope.selectedInvitation._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(registrations) {
+            // console.log(`Registrations status: ${registrations.status}`);
+            if (registrations.data) {
+                $scope.registrationsExist = true
+                $scope.registrations = registrations.data;
+                // console.log(`Num registrations: ${$scope.registrations.length}`);
+                for (var i=0; i<$scope.registrations.length; i++) {
+                    $scope.registrations[i].num = i;
+                    $scope.registrations[i].EditPopoverIsVisible = false;
+                    $scope.registrations[i].RemPopoverIsVisible = false;
+                };
+            };
+    
+        }, function errorCallback(response) {
+            console.log(`Error. Status: ${response.status}`);
+        });
+    };
 
     $scope.attendPositive = function() {
         $scope.willnotattend = false;
@@ -80,22 +120,36 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         // console.log(`Name: ${$scope.regname}`)
         var eventFee = 0;
         var willattend = true;
+        partCat = JSON.parse($scope.participantCategory);
 
         if ($scope.willnotattend) {
             willattend = false;
         } else {
-            eventFee = EventPriceService.eventFee($scope.arrivalday ,$scope.departureday, $scope.agegroup, $scope.invitation.payment);
+            var numDays = EventregService.numDays($scope.arrivalOption, $scope.departureOption);
+            // console.log(`numDays: ${numDays}`);
+            if (numDays == 1) {
+                eventFee = partCat.priceDay;
+            } else {
+                eventFee = partCat.priceFull;
+            };
             // console.log(`Event Fee: ${eventFee}`);
         };
+
+        var startDate = new Date($scope.selectedInvitation.startdate);
+        var year = startDate.getFullYear();
         
         var eventreg = {
             name: $scope.regname,
-            agegroup: $scope.agegroup,
-            year: invyear,
+            _event: $scope.selectedInvitation._id,
+            // agegroup: $scope.agegroup,
+            participantCategory: partCat.name,
+            year: year,
             willattend: willattend,
-            arrivalday: $scope.arrivalday,
+            // arrivalday: $scope.arrivalday,
+            arrivalOption: $scope.arrivalOption,
             arrivaltime: $scope.arrivaltime,
-            departureday: $scope.departureday,
+            // departureday: $scope.departureday,
+            departureOption: $scope.departureOption,
             departuretime: $scope.departuretime,
             fee: eventFee,
             diet: $scope.diet
@@ -111,12 +165,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
             // console.log(response.data._id);
-            $scope.errorHappened = false;
             $location.path('/eventregistration');
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-            $scope.errorHappened = true;
         });
     };
 
@@ -131,12 +183,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
             }).then(function(response) {
                 // console.log(`Status: ${response.status}`);
                 // console.log(response.data._id);
-                $scope.errorHappened = false;
                 $location.path('/eventregistration');
                 $route.reload();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
-                $scope.errorHappened = true;
             });
         };
     };
@@ -149,15 +199,17 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         };
         $scope.editRegname = registration.name;
         $scope.editAgegroup = registration.agegroup;
+        $scope.editPartCat = registration.participantCategory;
+        $scope.editYear = registration.year;
         $scope.willattend = registration.willattend;
         $scope.willnotattend = !registration.willattend;
-        $scope.editArrivalday = registration.arrivalday;
+        $scope.editArrivalOption = registration.arrivalOption;
         if (registration.arrivaltime == null) {
             $scope.editArrivaltime = null;
         } else {
             $scope.editArrivaltime = new Date(registration.arrivaltime);
         };
-        $scope.editDepartureday = registration.departureday;
+        $scope.editDepartureOption = registration.departureOption;
         if (registration.departuretime == null) {
             $scope.editDeparturetime = null;
         } else {
@@ -169,25 +221,40 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
     };
 
     $scope.editEventreg = function() {
-        // console.log(`Name: ${$scope.editRegname}`);
+        // console.log(`In editEventreg. Name: ${$scope.editRegname}`);
         var eventFee = 0;
         var willattend = true;
+        partCat = $scope.eventtype.participantCategories.filter(obj => {
+            return obj.name == $scope.editPartCat
+        })[0];
+        // console.log(`In editRegistrationToggle. editPartCat: ${editPartCat.name}`);
+        // console.log(`editPartCat stringified: ${JSON.stringify(editPartCat)}`);
 
         if ($scope.willnotattend) {
             willattend = false
         } else {
-            eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
+            var numDays = EventregService.numDays($scope.editArrivalOption, $scope.editDepartureOption);
+            // console.log(`numDays: ${numDays}`);
+            if (numDays == 1) {
+                eventFee = partCat.priceDay;
+            } else {
+                eventFee = partCat.priceFull;
+            };
+            // eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
             // console.log(`Event Fee: ${eventFee}`);
         };
 
         var eventreg = {
             name: $scope.editRegname,
-            agegroup: $scope.editAgegroup,
-            year: invyear,
+            // agegroup: $scope.editAgegroup,
+            participantCategory: $scope.editPartCat,
+            year: $scope.editYear,
             willattend: willattend,
-            arrivalday: $scope.editArrivalday,
+            // arrivalday: $scope.editArrivalday,
+            arrivalOption: $scope.editArrivalOption,
             arrivaltime: $scope.editArrivaltime,
-            departureday: $scope.editDepartureday,
+            // departureday: $scope.editDepartureday,
+            departureOption: $scope.editDepartureOption,
             departuretime: $scope.editDeparturetime,
             fee: eventFee,
             diet: $scope.editDiet,
@@ -204,12 +271,10 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
             // console.log(response.data._id);
-            $scope.errorHappened = false;
             $location.path('/eventregistration');
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-            $scope.errorHappened = true;
         });
     };
 
@@ -239,8 +304,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService, Ev
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'EventPriceService', 'EventregService',  'SearchService',
-function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, EventPriceService, EventregService, SearchService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'EventregService',  'SearchService',
+function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, EventregService, SearchService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -255,14 +320,13 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         angular.element(document.querySelector( '#eventregall' ) ).addClass('active');
     }, 1000);
 
-    var invyear = $routeParams.year;
+    var _event_id = $routeParams.id;
+    // var invyear = $routeParams.year;
+    // console.log(`_event_id: ${_event_id}`);
     var currentYear = YearService.myYear("eventRegAll");
-    if (invyear < 1990) {
-        invyear = currentYear;
-    };
 
     var fys = [];
-    var firstyear = 2018;
+    var firstyear = 2010;
     for (var y=currentYear; y>=firstyear; y--) {
         fys.push({"fy": y});
     };
@@ -270,179 +334,329 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     $scope.fyLocked = false;
 
     // console.log(`Invyear in eventregall: ${invyear}`);
-    $scope.invitationyear = invyear;
-    $scope.agegroups = EventregService.ageGroups();
-    $scope.arrivaldays = EventregService.arrivalDays();
-    $scope.departuredays = EventregService.departureDays();
+    // $scope.invitationyear = invyear;
+    // $scope.agegroups = EventregService.ageGroups();
+    // $scope.arrivaldays = EventregService.arrivalDays();
+    // $scope.departuredays = EventregService.departureDays();
+    $scope.invitationExists = false;
+    $scope.invitationSelected = false;
+    $scope.registrationsExist = false;
     $scope.editRegistration = false;
+    $scope.selectInvitationText = "Der er flere, aktive begivenheder. Vælg begivenhed:";
 
     $scope.searching = false;
     $scope.sorting = false;
     $scope.sortBy = "fornavn";
     $scope.sortDirection = "nedad";
 
-    $http({
-        method: 'GET',
-        url: 'eventregs/all/year/' + invyear,
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        // console.log(`Status: ${response.status}`);
-        $scope.registrations = response.data;
-        $scope.numAttendees = 0;
-        $scope.numNonAttendees = 0;
-        $scope.dinners = [[0,0],[0,0]];
-        $scope.breakfasts = [[0,0],[0,0]];
-        $scope.lunchs = [[0,0],[0,0]];
-        $scope.friday = [0,0];
-        $scope.saturday = [0,0];
-        $scope.sunday = [0,0];
-        $scope.feeSum = 0;
-        $scope.feePaidSum = 0;
-        for (var i=0; i<$scope.registrations.length; i++) {
-            // console.log(`Navn: ${$scope.registrations[i].name}, Arr: ${$scope.registrations[i].arrivalday}, Dep: ${$scope.registrations[i].departureday}`);
-            $scope.registrations[i].RemRegistrationPopoverIsVisible = false;
-            $scope.registrations[i].EditRegistrationPopoverIsVisible = false;
-            $scope.registrations[i].num = i;
-
-            $scope.feeSum += $scope.registrations[i].fee;
-            if ($scope.registrations[i].paid) {
-                $scope.feePaidSum += $scope.registrations[i].fee;
-            };
-            if ($scope.registrations[i].agegroup == "Voksen") {ag = 0;} else {ag = 1;};
-            if ($scope.registrations[i].willattend) {
-                $scope.numAttendees += 1;
-                if ($scope.registrations[i].arrivalday == "Fredag") {
-                    $scope.dinners[ag][0] += 1;
-                    $scope.friday[ag] += 1;
-                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][0] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.lunchs[ag][1] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][0] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][0] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
-                        $scope.breakfasts[ag][0] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag formiddag") {
-                        $scope.breakfasts[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                    };
-                } else if ($scope.registrations[i].arrivalday == "Lørdag formiddag") {
-                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.lunchs[ag][1] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag eftermiddag") {
-                        $scope.lunchs[ag][0] += 1;
-                        $scope.saturday[ag] += 1;
-                    };
-                } else if ($scope.registrations[i].arrivalday == "Lørdag eftermiddag") {
-                    if ($scope.registrations[i].departureday == "Søndag efter frokost") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.lunchs[ag][1] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Søndag efter morgenmad" || $scope.registrations[i].departureday == "Søndag" || $scope.registrations[i].departureday == "Jeg tager aldrig hjem!!") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.breakfasts[ag][1] += 1;
-                        $scope.saturday[ag] += 1;
-                        $scope.sunday[ag] += 1;
-                    } else if ($scope.registrations[i].departureday == "Lørdag efter aftensmad") {
-                        $scope.dinners[ag][1] += 1;
-                        $scope.saturday[ag] += 1;
-                    };
+    if (_event_id == 1000) {
+        // console.log(`No specific event. _event_id: ${_event_id}`);
+        $http({
+            method: 'GET',
+            url: 'events/futureactiveevents',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(faevents) {
+            // console.log(`Events selected by future and active invitation. faevents Status: ${faevents.status}. # events: ${faevents.data.length}`);
+            // console.log(`${JSON.stringify(faevents.data)}`);
+            if (faevents.data.length > 0) {
+                $scope.faevents = faevents.data;
+                $scope.invitationExists = true;
+                if ($scope.faevents.length == 1) {
+                    // console.log(`One event: ${$scope.faevents[0].eventName}`);
+                    $scope.selectedInvitation = $scope.faevents[0];
+                    $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                    getInvitationData();
                 };
             } else {
-                $scope.numNonAttendees += 1;
+                $scope.selectInvitationText = "Der er ikke nogen aktiv begivenhed. Vil du se på en anden? Vælg her:"
+                $scope.invitationExists = false;
+                $http({
+                    method: 'GET',
+                    url: 'events',
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(events) {
+                    // console.log(`No future, active event. Collected all events. Status: ${faevents.status}`);
+                    if (events.data) {
+                        $scope.faevents = events.data;
+                        $scope.invitationExists = true;
+                        if ($scope.faevents.length == 1) {
+                            $scope.selectedInvitation = $scope.faevents[0];
+                            $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                            getInvitationData();
+                        };
+                    } else {
+                        $scope.invitationExists = false;
+                    };
+            
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                });
             };
-/* 
-            console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
+
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    } else if (_event_id > 1991 && _event_id < 2100) {
+        // Fetch event based on year instead of _event_id.
+        $http({
+            method: 'GET',
+            url: 'events/year/' + _event_id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(faevents) {
+            // console.log(`Events selected by year. faevents Status: ${faevents.status}. # events: ${faevents.data.length}`);
+            // console.log(`${JSON.stringify(faevents.data)}`);
+            if (faevents.data.length > 0) {
+                $scope.faevents = faevents.data;
+                $scope.invitationExists = true;
+                if ($scope.faevents.length == 1) {
+                    // console.log(`One event: ${$scope.faevents[0].eventName}`);
+                    $scope.selectedInvitation = $scope.faevents[0];
+                    $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                    getInvitationData();
+                } else {
+                    $scope.selectInvitationText = "Der er flere begivenheder i " + _event_id + ". Vælg her:";
+                };
+            } else {
+                // console.log(`There was no events `);
+                $scope.invitationExists = false;
+                $http({
+                    method: 'GET',
+                    url: 'events',
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(events) {
+                    // console.log(`No future, active event. Collected all events. Status: ${faevents.status}`);
+                    if (events.data.length > 0) {
+                        $scope.faevents = events.data;
+                        $scope.invitationExists = true;
+                        if ($scope.faevents.length == 1) {
+                            $scope.selectedInvitation = $scope.faevents[0];
+                            $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                            getInvitationData();
+                        } else {
+                            $scope.selectInvitationText = "Der er ikke nogen begivenheder i " + _event_id + ". Vil du se en anden? Vælg her:";
+                        };
+                    } else {
+                        $scope.invitationExists = false;
+                        $location.path(`/eventregistrationall/1000`);
+                    };
+            
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                });
+            };
+
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    } else {
+        // console.log(`Specific event. _event_id: ${_event_id}`);
+        $http({
+            method: 'GET',
+            url: 'events/' + _event_id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(event) {
+            // console.log(`Specific event. Status: ${event.status}`);
+            $scope.selectedInvitation = event.data.event;
+            $scope.invitationExists = true;
+            // console.log(`Event Name: ${$scope.selectedInvitation.eventName}, startdate: ${$scope.selectedInvitation.startdate}`);
+            $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+            getInvitationData();
+
+        }, function errorCallback(response) {
+            console.log(`Status: ${response.status}`);
+        });
+    };
+
+    $scope.selectInvitation = function() {
+        $scope.selectedInvitation = JSON.parse($scope.selEvent);
+        getInvitationData();
+    };
+
+    getInvitationData = function() {
+        $scope.arrivalOptions = EventregService.arrivalOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
+        $scope.departureOptions = EventregService.departureOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
+        /* for (arrOpt in $scope.arrivalOptions) {
+            console.log(`Arrival option: ${$scope.arrivalOptions[arrOpt].arrivalOption}`);
+        };
+        for (depOpt in $scope.departureOptions) {
+            console.log(`Departure option: ${$scope.departureOptions[depOpt].departureOption}`);
+        }; */
+        var invyear = $scope.selectedInvitation.year;
+        $scope.invitationyear = invyear;
+        // console.log(`In getInvitationData. invyear: ${invyear}`);
+        _event_id = $scope.selectedInvitation._id;
+        $http({
+            method: 'GET',
+            url: '/eventtypes/'+$scope.selectedInvitation._eventtype,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(eventtype) {
+            // console.log(`Success, eventtype fetched. Status: ${eventtype.status}`);
+            if (eventtype.data) {
+                // console.log(`Eventtype Name: ${eventtype.data.eventtypeName}`);
+                $scope.eventtype = eventtype.data;
+                // console.log(`Eventtype Name: ${$scope.eventtype.eventtypeName}. Number categories: ${$scope.eventtype.participantCategories.length}`);
+                /* for (var u=0; u<$scope.eventtype.participantCategories.length; u++) {
+                    console.log(`Cat name: ${$scope.eventtype.participantCategories[u].name}`);
+                }; */
+                $scope.invitationSelected = true;
+            } else {
+                console.log('Eventtype does not exist');
+            };
+
+            return $http({
+                method: 'GET',
+                url: 'eventregs/all/event/' + $scope.selectedInvitation._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(registrations) {
+            // console.log(`Registrations status: ${registrations.status}`);
+            if (registrations.data) {
+                $scope.registrationsExist = true
+                $scope.registrations = registrations.data;
+                // console.log(`Num registrations: ${$scope.registrations.length}`);
+
+                for (var i=0; i<$scope.registrations.length; i++) {
+                    $scope.registrations[i].num = i;
+                    $scope.registrations[i].EditPopoverIsVisible = false;
+                    $scope.registrations[i].RemPopoverIsVisible = false;
+                };
+                
+                $scope.numAttendees = 0;
+                $scope.numNonAttendees = 0;
+                $scope.dinners = [[0,0],[0,0]];
+                $scope.breakfasts = [[0,0],[0,0]];
+                $scope.lunchs = [[0,0],[0,0]];
+                $scope.friday = [0,0];
+                $scope.saturday = [0,0];
+                $scope.sunday = [0,0];
+                $scope.feeSum = 0;
+                $scope.feePaidSum = 0;
+                for (var i=0; i<$scope.registrations.length; i++) {
+                    // console.log(`Navn: ${$scope.registrations[i].name}, Arr: ${$scope.registrations[i].arrivalOption}, Dep: ${$scope.registrations[i].departureOption}`);
+                    $scope.registrations[i].RemRegistrationPopoverIsVisible = false;
+                    $scope.registrations[i].EditRegistrationPopoverIsVisible = false;
+                    $scope.registrations[i].num = i;
+        
+                    $scope.feeSum += $scope.registrations[i].fee;
+                    if ($scope.registrations[i].paid) {
+                        $scope.feePaidSum += $scope.registrations[i].fee;
+                    };
+                    if ($scope.registrations[i].participantCategory == "Voksen") {ag = 0;} else {ag = 1;};
+                    if ($scope.registrations[i].willattend) {
+                        $scope.numAttendees += 1;
+                        if ($scope.registrations[i].arrivalOption == "Fredag" || $scope.registrations[i].arrivalOption == "Fredag eftermiddag") {
+                            $scope.dinners[ag][0] += 1;
+                            $scope.friday[ag] += 1;
+                            if ($scope.registrations[i].departureOption == "Søndag efter morgenmad" || $scope.registrations[i].departureOption == "Søndag" || $scope.registrations[i].departureOption == "Jeg tager aldrig hjem!!") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.breakfasts[ag][0] += 1;
+                                $scope.breakfasts[ag][1] += 1;
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                                $scope.sunday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag efter aftensmad") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.breakfasts[ag][0] += 1;
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag eftermiddag") {
+                                $scope.breakfasts[ag][0] += 1;
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag formiddag") {
+                                $scope.breakfasts[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                            };
+                        } else if ($scope.registrations[i].arrivalOption == "Lørdag formiddag") {
+                            if ($scope.registrations[i].departureOption == "Søndag efter morgenmad" || $scope.registrations[i].departureOption == "Søndag" || $scope.registrations[i].departureOption == "Jeg tager aldrig hjem!!") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.breakfasts[ag][1] += 1;
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                                $scope.sunday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag efter aftensmad") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag eftermiddag") {
+                                $scope.lunchs[ag][0] += 1;
+                                $scope.saturday[ag] += 1;
+                            };
+                        } else if ($scope.registrations[i].arrivalOption == "Lørdag eftermiddag") {
+                            if ($scope.registrations[i].departureOption == "Søndag efter frokost") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.breakfasts[ag][1] += 1;
+                                $scope.lunchs[ag][1] += 1;
+                                $scope.saturday[ag] += 1;
+                                $scope.sunday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Søndag efter morgenmad" || $scope.registrations[i].departureOption == "Søndag" || $scope.registrations[i].departureOption == "Jeg tager aldrig hjem!!") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.breakfasts[ag][1] += 1;
+                                $scope.saturday[ag] += 1;
+                                $scope.sunday[ag] += 1;
+                            } else if ($scope.registrations[i].departureOption == "Lørdag efter aftensmad") {
+                                $scope.dinners[ag][1] += 1;
+                                $scope.saturday[ag] += 1;
+                            };
+                        };
+                    } else {
+                        $scope.numNonAttendees += 1;
+                    };
+        
+                    /* console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
+                    console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);
+                    console.log(`Voksne. Frokost lørdag: ${$scope.lunchs[0][0]}, søndag: ${$scope.lunchs[0][1]}`);
+                    console.log(`Voksne. Fredag: ${$scope.friday[0]}, Lørdag: ${$scope.saturday[0]}, søndag: ${$scope.sunday[0]}`);
+                    console.log(`Børn. Aftensmad fredag: ${$scope.dinners[1][0]}, lørdag: ${$scope.dinners[1][1]}`);
+                    console.log(`Børn. Morgenmad lørdag: ${$scope.breakfasts[1][0]}, søndag: ${$scope.breakfasts[1][1]}`);
+                    console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
+                    console.log(`Børn. Fredag: ${$scope.friday[1]}, Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`); */
+                };
+            };
+
+            /* console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
             console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);
             console.log(`Voksne. Frokost lørdag: ${$scope.lunchs[0][0]}, søndag: ${$scope.lunchs[0][1]}`);
-            console.log(`Voksne. Fredag: ${$scope.friday[0]}, Lørdag: ${$scope.saturday[0]}, søndag: ${$scope.sunday[0]}`);
+            console.log(`Voksne. Lørdag: ${$scope.saturday[0]}, søndag: ${$scope.sunday[0]}`);
             console.log(`Børn. Aftensmad fredag: ${$scope.dinners[1][0]}, lørdag: ${$scope.dinners[1][1]}`);
             console.log(`Børn. Morgenmad lørdag: ${$scope.breakfasts[1][0]}, søndag: ${$scope.breakfasts[1][1]}`);
             console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
-            console.log(`Børn. Fredag: ${$scope.friday[1]}, Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`);
- */            
-        };
-/* 
-        console.log(`Voksne. Aftensmad fredag: ${$scope.dinners[0][0]}, lørdag: ${$scope.dinners[0][1]}`);
-        console.log(`Voksne. Morgenmad lørdag: ${$scope.breakfasts[0][0]}, søndag: ${$scope.breakfasts[0][1]}`);
-        console.log(`Voksne. Frokost lørdag: ${$scope.lunchs[0][0]}, søndag: ${$scope.lunchs[0][1]}`);
-        console.log(`Voksne. Lørdag: ${$scope.saturday[0]}, søndag: ${$scope.sunday[0]}`);
-        console.log(`Børn. Aftensmad fredag: ${$scope.dinners[1][0]}, lørdag: ${$scope.dinners[1][1]}`);
-        console.log(`Børn. Morgenmad lørdag: ${$scope.breakfasts[1][0]}, søndag: ${$scope.breakfasts[1][1]}`);
-        console.log(`Børn. Frokost lørdag: ${$scope.lunchs[1][0]}, søndag: ${$scope.lunchs[1][1]}`);
-        console.log(`Børn. Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`);
- */        
+            console.log(`Børn. Lørdag: ${$scope.saturday[1]}, søndag: ${$scope.sunday[1]}`); */
 
-        return $http({
-            method: 'GET',
-            url: '/fiscalyears/year/'+invyear,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
+            return $http({
+                method: 'GET',
+                url: '/fiscalyears/year/'+invyear,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(fiscalyear) {
+            // console.log(`Success. Status: ${fiscalyear.status}`);
+            if (fiscalyear.locked) {
+                $scope.fyLocked = true;
+                // console.log(`FY is locked`);
+            } else {
+                // console.log(`FY is NOT locked`);
+            };
+                
+        }, function errorCallback(response) {
+            console.log(`Error. Status: ${response.status}`);
         });
-    }).then(function(fiscalyear) {
-        // console.log(`Success. Status: ${fiscalyear.status}`);
-        if (fiscalyear.locked) {
-            $scope.fyLocked = true;
-            // console.log(`FY is locked`);
-        } else {
-            // console.log(`FY is NOT locked`);
-        };
-        return $http({
-            method: 'GET',
-            url: '/invitations/year/'+invyear,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        });
-    }).then(function(invitation) {
-        // console.log(`Success, invitation fetched. Status: ${invitation.status}`);
-        // console.log(invitation.data.year);
-        if (invitation.data) {
-            // console.log(invitation.data.enddate, invitation.data.startdate);
-            $scope.invitation = invitation.data;
-            invitationExists = true;
-        } else {
-            console.log('Invitation does not exist');
-        };
-    }, function errorCallback(response) {
-        console.log(`Status: ${response.status}`);
-    });
+    };
 
     $scope.sortByName = function(sortDirection) {
         $scope.sorting = true;
@@ -474,11 +688,11 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     getEventregs = function(sortOrNot, sortDirection, searchOrNot, searchText) {
         var url = "eventregs/all/";
         if (sortOrNot) {
-            url = `${url}sort/${$scope.invitationyear}/${sortDirection}`;
+            url = `${url}sort/event/${$scope.selectedInvitation._id}/${sortDirection}`;
         } else if (searchOrNot) {
-            url = `${url}search/${$scope.invitationyear}/${searchText}`;
+            url = `${url}search/event/${$scope.selectedInvitation._id}/${searchText}`;
         } else {
-            url = `${url}year/${$scope.invitationyear}`;
+            url = `${url}event/${$scope.selectedInvitation._id}`;
         };
         // console.log(`url: ${url}`);
         $http({
@@ -489,8 +703,12 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             }
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
-            // console.log(response.data);
             $scope.registrations = response.data;
+            for (var i=0; i<$scope.registrations.length; i++) {
+                $scope.registrations[i].num = i;
+                $scope.registrations[i].EditPopoverIsVisible = false;
+                $scope.registrations[i].RemPopoverIsVisible = false;
+            };
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -505,14 +723,12 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                     'x-auth': localStorage.userToken
                 }
             }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
-                $scope.errorHappened = false;
+                // console.log(`Status: ${response.status}`);
+                // console.log(response.data._id);
                 $location.path(`/eventregistrationall/${registration.year}`);
                 $route.reload();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
-                $scope.errorHappened = true;
             });
         };
     };
@@ -521,11 +737,14 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         // console.log(`Payment status: ${registration.paid}`);
         var data = {
             name: registration.name,
-            agegroup: registration.agegroup,
+            // agegroup: registration.agegroup,
+            participantCategory: registration.participantCategory,
             year: registration.year,
-            arrivalday: registration.arrivalday,
+            // arrivalday: registration.arrivalday,
+            arrivalOption: registration.arrivalOption,
             arrivaltime: registration.arrivaltime,
-            departureday: registration.departureday,
+            // departureday: registration.departureday,
+            departureOption: $scope.departureOption,
             departuretime: registration.departuretime,
             diet: registration.diet,
             _creator: registration._creator,
@@ -564,16 +783,19 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
             $scope.editRegistration = true;
         };
         $scope.editRegname = registration.name;
-        $scope.editAgegroup = registration.agegroup;
+        $scope.editPartCat = registration.participantCategory;
+        $scope.editYear = registration.year;
         $scope.willattend = registration.willattend;
         $scope.willnotattend = !registration.willattend;
-        $scope.editArrivalday = registration.arrivalday;
+        // $scope.editArrivalday = registration.arrivalday;
+        $scope.editArrivalOption = registration.arrivalOption;
         if (registration.arrivaltime == null) {
             $scope.editArrivaltime = null;
         } else {
             $scope.editArrivaltime = new Date(registration.arrivaltime);
         };
-        $scope.editDepartureday = registration.departureday;
+        // $scope.editDepartureday = registration.departureday;
+        $scope.editDepartureOption = registration.departureOption;
         if (registration.departuretime == null) {
             $scope.editDeparturetime = null;
         } else {
@@ -585,28 +807,39 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     };
 
     $scope.editEventreg = function() {
-        console.log(`In AllEventReg controller, editEventreg. Name: ${$scope.editRegname}`)
+        // console.log(`In AllEventReg controller, editEventreg. Name: ${$scope.editRegname}`)
         var eventFee = 0;
         var willattend = true;
+        partCat = $scope.eventtype.participantCategories.filter(obj => {
+            return obj.name == $scope.editPartCat
+        })[0];
+        // console.log(`In editRegistrationToggle. editPartCat: ${editPartCat.name}`);
+        // console.log(`editPartCat stringified: ${JSON.stringify(editPartCat)}`);
 
         if ($scope.willnotattend) {
             willattend = false
         } else {
-            eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
-            console.log(`Arrivalday: ${$scope.editArrivalday}, Departureday: ${$scope.editDepartureday}, Event Fee: ${eventFee}`);
+            var numDays = EventregService.numDays($scope.editArrivalOption, $scope.editDepartureOption);
+            // console.log(`numDays: ${numDays}`);
+            if (numDays == 1) {
+                eventFee = partCat.priceDay;
+            } else {
+                eventFee = partCat.priceFull;
+            };
+            // console.log(`ArrivalOption: ${$scope.editArrivalOption}, DepartureOption: ${$scope.editDepartureOption}, Event Fee: ${eventFee}`);
         };
 
         var eventreg = {
             name: $scope.editRegname,
-            agegroup: $scope.editAgegroup,
-            year: invyear,
+            participantCategory: $scope.editPartCat,
+            year: $scope.editYear,
             willattend: willattend,
-            arrivalday: $scope.editArrivalday,
+            arrivalOption: $scope.editArrivalOption,
             arrivaltime: $scope.editArrivaltime,
-            departureday: $scope.editDepartureday,
+            departureOption: $scope.editDepartureOption,
             departuretime: $scope.editDeparturetime,
-            diet: $scope.editDiet,
             fee: eventFee,
+            diet: $scope.editDiet,
             paid: $scope.editPaid
         };
 
@@ -620,12 +853,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         }).then(function(response) {
             // console.log(`Status: ${response.status}`);
             // console.log(response.data._id);
-            $scope.errorHappened = false;
-            $location.path('/eventregistrationall/'+invyear);
+            $location.path('/eventregistrationall/'+$scope.selectedInvitation._id);
             $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-            $scope.errorHappened = true;
         });
     };
 
@@ -640,7 +871,16 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         for (var i=0; i<$scope.registrations.length; i++) {
             var eventFee = 0;
             if ($scope.registrations[i].willattend) {
-                eventFee = EventPriceService.eventFee($scope.registrations[i].arrivalday ,$scope.registrations[i].departureday, $scope.registrations[i].agegroup, $scope.invitation.payment);
+                var numDays = EventregService.numDays($scope.registrations[i].arrivalOption, $scope.registrations[i].departureOption);
+                // console.log(`numDays: ${numDays}`);
+                var partCat = $scope.eventtype.participantCategories.filter(obj => {
+                    return obj.name == registrations[i].participantCategory
+                })[0];
+                if (numDays == 1) {
+                    eventFee = partCat.priceDay;
+                } else {
+                    eventFee = partCat.priceFull;
+                };
                 // console.log(`Event Fee in recalcFees: ${eventFee}`);
             };
             
@@ -661,7 +901,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         };
             
         setTimeout(function(){
-            $location.path('/eventregistrationall/'+invyear);
+            $location.path('/eventregistrationall/'+$scope.selectedInvitation._id);
             $route.reload();
         }, 1000);
     };

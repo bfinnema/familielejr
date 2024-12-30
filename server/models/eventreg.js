@@ -5,13 +5,21 @@ var EventregSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false
     },
+    _event: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     name: {
         type: String,
         required: true
     },
     agegroup: {
         type: String,
-        required: true
+        required: false
+    },
+    participantCategory: {
+        type: String,
+        required: false
     },
     year: {
         type: Number,
@@ -24,10 +32,16 @@ var EventregSchema = new mongoose.Schema({
     arrivalday: {
         type: String
     },
+    arrivalOption: {
+        type: String
+    },
     arrivaltime: {
         type: Date
     },
     departureday: {
+        type: String
+    },
+    departureOption: {
         type: String
     },
     departuretime: {

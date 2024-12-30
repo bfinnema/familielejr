@@ -64,6 +64,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                             },
                             data: {
                                 year: $scope.year,
+                                commonImage: $scope.commonImage,
                                 filename: file.name,
                                 filetype: file.type,
                                 user: localStorage.familielejrUserId,
@@ -174,11 +175,18 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     // console.log(`Screen Size detected: ${$scope.screenSizeIndex}`);
     var currentPhoto = 0;
     $scope.year = $routeParams.year;
+    $scope.commonImages = false;
+    var url = '/photos/year/'+$routeParams.year;
+    if ($routeParams.year == "common") {
+        url = "/photos/common"
+        // console.log(`Common Images. url: ${url}`);
+        $scope.commonImages = true;
+    };
     //console.log(`Photos from year ${$scope.year}`)
 
     $http({
         method: 'GET',
-        url: '/photos/year/'+$routeParams.year,
+        url: url,
         headers: {
             'x-auth': localStorage.userToken
         }

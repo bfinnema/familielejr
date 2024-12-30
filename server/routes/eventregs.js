@@ -11,15 +11,20 @@ router.post('/', authenticate, (req, res) => {
   var registeree = req.user.name.firstname;
   if (req.user.name.middlename) {registeree = registeree + ' ' + req.user.name.middlename};
   registeree = registeree + ' ' + req.user.name.surname
+  console.log(`_event: ${req.body._event}`);
   var eventreg = new Eventreg({
     name: req.body.name,
     agegroup: req.body.agegroup,
+    participantCategory: req.body.participantCategory,
     year: req.body.year,
     _tenant: req.user._tenant,
+    _event: req.body._event,
     willattend: req.body.willattend,
-    arrivalday: req.body.arrivalday,
+    // arrivalday: req.body.arrivalday,
+    arrivalOption: req.body.arrivalOption,
     arrivaltime: req.body.arrivaltime,
-    departureday: req.body.departureday,
+    // departureday: req.body.departureday,
+    departureOption: req.body.departureOption,
     departuretime: req.body.departuretime,
     fee: req.body.fee,
     diet: req.body.diet,
@@ -37,8 +42,8 @@ router.post('/', authenticate, (req, res) => {
 // Change an Eventreg. Is used for registering that a participant has paid the camp fee.
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['name', 'agegroup', 'year', 'willattend', 'arrivalday', 'arrivaltime', 'departureday', 'departuretime', 'fee', 'diet', '_creator', 'registeree', 'paid']);
-  // console.log(`Patching Eventreg, name: ${body.name}, Registeree: ${req.user.name.firstname}, Arrivalday: ${body.arrivalday}, Departureday: ${body.departureday}, Paid? ${body.paid}`);
+  var body = _.pick(req.body, ['name', 'agegroup', 'participantCategory', 'year', 'willattend', 'arrivalOption', 'arrivaltime', 'departureOption', 'departuretime', 'fee', 'diet', '_creator', 'registeree', 'paid']);
+  // console.log(`Patching Eventreg, name: ${body.name}, Registeree: ${req.user.name.firstname}, ArrivalOption: ${body.arrivalOption}, DepartureOption: ${body.departureOption}, Paid? ${body.paid}`);
 
   var uploader = req.user.name.firstname;
   if (req.user.name.middlename) {uploader = uploader + ' ' + req.user.name.middlename};
@@ -116,6 +121,20 @@ router.get('/:year', authenticate, (req, res) => {
   });
 });
 
+// Get all event registrations for a specific event submitted by a specific member
+router.get('/event/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  Eventreg.find({
+    _tenant: req.user._tenant,
+    _creator: req.user._id,
+    _event: id
+  }).then((eventregs) => {
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 // Get all event registrations for all years
 router.get('/all', authenticate, (req, res) => {
   Eventreg.find({
@@ -131,7 +150,27 @@ router.get('/all', authenticate, (req, res) => {
 router.get('/all/year/:year', authenticate, (req, res) => {
   var year = req.params.year;
   Eventreg.find({_tenant: req.user._tenant, year: year}).sort({willattend:-1}).then((eventregs) => {
-    // console.log(`Regs: ${eventregs[0].name}`);
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// Get all event registrations for one event
+router.get('/all/event/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  if (!ObjectId.isValid(id)) {
+      console.log(`id is not valid`);
+      return res.status(404).send();
+  };
+
+  Eventreg.find({_tenant: req.user._tenant, _event: id}).sort({willattend:-1}).then((eventregs) => {
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
     res.json(eventregs);
   }, (e) => {
     res.status(400).send(e);
@@ -139,14 +178,38 @@ router.get('/all/year/:year', authenticate, (req, res) => {
 });
 
 // Get all event registrations for one year, sorted
-router.get('/all/sort/:year/:sortDirection', authenticate, (req, res) => {
+router.get('/all/sort/year/:year/:sortDirection', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`sortDirection: ${req.params.sortDirection}`);
   var sd = 1;
   if (req.params.sortDirection == "up") {sd = -1};
   // console.log(`sd: ${sd}`);
   Eventreg.find({_tenant: req.user._tenant, year: year}).sort({name:sd}).then((eventregs) => {
-    // console.log(`Regs: ${eventregs[0].name}`);
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// Get all event registrations for one event, sorted
+router.get('/all/sort/event/:id/:sortDirection', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`Get all event registrations for one event, sorted. sortDirection: ${req.params.sortDirection}`);
+  if (!ObjectId.isValid(id)) {
+      console.log(`id is not valid`);
+      return res.status(404).send();
+  };
+
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
+  // console.log(`sd: ${sd}`);
+  Eventreg.find({_tenant: req.user._tenant, _event: id}).sort({name:sd}).then((eventregs) => {
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
     res.json(eventregs);
   }, (e) => {
     res.status(400).send(e);
@@ -154,12 +217,34 @@ router.get('/all/sort/:year/:sortDirection', authenticate, (req, res) => {
 });
 
 // Search registrations for one year
-router.get('/all/search/:year/:searchText', authenticate, (req, res) => {
+router.get('/all/search/year/:year/:searchText', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log(`searchText: ${req.params.searchText}`);
   var sd = 1;
   Eventreg.find({_tenant: req.user._tenant ,year: year, name: {"$regex":req.params.searchText}}).sort({name:sd}).then((eventregs) => {
-    // console.log(`Regs: ${eventregs[0].name}`);
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
+    res.json(eventregs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+// Search registrations for one event
+router.get('/all/search/event/:id/:searchText', authenticate, (req, res) => {
+  var id = req.params.id;
+  // console.log(`Search registrations for one event. searchText: ${req.params.searchText}`);
+  if (!ObjectId.isValid(id)) {
+      console.log(`id is not valid`);
+      return res.status(404).send();
+  };
+
+  var sd = 1;
+  Eventreg.find({_tenant: req.user._tenant ,_event: id, name: {"$regex":req.params.searchText}}).sort({name:sd}).then((eventregs) => {
+    /* if (eventregs.length > 0) {
+      console.log(`Regs #0: ${eventregs[0].name}`);
+    }; */
     res.json(eventregs);
   }, (e) => {
     res.status(400).send(e);

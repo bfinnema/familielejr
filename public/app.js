@@ -4,7 +4,7 @@ familielejr.config(['uiGmapGoogleMapApiProvider', function(uiGmapGoogleMapApiPro
     uiGmapGoogleMapApiProvider.configure({
         key: 'AIzaSyCaMYDW9iGzjm-30DhtenRYrJ_lTipnRzE',
         v: '3', //defaults to latest 3.X anyhow
-        libraries: 'weather,geometry,visualization'
+        libraries: 'geometry,visualization'
     });
 }]);
 
@@ -85,12 +85,12 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregCtrl',
             access: {restricted: true}
         }).
-        when('/eventregistrationall/:year', {
+        when('/eventregistrationall/:id', {
             templateUrl: 'views/eventregall.view.html',
             controller: 'eventregallCtrl',
             access: {restricted: true}
         }).
-        when('/eventregistrationallprint/:year', {
+        when('/eventregistrationallprint/:id', {
             templateUrl: 'views/eventregallprint.view.html',
             controller: 'eventregallCtrl',
             access: {restricted: true}
@@ -130,9 +130,9 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'campmapCtrl',
             access: {restricted: true}
         }).
-        when('/camplist', {
-            templateUrl: 'views/camplist.view.html',
-            controller: 'camplistCtrl',
+        when('/pasteventlist', {
+            templateUrl: 'views/pasteventlist.view.html',
+            controller: 'pasteventlistCtrl',
             access: {restricted: true}
         }).
         when('/photos/:id', {
@@ -187,6 +187,16 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/invitationadmin', {
             templateUrl: 'views/invitationadmin.view.html',
             controller: 'invitationadminCtrl',
+            access: {restricted: true}
+        }).
+        when('/invitation2admin', {
+            templateUrl: 'views/invitation2admin.view.html',
+            controller: 'invitation2adminCtrl',
+            access: {restricted: true}
+        }).
+        when('/invitation2display/:id', {
+            templateUrl: 'views/invitation2display.view.html',
+            controller: 'invitation2displayCtrl',
             access: {restricted: true}
         }).
         when('/futurecamps/edit/:id', {

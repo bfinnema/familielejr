@@ -66,11 +66,18 @@ var EventSchema = new mongoose.Schema({
         text1: {
             type: String
         },
+        starttime: {
+            type: Date
+        },
+        endtime: {
+            type: Date
+        },
         registration: {
-            receiver: {type: String, required: true},
+            requiresRegistration: {type: Boolean},
+            receiver: {type: String},
             email: {type: String},
             phone: {type: String},
-            deadline: {type: Date, required: true}
+            deadline: {type: Date}
         },
         bring: {
             type: String

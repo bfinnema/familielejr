@@ -146,12 +146,15 @@ function ($q, $timeout, $http) {
 
 .factory('EventregService',[function() {
     return({
-        ageGroups: ageGroups,
-        arrivalDays: arrivalDays,
-        departureDays: departureDays
+        // ageGroups: ageGroups,
+        // arrivalDays: arrivalDays,
+        // departureDays: departureDays,
+        numDays: numDays,
+        arrivalOptions: arrivalOptions,
+        departureOptions: departureOptions
     });
 
-    function ageGroups() {
+    /* function ageGroups() {
         return [
             {"agegroup": "Voksen"},
             {"agegroup": "Barn under 12"},
@@ -175,6 +178,106 @@ function ($q, $timeout, $http) {
             {"departureday": "Lørdag efter aftensmad"},
             {"departureday": "Jeg tager aldrig hjem!!"}
         ];
+    }; */
+
+    function numDays(arrival, departure) {
+        numDays = 1;
+        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!" || departure == "Lørdag efter aftensmad") {
+            // "Søndag efter frokost" is the for historic reasons
+            if (arrival == "Fredag" || arrival == "Fredag eftermiddag") {
+                numDays = 2;
+            };
+        };
+        return numDays;
+    };
+
+    function arrivalOptions(esDate, sTime, eeDate, eTime) {
+        var eventStartDate = new Date(esDate);
+        var startTime = new Date(sTime);
+        var eventEndDate = new Date(eeDate);
+        var endTime = new Date(eTime);
+        var startYear = eventStartDate.getFullYear();
+        var startMonth = eventStartDate.getMonth();
+        var startDate = eventStartDate.getDate();
+        // console.log(`Startdate: ${eventStartDate.toLocaleString('da-DK', {timeZone: 'Europe/Copenhagen'})}`);
+        // console.log(`Enddate: ${eventEndDate.toLocaleString('da-DK', {timeZone: 'Europe/Copenhagen'})}`);
+        var diffInDays = Math.round((eventEndDate.getTime() - eventStartDate.getTime())/(1000*3600*24));
+        // console.log(`Diff in days: ${diffInDays}`);
+        var days = ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
+        // console.log(`Startday of the week ${eventStartDate.getDay()}: ${days[eventStartDate.getDay()]}`);
+        // console.log(`Endday of the week ${eventEndDate.getDay()}: ${days[eventEndDate.getDay()]}`);
+
+        var arrivalOptions = [];
+
+        if (eventStartDate.getDate() != eventEndDate.getDate()) {
+            if (startTime.getHours() < 12) {
+                arrivalOptions.push({"arrivalOption": days[eventStartDate.getDay()] + " formiddag"});
+            };
+            if (startTime.getHours() < 20) {
+                arrivalOptions.push({"arrivalOption": days[eventStartDate.getDay()] + " eftermiddag"});
+            };
+            if (startTime.getHours() < 24) {
+                arrivalOptions.push({"arrivalOption": days[eventStartDate.getDay()] + " efter aftensmad"});
+            };
+            var i=0;
+            while (i<diffInDays) {
+                theDate = new Date(startYear, startMonth, startDate + 1 + i);
+                if (eventEndDate.getDate() == theDate.getDate()) {
+                    if (endTime.getHours > 12) {
+                        arrivalOptions.push({"arrivalOption": days[theDate.getDay()] + " formiddag"});
+                    };
+                } else {
+                    arrivalOptions.push({"arrivalOption": days[theDate.getDay()] + " formiddag"});
+                    arrivalOptions.push({"arrivalOption": days[theDate.getDay()] + " eftermiddag"});
+                    arrivalOptions.push({"arrivalOption": days[theDate.getDay()] + " efter aftensmad"});
+                };
+                i++;
+            };
+        };
+
+        return arrivalOptions;
+    };
+
+    function departureOptions(esDate, sTime, eeDate, eTime) {
+        var eventStartDate = new Date(esDate);
+        var eventEndDate = new Date(eeDate);
+        var endTime = new Date(eTime);
+        var startYear = eventStartDate.getFullYear();
+        var startMonth = eventStartDate.getMonth();
+        var startDate = eventStartDate.getDate();
+        // console.log(`Startdate: ${eventStartDate.toLocaleString('da-DK', {timeZone: 'Europe/Copenhagen'})}`);
+        // console.log(`Enddate: ${eventEndDate.toLocaleString('da-DK', {timeZone: 'Europe/Copenhagen'})}`);
+        var diffInDays = Math.round((eventEndDate.getTime() - eventStartDate.getTime())/(1000*3600*24));
+        // console.log(`Diff: ${eventEndDate.getTime() - eventStartDate.getTime()}. Diff in days: ${diffInDays}`);
+        var days = ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
+
+        var departureOptions = [];
+
+        if (eventStartDate.getDate() != eventEndDate.getDate()) {
+            var i=0;
+            while (i<diffInDays) {
+                theDate = new Date(startYear, startMonth, startDate + 1 + i);
+                if (eventEndDate.getDate() == theDate.getDate()) {
+                    if (endTime.getHours > 12) {
+                        departureOptions.push({"departureOption": days[theDate.getDay()] + " formiddag"});
+                        departureOptions.push({"departureOption": days[theDate.getDay()] + " eftermiddag"});
+                    } else {
+                        departureOptions.push({"departureOption": days[theDate.getDay()]});
+                    }
+                    if (endTime.getHours > 18) {
+                        departureOptions.push({"departureOption": days[theDate.getDay()] + " efter aftensmad"});
+                    };
+                } else {
+                    departureOptions.push({"departureOption": days[theDate.getDay()] + " formiddag"});
+                    departureOptions.push({"departureOption": days[theDate.getDay()] + " eftermiddag"});
+                    departureOptions.push({"departureOption": days[theDate.getDay()] + " efter aftensmad"});
+                };
+                i++;
+            };
+        };
+        departureOptions.push({"departureOption": "Jeg tager aldrig hjem!!"});
+
+        return departureOptions;
     };
 }])
 
@@ -255,27 +358,27 @@ function ($q, $timeout, $http) {
 .factory('EventPriceService',[function() {
     return({
         numDays: numDays,
-        eventFee: eventFee,
-        eventFeeOld: eventFeeOld,
-        eventPriceDefault: eventPriceDefault
+        // eventFee: eventFee,
+        // eventFeeOld: eventFeeOld,
+        // eventPriceDefault: eventPriceDefault
     });
 
-    function numDays(arrival, departure, priceModelType) {
+    function numDays(arrival, departure) {
         numDays = 1;
-        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!") {
+        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!" || departure == "Lørdag efter aftensmad") {
             // "Søndag efter frokost" is the for historic reasons
-            if (arrival == "Fredag") {
+            if (arrival == "Fredag" || arrival == "Fredag eftermiddag") {
                 numDays = 2;
             };
-            if (arrival == "Lørdag formiddag" && priceModelType == "old") {
+            /* if (arrival == "Lørdag formiddag" && priceModelType == "old") {
                 numDays = 2;
-            }
-        } else if (departure == "Søndag efter morgenmad" || departure == "Lørdag efter aftensmad") {
+            }; */
+        } /* else if (departure == "Søndag efter morgenmad" || departure == "Lørdag efter aftensmad") {
             // "Søndag efter morgenmad" is the for historic reasons
             if (arrival == "Fredag") {
                 numDays = 2;
             };
-        };
+        } */;
         return numDays;
     };
 

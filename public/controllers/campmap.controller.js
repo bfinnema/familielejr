@@ -291,11 +291,9 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
     };
 }])
 
-.controller('camplistCtrl', ['$scope', '$http', 'AuthService', 'YearService', 
-function($scope, $http, AuthService, YearService) {
+.controller('pasteventlistCtrl', ['$scope', '$http', 'AuthService', 
+function($scope, $http, AuthService) {
 
-    // console.log(`This controller is for the list of past camps. Don't be confused bby the fact that it uses the term "futurecamps" for past camps.`);
-    
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
@@ -304,10 +302,26 @@ function($scope, $http, AuthService, YearService) {
         };
     });
 
-    var invyear = YearService.myYear("camplist");
-    // console.log(`List of past camps. Invyear: ${invyear}`);
-
     $http({
+        method: 'GET',
+        url: '/events/pastevents/',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(events) {
+        console.log(`Success. Status: ${events.status}`);
+        if (events.data) {
+            $scope.events = events.data;
+        } else {
+            console.log('No past camps');
+        };
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
+        angular.element(document.querySelector( '#pasteventlist' ) ).addClass('active');
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
+    });
+
+    /* $http({
         method: 'GET',
         url: '/futurecamps/past/' + invyear,
         headers: {
@@ -324,12 +338,5 @@ function($scope, $http, AuthService, YearService) {
         angular.element(document.querySelector( '#camplist' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
-    });
-/* 
-    setTimeout(function(){
-        angular.element(document.querySelector( '#history' ) ).addClass('active');
-        angular.element(document.querySelector( '#camplist' ) ).addClass('active');
-    }, 1000);
-
- */    
+    }); */
 }]);

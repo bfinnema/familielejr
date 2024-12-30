@@ -29,6 +29,18 @@ router.get('/', authenticate, (req, res) => {
     });
 });
 
+router.get('/eventtypeName/:name', authenticate, (req, res) => {
+    var name = req.params.name;
+    Eventtype.findOne({
+        _tenant: req.user._tenant,
+        eventtypeName: name
+    }).then((eventtype) => {
+        res.json(eventtype);
+    }, (e) => {
+        res.status(400).send(e);
+    });
+});
+
 router.get('/:id', authenticate, (req, res) => {
   var id = req.params.id;
 

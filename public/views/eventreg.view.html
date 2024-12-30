@@ -1,13 +1,16 @@
 <div ng-include="'navigation.html'"></div>
 
 <div>
-    <h2>Tilmelding til næste lejr i {{ invitationyear }}</h2>
-    <hr>
-    <div class="row" ng-show="errorHappened">
-        <div class="form-group col-md-5">
-            <p> Der skete en fejl. Prøv igen.</p>
-        </div>
+    <!-- <h2>Tilmelding til næste lejr i {{ invitationyear }}</h2> -->
+    <h2 ng-show="!invitationSelected">Tilmelding til en begivenhed</h2>
+    <h2 ng-show="invitationSelected">Tilmelding til {{ selectedInvitation.eventName }}</h2>
+    <div class="form-group col-md-6" ng-show="!invitationSelected">
+        <label>Der er flere, aktive begivenheder, man kan tilmelde sig. Vælg begivenhed, du tilmelde til:</label>
+        <select class="form-control" ng-model="selEvent" name="selEvent" ng-change="selectInvitation()">
+            <option ng-repeat="event in faevents" value="{{event}}">{{event.eventName}}</option>
+        </select>
     </div>
+    <hr>
     <div class="row">
         <div class="form-group col-md-12">
             <p>Her kan du tilmelde dig og andre til den kommende familielejr. Der skal være en tilmelding per person = Du må ikke 
@@ -37,15 +40,15 @@
         </div>
     </div>
 </div>
-<div ng-show="!editRegistration">
+<div ng-show="!editRegistration && invitationSelected">
     <form name="eventregForm" ng-submit="addEventreg()">
         <div class="row">
             <div class="form-group col-md-4">
-                <label>Deltager i familielejr {{invitationyear}}</label>
+                <label>Deltager i {{selectedInvitation.eventName}}</label>
                 <input type="checkbox" ng-model="willattend" id="willattend" ng-change="attendPositive()">
             </div>
             <div class="form-group col-md-4">
-                <label>Deltager ikke i familielejr {{invitationyear}}</label>
+                <label>Deltager ikke i {{selectedInvitation.eventName}}</label>
                 <input type="checkbox" ng-model="willnotattend" id="willnotattend" ng-change="attendNegative()">
             </div>
         </div>
@@ -56,35 +59,56 @@
                 <i ng-show="eventregForm.regname.$error.required">*Skal udfyldes</i>
             </div>
             <div class="form-group col-md-2">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="participantCategory" name="participantCategory" required>
+                    <option ng-repeat="partCat in eventtype.participantCategories" value="{{partCat}}">{{partCat.name}}</option>
+                </select>
+                <i ng-show="eventregForm.participantCategory.$error.required">*Skal udfyldes</i>
+            </div>
+            <!-- <div class="form-group col-md-2">
                 <label>Barn / Voksen</label>
                 <select class="form-control" ng-model="agegroup" name="agegroup" required>
                     <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
                 </select>
                 <i ng-show="eventregForm.agegroup.$error.required">*Skal udfyldes</i>
-            </div>
+            </div> -->
             <div ng-show="willattend" class="form-group col-md-4">
                 <label>Diæt / fødevareallergier</label>
                 <input type="text" class="form-control" ng-model="diet" name="diet" placeholder="Diæt">
             </div>
         </div>
         <div ng-show="willattend" class="row">
-            <div class="form-group col-md-2">
+            <!-- <div class="form-group col-md-2">
                 <label>Ankomst</label>
                 <select class="form-control" ng-model="arrivalday" name="arrivalday" ng-required="willattend">
                     <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
                 </select>
                 <i ng-show="eventregForm.arrivalday.$error.required">*Skal udfyldes</i>
+            </div> -->
+            <div class="form-group col-md-2">
+                <label>Ankomst</label>
+                <select class="form-control" ng-model="arrivalOption" name="arrivalOption" ng-required="willattend">
+                    <option ng-repeat="arrivalOption in arrivalOptions" value="{{arrivalOption.arrivalOption}}">{{arrivalOption.arrivalOption}}</option>
+                </select>
+                <i ng-show="eventregForm.arrivalOption.$error.required">*Skal udfyldes</i>
             </div>
             <div class="form-group col-md-2">
                 <label>Ca. tid</label>
                 <input type="time" class="form-control" ng-model="arrivaltime" name="arrivaltime">
             </div>
-            <div class="form-group col-md-2">
+            <!-- <div class="form-group col-md-2">
                 <label>Afgang</label>
                 <select class="form-control" ng-model="departureday" name="departureday" ng-required="willattend">
                     <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
                 </select>
                 <i ng-show="eventregForm.departureday.$error.required">*Skal udfyldes</i>
+            </div> -->
+            <div class="form-group col-md-2">
+                <label>Afgang</label>
+                <select class="form-control" ng-model="departureOption" name="departureOption" ng-required="willattend">
+                    <option ng-repeat="departureOption in departureOptions" value="{{departureOption.departureOption}}">{{departureOption.departureOption}}</option>
+                </select>
+                <i ng-show="eventregForm.departureOption.$error.required">*Skal udfyldes</i>
             </div>
             <div class="form-group col-md-2">
                 <label>Ca. tid</label>
@@ -102,16 +126,15 @@
     </form>
 </div>
 <hr>
-<h3 class="heading">Til familielejren {{ invitationyear }}, har du tilmeldt:</h3>
-<table class="table table-striped">
+<!-- <h3 class="heading">Til familielejren {{ invitationyear }}, har du tilmeldt:</h3> -->
+<h3 class="heading" ng-show="invitationSelected">Til {{ selectedInvitation.eventName }}, har du tilmeldt:</h3>
+<table class="table table-striped" ng-show="invitationSelected">
     <thead>
         <tr>
             <th width="20%">Navn</th>
-            <th width="12%">Voksen / Barn</th>
+            <th width="12%">Kategori</th>
             <th width="18%">Ankomst</th>
-            <!-- <th width="7%">~tid</th> -->
             <th width="18%">Afgang</th>
-            <!-- <th width="7%">~tid</th> -->
             <th width="6%">~pris</th>
             <th width="16%">Diæt</th>
             <th width="10%">Ændre/Slet</th>
@@ -120,12 +143,10 @@
     <tbody>
         <tr ng-repeat="registration in registrations">
             <td>{{ registration.name }}</td>
-            <td>{{ registration.agegroup }}</td>
-            <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+            <td>{{ registration.participantCategory }}</td>
+            <td ng-show="registration.willattend">{{ registration.arrivalOption }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
             <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
-            <!-- <td>{{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td> -->
-            <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
-            <!-- <td>{{ registration.departuretime | date:'HH:mm' : 'CET' }}</td> -->
+            <td>{{ registration.departureOption }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
             <td>{{ registration.fee | number:0 }}</td>
             <td>{{ registration.diet }}</td>
             <td>
@@ -144,18 +165,55 @@
         </tr>
     </tbody>
 </table>
+<!-- <table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="20%">Navn</th>
+            <th width="12%">Voksen / Barn</th>
+            <th width="18%">Ankomst</th>
+            <th width="18%">Afgang</th>
+            <th width="6%">~pris</th>
+            <th width="16%">Diæt</th>
+            <th width="10%">Ændre/Slet</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="registration in registrations">
+            <td>{{ registration.name }}</td>
+            <td>{{ registration.agegroup }}</td>
+            <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+            <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
+            <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+            <td>{{ registration.fee | number:0 }}</td>
+            <td>{{ registration.diet }}</td>
+            <td>
+                <a class="btn btn-primary" ng-click="editRegistrationToggle(registration)">
+                    <i class="glyphicon glyphicon-edit" ng-mouseover="showPopoverEdit(registration.num)" ng-mouseleave="hidePopoverEdit(registration.num)"></i>
+                    <div class="mypopover2" ng-show="registration.EditPopoverIsVisible">Ændre tilmelding for {{registration.name}}</div>
+                </a>
+                <a class="btn btn-primary" ng-click="removeReg(registration)">
+                    <i class="glyphicon glyphicon-trash" ng-mouseover="showPopoverRem(registration.num)" ng-mouseleave="hidePopoverRem(registration.num)"></i>
+                    <div class="mypopover2" ng-show="registration.RemPopoverIsVisible">Slet tilmelding for {{registration.name}}</div>
+                </a>
+            </td>
+        </tr>
+        <tr ng-show="registrations.length == 0">
+            <td>Du har ikke tilmeldt nogen endnu</td>
+        </tr>
+    </tbody>
+</table> -->
 <br>
-<p ng-show="registrations"> PS: Prisen er anslået. Arrangørerne kan ændre den :-)</p>
+<!-- <p ng-show="registrations"> PS: Prisen er anslået. Arrangørerne kan ændre den :-)</p> -->
 <div ng-show="editRegistration">
     <h3 class="heading">Ændre tilmeldingen af {{editRegname}}</h3>
     <form name="editEventregForm" ng-submit="editEventreg()">
         <div class="row">
             <div class="form-group col-md-4">
-                <label>Deltager i famililejr {{invitationyear}}</label>
+                <label>Deltager i {{selectedInvitation.eventName}}</label>
                 <input type="checkbox" ng-model="willattend" id="willattend" ng-change="attendPositive()">
             </div>
             <div class="form-group col-md-4">
-                <label>Deltager ikke i famililejr {{invitationyear}}</label>
+                <label>Deltager ikke i {{selectedInvitation.eventName}}</label>
                 <input type="checkbox" ng-model="willnotattend" id="willnotattend" ng-change="attendNegative()">
             </div>
         </div>
@@ -166,36 +224,57 @@
                 <i ng-show="editEventregForm.regname.$error.required">*Skal udfyldes</i>
             </div>
             <div class="form-group col-md-2">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="editPartCat" name="editPartCat" required>
+                    <option ng-repeat="partCat in eventtype.participantCategories" value="{{partCat.name}}">{{partCat.name}}</option>
+                </select>
+                <i ng-show="editEventregForm.editPartCat.$error.required">*Skal udfyldes</i>
+            </div>
+            <!-- <div class="form-group col-md-2">
                 <label>Barn / Voksen</label>
                 <select class="form-control" ng-model="editAgegroup" name="editAgegroup" required>
                     <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
                 </select>
                 <i ng-show="editEventregForm.editAgegroup.$error.required">*Skal udfyldes</i>
-            </div>
+            </div> -->
             <div ng-show="willattend" class="form-group col-md-4">
                 <label>Diæt / fødevareallergier</label>
                 <input type="text" class="form-control" ng-model="editDiet" name="editDiet" placeholder="Diæt">
             </div>
         </div>
         <div ng-show="willattend" class="row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
+                <label>Ankomst</label>
+                <select class="form-control" ng-model="editArrivalOption" name="editArrivalOption" required>
+                    <option ng-repeat="arrivalOption in arrivalOptions" value="{{arrivalOption.arrivalOption}}">{{arrivalOption.arrivalOption}}</option>
+                </select>
+                <i ng-show="editEventregForm.arrivalOption.$error.required">*Skal udfyldes</i>
+            </div>
+            <!-- <div class="form-group col-md-2">
                 <label>Ankomst</label>
                 <select class="form-control" ng-model="editArrivalday" name="editArrivalday" required>
                     <option ng-repeat="arrivalday in arrivaldays" value="{{arrivalday.arrivalday}}">{{arrivalday.arrivalday}}</option>
                 </select>
                 <i ng-show="editEventregForm.arrivalday.$error.required">*Skal udfyldes</i>
-            </div>
+            </div> -->
             <div class="form-group col-md-2">
                 <label>Ca. tid</label>
                 <input type="time" class="form-control" ng-model="editArrivaltime" name="editArrivaltime">
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
+                <label>Afgang</label>
+                <select class="form-control" ng-model="editDepartureOption" name="editDepartureOption" required>
+                    <option ng-repeat="departureOption in departureOptions" value="{{departureOption.departureOption}}">{{departureOption.departureOption}}</option>
+                </select>
+                <i ng-show="editEventregForm.departureOption.$error.required">*Skal udfyldes</i>
+            </div>
+            <!-- <div class="form-group col-md-2">
                 <label>Afgang</label>
                 <select class="form-control" ng-model="editDepartureday" name="editDepartureday" required>
                     <option ng-repeat="departureday in departuredays" value="{{departureday.departureday}}">{{departureday.departureday}}</option>
                 </select>
                 <i ng-show="editEventregForm.departureday.$error.required">*Skal udfyldes</i>
-            </div>
+            </div> -->
             <div class="form-group col-md-2">
                 <label>Ca. tid</label>
                 <input type="time" class="form-control" ng-model="editDeparturetime" name="editDeparturetime">
