@@ -535,8 +535,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                             }).then(function(response) {
                                 console.log(`Status: ${response.status}`);
                                 console.log(response.data._id);
-                                $location.path('/eventregistration/' + $scope._event_id);
-                                $route.reload();
                             }, function errorCallback(response) {
                                 console.log(`Status: ${response.status}`);
                             });
@@ -551,7 +549,9 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
     
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-        });
+            $location.path('/eventregistrationall/' + $scope._event_id);
+            $route.reload();
+});
     
     
     };

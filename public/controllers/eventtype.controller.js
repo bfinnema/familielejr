@@ -76,11 +76,11 @@ angular.module('familielejr')
     $scope.editEventtype = false;
 
     $scope.showPartCat = function() {
-        console.log(`-------------------------------------------------`);
-        console.log("Entering showPartCat. numPartCats: "+$scope.numPartCats);
+        // console.log(`-------------------------------------------------`);
+        // console.log("Entering showPartCat. numPartCats: "+$scope.numPartCats);
         numPartCats = $scope.numPartCats;
         if ($scope.eventtypeToEdit.participantCategories[numPartCats].name) {
-            console.log("numPartCats: "+numPartCats+", Participant Category Name: "+$scope.eventtypeToEdit.participantCategories[numPartCats].name);
+            // console.log("numPartCats: "+numPartCats+", Participant Category Name: "+$scope.eventtypeToEdit.participantCategories[numPartCats].name);
             numPartCats = numPartCats + 1;
             $scope.numPartCats = numPartCats;
             $scope.partCatShow[numPartCats] = true;
@@ -165,7 +165,7 @@ angular.module('familielejr')
         var participantCategories = [];
         for (var i=0; i<$scope.numPartCats+1; i++) {
             if ($scope.eventtypeToEdit.participantCategories[i].name != "") {
-                console.log(`${i}. Item: ${$scope.eventtypeToEdit.participantCategories[i].name}, minAge: ${$scope.eventtypeToEdit.participantCategories[i].minAge}`);
+                // console.log(`${i}. Item: ${$scope.eventtypeToEdit.participantCategories[i].name}, minAge: ${$scope.eventtypeToEdit.participantCategories[i].minAge}`);
                 participantCategories.push({
                     name: $scope.eventtypeToEdit.participantCategories[i].name,
                     minAge: $scope.eventtypeToEdit.participantCategories[i].minAge,
@@ -194,8 +194,8 @@ angular.module('familielejr')
             },
             data: eventtype
         }).then(function(response) {
-            console.log(`Status: ${response.status}`);
-            console.log(response.data._id);
+            // console.log(`Status: ${response.status}`);
+            // console.log(response.data._id);
             $location.path('/eventtypes');
             $route.reload();
         }, function errorCallback(response) {
