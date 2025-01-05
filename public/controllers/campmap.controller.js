@@ -304,16 +304,27 @@ function($scope, $http, AuthService) {
 
     $http({
         method: 'GET',
-        url: '/events/pastevents/',
+        url: '/tenants/mytenant/',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/events/pastevents/',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(events) {
-        console.log(`Success. Status: ${events.status}`);
+        // console.log(`Success. Status: ${events.status}`);
         if (events.data) {
             $scope.events = events.data;
         } else {
-            console.log('No past camps');
+            console.log('No past events');
         };
         angular.element(document.querySelector( '#history' ) ).addClass('active');
         angular.element(document.querySelector( '#pasteventlist' ) ).addClass('active');

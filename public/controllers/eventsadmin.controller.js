@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('eventsadminCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'YearService', 
-function($scope, $http, $location, $route, $window, AuthService, YearService) {
+.controller('eventsadminCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 
+function($scope, $http, $location, $route, $window, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -11,19 +11,30 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         };
     });
 
-    var invyear = YearService.myYear("eventsadmin");
+    // var invyear = YearService.myYear("eventsadmin");
     // var pastyear = invyear - 1;
-    var pastyear = 1992;
-    console.log(`eventsadminCtrl: Invyear: ${invyear}, Pastyear: ${pastyear}`);
+    // var pastyear = 1992;
+    // console.log(`eventsadminCtrl: Invyear: ${invyear}, Pastyear: ${pastyear}`);
 
     $http({
         method: 'GET',
-        url: '/events/futureevents/',
+        url: '/tenants/mytenant/',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/events/futureevents/',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(events) {
-        console.log(`Events collected with Success. Status: ${events.status}`);
+        // console.log(`Events collected with Success. Status: ${events.status}`);
         if (events.data) {
             $scope.events = events.data;
         } else {
@@ -39,7 +50,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             }
         });
     }).then(function(eventtypes) {
-        console.log(`Eventtypes collected with Success. Status: ${eventtypes.status}`);
+        // console.log(`Eventtypes collected with Success. Status: ${eventtypes.status}`);
         if (eventtypes.data) {
             $scope.eventtypes = eventtypes.data;
             // console.log(`Eventtype 0: ${$scope.eventtypes[0].eventtypeName}`);
@@ -214,12 +225,12 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 }
             },
             active: false
-        }
+        };
 
-        console.log(`Selected id: ${$scope.selectEventtype}`);
+        // console.log(`Selected id: ${$scope.selectEventtype}`);
         var selectedEventtypeName = "NONE";
         for (var j=0; j<$scope.eventtypes.length; j++) {
-            console.log(`${j}. eventtypeName: ${$scope.eventtypes[j].eventtypeName}. id: ${$scope.eventtypes[j]._id}`);
+            // console.log(`${j}. eventtypeName: ${$scope.eventtypes[j].eventtypeName}. id: ${$scope.eventtypes[j]._id}`);
             if ($scope.selectEventtype == $scope.eventtypes[j]._id) {
                 selectedEventtypeName = $scope.eventtypes[j].eventtypeName;
                 console.log(`Found ${$scope.eventtypes[j].eventtypeName}.`);
@@ -236,7 +247,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             website: $scope.website,
             startdate: $scope.startdate,
             enddate: $scope.enddate,
-            invitation: invitation
+            invitation: invitation,
+            summaryExist: false
         };
         
         if (organizers.length > 0) {data.organizers = organizers;};
@@ -276,10 +288,21 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $http({
         method: 'GET',
-        url: '/events/' + $routeParams.id,
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/events/' + $routeParams.id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(event) {
         console.log(`Event collected with Success. Status: ${event.status}`);
 
@@ -497,7 +520,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
             website: $scope.event.website,
             startdate: $scope.startdateView,
             enddate: $scope.enddateView,
-            invitation: $scope.event.invitation
+            invitation: $scope.event.invitation,
+            summaryExist: $scope.event.summaryExist
         };
         
         if (organizers.length > 0) {data.organizers = organizers;};
@@ -523,7 +547,7 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
 }])
 
-.controller('eventsadmindetailsCtrl', ['$scope', '$http', '$location', '$routeParams', '$window', 'AuthService', function($scope, $http, $location, $routeParams, $window, AuthService) {
+.controller('eventsadmindetailsCtrl', ['$scope', '$http', '$location', '$route', '$routeParams', '$window', 'AuthService', function($scope, $http, $location, $route, $routeParams, $window, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -535,10 +559,21 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $http({
         method: 'GET',
-        url: '/events/' + $routeParams.id,
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/events/' + $routeParams.id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         console.log(`Success. Status: ${response.status}`);
 
@@ -566,10 +601,14 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                 console.log(`Status: ${response.status}`);
                 console.log(response.data._id);
                 $location.path('/eventsadmin');
+                $route.reload();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
+                if (response.status == 404) {
+                    window-alert('Kun den, der har oprettet begivenheden, kan slette den.')
+                    $location.path('/eventsadmin');
+                };
             });
         };
     };
-
 }])

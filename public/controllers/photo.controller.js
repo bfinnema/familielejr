@@ -3,15 +3,6 @@ angular.module('familielejr')
 .controller('photouploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', 
 function ($scope, $http, $route, $window, $timeout, AuthService) {
 
-    var currentyear = (new Date()).getFullYear();
-    var firstyear = 1993;
-    $scope.years = [];
-
-    for (var y=currentyear; y>=firstyear; y--) {
-        $scope.years.push({"year": y.toString()});
-    };
-    $scope.years.push({"year": "historiske"});
-    
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
         if (AuthService.isLoggedIn()) {
@@ -25,18 +16,48 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         angular.element(document.querySelector( '#photoupload' ) ).addClass('active');
     }, 1000);
 
+    $scope.yearSelected = false;
     $scope.errorMsg = '';
     $scope.successMsg = '';
     $scope.showImagesList = false;
     $scope.imageReplica = true;
 
+    $http({
+        method: 'GET',
+        url: '/tenants/mytenant/',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+        var currentyear = (new Date()).getFullYear();
+        var firstyear = $scope.tenant.startYear;
+        $scope.years = [];
+        for (var y=currentyear; y>=firstyear; y--) {
+            $scope.years.push({"year": y.toString()});
+        };
+        $scope.years.push({"year": "historiske"});
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
+    });
+
     $scope.uploadPicture = function(file) {
         // console.log(`uploadPicture. filename: ${file.name}, filetype: ${file.type}`);
         var folder = $scope.year;
         var operation = 'putObject';
-        var picturetext = 'Familielejr '+$scope.year;
+
+        var selectedEvent = $scope.events.filter(obj => {
+            return obj.eventName == $scope.selEvent
+        });
+        console.log(`selectedEvent: ${JSON.stringify(selectedEvent)}`);
+        if (selectedEvent.length > 0) {
+            photoEvent = selectedEvent[0];
+        };
+        var picturetext = (`${photoEvent.eventName}`);
         if (folder == "historiske") {
-            picturetext = 'Fra Flensburg familiens historie';
+            picturetext = (`Historisk billede, ${tenant.tenantName}.`);
         };
         if ($scope.picturetext) {picturetext = $scope.picturetext;};
 
@@ -47,30 +68,35 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 'x-auth': localStorage.userToken
             }
         }).then(function(response) {
-            // console.log(response);
-            // console.log(response.data.url);
+            console.log(response);
+            console.log(response.data.url);
             $scope.successMsg = 'VENT VENLIGST. Billedet '+file.name+' bliver uploaded.......'
             const xhr = new XMLHttpRequest();
             xhr.open('PUT', response.data.signedRequest);
             xhr.onreadystatechange = () => {
                 if(xhr.readyState === 4){
                     if(xhr.status === 200){
-                        // console.log("Success!");
+                        console.log("Success!");
+                        var data = {
+                            year: $scope.year,
+                            commonImage: $scope.commonImage,
+                            eventName: $scope.selEvent,
+                            filename: file.name,
+                            filetype: file.type,
+                            user: localStorage.familielejrUserId,
+                            text: picturetext,
+                            orientation: 0
+                        };
+                        if (selectedEvent.length > 0) {
+                            data._event = selectedEvent[0]._id;
+                        };
                         $http({
                             method: 'POST',
                             url: '/photos/upload',
                             headers: {
                                 'x-auth': localStorage.userToken
                             },
-                            data: {
-                                year: $scope.year,
-                                commonImage: $scope.commonImage,
-                                filename: file.name,
-                                filetype: file.type,
-                                user: localStorage.familielejrUserId,
-                                text: picturetext,
-                                orientation: 0
-                            }
+                            data: data
                         }).then(function(response) {
                             // console.log(`Status: ${response.status}`);
                             // console.log(response.data._id);
@@ -103,6 +129,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     };
 
     $scope.getUploadedPhotos = function() {
+        // This function fetches all photos that the user has uploaded for the selected year and it fetches all events for that year.
         // $scope.successMsg = '';
         $http({
             method: 'GET',
@@ -110,11 +137,11 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             headers: {
                 'x-auth': localStorage.userToken
             }
-        }).then(function(response) {
-            // console.log(`MyphotosStatus: ${response.status}`);
-            $scope.images = response.data;
-            if (!response.data[0]) {
-                // console.log('No photos for year '+$scope.year)
+        }).then(function(images) {
+            console.log(`MyphotosStatus: ${images.status}`);
+            $scope.images = images.data;
+            if (!images.data[0]) {
+                console.log('No photos for year '+$scope.year)
                 $scope.imagesExist = false;
             } else {
                 $scope.imagesExist = true;
@@ -124,6 +151,34 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 };
             };
             $scope.showImagesList = true;
+
+            console.log(`In getEvents (getUploadedPhotos, really). Year: ${$scope.year}`);
+            var year = $scope.year;
+            if (year == "historiske") {
+                $scope.eventNames = [{"name": "Historisk"}];
+            } else {
+                $scope.eventNames = [{"name": "Ikke tilknyttet en begivenhed"}];
+            };
+            $scope.selEvent = $scope.eventNames[0].name;
+            $scope.yearSelected = true;
+            return $http({
+                method: 'GET',
+                url: '/events/year/' + year,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            });
+        }).then(function(events) {
+            console.log(`Events fetched. Status: ${events.status}. # events: ${events.data.length}`);
+            if (events.data.length > 0) {
+                for (ev in events.data) {
+                    console.log(`eventName: ${events.data[ev].eventName}`);
+                    $scope.eventNames.push({"name": events.data[ev].eventName});
+                };
+                $scope.events = events.data;
+                var lastEvent = $scope.eventNames.length - 1;
+                $scope.selEvent = $scope.eventNames[lastEvent].name;
+            };
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -186,10 +241,29 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
 
     $http({
         method: 'GET',
-        url: url,
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        /* $scope.tenant = tenant.data;
+        var currentyear = (new Date()).getFullYear();
+        var firstyear = $scope.tenant.startYear;
+        $scope.years = [];
+        for (var y=currentyear; y>=firstyear; y--) {
+            $scope.years.push({"year": y.toString()});
+        };
+        $scope.years.push({"year": "historiske"}); */
+
+        return $http({
+            method: 'GET',
+            url: url,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         $scope.images = response.data;
@@ -785,10 +859,21 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     
     $http({
         method: 'GET',
-        url: photosurl,
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: photosurl,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`Status: ${response.status}`);
         $scope.images = response.data;
@@ -966,10 +1051,10 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
                 'x-auth': localStorage.userToken
             }
         }).then(function(response) {
-            console.log("Signed request: "+response.data.signedRequest);
+            // console.log("Signed request: "+response.data.signedRequest);
             $scope.mainImage = response.data.signedRequest;
             $scope.images[photoNum].signedRequest = response.data.signedRequest;
-            console.log(`mainImage: ${$scope.mainImage}`);
+            // console.log(`mainImage: ${$scope.mainImage}`);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -1127,42 +1212,59 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     });
 
     $scope.imagescope = $routeParams.imagescope;
-    var currentyear = (new Date()).getFullYear();
-    var firstyear = 1993
-    $scope.years = [];
-    $scope.total = 0;
-    if ($routeParams.imagescope == "global") {
-        $scope.mypictures = false;
-        photosurl = '/photos/count/';
-        $scope.headline = "Billedoversigt";
-    } else {
-        $scope.mypictures = true;
-        photosurl = '/photos/my/count/';
-        $scope.headline = "Min billedoversigt";
-    };
-    // console.log(`My pictures?: ${$scope.mypictures}`);
-
-    for (var y=firstyear; y<=currentyear; y++) {
-        // console.log(`Year before http: ${y}`);
-        $http({
-            method: 'GET',
-            url: photosurl+y.toString(),
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(response) {
-            // console.log(`Status: ${response.status}`);
-            $scope.years.push(response.data);
-            // console.log(`Year: ${y.toString()}, Count: ${response.data.count}`);
-            $scope.total += response.data.count;
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    };
 
     $http({
         method: 'GET',
-        url: photosurl+'historiske',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant){
+        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+
+        var currentyear = (new Date()).getFullYear();
+        var firstyear = $scope.tenant.startYear;
+        $scope.years = [];
+        $scope.total = 0;
+        if ($routeParams.imagescope == "global") {
+            $scope.mypictures = false;
+            photosurl = '/photos/count/';
+            $scope.headline = "Billedoversigt";
+        } else {
+            $scope.mypictures = true;
+            photosurl = '/photos/my/count/';
+            $scope.headline = "Min billedoversigt";
+        };
+        $scope.photosurl = photosurl;
+        // console.log(`My pictures?: ${$scope.mypictures}`);
+    
+        for (var y=firstyear; y<=currentyear; y++) {
+            // console.log(`Year before http: ${y}`);
+            $http({
+                method: 'GET',
+                url: photosurl+y.toString(),
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(response) {
+                // console.log(`Status: ${response.status}`);
+                $scope.years.push(response.data);
+                // console.log(`Year: ${y.toString()}, Count: ${response.data.count}`);
+                $scope.total += response.data.count;
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        };
+    
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+
+    $http({
+        method: 'GET',
+        url: $scope.photosurl+'historiske',
         headers: {
             'x-auth': localStorage.userToken
         }

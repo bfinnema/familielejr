@@ -74,6 +74,31 @@ router.patch('/:id', authenticate, (req, res) => {
   })
 });
 
+// Change an Eventreg. Is used for registering that a participant has paid the camp fee.
+router.patch('/convertToEvents/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['participantCategory', 'arrivalOption', 'departureOption', '_event']);
+  // console.log(`Migrating Eventreg to Events, Registeree: ${req.user.name.firstname}, ArrivalOption: ${body.arrivalOption}, DepartureOption: ${body.departureOption}`);
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  };
+  if (!ObjectId.isValid(body._event)) {
+    console.log(`_event is not a valid ObjectID.`);
+    return res.status(404).send();
+  };
+
+  Eventreg.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventreg) => {
+    if (!eventreg) {
+      return res.status(404).send();
+    };
+
+    res.json(eventreg);
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
 router.patch('/fee/:id', authenticate, (req, res) => {
   var id = req.params.id;
   // console.log(`Calculated fee: ${req.body.eventFee}`);

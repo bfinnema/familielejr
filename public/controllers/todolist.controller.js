@@ -27,10 +27,21 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/todos',
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`Success. Status: ${response.status}`);
         $scope.todos = response.data;

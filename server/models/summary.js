@@ -25,6 +25,10 @@ var SummarySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false
     },
+    _event: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     visible: {
         type: Boolean,
         default: false

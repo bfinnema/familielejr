@@ -13,6 +13,11 @@
             </div>
         </div>
         <div class="row">
+            <div class="form-group col-md-4">
+                <label>Begivenhedens navn</label>
+                <input type="text" id="event.eventName" class="form-control" ng-model="event.eventName" placeholder="Begivenhedens navn">
+                <i ng-show="formEditEvent.eventName.$error.required">*Skal udfyldes</i>
+            </div>
             <div class="form-group col-md-2">
                 <label for="year">År</label>
                 <input type="number" id="year" class="form-control" ng-model="event.year" required>

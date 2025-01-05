@@ -105,6 +105,13 @@ var EventSchema = new mongoose.Schema({
             required: true
         }
     },
+    summaryExist: {
+        type: Boolean,
+        required: true
+    },
+    _summary: {
+        type: mongoose.Schema.Types.ObjectId
+    },
     _creator: {
         type: mongoose.Schema.Types.ObjectId,
         required: true

@@ -12,10 +12,6 @@ router.post('/', authenticate, (req, res) => {
   // console.log(`_tenant: ${req.user._tenant}`);
   var about = new About({
     _tenant: req.body._tenant,
-    communityName: req.body.communityName,
-    subHeading: req.body.subHeading,
-    nextHeadline: req.body.nextHeadline,
-    upcomingHeadline: req.body.upcomingHeadline,
     metadata: req.body.metadata,
     textHeadlines: req.body.textHeadlines,
     _creator: req.user._id
@@ -37,10 +33,6 @@ router.post('/noauth', (req, res) => {
   // console.log(`In abouts. communityName: ${req.body.communityName}`);
   var about = new About({
     _tenant: req.body._tenant,
-    communityName: req.body.communityName,
-    subHeading: req.body.subHeading,
-    nextHeadline: req.body.nextHeadline,
-    upcomingHeadline: req.body.upcomingHeadline,
     metadata: req.body.metadata,
     textHeadlines: req.body.textHeadlines
   });
@@ -91,7 +83,7 @@ router.patch('/:id', authenticate, (req, res) => {
   // console.log(`_tenant: ${req.user._tenant}`);
   var id = req.params.id;
   var _photo = req.body._photo;
-  var body = _.pick(req.body, ['communityName', 'subHeading', 'nextHeadline', 'upcomingHeadline', 'metadata', 'textHeadlines']);
+  var body = _.pick(req.body, ['metadata', 'textHeadlines']);
   // console.log(`_photo: ${_photo}`);
   // console.log(body);
   

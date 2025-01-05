@@ -27,10 +27,21 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
 
     $http({
         method: 'GET',
-        url: 'events/futureactiveevents',
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: 'events/farevents',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(faevents) {
         // console.log(`faevents Status: ${faevents.status}`);
         if (faevents.data) {
@@ -304,8 +315,8 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
 
 }])
 
-.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'YearService', 'EventregService',  'SearchService',
-function($scope, $http, $window, $location, $route, $routeParams, AuthService, YearService, EventregService, SearchService) {
+.controller('eventregallCtrl', ['$scope', '$http', '$window', '$location', '$route', '$routeParams', 'AuthService', 'EventregService',  'SearchService',
+function($scope, $http, $window, $location, $route, $routeParams, AuthService, EventregService, SearchService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -321,23 +332,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     }, 1000);
 
     var _event_id = $routeParams.id;
-    // var invyear = $routeParams.year;
+    $scope._event_id = _event_id;
     // console.log(`_event_id: ${_event_id}`);
-    var currentYear = YearService.myYear("eventRegAll");
-
-    var fys = [];
-    var firstyear = 2010;
-    for (var y=currentYear; y>=firstyear; y--) {
-        fys.push({"fy": y});
-    };
-    $scope.fys = fys;
     $scope.fyLocked = false;
 
-    // console.log(`Invyear in eventregall: ${invyear}`);
-    // $scope.invitationyear = invyear;
-    // $scope.agegroups = EventregService.ageGroups();
-    // $scope.arrivaldays = EventregService.arrivalDays();
-    // $scope.departuredays = EventregService.departureDays();
     $scope.invitationExists = false;
     $scope.invitationSelected = false;
     $scope.registrationsExist = false;
@@ -349,94 +347,107 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
     $scope.sortBy = "fornavn";
     $scope.sortDirection = "nedad";
 
-    if (_event_id == 1000) {
-        // console.log(`No specific event. _event_id: ${_event_id}`);
-        $http({
+    $http({
+        method: 'GET',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+        var currentyear = (new Date()).getFullYear();
+        var firstyear = $scope.tenant.startYear;
+        $scope.fys = [];
+        for (var y=currentyear; y>=firstyear; y--) {
+            $scope.fys.push({"fy": y});
+        };
+        return $http({
             method: 'GET',
-            url: 'events/futureactiveevents',
+            url: 'events/arevents',
             headers: {
                 'x-auth': localStorage.userToken
             }
-        }).then(function(faevents) {
-            // console.log(`Events selected by future and active invitation. faevents Status: ${faevents.status}. # events: ${faevents.data.length}`);
-            // console.log(`${JSON.stringify(faevents.data)}`);
-            if (faevents.data.length > 0) {
-                $scope.faevents = faevents.data;
-                $scope.invitationExists = true;
-                if ($scope.faevents.length == 1) {
-                    // console.log(`One event: ${$scope.faevents[0].eventName}`);
-                    $scope.selectedInvitation = $scope.faevents[0];
-                    $scope.selEvent = JSON.stringify($scope.selectedInvitation);
-                    getInvitationData();
-                };
-            } else {
-                $scope.selectInvitationText = "Der er ikke nogen aktiv begivenhed. Vil du se på en anden? Vælg her:"
-                $scope.invitationExists = false;
-                $http({
-                    method: 'GET',
-                    url: 'events',
-                    headers: {
-                        'x-auth': localStorage.userToken
-                    }
-                }).then(function(events) {
-                    // console.log(`No future, active event. Collected all events. Status: ${faevents.status}`);
-                    if (events.data) {
-                        $scope.faevents = events.data;
-                        $scope.invitationExists = true;
+        });
+    }).then(function(arevents) {
+        // console.log(`arevents Status: ${arevents.status}. # arevents: ${arevents.data.length}`);
+        if (arevents.data.length > 0) {
+            $scope.arevents = arevents.data;
+        } else {
+            console.log(`There are no events`);
+        };
+
+        if (_event_id == 1000) {
+            // console.log(`No specific event. _event_id: ${_event_id}`);
+            $http({
+                method: 'GET',
+                url: 'events/futureactiveevents',
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(faevents) {
+                // console.log(`Events selected by future and active invitation. faevents Status: ${faevents.status}. # events: ${faevents.data.length}`);
+                // console.log(`${JSON.stringify(faevents.data)}`);
+                if (faevents.data.length > 0) {
+                    $scope.faevents = faevents.data;
+                    $scope.invitationExists = true;
+                    if ($scope.faevents.length == 1) {
+                        // console.log(`One event: ${$scope.faevents[0].eventName}`);
+                        $scope.selectedInvitation = $scope.faevents[0];
+                        $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                        getInvitationData();
+                    };
+                } else {
+                    $scope.selectInvitationText = "Der er ikke nogen aktiv begivenhed. Vil du se på en anden? Vælg her:"
+                    $scope.invitationExists = false;
+                    if ($scope.arevents) {
+                        $scope.faevents = $scope.arevents;
                         if ($scope.faevents.length == 1) {
-                            $scope.selectedInvitation = $scope.faevents[0];
-                            $scope.selEvent = JSON.stringify($scope.selectedInvitation);
-                            getInvitationData();
+                                $scope.selectedInvitation = $scope.faevents[0];
+                                $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                                getInvitationData();
                         };
                     } else {
                         $scope.invitationExists = false;
+                        $location.path(`/eventregistrationall/1000`);
                     };
-            
-                }, function errorCallback(response) {
-                    console.log(`Status: ${response.status}`);
-                });
-            };
-
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    } else if (_event_id > 1991 && _event_id < 2100) {
-        // Fetch event based on year instead of _event_id.
-        $http({
-            method: 'GET',
-            url: 'events/year/' + _event_id,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(faevents) {
-            // console.log(`Events selected by year. faevents Status: ${faevents.status}. # events: ${faevents.data.length}`);
-            // console.log(`${JSON.stringify(faevents.data)}`);
-            if (faevents.data.length > 0) {
-                $scope.faevents = faevents.data;
-                $scope.invitationExists = true;
-                if ($scope.faevents.length == 1) {
-                    // console.log(`One event: ${$scope.faevents[0].eventName}`);
-                    $scope.selectedInvitation = $scope.faevents[0];
-                    $scope.selEvent = JSON.stringify($scope.selectedInvitation);
-                    getInvitationData();
-                } else {
-                    $scope.selectInvitationText = "Der er flere begivenheder i " + _event_id + ". Vælg her:";
                 };
-            } else {
-                // console.log(`There was no events `);
-                $scope.invitationExists = false;
-                $http({
-                    method: 'GET',
-                    url: 'events',
-                    headers: {
-                        'x-auth': localStorage.userToken
-                    }
-                }).then(function(events) {
-                    // console.log(`No future, active event. Collected all events. Status: ${faevents.status}`);
-                    if (events.data.length > 0) {
-                        $scope.faevents = events.data;
-                        $scope.invitationExists = true;
+
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        } else if (_event_id > 1991 && _event_id < 2100) {
+            // console.log(`Fetch event based on year instead of _event_id.`);
+            $http({
+                method: 'GET',
+                url: 'events/year/' + _event_id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(yearevents) {
+                // console.log(`Events selected by year. yearevents Status: ${yearevents.status}. # events: ${yearevents.data.length}`);
+                // console.log(`${JSON.stringify(yearevents.data)}`);
+                if (yearevents.data.length > 0) {
+                    // console.log(`There are at least one event for the year ${_event_id}`);
+                    $scope.faevents = yearevents.data;
+                    $scope.invitationExists = true;
+                    if ($scope.faevents.length == 1) {
+                        // console.log(`One event: ${$scope.faevents[0].eventName}`);
+                        $scope.selectedInvitation = $scope.faevents[0];
+                        $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                        getInvitationData();
+                    } else {
+                        $scope.selectInvitationText = "Der er flere begivenheder i " + _event_id + ". Vælg her:";
+                    };
+                } else {
+                    console.log(`There was no events. # arevents: ${$scope.arevents.length}`);
+                    $scope.invitationExists = false;
+                    if ($scope.arevents.length > 0) {
+                        // console.log(`There are other active events, all years.`);
+                        $scope.faevents = $scope.arevents;
                         if ($scope.faevents.length == 1) {
+                            // console.log(`Only one event: ${$scope.faevents[0].eventName}`);
                             $scope.selectedInvitation = $scope.faevents[0];
                             $scope.selEvent = JSON.stringify($scope.selectedInvitation);
                             getInvitationData();
@@ -447,39 +458,102 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
                         $scope.invitationExists = false;
                         $location.path(`/eventregistrationall/1000`);
                     };
-            
+                };
+
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        } else {
+            console.log(`Specific event. _event_id: ${_event_id}`);
+            $http({
+                method: 'GET',
+                url: 'events/' + _event_id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(event) {
+                // console.log(`Specific event. Status: ${event.status}`);
+                $scope.selectedInvitation = event.data.event;
+                $scope.invitationExists = true;
+                // console.log(`Event Name: ${$scope.selectedInvitation.eventName}, startdate: ${$scope.selectedInvitation.startdate}`);
+                $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                getInvitationData();
+
+            }, function errorCallback(response) {
+                console.log(`Status: ${response.status}`);
+            });
+        };
+
+        $scope.selectInvitation = function() {
+            $scope.selectedInvitation = JSON.parse($scope.selEvent);
+            getInvitationData();
+        };
+
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+
+    $scope.convertToEvents = function() {
+        console.log(`Year: ${$scope._event_id}`);
+        $http({
+            method: 'GET',
+            url: 'events/year/' + $scope._event_id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(events) {
+            console.log(`Events fetched. Status: ${events.status}. # Events: ${events.data.length}`);
+            if (events.data.length > 0) {
+                convertForEvent = events.data[0];
+                $http({
+                    method: 'GET',
+                    url: 'eventregs/all/year/' + $scope._event_id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(eventregs) {
+                    if (eventregs.data.length > 0) {
+                        for (er in eventregs.data) {
+                            var departureday = eventregs.data[er].departureday;
+                            if (eventregs.data[er].departureday == "Søndag efter morgenmad" || eventregs.data[er].departureday == "Søndag efter frokost") {
+                                departureday = "Søndag";
+                            };
+                            data = {
+                                participantCategory: eventregs.data[er].agegroup,
+                                arrivalOption: eventregs.data[er].arrivalday,
+                                departureOption: departureday,
+                                _event: convertForEvent._id
+                            };
+                            console.log(`DATA: ${JSON.stringify(data)}`);
+                            $http({
+                                method: 'PATCH',
+                                url: 'eventregs/convertToEvents/'+eventregs.data[er]._id,
+                                headers: {
+                                    'x-auth': localStorage.userToken
+                                },
+                                data: data
+                            }).then(function(response) {
+                                console.log(`Status: ${response.status}`);
+                                console.log(response.data._id);
+                                $location.path('/eventregistration/' + $scope._event_id);
+                                $route.reload();
+                            }, function errorCallback(response) {
+                                console.log(`Status: ${response.status}`);
+                            });
+                    
+                        };
+
+                    };
                 }, function errorCallback(response) {
                     console.log(`Status: ${response.status}`);
                 });
             };
-
+    
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
-    } else {
-        // console.log(`Specific event. _event_id: ${_event_id}`);
-        $http({
-            method: 'GET',
-            url: 'events/' + _event_id,
-            headers: {
-                'x-auth': localStorage.userToken
-            }
-        }).then(function(event) {
-            // console.log(`Specific event. Status: ${event.status}`);
-            $scope.selectedInvitation = event.data.event;
-            $scope.invitationExists = true;
-            // console.log(`Event Name: ${$scope.selectedInvitation.eventName}, startdate: ${$scope.selectedInvitation.startdate}`);
-            $scope.selEvent = JSON.stringify($scope.selectedInvitation);
-            getInvitationData();
-
-        }, function errorCallback(response) {
-            console.log(`Status: ${response.status}`);
-        });
-    };
-
-    $scope.selectInvitation = function() {
-        $scope.selectedInvitation = JSON.parse($scope.selEvent);
-        getInvitationData();
+    
+    
     };
 
     getInvitationData = function() {
@@ -917,6 +991,13 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, Y
         // console.log(`The new fy is: ${$scope.fy}`);
 		$location.path('/eventregistrationall/'+$scope.fy);
         $route.reload();
+    };
+
+    $scope.registrationsFromOtherEvent = function() {
+        // console.log(`theOtherEvent, name: ${$scope.theOtherEvent.eventName}`);
+        var arEvent = JSON.parse($scope.theOtherEvent);
+        // console.log(`arEvent _id: ${arEvent._id}, ${arEvent.eventName}`);
+        $location.path('/eventregistrationall/' + arEvent._id);
     };
 
     $scope.showPopoverEditRegistration = function(x) {

@@ -2,7 +2,25 @@ var currentyear = new Date().getFullYear();
 console.log(currentyear);
 // var demarc = new Date(currentyear,8,1).toLocaleString({ timeZone: 'Europe/Copenhagen' });
 
-var starttime = new Date(2025, 7, 28, 15, 45);
+let today = new Date();
+console.log("Today's date = " + today);
+
+Date.prototype.subtractDays = function (d) {
+	this.setDate(this.getDate() - d);
+	return this;
+}
+
+let a = new Date();
+a.subtractDays(60);
+
+console.log(a);
+
+var theTime = new Date();
+console.log(`theTime: ${theTime}`);
+var theNewTime = theTime.setMonth(2);
+console.log(`theNewTime: ${theNewTime}`);
+
+/* var starttime = new Date(2025, 7, 28, 15, 45);
 var endtime = new Date(2025, 7, 30, 11, 5)
 
 function getArrivalOptions(starttime, endtime) {
@@ -94,7 +112,7 @@ for (arrOpt in arrivalOptions) {
 };
 for (depOpt in departureOptions) {
     console.log(`Departure option: ${departureOptions[depOpt].departureOption}`);
-};
+}; */
 
 /* var offset = new Date(2*3600*1000);
 console.log(offset);

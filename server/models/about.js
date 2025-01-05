@@ -10,12 +10,11 @@ var AboutSchema = new mongoose.Schema({
     },
     communityName: {
         type: String,
-        required: true,
-        unique: true
+        required: false
     },
     subHeading: {
         type: String,
-        required: true
+        required: false
     },
     nextHeadline: {
         type: String

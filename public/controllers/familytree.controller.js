@@ -24,10 +24,21 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/familytrees/0',
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/familytrees/0',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        })
     }).then(function(response) {
         // console.log(`FamilytreeStatus: ${response.status}`);
         // console.log(response.data)
@@ -406,10 +417,21 @@ angular.module('familielejr')
     
     $http({
         method: 'GET',
-        url: '/familytrees/0',
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/familytrees/0',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`In familytreeslCtrl. FamilytreeStatus: ${response.status}`);
         $scope.familytree = response.data[$scope._L0_family_id];

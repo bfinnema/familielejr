@@ -1,27 +1,20 @@
 <div ng-include="'navigation.html'"></div>
 
 <div ng-controller="invitation2adminCtrl">
-    <div ng-show="!eventSelected">
-        <form name="formSelectEvent" ng-submit="selectEvent()" novalidate>
+    <div ng-show="!eventSelected && eventsExist">
+        <form name="formSelectEvent">
             <div class="form-group col-md-6 row">
                 <label>Vælg begivenhed, du vil oprette eller ændre invitation for:</label>
-                <select class="form-control" ng-model="selEvent" name="selEvent" required>
+                <select class="form-control" ng-model="selEvent" name="selEvent" ng-change="selectEvent()">
                     <option ng-repeat="event in futureevents" value="{{event}}">{{event.eventName}}</option>
                 </select>
-                <i ng-show="formSelectEvent.selEvent.$error.required">*Skal udfyldes</i>
-            </div>
-            <br>
-            <div class="row">
-                <div class="form-group col-md-4">
-                    <button ng-disabled="formSelectEvent.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">Vælg begivenhed</button>
-                </div>
             </div>
         </form>
     </div>
     <div ng-show="eventSelected">
 
         <form name="formInvitationEdit" ng-submit="generateInvitation()" novalidate>
-            <h2 class="form-signin-heading">Opsætning af invitation</h2>
+            <h2 class="form-signin-heading">Opsætning af invitation til {{ selectedEvent.eventName }}</h2>
             <div class="row">
                 <div class="col-md-8">
                     <p>Her kan du som arrangør oprette eller ændre en invitation baseret på et antal standard felter. Der er også mulighed for en indledende og en afsluttende blok med fritekst</p>
@@ -198,5 +191,8 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div ng-show="!eventsExist">
+        <h2>Der er ikke nogen fremtidige begivenheder med aktiv invitation.</h2>
     </div>
 </div>

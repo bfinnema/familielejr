@@ -1,8 +1,8 @@
 <div ng-include="'navigation.html'"></div>
 
-<h2 class="heading">Hvor har vi været? Liste over lejrskoler / hytter</h2>
-<p>Klik på lejrskolens navn for at komme til lejrskolens hjemmeside. <i>Det er ikke sikkert lejrens hjemmeside eksisterer. F.eks. er der ikke nogen for Hejls Lejrskole, da den ikke eksisterer mere.</i></p>
-<p>Klik på adressen for at åbne Google maps og se, hvor på kortet lejren ligger.</p>
+<h2 class="heading">Hvor har vi været?</h2>
+<p>Klik på stedets navn for at komme til hjemmesiden, hvis den findes.</p>
+<p>Klik på adressen for at åbne Google maps og se placering på kortet.</p>
 <br>
 <table class="table table-striped">
     <thead>
@@ -12,7 +12,7 @@
             <th width="11%">Startdato</th>
             <th width="11%">Slutdato</th>
             <th width="24%">Arrangører</th>
-            <th ng-show="role == 0" width="15%">Ændre / Se detaljer</th>
+            <th width="15%"><span ng-show="role==0">Ændre / </span>Detaljer / Referat</th>
         </tr>
     </thead>
     <tbody>
@@ -22,12 +22,15 @@
             <td>{{ event.startdate | date:'dd-MM-yyyy' : 'CET' }}</td>
             <td>{{ event.enddate | date:'dd-MM-yyyy' : 'CET' }}</td>
             <td><span ng-repeat="organizer in event.organizers">{{organizer.orgname}}, </span></td>
-            <td ng-show="role == 0">
-                <a class="btn btn-primary" href="#!eventsadmin/edit/{{event._id}}">
+            <td>
+                <a ng-show="role == 0" class="btn btn-primary" href="#!eventsadmin/edit/{{event._id}}">
                     <i class="glyphicon glyphicon-edit"></i>
                 </a>
                 <a class="btn btn-primary" href="#!eventsadmin/details/{{event._id}}">
                     <i class="glyphicon glyphicon-zoom-in"></i>
+                </a>
+                <a ng-show="event.summaryExist" class="btn btn-primary" href="#!summaries">
+                    <i class="glyphicon glyphicon-briefcase"></i>
                 </a>
             </td>
         </tr>

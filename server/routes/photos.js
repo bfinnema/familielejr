@@ -26,6 +26,8 @@ router.post('/upload', authenticate, (req, res) => {
         _creator: req.body.user,
         year: req.body.year,
         _tenant: req.user._tenant,
+        _event: req.body._event,
+        eventName: req.body.eventName,
         filename: fn,
         commonImage: req.body.commonImage,
         filetype: req.body.filetype,
@@ -325,18 +327,24 @@ router.get('/s3ops/sign-s3-getimage', authenticate, (req, res) => {
 });
 
 router.get('/s3ops/sign-s3-deleteimage', authenticate, (req, res) => {
+  // console.log(`In sign-s3-deleteimage. fileName: ${req.query['file_name']}`);
   const s3 = new aws.S3();
   const fileName = req.query['file_name'];
   const fileType = req.query['file_type'];
   const folder = req.query['folder'];
   const operation = req.query['operation'];
-  
+
+  // console.log(`File name: ${fileName}, fileType: ${fileType}, folder: ${folder}, operation: ${operation}`);
+  // console.log(`S3_BUCKET: ${S3_BUCKET}`);
+
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: albumPhotosKey + fileName,
     Expires: 60
   };
+
+  // console.log(`Key in s3Params: ${s3Params.Key}`);
 
   s3.getSignedUrl(operation, s3Params, (err, data) => {
     if(err){

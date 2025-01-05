@@ -245,12 +245,21 @@
     <hr>
 </div>
 <div class="form-group col-md-4" ng-show="!editRegistration">
-    <form name="otherFy">
-        <label>Se tilmeldinger fra et andet år:</label>
+    <form name="otherEvent">
+        <label>Se tilmeldinger fra en anden begivenhed:</label>
+        <select class="form-control" ng-model="theOtherEvent" name="theOtherEvent" ng-change="registrationsFromOtherEvent()">
+            <option ng-repeat="arEvent in arevents" value="{{arEvent}}">{{arEvent.eventName}}</option>
+        </select>
+        <label>Find tilmeldinger baseret på år:</label>
         <select class="form-control" ng-model="theOtherFy" name="theOtherFy" ng-change="newFy()">
             <option ng-repeat="fy in fys" value="{{fy.fy}}">{{fy.fy}}</option>
         </select>
     </form>
+</div>
+<div class="row actions" ng-show="role < 1">
+    <div class="col-md-4">
+        <a class="btn btn-danger btn-lg btn-block" ng-click="convertToEvents()">Convert to Events</a>
+    </div>
 </div>
 <div class="row">
     <hr>

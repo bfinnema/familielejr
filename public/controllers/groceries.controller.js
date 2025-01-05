@@ -43,10 +43,21 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $http({
         method: 'GET',
-        url: '/groceries',
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/groceries',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`Success. Status: ${response.status}`);
         $scope.groceries = response.data;

@@ -25,13 +25,15 @@ router.post('/upload', authenticate, (req, res) => {
       var doc = new Doc({
         _creator: req.body.user,
         year: req.body.year,
-        _tenant: req.body._tenant,
+        _tenant: req.user._tenant,
+        _event: req.body._event,
         filename: fn,
         filetype: req.body.filetype,
         category: req.body.category,
         uploader: uploader,
         orientation: req.body.orientation,
-        description: req.body.description
+        description: req.body.description,
+        eventName: req.body.eventName
       });
 
       doc.save().then((doc) => {
@@ -54,6 +56,16 @@ router.get('/', authenticate, (req, res) => {
   Doc.find({
     _tenant: req.user._tenant
   }).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/sortcategory', authenticate, (req, res) => {
+  Doc.find({
+    _tenant: req.user._tenant
+  }).sort({"category": 1}).then((docs) => {
     res.json(docs);
   }, (e) => {
     res.status(400).send(e);

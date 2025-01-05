@@ -15,11 +15,12 @@ router.post('/', authenticate, (req, res) => {
       agenda: req.body.agenda,
       meetingdate: req.body.meetingdate,
       visible: req.body.visible,
-      _creator: req.user._id
+      _creator: req.user._id,
+      _event: req.body._event
   });
 
-  summary.save().then((doc) => {
-      res.send(doc);
+  summary.save().then((summary) => {
+      res.json(summary);
   }, (e) => {
     // console.log(e);
     console.log(`Error code: ${e.code}`);

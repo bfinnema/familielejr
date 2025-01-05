@@ -25,10 +25,21 @@ angular.module('familielejr')
 
     $http({
         method: 'GET',
-        url: '/eventtypes',
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/eventtypes',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(response) {
         // console.log(`Success. Status: ${response.status}`);
         $scope.eventtypes = response.data;
@@ -83,8 +94,8 @@ angular.module('familielejr')
     };
     
     $scope.removePartCat = function(partCatNum) {
-        console.log(`-------------------------------------------------`);
-        console.log("Entering removePartCat. numPartCats: "+$scope.numPartCats);
+        // console.log(`-------------------------------------------------`);
+        // console.log("Entering removePartCat. numPartCats: "+$scope.numPartCats);
         numPartCats = $scope.numPartCats;
         for (var i=partCatNum; i<numPartCats; i++) {
             console.log(`Before removeal: ${i}. Name: ${$scope.eventtypeToEdit.participantCategories[i].name}, minAge: ${$scope.eventtypeToEdit.participantCategories[i].minAge}, id: ${$scope.eventtypeToEdit._id}`);
@@ -107,7 +118,7 @@ angular.module('familielejr')
         $scope.partCatsBtnShow[numPartCats+1] = false;
         numPartCats -= 1;
         $scope.numPartCats = numPartCats;
-        console.log("numPartCats: "+numPartCats);
+        // console.log("numPartCats: "+numPartCats);
         $scope.eventtypeToEdit.participantCategories.pop();
     };
 
@@ -121,8 +132,8 @@ angular.module('familielejr')
     };
 
     $scope.editEventtypeToggle = function(eventtypeToEdit) {
-        console.log(`-------------------------------------------------`);
-        console.log(`Entering editEventtypeToggle`);
+        // console.log(`-------------------------------------------------`);
+        // console.log(`Entering editEventtypeToggle`);
         if ($scope.editEventtype) {
             $scope.editEventtype = false;
         } else {
@@ -139,17 +150,17 @@ angular.module('familielejr')
             $scope.numPartCats = numPartCats;
             for (x=0; x<numPartCats; x++) {
                 $scope.partCatShow[x] = true;
-                console.log(`numPartCats: ${numPartCats}`);
-                console.log(`${x}. partCatsBtnShow: ${$scope.partCatsBtnShow[x]}, partCatShow: ${$scope.partCatShow[x]}`);
-                console.log(`${x}. Name: ${eventtypeToEdit.participantCategories[x].name}, minAge: ${eventtypeToEdit.participantCategories[x].minAge}`);
+                // console.log(`numPartCats: ${numPartCats}`);
+                // console.log(`${x}. partCatsBtnShow: ${$scope.partCatsBtnShow[x]}, partCatShow: ${$scope.partCatShow[x]}`);
+                // console.log(`${x}. Name: ${eventtypeToEdit.participantCategories[x].name}, minAge: ${eventtypeToEdit.participantCategories[x].minAge}`);
             };
             $scope.numPartCats = numPartCats-1;
         };
     }
 
     $scope.addEventtype = function() {
-        console.log(`-------------------------------------------------`);
-        console.log(`In addEventtype. freeEvent: ${$scope.freeEvent}`);
+        // console.log(`-------------------------------------------------`);
+        // console.log(`In addEventtype. freeEvent: ${$scope.freeEvent}`);
 
         var participantCategories = [];
         for (var i=0; i<$scope.numPartCats+1; i++) {
@@ -193,7 +204,7 @@ angular.module('familielejr')
     };
 
     $scope.eventtypeEdit = function() {
-        console.log(`In eventtypeEdit. freeEvent: ${$scope.freeEvent}`);
+        // console.log(`In eventtypeEdit. freeEvent: ${$scope.freeEvent}`);
 
         var eventtype = {
             eventtypeName: $scope.eventtypeToEdit.eventtypeName,

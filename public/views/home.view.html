@@ -15,12 +15,12 @@
     </div>
 </div>
 <hr>
-<div class="row">
+<div class="blog-post row">
 
     <div class="col-sm-8 blog-main">
         <h2 class="blog-post-title">Invitationer</h2>
         <div class="blog-post" ng-show="invitationExists2">
-            <div ng-repeat="activeInvitation in activeInvitations">
+            <div ng-repeat="activeInvitation in activeInvitations" class="blog-post row">
                 <h3 class="blog-post-title">{{ activeInvitation.eventName }}</h3>
                 <p>Vi skal være i 
                 {{activeInvitation.venue}}, {{activeInvitation.address.street}}, {{activeInvitation.address.zip}} {{activeInvitation.address.town}} 

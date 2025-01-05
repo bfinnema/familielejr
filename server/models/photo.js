@@ -9,6 +9,14 @@ var PhotoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: false
   },
+  _event: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+  },
+  eventName: {
+    type: String,
+    required: false
+  },
   year: {
     type: String,
     required: true

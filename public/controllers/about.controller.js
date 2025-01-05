@@ -20,15 +20,26 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
 
     $http({
         method: 'GET',
-        url: '/abouts',
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
-    }).then(function(response) {
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/abouts',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(abouts) {
         // console.log(`Success. Status: ${response.status}`);
-        if (response.data) {
-            $scope.abouts = response.data;
-            $scope.about = response.data[0];
+        if (abouts.data) {
+            $scope.abouts = abouts.data;
+            $scope.about = abouts.data[0];
         } else {
             console.log('No abouts');
         };

@@ -6,50 +6,50 @@
         Herunder finder du en link til hvert dokument. Når du klikker på linket, åbnes en ny fane eller vindue med 
         dokumentet. Du kan komme ud for, at åbning af dokumentet blokeres af sikkerhedshensyn. I så fald skal du give 
         tilladelse til pop-up's i din browser for denne hjemmeside.</p>
-    <div ng-show="invitations.length > 0" class="row">
-        <h3 class="archive-headline">Invitationer ({{ invitations.length }})</h3>
-        <div ng-repeat="invitation in invitations" class="col-md-4">
-            <a ng-click="getDoc(invitation)"><h4 class="archive-invitations">{{ invitation.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="menus.length > 0" class="row">
-        <h3 class="archive-headline">Menuer og madplaner ({{ menus.length }})</h3>
-        <div ng-repeat="menu in menus" class="col-md-4">
-            <a ng-click="getDoc(menu)"><h4 class="archive-menus">{{ menu.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="shoppinglists.length > 0" class="row">
-        <h3 class="archive-headline">Indkøbslister ({{ shoppinglists.length }})</h3>
-        <div ng-repeat="shoppinglist in shoppinglists" class="col-md-4">
-            <a ng-click="getDoc(shoppinglist)"><h4 class="archive-shoppinglists">{{ shoppinglist.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="accounts.length > 0" class="row">
-        <h3 class="archive-headline">Regnskaber ({{ accounts.length }})</h3>
-        <div ng-repeat="account in accounts" class="col-md-4">
-            <a ng-click="getDoc(account)"><h4 class="archive-accounts">{{ account.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="records.length > 0" class="row">
-        <h3 class="archive-headline">Regnskabsbilag ({{ records.length }})</h3>
-        <div ng-repeat="record in records" class="col-md-4">
-            <a ng-click="getDoc(record)"><h4 class="archive-accounts">{{ record.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="others.length > 0" class="row">
-        <h3 class="archive-headline">Andet ({{ others.length }})</h3>
-        <div ng-repeat="other in others" class="col-md-4">
-            <a ng-click="getDoc(other)"><h4 class="archive-others">{{ other.description }}</h4></a>
-        </div>
-    </div>
-    <div ng-show="somethingCompletelyDifferent.length > 0" class="row">
-        <h3 class="archive-headline">Noget helt andet.. ({{ somethingCompletelyDifferent.length }})</h3>
-        <div ng-repeat="something in somethingCompletelyDifferent" class="col-md-4">
-            <a ng-click="getDoc(something)"><h4 class="archive-different">{{ something.description }}</h4></a>
-        </div>
-    </div>
+</div>
+<div ng-show="!newCampEntry && docsExist">
+    <h2>Liste over dokumenter</h2>
     <hr>
-    <br>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="14%">Begivenhed</th>
+                <th width="6%">År</th>
+                <th width="40%">Beskrivelse</th>
+                <th width="13%">Kategori</th>
+                <th width="13%">Lagt op af</th>
+                <th width="14%" ng-show="role==0">Ændre / Slette</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="doc in docs">
+                <td>{{ doc.eventName }}</td>
+                <td>{{ doc.year }}</td>
+                <td><a ng-click="getDoc(doc)">{{ doc.description }}</a></td>
+                <td>{{ doc.category }}</td>
+                <td>{{ doc.uploader }}</td>
+                <td>
+                    <!-- <a class="btn btn-primary" ng-click="editDoc(doc)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="docDetails(doc)">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                    </a> -->
+                    <a class="btn btn-primary" ng-click="removeDoc(doc)" ng-show="role==0">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="!docsExist">
+    <tr>
+        <td></td><td>Der er ikke nogen dokumenter endnu</td>
+    </tr>
+</div>
+<hr>
+<div>
     <div class="col-md-offset-4 col-md-4">
         <a class="btn btn-primary btn-lg btn-block" href="#!docupload">Upload dokumenter</a>
     </div>

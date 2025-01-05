@@ -1,6 +1,6 @@
 <div ng-include="'navigation.html'"></div>
 
-<h2 class="heading">Referater fra generalforsamlingerne</h2>
+<h2 class="heading">Referater</h2>
 <hr>
 <div ng-repeat="summary in summaries">
     <a class="btn btn-primary" ng-click="makeVisible(summary)">{{ summary.name }}</a>
@@ -27,7 +27,17 @@
         <td></td><td>Der er ikke nogen referater endnu</td>
     </tr>
 </div>
-<div ng-show="newSummaryEntry">
+<div ng-show="!eventSelected && !noRecentEventsWithNoSummary">
+    <form name="formSelectEvent">
+        <div class="form-group col-md-6 row">
+            <label>Der er flere begivenheder uden referat. Hvilken vil du åbne?:</label>
+            <select class="form-control" ng-model="selEvent" name="selEvent" ng-change="selectEvent()">
+                <option ng-repeat="event in events" value="{{event}}">{{event.eventName}}</option>
+            </select>
+        </div>
+    </form>
+</div>
+<div ng-show="newSummaryEntry && eventSelected">
     <form name="newSummaryForm" ng-submit="addSummary()" novalidate>
         <h2 class="form-signin-heading">Opret nyt referat</h2>
         <div class="row">
@@ -36,7 +46,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-4">
                 <label for="name">Unikt navn</label>
                 <input type="text" id="name" class="form-control" ng-model="name" placeholder="Navn" autofocus required>
             </div>
@@ -47,7 +57,7 @@
         </div>
         <h3 class="form-signin-heading">Punkter på dagsordenen - op til 10</h3>
         <div class="row">
-            <div ng-repeat="y in agendaItems">
+            <div ng-repeat="y in agendaItems" class="form-group">
                 <div ng-show="agendaItemShow[y]">
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -100,8 +110,10 @@
         </div>
     </form>
 </div>
-<div class="row actions" ng-show="!newSummaryEntry && !editSummaryEntry">
-    <div class="col-md-4">
+<div class="row actions" ng-show="!newSummaryEntry && !editSummaryEntry && eventSelected">
+    <h3 class="heading">Indtast et nyt referat fra en nylig begivenhed - mindre end 60 dage siden.</h3>
+    <p class="blog-post" ng-show="noRecentEventsWithNoSummary">Der er ikke nogen nylige begivenheder uden referat.</p>
+    <div class="col-md-4" ng-show="!noRecentEventsWithNoSummary">
         <a class="btn btn-info btn-lg btn-block" ng-click="newSummaryEntryToggle()">Indtast nyt referat</a>
     </div>
 </div>

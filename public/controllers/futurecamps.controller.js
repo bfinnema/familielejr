@@ -287,11 +287,12 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                     fcinvitation.bring = oldinvitation[0].bring || "";
                     fcinvitation.payment = fcpayment;
                     fcinvitation.text2 = oldinvitation[0].text2 || "";
+                    fcinvitation.active = true;
                     console.log(`fcinvitation: ${JSON.stringify(fcinvitation)}`);
                 };
 
                 var event = {
-                    eventName: "Familielejr-" + String($scope.allcamps[i].year),
+                    eventName: "Familielejr " + String($scope.allcamps[i].year),
                     _eventtype: $scope.eventtype._id,
                     eventtypeName: $scope.eventtype.eventtypeName,
                     year: $scope.allcamps[i].year,
@@ -303,7 +304,8 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
                     enddate: $scope.allcamps[i].enddate,
                     organizers: $scope.allcamps[i].organizers,
                     committees: $scope.allcamps[i].committees,
-                    invitation: fcinvitation
+                    invitation: fcinvitation,
+                    summaryExist: false
                 };
                 console.log(`Event: ${JSON.stringify(event)}`);
 
@@ -329,41 +331,6 @@ function($scope, $http, $location, $route, $window, AuthService, YearService) {
         }, function errorCallback(response) {
             console.log(`Error. Status: ${response.status}`);
         });        
-    };
-
-    $scope.testArrayOfObjects = function() {
-        var jsObjects = [
-            {a: 1, b: 2}, 
-            {a: 3, b: 4}, 
-            {a: 5, b: 6}, 
-            {a: 7, b: 8}
-        ];
-
-        console.log(`${JSON.stringify(jsObjects)}`);
-        console.log(jsObjects);
-
-        var result = jsObjects.filter(obj => {
-            return obj.b === 12
-        });
-
-        if (result.length > 0) {
-            console.log(`${JSON.stringify(result)}`);
-            console.log(`Result: ${result[0].a}, ${result[0].b}`);
-        } else {
-            console.log(`No findings`);
-        };
-
-        var result2 = jsObjects.find(obj => {
-            return obj.b === 12
-        });
-
-        if (result2) {
-            console.log(`${JSON.stringify(result2)}`);
-            console.log(`Result: ${result2.a}, ${result2.b}`);
-        } else {
-            console.log(`No findings 2`);
-        }
-
     };
 
 }])

@@ -254,11 +254,6 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'accountingCtrl',
             access: {restricted: true}
         }).
-        /* when('/expenses', {
-            templateUrl: 'views/expenses.view.html',
-            controller: 'expensesCtrl',
-            access: {restricted: true}
-        }). */
         when('/groceries', {
             templateUrl: 'views/groceries.view.html',
             controller: 'groceriesCtrl',

@@ -9,7 +9,14 @@ var DocSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false
     },
+    _event: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     year: {
+        type: String
+    },
+    eventName: {
         type: String
     },
     filename: {

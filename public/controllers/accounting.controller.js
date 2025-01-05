@@ -12,7 +12,8 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
     });
 
     var year = $routeParams.year;
-    var currentYear = YearService.myYear("accounting");
+    // var currentYear = YearService.myYear("accounting");
+    var currentYear = new Date().getFullYear();
     // console.log(`currentYear: ${currentYear}`);
     var fy = year;
     if (year < 1990) {
@@ -59,10 +60,21 @@ function($scope, $http, $location, $route, $window, $routeParams, AuthService, Y
 
     $http({
         method: 'GET',
-        url: 'fiscalyears/year/' + fy,
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: 'fiscalyears/year/' + fy,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
     }).then(function(fiscalyear) {
         $scope.fiscalyear = fiscalyear.data;
         // console.log(`FY description: ${$scope.fiscalyear.description}`);

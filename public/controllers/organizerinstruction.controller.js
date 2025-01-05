@@ -1,6 +1,6 @@
 angular.module('familielejr')
 
-.controller('organizerinstructionCtrl', ['$scope', 'AuthService', 'YearService', function($scope, AuthService, YearService) {
+.controller('organizerinstructionCtrl', ['$scope', '$http', 'AuthService', 'YearService', function($scope, $http, AuthService, YearService) {
     
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -14,9 +14,18 @@ angular.module('familielejr')
         angular.element(document.querySelector( '#organizerinstruction' ) ).addClass('active');
     }, 1000);
 
-    var invyear = YearService.myYear("default");
-    var pastyear = invyear - 1;
-    $scope.invyear = invyear;
-    $scope.pastyear = pastyear;
+    $http({
+        method: 'GET',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
 
 }]);

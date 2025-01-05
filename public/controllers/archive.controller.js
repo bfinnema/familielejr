@@ -1,15 +1,8 @@
 angular.module('familielejr')
 
-.controller('docuploadCtrl', ['$scope', '$http', '$route', '$window', '$timeout', 'AuthService', 
-function ($scope, $http, $route, $window, $timeout, AuthService) {
+.controller('docuploadCtrl', ['$scope', '$http', '$route', '$window', 'AuthService', 
+function ($scope, $http, $route, $window, AuthService) {
 
-    var currentyear = (new Date()).getFullYear();
-    var firstyear = 1993;
-    $scope.years = [];
-    for (var y=currentyear+2; y>=firstyear; y--) {
-        $scope.years.push({"year": y.toString()});
-    };
-    
     $scope.categories = [
         {"category": "Invitationer", "catNum": 0, "folder": "invitations"},
         {"category": "Menuer og madplaner", "catNum": 1, "folder": "menus"},
@@ -17,7 +10,8 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         {"category": "Regnskaber", "catNum": 3, "folder": "accounting"},
         {"category": "Regnskabsbilag", "catNum": 6, "folder": "records"},
         {"category": "Andet", "catNum": 4, "folder": "other"},
-        {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"}
+        {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"},
+        {"category": "Referater", "catNum": 7, "folder": "summaries"}
     ];
 
     $scope.isLoggedIn = false;
@@ -33,10 +27,57 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         angular.element(document.querySelector( '#archive' ) ).addClass('active');
     }, 1000);
 
+    $scope.yearSelected = false;
+
+    $http({
+        method: 'GET',
+        url: '/tenants/mytenant/',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+        var currentyear = (new Date()).getFullYear();
+        var firstyear = $scope.tenant.startYear;
+        $scope.years = [];
+        for (var y=currentyear; y>=firstyear; y--) {
+            $scope.years.push({"year": y.toString()});
+        };
+    }, function errorCallback(response) {
+        console.log(`Error. Status: ${response.status}`);
+    });
+
     $scope.errorMsg = '';
     $scope.successMsg = '';
     $scope.showDocsList = false;
     $scope.docReplica = true;
+
+    $scope.getEvents = function(year) {
+        // console.log(`In getEvents. Year: ${year}`);
+        $scope.eventNames = [{"name": "Generelt Dokument"}];
+        $scope.selEvent = $scope.eventNames[0].name;
+        $scope.yearSelected = true;
+        $http({
+            method: 'GET',
+            url: '/events/year/' + year,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(events) {
+            // console.log(`Events fetched. Status: ${events.status}. # events: ${events.data.length}`);
+            if (events.data.length > 0) {
+                for (ev in events.data) {
+                    // console.log(`eventName: ${events.data[ev].eventName}`);
+                    $scope.eventNames.push({"name": events.data[ev].eventName});
+                };
+                $scope.events = events.data;
+            };
+        }, function errorCallback(response) {
+            console.log(`Error. Status: ${response.status}`);
+        });
+    };
 
     $scope.uploadDoc = function(file) {
         // console.log(`uploadDoc. filename: ${file.name}, filetype: ${file.type}`);
@@ -44,10 +85,18 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         var folder = "archive"
         // console.log(`Folder to upload to: ${folder}`);
         var operation = 'putObject';
+        
+        var selectedEvent = $scope.events.filter(obj => {
+            return obj.eventName == $scope.selEvent
+        });
+        // console.log(`selectedEvent: ${JSON.stringify(selectedEvent)}`);
 
         $http({
             method: 'GET',
-            url: `/photos/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3?file_name=${file.name}&file_type=${file.type}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             // console.log(response);
             // console.log(response.data.url);
@@ -57,28 +106,36 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             xhr.onreadystatechange = () => {
                 if(xhr.readyState === 4){
                     if(xhr.status === 200){
-                        console.log("Document Success!");
+                        // console.log("Document Success!");
+                        var data = {
+                            year: $scope.year,
+                            filename: file.name,
+                            filetype: file.type,
+                            category: $scope.category,
+                            eventName: $scope.selEvent,
+                            user: localStorage.familielejrUserId,
+                            description: $scope.description,
+                            orientation: 0
+                        };
+                        if (selectedEvent.length > 0) {
+                            data._event = selectedEvent[0]._id
+                        };
+                        // console.log(`Doc Data: ${JSON.stringify(data)}`);
                         $http({
                             method: 'POST',
                             url: '/docs/upload',
                             headers: {
                                 'x-auth': localStorage.userToken
                             },
-                            data: {
-                                year: $scope.year,
-                                filename: file.name,
-                                filetype: file.type,
-                                category: $scope.category,
-                                user: localStorage.familielejrUserId,
-                                description: $scope.description,
-                                orientation: 0
-                            }
+                            data: data
                         }).then(function(response) {
                             // console.log(`Status: ${response.status}`);
                             // console.log(response.data._id);
                             $scope.docFile = null;
                             $scope.description = "";
                             $scope.errorMsg = "";
+                            $scope.year = "";
+                            $scope.yearSelected = false;
                             $scope.successMsg = file.name + ' blev uploaded.'
                             // $route.reload();
                         }, function errorCallback(response) {
@@ -128,39 +185,35 @@ function($scope, $http, $window, $route, $location, AuthService) {
         {"category": "Regnskaber", "catNum": 3, "folder": "accounting"},
         {"category": "Regnskabsbilag", "catNum": 6, "folder": "records"},
         {"category": "Andet", "catNum": 4, "folder": "other"},
-        {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"}
+        {"category": "Noget helt andet", "catNum": 5, "folder": "somethingcompletelydifferent"},
+        {"category": "Referater", "catNum": 7, "folder": "summaries"}
     ];
+    $scope.docsExist = true;
 
     $http({
         method: 'GET',
-        url: '/docs',
+        url: '/tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
-    }).then(function(response) {
-        // console.log(`Status: ${response.status}`);
-        $scope.docs = response.data;
-        if (!response.data[0]) {
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        return $http({
+            method: 'GET',
+            url: '/docs/sortcategory',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(docs) {
+        // console.log(`Status: ${docs.status}`);
+        if (docs.data.length == 0) {
             // console.log('No Documents in db)
             $scope.docsExist = false;
         } else {
             $scope.docsExist = true;
-            $scope.invitations = [];
-            $scope.menus = [];
-            $scope.shoppinglists = [];
-            $scope.accounts = [];
-            $scope.records = [];
-            $scope.others = [];
-            $scope.somethingCompletelyDifferent = [];
-            for (x=0; x<$scope.docs.length; x++) {
-                if ($scope.docs[x].category == 0) {$scope.invitations.push($scope.docs[x]);}
-                else if ($scope.docs[x].category == 1) {$scope.menus.push($scope.docs[x]);}
-                else if ($scope.docs[x].category == 2) {$scope.shoppinglists.push($scope.docs[x]);}
-                else if ($scope.docs[x].category == 3) {$scope.accounts.push($scope.docs[x]);}
-                else if ($scope.docs[x].category == 4) {$scope.others.push($scope.docs[x]);}
-                else if ($scope.docs[x].category == 6) {$scope.records.push($scope.docs[x]);}
-                else {$scope.somethingCompletelyDifferent.push($scope.docs[x]);};
-            };
+            $scope.docs = docs.data;
         };
     }, function errorCallback(response) {
         console.log(`Error Status, get all docs: ${response.status}`);
@@ -175,7 +228,10 @@ function($scope, $http, $window, $route, $location, AuthService) {
         // console.log(`Folder: ${folder}`);
         $http({
             method: 'GET',
-            url: `/photos/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`
+            url: `/photos/s3ops/sign-s3-getimage?file_name=${filename}&file_type=${filetype}&folder=${folder}&operation=${operation}`,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
         }).then(function(response) {
             // console.log("Signed request: "+response.data.signedRequest);
             $window.open(response.data.signedRequest, '_blank');
@@ -186,13 +242,18 @@ function($scope, $http, $window, $route, $location, AuthService) {
     };
 
     $scope.removeDoc = function(doc) {
+        var folder = "archive"
+        // console.log(`In removeDoc. Description: ${doc.description}, id: ${doc._id}`);
         if ($window.confirm('Bekræft venligst at du vil slette dokumentet '+doc.filename) && $scope.role == 0) {
 
             $http({
                 method: 'GET',
-                url: `/photos/sign-s3-deletedoc?file_name=${doc.filename}&file_type=${doc.filetype}&folder=${doc.year}&operation=${'deleteObject'}`
+                url: `/photos/s3ops/sign-s3-deleteimage?file_name=${doc.filename}&file_type=${doc.filetype}&folder=${folder}&operation=${'deleteObject'}`,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
             }).then(function(response) {
-                console.log(response.data.signedRequest);
+                // console.log(response.data.signedRequest);
 
                 $http({
                     method: 'DELETE',
@@ -202,15 +263,15 @@ function($scope, $http, $window, $route, $location, AuthService) {
                     // console.log("Success!");
                     $http({
                         method: 'DELETE',
-                        url: '/photos/admindelete/'+doc._id,
+                        url: '/docs/admindelete/'+doc._id,
                         headers: {
                             'x-auth': localStorage.userToken
                         }
                     }).then(function(response) {
                         // console.log(`Status: ${response.status}`);
                         // console.log(response.data._id);
-                        $location.path('/photoalbum/'+$scope.year);
-                        // $route.reload();
+                        $location.path('/archive');
+                        $route.reload();
                     }, function errorCallback(response) {
                         console.log(`Status: ${response.status}`);
                     });

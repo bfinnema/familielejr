@@ -1,8 +1,8 @@
 <div ng-include="'navigation.html'"></div>
 
 <div class="blog-header">
-    <h1 class="blog-title">{{ about.communityName }}</h1>
-    <p class="lead blog-description">{{ about.subHeading }}</p>
+    <h1 class="blog-title">{{ tenant.tenantName }}</h1>
+    <p class="lead blog-description">{{ tenant.description }}</p>
 </div>
 <hr>
 <div class="row">
@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <h2 class="blog-post-title">Om {{ about.communityName }}</h2>
+            <h2 class="blog-post-title">Om {{ tenant.tenantName }}</h2>
             <p class="blog-post-meta">{{ about.metadata }}</p>
             <div ng-repeat="textHeadline in about.textHeadlines">
                 <h3>{{ textHeadline.h3 }}</h3>
@@ -55,36 +55,12 @@
                 <p>Her kan du indtaste en beskrivelse af din forening / familie hjemmeside</p>
             </div>
         </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="communityName">Navn</label>
-                <input type="text" id="communityName" class="form-control" ng-model="about.communityName" placeholder="Navn" autofocus required>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label for="subHeading">Under-overskrift</label>
-                <input type="text" id="subHeading" class="form-control" ng-model="about.subHeading" placeholder="Under-overskrift" required>
-            </div>
-        </div>
         <div ng-show="numHistoricPhotos > 0" class="row">
             <div class="form-group col-md-2">
                 <label>Vælg foto (valgfrit)</label>
                 <select class="form-control" ng-model="_photo" name="_photo">
                     <option ng-repeat="image in images" value="{{image._id}}">{{image.filename}}</option>
                 </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label for="nextHeadline">Overskrift, næste begivenhed</label>
-                <input type="text" id="nextHeadline" class="form-control" ng-model="about.nextHeadline" required>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label for="upcomingHeadline">Overskrift, kommende begivenheder</label>
-                <input type="text" id="upcomingHeadline" class="form-control" ng-model="about.upcomingHeadline" required>
             </div>
         </div>
         <div class="row">

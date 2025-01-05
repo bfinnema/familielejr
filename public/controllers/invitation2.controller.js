@@ -16,19 +16,43 @@ function($scope, $http, $location, $window, AuthService) {
         angular.element(document.querySelector( '#invitationadmin' ) ).addClass('active');
     }, 1000);
 
-    $scope.invitationExists = false;
+    $scope.eventsExist = true;
     $scope.eventSelected = false;
 
     $http({
         method: 'GET',
-        url: 'events/futureevents',
+        url: 'tenants/mytenant',
         headers: {
             'x-auth': localStorage.userToken
         }
-    }).then(function(futureevents) {
-        console.log(`Future Events fetched. Status: ${futureevents.status}`);
-        $scope.futureevents = futureevents.data;
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
         return $http({
+            method: 'GET',
+            url: 'events/futureevents',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(futureevents) {
+        // console.log(`Future Events fetched. Status: ${futureevents.status}`);
+        if (futureevents.data.length > 0) {
+            console.log(`There are some future events. Name of first: ${futureevents.data[0].eventName}`);
+            if (futureevents.data.length == 1) {
+                $scope.selectedEvent = futureevents.data[0];
+                console.log(`There is only one future event. name: ${$scope.selectedEvent.eventName}`);
+                $scope.eventSelected = true;
+                getEventData();
+            } else {
+                $scope.futureevents = futureevents.data;
+            };
+        } else {
+            console.log(`There are no future events at all.`);
+            $scope.eventsExist = false;
+        };
+        /* return $http({
             method: 'GET',
             url: 'eventtypes',
             headers: {
@@ -37,7 +61,7 @@ function($scope, $http, $location, $window, AuthService) {
         });
     }).then(function(eventtypes) {
         console.log(`Eventtypes fetched. Status: ${eventtypes.status}`);
-        $scope.eventtypes = eventtypes.data;
+        $scope.eventtypes = eventtypes.data; */
     }, function errorCallback(response) {
         console.log(`Error! Status: ${response.status}`);
     });
@@ -45,8 +69,13 @@ function($scope, $http, $location, $window, AuthService) {
     $scope.selectEvent = function() {
         console.log(`In selectEvent`);
         $scope.selectedEvent = JSON.parse($scope.selEvent);
-        console.log(`selectedEvent stringified: ${JSON.stringify($scope.selectedEvent)}`);
-        // console.log(`seleEvent: ${$scope.selEvent}`);
+        getEventData();
+    };
+
+    getEventData = function() {
+        // console.log(`In getEventData`);
+        // console.log(`selectedEvent stringified: ${JSON.stringify($scope.selectedEvent)}`);
+        // console.log(`selectEvent: ${$scope.selEvent}`);
         // console.log(`Name: ${$scope.selectedEvent.eventName}`);
         // console.log(`organizers: ${JSON.stringify($scope.selectedEvent.organizers)}`);
         // console.log(`organizer: ${$scope.selectedEvent.organizers[0].orgname}`);
@@ -89,7 +118,7 @@ function($scope, $http, $location, $window, AuthService) {
     
     $scope.generateInvitation = function() {
 
-        console.log(`selectedEvent: ${JSON.stringify($scope.selectedEvent)}`);
+        // console.log(`selectedEvent: ${JSON.stringify($scope.selectedEvent)}`);
 
         $scope.selectedEvent.startdate = $scope.startdateView;
         $scope.selectedEvent.enddate = $scope.enddateView;
@@ -106,7 +135,7 @@ function($scope, $http, $location, $window, AuthService) {
 
         $scope.selectedEvent.organizers = organizers;
 
-        console.log(`selectedEvent: ${JSON.stringify($scope.selectedEvent)}`);
+        // console.log(`selectedEvent: ${JSON.stringify($scope.selectedEvent)}`);
 
         var data = {
             venue: $scope.selectedEvent.venue,
@@ -116,8 +145,7 @@ function($scope, $http, $location, $window, AuthService) {
             organizers: $scope.selectedEvent.organizers,
             invitation: $scope.selectedEvent.invitation,
         }
-        console.log(`data: ${JSON.stringify(data)}`);
-        // console.log(`${STOP}`);
+        // console.log(`data: ${JSON.stringify(data)}`);
 
         $http({
             method: 'PATCH',
@@ -127,7 +155,7 @@ function($scope, $http, $location, $window, AuthService) {
             },
             data: data
         }).then(function(response) {
-            $location.path('/eventinfo');
+            $location.path('/invitation2display/' + $scope.selectedEvent._id);
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -154,13 +182,224 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
 
     setTimeout(function(){
         angular.element(document.querySelector( '#nextcamp' ) ).addClass('active');
-        angular.element(document.querySelector( '#nextcampinfo' ) ).addClass('active');
+        angular.element(document.querySelector( '#nexteventinfo' ) ).addClass('active');
     }, 1000);
 
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
 
+    $scope.eventsExist = true;
+    $scope.eventSelected = false;
+
     $http({
+        method: 'GET',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        $scope.tenant = tenant.data;
+
+        if ($routeParams.id == 1000) {
+            $http({
+                method: 'GET',
+                url: 'events/futureactiveevents',
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(faevents) {
+                console.log(`Future Events fetched. Status: ${faevents.status}`);
+                if (faevents.data.length > 0) {
+                    console.log(`There are some future, active events. Name of first: ${faevents.data[0].eventName}`);
+                    if (faevents.data.length == 1) {
+                        $scope.event = faevents.data[0];
+                        console.log(`There is only one future event. name: ${$scope.event.eventName}`);
+                        $scope.eventSelected = true;
+                        prepareInvitation();
+                    } else {
+                        $scope.faevents = faevents.data;
+                    };
+                } else {
+                    console.log(`There are no future, active events at all.`);
+                    $scope.eventsExist = false;
+                };
+            }, function errorCallback(response) {
+                console.log(`Error! Status: ${response.status}`);
+            });
+        } else {
+            $http({
+                method: 'GET',
+                url: 'events/' + $routeParams.id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(event) {
+                console.log(`Future Event fetched. Status: ${event.status}`);
+                $scope.event = event.data.event;
+                $scope.eventSelected = true;
+                console.log(`eventtypeName: ${$scope.event.eventtypeName}, ${$scope.event.eventName}`);
+                prepareInvitation();
+            }, function errorCallback(response) {
+                console.log(`Error! Status: ${response.status}`);
+            });
+        };
+    }, function errorCallback(response) {
+        console.log(`Error! Status: ${response.status}`);
+    });
+
+    $scope.selectEvent = function() {
+        // console.log(`In selectEvent`);
+        $scope.event = JSON.parse($scope.selEvent);
+        $scope.eventSelected = true;
+        prepareInvitation();
+    };
+
+    prepareInvitation = function() {
+        $http({
+            method: 'GET',
+            url: 'eventtypes/eventtypeName/' + $scope.event.eventtypeName,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(eventtype) {
+            // console.log(`Eventtype fetched. Status: ${eventtype.status}`);
+            $scope.eventtype = eventtype.data;
+
+            var sd = new Date($scope.event.startdate);
+            $scope.startday = days[sd.getDay()];
+            $scope.startdate = sd.getDate();
+            $scope.startmonth = months[sd.getMonth()];
+            var ed = new Date($scope.event.enddate);
+            // console.log(`endday: ${ed}, getDay: ${ed.getDay()}`);
+            $scope.endday = days[ed.getDay()];
+            // console.log(`Slutdag: ${$scope.endday}`);
+            $scope.enddate = ed.getDate();
+            $scope.endmonth = months[ed.getMonth()];
+            var dl = new Date($scope.event.invitation.registration.deadline);
+            $scope.deadlineday = days[dl.getDay()];
+            $scope.deadlinedate = dl.getDate();
+            $scope.deadlinemonth = months[dl.getMonth()];
+    
+            var encodedAddress = encodeURIComponent($scope.event.address.street+" "+$scope.event.address.zip+" "+$scope.event.address.town+" Denmark");
+            // console.log(`encodedAddress: ${encodedAddress}`);
+            // console.log(`api_key: ${$scope.api_key}`);
+            $http({
+                method: 'GET',
+                url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${$scope.api_key}`
+            }).then(function(response) {
+                // console.log(`Googleapis status: ${response.status}`);
+                // console.log(response.data);
+                if (response.error) {
+                    console.log('Unable to connect to Google servers');
+                } else if (response.data.status === 'ZERO_RESULTS') {
+                    console.log('Unable to find that address');
+                } else if (response.status === 200) {
+                    $scope.googleaddress = response.data.results[0].formatted_address,
+                    $scope.latitude = response.data.results[0].geometry.location.lat,
+                    $scope.longitude = response.data.results[0].geometry.location.lng
+                    // console.log(`Google address: ${$scope.googleaddress}, ${$scope.latitude}, ${$scope.longitude}`);
+                } else {
+                    console.log('Hej');
+                };
+
+                uiGmapGoogleMapApi.then(function (maps) {
+                    // console.log('Google Maps loaded');
+                    // maps.visualRefresh = true;
+                    $scope.map = {
+                        center: {
+                            latitude: $scope.latitude,
+                            longitude: $scope.longitude
+                        },
+                        zoom: 16,
+                        pan: 1,
+                        options: $scope.mapOptions,
+                        control: {},
+                        events: {
+                            tilesloaded: function (maps, eventName, args) {},
+                            dragend: function (maps, eventName, args) {},
+                            zoom_changed: function (maps, eventName, args) {}
+                        }
+                    };
+                    // console.log($scope.map); 
+
+                    $scope.googlemap = {};
+                });
+
+            });
+
+            $scope.windowOptions = {
+                show: true
+            };
+        
+            $scope.wincontent = "Hello";
+            $scope.onClick = function (name, address, years, website) {
+                $scope.windowOptions.show = true;
+                $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
+            };
+        
+            $scope.closeClick = function () {
+                $scope.windowOptions.show = true;
+            };
+        
+            $scope.title = "Window Title!";
+        
+            uiGmapIsReady.promise() // if no value is put in promise() it defaults to promise(1)
+            .then(function (instances) {
+                console.log(instances[0].map); // get the current map
+            })
+                .then(function () {
+                $scope.addMarkerClickFunction($scope.markers);
+            });
+        
+            $scope.markers = [
+                
+            ];
+        
+            $scope.addMarkerClickFunction = function (markersArray) {
+                angular.forEach(markersArray, function (value, key) {
+                    value.onClick = function () {
+                        $scope.onClick(value.name, value.address, value.years, value.website);
+                        $scope.MapOptions.markers.selected = value;
+                    };
+                });
+            };
+        
+            $scope.MapOptions = {
+                minZoom: 15,
+                zoomControl: false,
+                draggable: true,
+                navigationControl: false,
+                mapTypeControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                disableDoubleClickZoom: false,
+                keyboardShortcuts: true,
+                markers: {
+                    selected: {}
+                },
+                styles: [{
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{
+                        visibility: "off"
+                    }]
+                }, {
+                    featureType: "transit",
+                    elementType: "all",
+                    stylers: [{
+                        visibility: "off"
+                    }]
+                }],
+            };
+        
+        }, function errorCallback(response) {
+            console.log(`Error! Status: ${response.status}`);
+        });
+    };
+
+    /* $http({
         method: 'GET',
         url: 'events/' + $routeParams.id,
         headers: {
@@ -246,70 +485,6 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
 
     }, function errorCallback(response) {
         console.log(`Error! Status: ${response.status}`);
-    });
+    }); */
 
-    $scope.windowOptions = {
-        show: true
-    };
-
-    $scope.wincontent = "Hello";
-    $scope.onClick = function (name, address, years, website) {
-        $scope.windowOptions.show = true;
-        $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
-    };
-
-    $scope.closeClick = function () {
-        $scope.windowOptions.show = true;
-    };
-
-    $scope.title = "Window Title!";
-
-    uiGmapIsReady.promise() // if no value is put in promise() it defaults to promise(1)
-    .then(function (instances) {
-        console.log(instances[0].map); // get the current map
-    })
-        .then(function () {
-        $scope.addMarkerClickFunction($scope.markers);
-    });
-
-    $scope.markers = [
-        
-    ];
-
-    $scope.addMarkerClickFunction = function (markersArray) {
-        angular.forEach(markersArray, function (value, key) {
-            value.onClick = function () {
-                $scope.onClick(value.name, value.address, value.years, value.website);
-                $scope.MapOptions.markers.selected = value;
-            };
-        });
-    };
-
-    $scope.MapOptions = {
-        minZoom: 15,
-        zoomControl: false,
-        draggable: true,
-        navigationControl: false,
-        mapTypeControl: false,
-        scaleControl: false,
-        streetViewControl: false,
-        disableDoubleClickZoom: false,
-        keyboardShortcuts: true,
-        markers: {
-            selected: {}
-        },
-        styles: [{
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{
-                visibility: "off"
-            }]
-        }, {
-            featureType: "transit",
-            elementType: "all",
-            stylers: [{
-                visibility: "off"
-            }]
-        }],
-    };
 }])

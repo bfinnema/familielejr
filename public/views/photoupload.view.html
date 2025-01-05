@@ -2,10 +2,9 @@
 
 <div class="col-md-6">
     <h1>Upload af fotografier</h1>
-    <p>Her kan du lægge dine billeder fra familielejrene op. Vælg det år, billedet blev taget. Vælg derefter 
-        det billede, du vil lægge op, fra din computer.</p>
-    <p>Der kommer en fejlmeddelelse, hvis du forsøger at lægge et billede op, med et navn, der allerede er 
-        lagt op en gang.</p>
+    <p>Her kan du lægge dine billeder op. Vælg det år, billedet blev taget. Når du har valgt år, kan du vælge begivenhed, hvor
+        billedet blev taget. Vælg derefter det billede, du vil lægge op, fra din computer.</p>
+    <p>Der kommer en fejlmeddelelse, hvis du forsøger at lægge et billede op, med et navn, der allerede er lagt op en gang.</p>
     <hr>
     <form name="photouploadForm">
         <fieldset>
@@ -22,6 +21,14 @@
                 <label>
                     <input type="checkbox" ng-model="commonImage" id="commonImage">Fællesbillede?
                 </label>
+            </div>
+        </div>
+        <div class="row" ng-show="yearSelected">
+            <div class="form-group col-md-8">
+                <label>Er billedet tilknyttet en begivenhed? Hvis ja, hvilken?</label>
+                <select class="form-control" ng-model="selEvent" name="selEvent" required>
+                    <option ng-repeat="eventName in eventNames" value="{{eventName.name}}">{{eventName.name}}</option>
+                </select>
             </div>
         </div>
         <div class="row">

@@ -22,7 +22,8 @@ router.post('/', authenticate, (req, res) => {
     'enddate',
     'organizers',
     'committees',
-    'invitation'
+    'invitation',
+    'summaryExist'
   ]);
   body._creator = req.user._id;
   body._tenant = req.user._tenant;
@@ -81,7 +82,7 @@ router.get('/pastevents', authenticate, (req, res) => {
   Event.find({
     startdate:{'$lte':thisMoment},
     _tenant: req.user._tenant
-  }).then((events) => {
+  }).sort({year:1}).then((events) => {
     res.json(events);
   }, (e) => {
     res.status(400).send(e);
@@ -103,6 +104,19 @@ router.get('/futureactiveevents', authenticate, (req, res) => {
   });
 });
 
+router.get('/arevents', authenticate, (req, res) => {
+  // console.log('Find by active invitation and requires registration.');
+  Event.find({
+    "invitation.registration.requiresRegistration": true,
+    "invitation.active": true,
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/farevents', authenticate, (req, res) => {
   // console.log('Find by gt date, active invitation and requires registration');
   var thisMoment = new Date();
@@ -111,6 +125,23 @@ router.get('/farevents', authenticate, (req, res) => {
     startdate:{'$gt':thisMoment},
     "invitation.active": true,
     "invitation.registration.requiresRegistration": true,
+    _tenant: req.user._tenant
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/summaryadmin/:year/:month/:date', authenticate, (req, res) => {
+  // console.log('Find by gt date and summary not written');
+  var theDate = new Date(req.params.year, req.params.month, req.params.date);
+  var currentDate = new Date();
+  // console.log(`This Date: ${theDate}. Current Date: ${currentDate}`);
+  Event.find({
+    startdate:{'$gt':theDate},
+    enddate:{'$lte':currentDate},
+    summaryExist: false,
     _tenant: req.user._tenant
   }).then((events) => {
     res.json(events);
@@ -171,7 +202,7 @@ router.get('/eventtype/:eventtype_id', authenticate, (req, res) => {
 router.get('/eventtype/year/:eventtype_id/:year', authenticate, (req, res) => {
   var id = req.params.eventtype_id;
   // console.log('This is the find by eventtype section');
-  console.log(`Find Events by eventtype: ${id}, and year: ${req.params.year}`);
+  // console.log(`Find Events by eventtype: ${id}, and year: ${req.params.year}`);
 
   if (!ObjectId.isValid(id)) {
     return res.status(404).send();
@@ -224,6 +255,35 @@ router.patch('/:id', authenticate, (req, res) => {
     'organizers',
     'committees',
     'invitation'
+  ]);
+
+  if (!ObjectId.isValid(id)) {
+    console.log(`id is not valid`);
+    return res.status(404).send();
+  }
+
+  Event.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((event) => {
+    if (!event) {
+      console.log(`Event not found`);
+      return res.status(404).send();
+    }
+
+    res.send({event});
+  }).catch((e) => {
+    console.log(`PATCH Event, Error code: ${e.code}`);
+    if (e.code == 11000) {
+      res.status(409).send(e);
+    } else {
+      res.status(400).send(e);
+    };
+  })
+});
+
+router.patch('/summary/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, [
+    'summaryExist',
+    '_summary'
   ]);
 
   if (!ObjectId.isValid(id)) {

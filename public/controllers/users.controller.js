@@ -259,6 +259,7 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
     } else {
         token = '123';
     };
+    
     $http({
         method: 'GET',
         url: '/users/me',
@@ -291,6 +292,7 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
     }).then(function(tenant) {
         // console.log(`tenantStatus: ${tenant.status}`);
         $scope.tenant = tenant.data.tenant;
+        $scope.tenantName = $scope.tenant.tenantName;
         // console.log(`Tenant name: ${$scope.tenant.tenantName}`);
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
@@ -501,7 +503,21 @@ function($scope, $http, $location, $route, $window, AuthService, ProfileService,
         });
     };
 
-    getUsers(false, "none", "none", false, "none", "none");
+    $http({
+        method: 'GET',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        getUsers(false, "none", "none", false, "none", "none");
+        // $scope.tenant = tenant.data;
+    }, function errorCallback(response) {
+        console.log(`Status: ${response.status}`);
+    });
+    // getUsers(false, "none", "none", false, "none", "none");
 
     $scope.removeUser = function(id) {
         if ($window.confirm('Bekræft venligst at du vil slette brugeren')) {
