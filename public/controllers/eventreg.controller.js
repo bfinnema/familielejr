@@ -257,14 +257,11 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
 
         var eventreg = {
             name: $scope.editRegname,
-            // agegroup: $scope.editAgegroup,
             participantCategory: $scope.editPartCat,
             year: $scope.editYear,
             willattend: willattend,
-            // arrivalday: $scope.editArrivalday,
             arrivalOption: $scope.editArrivalOption,
             arrivaltime: $scope.editArrivaltime,
-            // departureday: $scope.editDepartureday,
             departureOption: $scope.editDepartureOption,
             departuretime: $scope.editDeparturetime,
             fee: eventFee,
@@ -546,11 +543,11 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                     console.log(`Status: ${response.status}`);
                 });
             };
+            $location.path('/eventregistrationall/' + $scope._event_id);
+            $route.reload();
     
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-            $location.path('/eventregistrationall/' + $scope._event_id);
-            $route.reload();
 });
     
     

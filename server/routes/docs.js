@@ -65,7 +65,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/sortcategory', authenticate, (req, res) => {
   Doc.find({
     _tenant: req.user._tenant
-  }).sort({"category": 1}).then((docs) => {
+  }).sort({"category": 1, "year": 1, "eventName": 1}).then((docs) => {
     res.json(docs);
   }, (e) => {
     res.status(400).send(e);

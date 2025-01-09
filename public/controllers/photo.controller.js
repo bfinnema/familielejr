@@ -1212,6 +1212,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
     });
 
     $scope.imagescope = $routeParams.imagescope;
+    $scope.photosurl = '/photos/count/';
 
     $http({
         method: 'GET',
