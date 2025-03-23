@@ -95,11 +95,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregallCtrl',
             access: {restricted: true}
         }).
-        when('/eventinfo', {
+        /* when('/eventinfo', {
             templateUrl: 'views/eventinfo.view.html',
             controller: 'eventinfoCtrl',
             access: {restricted: true}
-        }).
+        }). */
         when('/familytree/0/:_L0_family_id', {
             templateUrl: 'views/familytree.view.html',  // Handles level 0. There are up to six levels; 0, 1, 2, 3, 4, 5
             controller: 'familytreeCtrl',
@@ -184,11 +184,6 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'contentCtrl',
             access: {restricted: true}
         }).
-        when('/invitationadmin', {
-            templateUrl: 'views/invitationadmin.view.html',
-            controller: 'invitationadminCtrl',
-            access: {restricted: true}
-        }).
         when('/invitation2admin', {
             templateUrl: 'views/invitation2admin.view.html',
             controller: 'invitation2adminCtrl',
@@ -197,21 +192,6 @@ familielejr.config(['$routeProvider', function($routeProvider){
         when('/invitation2display/:id', {
             templateUrl: 'views/invitation2display.view.html',
             controller: 'invitation2displayCtrl',
-            access: {restricted: true}
-        }).
-        when('/futurecamps/edit/:id', {
-            templateUrl: 'views/futurecampedit.view.html',
-            controller: 'futurecampeditCtrl',
-            access: {restricted: true}
-        }).
-        when('/futurecamps/details/:id', {
-            templateUrl: 'views/futurecampdetails.view.html',
-            controller: 'futurecampdetailsCtrl',
-            access: {restricted: true}
-        }).
-        when('/futurecamps', {
-            templateUrl: 'views/futurecamps.view.html',
-            controller: 'futurecampsCtrl',
             access: {restricted: true}
         }).
         when('/eventtypes', {
@@ -269,9 +249,14 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'docuploadCtrl',
             access: {restricted: true}
         }).
+        when('/tenantdetails/:id', {
+            templateUrl: 'views/tenantdetails.view.html',
+            controller: 'tenantdetailsCtrl',
+            access: {restricted: true}
+        }).
         when('/tenants', {
             templateUrl: 'views/tenants.view.html',
-            controller: 'tenantCtrl',
+            controller: 'tenantsCtrl',
             access: {restricted: true}
         }).
 		otherwise({redirectTo: '/'})

@@ -50,6 +50,7 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
             if ($scope.faevents.length == 1) {
                 $scope.selectedInvitation = $scope.faevents[0];
                 $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                // console.log(`Selected event: ${$scope.selEvent}`);
                 getInvitationData();
             };
         } else {
@@ -59,11 +60,6 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
-
-    $scope.selectInvitation = function() {
-        $scope.selectedInvitation = JSON.parse($scope.selEvent);
-        getInvitationData();
-    };
 
     getInvitationData = function() {
         $scope.arrivalOptions = EventregService.arrivalOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
@@ -393,6 +389,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                         // console.log(`One event: ${$scope.faevents[0].eventName}`);
                         $scope.selectedInvitation = $scope.faevents[0];
                         $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                        // console.log(`OK. Selected event: ${$scope.selEvent}`);
                         getInvitationData();
                     };
                 } else {
@@ -403,6 +400,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                         if ($scope.faevents.length == 1) {
                                 $scope.selectedInvitation = $scope.faevents[0];
                                 $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                                // console.log(`Selected event: ${$scope.selEvent}`);
                                 getInvitationData();
                         };
                     } else {
@@ -433,6 +431,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                         // console.log(`One event: ${$scope.faevents[0].eventName}`);
                         $scope.selectedInvitation = $scope.faevents[0];
                         $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                        // console.log(`Selected event: ${$scope.selEvent}`);
                         getInvitationData();
                     } else {
                         $scope.selectInvitationText = "Der er flere begivenheder i " + _event_id + ". Vælg her:";
@@ -447,6 +446,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                             // console.log(`Only one event: ${$scope.faevents[0].eventName}`);
                             $scope.selectedInvitation = $scope.faevents[0];
                             $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                            // console.log(`Selected event: ${$scope.selEvent}`);
                             getInvitationData();
                         } else {
                             $scope.selectInvitationText = "Der er ikke nogen begivenheder i " + _event_id + ". Vil du se en anden? Vælg her:";
@@ -461,7 +461,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                 console.log(`Status: ${response.status}`);
             });
         } else {
-            console.log(`Specific event. _event_id: ${_event_id}`);
+            // console.log(`Specific event. _event_id: ${_event_id}`);
             $http({
                 method: 'GET',
                 url: 'events/' + _event_id,
@@ -474,6 +474,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                 $scope.invitationExists = true;
                 // console.log(`Event Name: ${$scope.selectedInvitation.eventName}, startdate: ${$scope.selectedInvitation.startdate}`);
                 $scope.selEvent = JSON.stringify($scope.selectedInvitation);
+                // console.log(`OK. Selected event: ${$scope.selEvent}`);
                 getInvitationData();
 
             }, function errorCallback(response) {
@@ -481,16 +482,11 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             });
         };
 
-        $scope.selectInvitation = function() {
-            $scope.selectedInvitation = JSON.parse($scope.selEvent);
-            getInvitationData();
-        };
-
     }, function errorCallback(response) {
         console.log(`Status: ${response.status}`);
     });
 
-    $scope.convertToEvents = function() {
+    /* $scope.convertToEvents = function() {
         console.log(`Year: ${$scope._event_id}`);
         $http({
             method: 'GET',
@@ -548,10 +544,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
     
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
-});
-    
-    
-    };
+        });
+    }; */
 
     getInvitationData = function() {
         $scope.arrivalOptions = EventregService.arrivalOptions($scope.selectedInvitation.startdate, $scope.selectedInvitation.invitation.starttime, $scope.selectedInvitation.enddate);
@@ -797,7 +791,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                 // console.log(`Status: ${response.status}`);
                 // console.log(response.data._id);
                 $location.path(`/eventregistrationall/${registration.year}`);
-                $route.reload();
             }, function errorCallback(response) {
                 console.log(`Status: ${response.status}`);
             });
@@ -832,7 +825,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             data: data
         }).then(function(response) {
             $location.path(`/eventregistrationall/${registration.year}`);
-            // $route.reload();
         }, function errorCallback(response) {
             console.log(`editEventregStatus: ${response.status}`);
         });
@@ -925,7 +917,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             // console.log(`Status: ${response.status}`);
             // console.log(response.data._id);
             $location.path('/eventregistrationall/'+$scope.selectedInvitation._id);
-            $route.reload();
         }, function errorCallback(response) {
             console.log(`Status: ${response.status}`);
         });
@@ -973,7 +964,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             
         setTimeout(function(){
             $location.path('/eventregistrationall/'+$scope.selectedInvitation._id);
-            $route.reload();
         }, 1000);
     };
 
@@ -987,7 +977,6 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
         $scope.fy = $scope.fys[i].fy;
         // console.log(`The new fy is: ${$scope.fy}`);
 		$location.path('/eventregistrationall/'+$scope.fy);
-        $route.reload();
     };
 
     $scope.registrationsFromOtherEvent = function() {

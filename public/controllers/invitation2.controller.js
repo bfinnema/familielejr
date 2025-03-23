@@ -39,7 +39,7 @@ function($scope, $http, $location, $window, AuthService) {
     }).then(function(futureevents) {
         // console.log(`Future Events fetched. Status: ${futureevents.status}`);
         if (futureevents.data.length > 0) {
-            console.log(`There are some future events. Name of first: ${futureevents.data[0].eventName}`);
+            // console.log(`There are some future events. Name of first: ${futureevents.data[0].eventName}`);
             if (futureevents.data.length == 1) {
                 $scope.selectedEvent = futureevents.data[0];
                 console.log(`There is only one future event. name: ${$scope.selectedEvent.eventName}`);
@@ -67,7 +67,7 @@ function($scope, $http, $location, $window, AuthService) {
     });
 
     $scope.selectEvent = function() {
-        console.log(`In selectEvent`);
+        // console.log(`In selectEvent`);
         $scope.selectedEvent = JSON.parse($scope.selEvent);
         getEventData();
     };

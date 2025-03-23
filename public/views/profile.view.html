@@ -22,7 +22,29 @@
                 <p ng-if="user.role == 2">Bruger</p>
                 <p ng-if="user.role == 1">Arrangør</p>
                 <p ng-if="user.role == 0">Administrator</p>
-                <p>{{ tenant.tenantName }}</p>
+                <p ng-if="user.role == 10">The Big ADMIN</p>
+                <p ng-show="user.role < 10">af {{ tenant.tenantName }}</p>
+            </div>
+        </div>
+        <div class="row" ng-show="multipleMemberships">
+            <div class="col-md-4">
+                <h3>Nuværende selskab:</h3>
+                <p>{{ tenant.tenantName }}
+            </div>
+            <div class="col-md-4">
+                <h3>Skift selskab</h3>
+                <form name="shiftTenant" ng-submit="tenantShift()">
+                    <div class="form-group">
+                        <label>Vælg selskab</label>
+                        <select class="form-control" ng-model="selectTenant" name="selectTenant" required>
+                            <option ng-repeat="tenant in mymemberships" value="{{tenant._id}}">{{tenant.tenantName}}</option>
+                        </select>
+                        <!-- <i ng-show="shiftTenant.selectTenant.$error.required">*Skal udfyldes</i> -->
+                    </div>
+                    <div class="form-group col-md-4">
+                        <button ng-disabled="shiftTenant.$invalid" class="btn btn-primary btn-block" type="submit">Send</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

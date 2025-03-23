@@ -12,9 +12,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li id="about" ng-show="isLoggedIn"><a href="#!about">Om {{tenantName}}</a></li>
-            <li id="summaries" ng-show="isLoggedIn"><a href="#!summaries">Mødereferater</a></li>
-            <li id="history" ng-show="isLoggedIn" class="dropdown">
+            <li id="about" ng-show="isLoggedIn && role<3"><a href="#!about">Om {{tenantName}}</a></li>
+            <li id="summaries" ng-show="isLoggedIn && role<3"><a href="#!summaries">Mødereferater</a></li>
+            <li id="history" ng-show="isLoggedIn && role<3" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Historie<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="campmap"><a href="#!campmap">Kort</a></li>
@@ -22,8 +22,8 @@
                     <li id="archive"><a href="#!archive">Arkiv</a></li>
                 </ul>
             </li>
-            <li id="familytree" ng-show="isLoggedIn"><a href="#!familytree/0/0">Stamtræ</a></li>
-            <li id="photoalbum" ng-show="isLoggedIn" class="dropdown">
+            <li id="familytree" ng-show="isLoggedIn && role<3"><a href="#!familytree/0/0">Stamtræ</a></li>
+            <li id="photoalbum" ng-show="isLoggedIn && role<3" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fotoalbum<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="globalphotooverview"><a href="#!photooverview/global">Billedoversigt, alle billeder</a></li>
@@ -37,7 +37,7 @@
                     <li><a href="#!photoalbum/common">Fællesbilleder</a></li>
                 </ul>
             </li>
-            <li id="nextcamp" ng-show="isLoggedIn" class="dropdown">
+            <li id="nextcamp" ng-show="isLoggedIn && role<3" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Næste Familielejr<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="nexteventinfo"><a href="#!invitation2display/1000">Invitation</a></li>
@@ -60,9 +60,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrangør<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="organizerinstruction"><a href="#!organizerinstruction">Vejledning til arrangører</a></li>
-                    <!-- <li id="invitationadmin" ng-show="role < 2"><a href="#!invitationadmin">Administrer invitation</a></li> -->
                     <li id="invitationadmin2" ng-show="role < 2"><a href="#!invitation2admin">Administrer invitation</a></li>
-                    <!-- <li id="futurecamps" ng-show="role < 2"><a href="#!futurecamps">Fremtidige lejre</a></li> -->
                     <li id="futureevents" ng-show="role < 2"><a href="#!eventsadmin">Fremtidige begivenheder</a></li>
                     <li id="eventregall"><a href="#!eventregistrationall/1000">Administrer tilmeldinger</a></li>
                     <li id="todolist"><a href="#!todolist">Huskelister</a></li>
@@ -77,6 +75,12 @@
                 <ul class="dropdown-menu">
                     <li id="usersadmin"><a href="#!usersadmin">Administrer brugere</a></li>
                     <li id="eventtypes"><a href="#!eventtypes">Begivenheds kategorier</a></li>
+                </ul>
+            </li>
+            <li id="admin" ng-show="isLoggedIn && role == 10" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">The Big ADMIN<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="tenants"><a href="#!tenants">Administrer Tenants</a></li>
                 </ul>
             </li>
             <li id="contact" ng-show="isLoggedIn && role == 2"><a href="#!content">Kontakt</a></li>

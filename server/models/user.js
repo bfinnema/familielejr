@@ -44,6 +44,14 @@ var UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: false
   },
+  memberships: [
+    {
+      _tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+      }
+    }
+  ],
   password: {
     type: String,
     required: true,
@@ -69,7 +77,7 @@ UserSchema.methods.toJSON = function () {
   var user = this;
   var userObject = user.toObject();
 
-  return _.pick(userObject, ['_id', 'email', 'role', 'name', 'address', 'phone', 'role', '_tenant']);
+  return _.pick(userObject, ['_id', 'email', 'role', 'name', 'address', 'phone', 'role', '_tenant', 'memberships']);
 };
 
 UserSchema.methods.generateAuthToken = function () {

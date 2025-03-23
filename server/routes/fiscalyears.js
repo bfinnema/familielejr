@@ -42,7 +42,8 @@ router.get('/:id', authenticate, (req, res) => {
     }
 
     FiscalYear.findOne({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((fiscalyear) => {
         if (!fiscalyear) {
             return res.status(404).send();
@@ -80,7 +81,8 @@ router.delete('/:id', authenticate, (req, res) => {
     }
 
     FiscalYear.findOneAndDelete({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((fiscalyear) => {
         if (!fiscalyear) {
         return res.status(404).send();
@@ -107,7 +109,7 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    FiscalYear.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((fiscalyear) => {
+    FiscalYear.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((fiscalyear) => {
         if (!fiscalyear) {
             return res.status(404).send();
         }
@@ -127,7 +129,7 @@ router.patch('/locked/:id', authenticate, (req, res) => {
         return res.status(404).send();
     };
 
-    FiscalYear.findOneAndUpdate({_id: id}, {$set: {'locked': req.body.locked}}).then((fiscalyear) => {
+    FiscalYear.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: {'locked': req.body.locked}}).then((fiscalyear) => {
         if (!fiscalyear) {
             console.log(`Fiscalyear not found`);
             return res.status(404).send();

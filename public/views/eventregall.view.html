@@ -187,13 +187,6 @@
                 </select>
                 <i ng-show="editEventregForm.editPartCat.$error.required">*Skal udfyldes</i>
             </div>
-            <!-- <div class="form-group col-md-4">
-                <label>Barn / Voksen</label>
-                <select class="form-control" ng-model="editAgegroup" name="editAgegroup" required>
-                    <option ng-repeat="agegroup in agegroups" value="{{agegroup.agegroup}}">{{agegroup.agegroup}}</option>
-                </select>
-                <i ng-show="editEventregForm.agegroup.$error.required">*Skal udfyldes</i>
-            </div> -->
             <div ng-show="willattend" class="form-group col-md-4">
                 <label>Diæt / fødevareallergier</label>
                 <input type="text" class="form-control" ng-model="editDiet" name="editDiet" placeholder="Diæt">
@@ -256,11 +249,11 @@
         </select>
     </form>
 </div>
-<div class="row actions" ng-show="role < 1">
+<!-- <div class="row actions" ng-show="role < 1">
     <div class="col-md-4">
         <a class="btn btn-danger btn-lg btn-block" ng-click="convertToEvents()">Convert to Events</a>
     </div>
-</div>
+</div> -->
 <div class="row">
     <hr>
 </div>

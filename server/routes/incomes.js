@@ -42,7 +42,8 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   Income.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((income) => {
     if (!income) {
       return res.status(404).send();
@@ -72,7 +73,8 @@ router.delete('/:id', authenticate, (req, res) => {
     }
 
     Income.findOneAndDelete({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((income) => {
         if (!income) {
         return res.status(404).send();
@@ -99,7 +101,7 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Income.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((income) => {
+    Income.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((income) => {
         if (!income) {
         return res.status(404).send();
         }

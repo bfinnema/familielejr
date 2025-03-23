@@ -62,6 +62,23 @@ router.get('/', authenticate, (req, res) => {
   });
 });
 
+router.get('/tenant/:_tenant_id', authenticate, (req, res) => {
+  // console.log('This is the find by TENANT section in docs');
+  var id =req.params._tenant_id;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  };
+
+  Doc.find({
+    _tenant: id
+  }).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/sortcategory', authenticate, (req, res) => {
   Doc.find({
     _tenant: req.user._tenant

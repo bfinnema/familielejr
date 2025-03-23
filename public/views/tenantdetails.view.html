@@ -1,0 +1,119 @@
+<div ng-include="'navigation.html'"></div>
+
+<div ng-show="!editTenant">
+	<a href="#!tenants">Tilbage</a>
+    <h1 class="blog-post-title">{{tenant.tenantName}}</h1>
+    <p class="blog-main">{{ tenant.description }}</p>
+    <p class="blog-main">Startår: {{ tenant.startYear }}</p>
+    <p class="blog-main">Administrator: {{ admin.name.firstname }} {{ admin.name.surname }}, {{ admin.email }}</p>
+    <hr>
+    <div class="blog-post row">
+        <h2 class="blog-post-title">Abonnementer</h2>
+        <p>Events: <input type="checkbox" ng-model="tenant.subscriptions.events.subscribe" id="events" ng-change="eventSubscription(tenant)"> </p>
+        <p>Multiple Events: <input type="checkbox" ng-model="tenant.subscriptions.events.multipleEventsPerYear" id="multipleEvents" ng-change="multipleEventSubscription(tenant)"> </p>
+        <p>Familytree: <input type="checkbox" ng-model="tenant.subscriptions.familyTree" id="familyTree" ng-change="familyTreeSubscription(tenant)"> </p>
+        <p>Photo Gallery: <input type="checkbox" ng-model="tenant.subscriptions.photoGallery" id="photoGallery" ng-change="photoGallerySubscription(tenant)"> </p>
+        <p>Summaries: <input type="checkbox" ng-model="tenant.subscriptions.summaries" id="summaries" ng-change="summariesSubscription(tenant)"> </p>
+        <p>Accounting: <input type="checkbox" ng-model="tenant.subscriptions.accounting" id="accounting" ng-change="accountingSubscription(tenant)"> </p>
+    </div>
+    <div class="blog-post row">
+        <div class="col-md-4">
+            <h2 class="blog-post-title">Begivenheder</h2>
+            <div ng-if="events">
+                <div ng-repeat="event in events">
+                    <a href="#!/eventsadmin/details/{{event._id}}"><h3 class="blog-post-title">{{event.eventName}}</h3></a>
+                </div>
+            </div>
+            <div ng-if="events.length < 1">
+                <p>Der er ikke nogen begivenheder.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h2 class="blog-post-title">Arkiv</h2>
+            <div ng-if="docs">
+                <div ng-repeat="doc in docs">
+                    <h3 class="blog-post-title">{{doc.filename}}</h3>
+                </div>
+            </div>
+            <div ng-if="docs.length < 1">
+                <p>Der er ikke nogen dokumenter.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h2 class="blog-post-title">Brugere</h2>
+            <div ng-if="users">
+                <div ng-repeat="user in users">
+                    <h3 class="blog-post-title">{{user.email}}</h3>
+                </div>
+            </div>
+            <div ng-if="users.length < 1">
+                <p>Der er ikke nogen brugere.</p>
+            </div>
+        </div>
+    </div>
+    <hr>
+	<div ng-show="role > 9" class="actions">
+		<a class="btn btn-default" ng-click="editTenantToggle()">Ændre Tenant</a>
+		<a class="btn btn-danger" ng-show="tenantDeletable" ng-click="removeTenant()">Slet Tenant</a>
+	</div>
+</div>
+
+<div ng-show="editTenant">
+    <h2>Change a Tenant</h2>
+    <form name="editTenantForm" ng-submit="tenantEdit()">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Tenant Name</label>
+                <input type="text" class="form-control" ng-model="tenantToEdit.tenantName" name="tenantToEdit.tenantName" autofocus required>
+                <i ng-show="editTenantForm.tenantToEdit.tenantName.$error.required">*Must enter</i>
+            </div>
+            <div class="form-group col-md-8">
+                <label>Description</label>
+                <input type="text" class="form-control" ng-model="tenantToEdit.description" name="tenantToEdit.description" required>
+                <i ng-show="editTenantForm.tenantToEdit.description.$error.required">*Must enter</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="startYear">Start år</label>
+                <input type="number" id="startYear" class="form-control" ng-model="tenantToEdit.startYear" required>
+                <i ng-show="editTenantForm.tenantToEdit.startYear.$error.required">*Must enter</i>
+            </div>
+        </div>
+        <h3>Subscriptions</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Events</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.events.subscribe" name="events">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Multiple Events</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.events.multipleEventsPerYear" name="multipleevents">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Family Tree</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.familyTree" name="familytree">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Photo Gallery</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.photogallery" name="photogallery">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Summaries</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.summaries" name="summaries">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Accounting</label>
+                <input type="checkbox" class="form-control" ng-model="tenantToEdit.subscriptions.accounting" name="accounting">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button ng-disabled="editTenantForm.$invalid" type="submit" class="btn btn-primary">Send</button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-warning" ng-click="editTenantToggle()">Afbryd</a>
+            </div>
+        </div>
+    </form>
+</div>

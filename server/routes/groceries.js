@@ -39,7 +39,8 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   Grocery.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((grocery) => {
     if (!grocery) {
       return res.status(404).send();
@@ -59,7 +60,8 @@ router.delete('/:id', authenticate, (req, res) => {
     }
 
     Grocery.findOneAndDelete({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((grocery) => {
         if (!grocery) {
         return res.status(404).send();
@@ -82,7 +84,7 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Grocery.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((grocery) => {
+    Grocery.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((grocery) => {
         if (!grocery) {
         return res.status(404).send();
         }

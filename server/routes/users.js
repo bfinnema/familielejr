@@ -8,10 +8,11 @@ var {User} = require('../models/user');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret', '_tenant']);
+  var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret', '_tenant', 'memberships']);
   // console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
   // console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
-  // console.log(`_tenant: ${body._tenant}`);
+  // console.log(`memberships: ${JSON.stringify(body.memberships)}`);
+  // console.log(`_tenant: ${body._tenant}, First memebership: ${body.memberships[0]._tenant}`);
   if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
     // console.log('Secret approved and passwords equal.');
     var user = new User(body);
@@ -57,7 +58,41 @@ router.patch('/role/:id', authenticate, (req, res) => {
     if (!user) {
       console.log('User not found');
       return res.status(404).send();
-    }
+    };
+
+    res.send({user});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+// Add membership of a tenant
+router.patch('/membership/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['memberships']);
+  console.log(`Memberships: ${body.memberships}`);
+  User.findOneAndUpdate({_id: id}, {$set: {'memberships': body.memberships}}).then((user) => { // , {new: true}
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).send();
+    };
+
+    res.send({user});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+// Shift to another tenant
+router.patch('/tenantshift/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['_tenant']);
+  console.log(`Tenant id: ${body._tenant}`);
+  User.findOneAndUpdate({_id: id}, {$set: {'_tenant': body._tenant}}).then((user) => { // , {new: true}
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).send();
+    };
 
     res.send({user});
   }).catch((e) => {
@@ -130,7 +165,7 @@ router.delete('/me/token', authenticate, (req, res) => {
   });
 });
 
-// Get users from one tenant
+// Get users from the tenant of the user.
 router.get('/', authenticate, (req, res) => {
   var _tenant = req.user._tenant;
   if (req.user.role < 3) {
@@ -144,6 +179,24 @@ router.get('/', authenticate, (req, res) => {
   } else {
     res.status(401).send();
   };
+});
+
+// Get users from a specific tenant.
+router.get('/tenant/:_tenant_id', authenticate, (req, res) => {
+  // console.log('This is the find by TENANT section in users');
+  var id =req.params._tenant_id;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  };
+
+  User.find({
+    _tenant: id
+  }).then((users) => {
+    res.json(users);
+  }, (e) => {
+    res.status(400).send(e);
+  });
 });
 
 // Get all users from all tenants
@@ -215,7 +268,7 @@ router.get('/search/:searchCriteria/:searchText', authenticate, (req, res) => {
 
 router.get('/user/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  if (req.user.role < 2) {
+  if (req.user.role < 2 || req.user.role == 10) {
     User.findById(id).then((user) => {
       // console.log(`Found User: ${user.email}`);
       res.json(user);

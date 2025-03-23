@@ -49,7 +49,8 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   Eventtype.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((eventtype) => {
     if (!eventtype) {
       return res.status(404).send();
@@ -69,7 +70,8 @@ router.delete('/:id', authenticate, (req, res) => {
     }
 
     Eventtype.findOneAndDelete({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((eventtype) => {
         if (!eventtype) {
         return res.status(404).send();
@@ -92,7 +94,7 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Eventtype.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventtype) => {
+    Eventtype.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((eventtype) => {
         if (!eventtype) {
         return res.status(404).send();
         }

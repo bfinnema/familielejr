@@ -8,22 +8,26 @@ var {Tenant} = require('../models/tenant');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-  // console.log(`In tenants. name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
-  var tenant = new Tenant({
+  console.log(`In tenants. name: ${req.body.tenantName}, startYear: ${req.body.startYear}, User role; ${req.user.role}`);
+  if (req.user.role == 10) {
+    var tenant = new Tenant({
       tenantName: req.body.tenantName,
       description: req.body.description,
       subscriptions: req.body.subscriptions,
       startYear: req.body.startYear,
       _admin: req.user._id,
       _creator: req.user._id
-  });
+    });
 
-  tenant.save().then((doc) => {
-    res.send(doc);
-  }, (e) => {
-    console.log(`Error: ${e}`);
-    res.status(400).send(e);
-  });
+    tenant.save().then((doc) => {
+      res.send(doc);
+    }, (e) => {
+      console.log(`Error: ${e}`);
+      res.status(400).send(e);
+    });
+  } else {
+    console.log(`Someone, who is not the Big ADMIN just tried to make a tenant`);
+  };
 });
 
 router.post('/noauth', (req, res) => {
@@ -112,7 +116,7 @@ router.delete('/:id', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['tenantName', 'description', 'subscriptions']);
+  var body = _.pick(req.body, ['tenantName', 'description', 'subscriptions', 'startYear']);
   // console.log(`Patching tenant, nsme: ${body.tenantName}`);
 
   if (!ObjectId.isValid(id)) {

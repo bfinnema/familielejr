@@ -83,6 +83,12 @@ function($scope, $http, $location, ProfileService) {
             street: $scope.street, houseno: $scope.houseno, floor: $scope.floor, direction: $scope.direction, zip: $scope.zip, town: $scope.town, country: $scope.country
         };
         
+        console.log(`_tenant_ ${$scope._tenant}`);
+        var memberships = [
+            {_tenant: $scope._tenant}
+        ];
+        console.log(`Memberships: ${JSON.stringify(memberships)}`);
+        
 		var tenantAdmin = {
             email: $scope.inputEmail,
             password: $scope.inputPassword,
@@ -91,7 +97,8 @@ function($scope, $http, $location, ProfileService) {
             name: name,
 			address: addr,
             phone: $scope.phone,
-            secret: $scope.secret
+            secret: $scope.secret,
+            memberships: memberships
 		};
 
         if ($scope.registrationAllowed) {
@@ -206,6 +213,10 @@ function($scope, $http, $location, ProfileService) {
         var addr = {
             street: $scope.street, houseno: $scope.houseno, floor: $scope.floor, direction: $scope.direction, zip: $scope.zip, town: $scope.town, country: $scope.country
         };
+
+        var memberships = [
+            {"_tenant": $scope._tenant}
+        ];
         
 		var data = {
             email: $scope.inputEmail,
@@ -216,7 +227,8 @@ function($scope, $http, $location, ProfileService) {
 			address: addr,
             phone: $scope.phone,
             secret: $scope.secret,
-            _tenant: $scope._tenant
+            _tenant: $scope._tenant,
+            memberships: memberships
 		};
 
         if ($scope.registrationAllowed) {
@@ -250,6 +262,7 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
     $scope.countries = ProfileService.countries();
     $scope.floors = ProfileService.floors();
     $scope.directions = ProfileService.directions();
+    $scope.multipleMemberships = false;
 
     $scope.editProfile = false;
 
@@ -276,6 +289,7 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
             // console.log(`Role: ${$scope.role}`);
             // console.log(`User: ${$scope.user.name.firstname} ${$scope.user.name.surname}, ${$scope.user._id}`);
             // console.log(`Tenant _id: ${$scope.user._tenant}`);
+            // console.log(`memberships: ${JSON.stringify($scope.user.memberships)}`);
         } else {
             alert('Something fishy...');
         };
@@ -294,9 +308,51 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         $scope.tenant = tenant.data.tenant;
         $scope.tenantName = $scope.tenant.tenantName;
         // console.log(`Tenant name: ${$scope.tenant.tenantName}`);
+        if ($scope.user.memberships) {
+            // console.log(`Memberships exist`);
+            if ($scope.user.memberships.length > 1) {
+                $scope.multipleMemberships = true;
+                // console.log(`# memeberships: ${$scope.user.memberships.length}`);
+                $scope.mymemberships = [];
+                for (var i=0; i<$scope.user.memberships.length; i++) {
+                    $http({
+                        method: 'GET',
+                        url: 'tenants/' + $scope.user.memberships[i]._tenant,
+                        headers: {
+                            'x-auth': localStorage.userToken
+                        }
+                    }).then(function(tnt) {
+                        // console.log(`${JSON.stringify(tnt.data.tenant)}`);
+                        // console.log(`Member of tenant: ${tnt.data.tenant.tenantName}`);
+                        $scope.mymemberships.push(tnt.data.tenant);
+                    }, function errorCallback(response) {
+                        console.log(`Memberships error status: ${response.status}`);
+                    })
+                };
+            };
+        };
     }, function errorCallback(response) {
         console.log(`getUserStatus: ${response.status}`);
     });
+
+    $scope.tenantShift = function() {
+        // console.log(`In tenantShift. ${$scope.selectTenant}`);
+        $http({
+            method: 'PATCH',
+            url: 'users/tenantshift/' + $scope.user._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            },
+            data: {
+                _tenant: $scope.selectTenant
+            }
+        }).then(function(response) {
+            // console.log(`selectTenant response: ${response.status}`);
+            $location.path('/home');
+        }, function errorCallback(response) {
+            console.log(`selectTenant error: ${response.status}`);
+        });
+    };
 
     $scope.editProfileToggle = function() {
         if ($scope.editProfile) {

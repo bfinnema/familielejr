@@ -29,7 +29,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(tenant) {
-        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
         $scope.tenantName = tenant.data.tenantName;
         $scope.tenant = tenant.data;
         var currentyear = (new Date()).getFullYear();
@@ -51,7 +51,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
         var selectedEvent = $scope.events.filter(obj => {
             return obj.eventName == $scope.selEvent
         });
-        console.log(`selectedEvent: ${JSON.stringify(selectedEvent)}`);
+        // console.log(`selectedEvent: ${JSON.stringify(selectedEvent)}`);
         if (selectedEvent.length > 0) {
             photoEvent = selectedEvent[0];
         };
@@ -68,15 +68,15 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 'x-auth': localStorage.userToken
             }
         }).then(function(response) {
-            console.log(response);
-            console.log(response.data.url);
+            // console.log(response);
+            // console.log(response.data.url);
             $scope.successMsg = 'VENT VENLIGST. Billedet '+file.name+' bliver uploaded.......'
             const xhr = new XMLHttpRequest();
             xhr.open('PUT', response.data.signedRequest);
             xhr.onreadystatechange = () => {
                 if(xhr.readyState === 4){
                     if(xhr.status === 200){
-                        console.log("Success!");
+                        // console.log("Success!");
                         var data = {
                             year: $scope.year,
                             commonImage: $scope.commonImage,
@@ -138,7 +138,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 'x-auth': localStorage.userToken
             }
         }).then(function(images) {
-            console.log(`MyphotosStatus: ${images.status}`);
+            // console.log(`MyphotosStatus: ${images.status}`);
             $scope.images = images.data;
             if (!images.data[0]) {
                 console.log('No photos for year '+$scope.year)
@@ -152,7 +152,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             };
             $scope.showImagesList = true;
 
-            console.log(`In getEvents (getUploadedPhotos, really). Year: ${$scope.year}`);
+            // console.log(`In getEvents (getUploadedPhotos, really). Year: ${$scope.year}`);
             var year = $scope.year;
             if (year == "historiske") {
                 $scope.eventNames = [{"name": "Historisk"}];
@@ -169,10 +169,10 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
                 }
             });
         }).then(function(events) {
-            console.log(`Events fetched. Status: ${events.status}. # events: ${events.data.length}`);
+            // console.log(`Events fetched. Status: ${events.status}. # events: ${events.data.length}`);
             if (events.data.length > 0) {
                 for (ev in events.data) {
-                    console.log(`eventName: ${events.data[ev].eventName}`);
+                    // console.log(`eventName: ${events.data[ev].eventName}`);
                     $scope.eventNames.push({"name": events.data[ev].eventName});
                 };
                 $scope.events = events.data;
@@ -198,10 +198,9 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             };
         };
         if (!foundReplica) {$scope.imageReplica = false;};
-        console.log(`${file.name}, ${file.type}, ${file.size}, ${file}`);
+        // console.log(`${file.name}, ${file.type}, ${file.size}`);
         var selectedFile = document.getElementById('fileSelected').files[0];
-        console.log(`${selectedFile}`);
-        console.log(`${document.getElementById("fileSelected").height}, ${document.getElementById("fileSelected").width}`);
+        // console.log(`${document.getElementById("fileSelected").height}, ${document.getElementById("fileSelected").width}`);
         var img = new Image();
         // img.src = file;
         // console.log(`Image 1 width: ${img.width}. Height: ${img.height}`);

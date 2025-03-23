@@ -48,7 +48,8 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   Summary.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((summary) => {
     if (!summary) {
       return res.status(404).send();
@@ -68,7 +69,8 @@ router.delete('/:id', authenticate, (req, res) => {
   }
 
   Summary.findOneAndDelete({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((summary) => {
     if (!summary) {
       return res.status(404).send();
@@ -89,7 +91,7 @@ router.patch('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Summary.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((summary) => {
+  Summary.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((summary) => {
     if (!summary) {
       return res.status(404).send();
     }

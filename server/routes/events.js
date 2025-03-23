@@ -51,6 +51,23 @@ router.get('/', authenticate, (req, res) => {
   });
 });
 
+router.get('/tenant/:_tenant_id', authenticate, (req, res) => {
+  // console.log('This is the find by TENANT section in events');
+  var id =req.params._tenant_id;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  };
+
+  Event.find({
+    _tenant: id
+  }).then((events) => {
+    res.json(events);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/future/:year', authenticate, (req, res) => {
   var year = req.params.year;
   // console.log('This is the find by GTYear section');
@@ -166,9 +183,12 @@ router.get('/:id', authenticate, (req, res) => {
 
   if (!ObjectId.isValid(id)) {
     return res.status(404).send();
-  }
+  };
 
-  Event.findById(id).then((event) => {
+  Event.findOne({
+    _id: id,
+    _tenant: req.user._tenant
+  }).then((event) => {
     if (!event) {
       return res.status(404).send();
     }
@@ -262,7 +282,7 @@ router.patch('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Event.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((event) => {
+  Event.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((event) => {
     if (!event) {
       console.log(`Event not found`);
       return res.status(404).send();

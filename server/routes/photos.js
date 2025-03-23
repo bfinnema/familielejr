@@ -99,7 +99,8 @@ router.get('/:id', authenticate, (req, res) => {
   };
 
   Photo.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((photo) => {
     res.json(photo);
   }, (e) => {
@@ -188,7 +189,8 @@ router.delete('/admindelete/:id', authenticate, (req, res) => {
 
   if (req.user.role == 0) {
     Photo.findOneAndDelete({
-      _id: id
+      _id: id,
+      _tenant: req.user._tenant
     }).then((photo) => {
       if (!photo) {
         return res.status(404).send();
@@ -226,7 +228,7 @@ router.patch('/:id', authenticate, (req, res) => {
     }
   };
 
-  Photo.findOneAndUpdate({_id: id}, {$push: {'imagetext': newtextobj}}, {new: true}).then((photo) => {
+  Photo.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$push: {'imagetext': newtextobj}}, {new: true}).then((photo) => {
     if (!photo) {
       console.log(`Photo not found`);
       return res.status(404).send();
@@ -247,7 +249,7 @@ router.patch('/orientation/:id', authenticate, (req, res) => {
     return res.status(404).send();
   };
 
-  Photo.findOneAndUpdate({_id: id}, {$set: {'orientation': req.body.orientation}}).then((photo) => {
+  Photo.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: {'orientation': req.body.orientation}}).then((photo) => {
     if (!photo) {
       console.log(`Photo not found`);
       return res.status(404).send();

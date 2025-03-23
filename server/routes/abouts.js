@@ -101,7 +101,7 @@ router.patch('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  About.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((about) => {
+  About.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((about) => {
     if (!about) {
       console.log(`About not found`);
       return res.status(404).send();

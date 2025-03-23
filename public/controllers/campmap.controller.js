@@ -332,22 +332,4 @@ function($scope, $http, AuthService) {
         console.log(`Error. Status: ${response.status}`);
     });
 
-    /* $http({
-        method: 'GET',
-        url: '/futurecamps/past/' + invyear,
-        headers: {
-            'x-auth': localStorage.userToken
-        }
-    }).then(function(response) {
-        // console.log(`Success. Status: ${response.status}`);
-        if (response.data) {
-            $scope.camps = response.data;
-        } else {
-            console.log('No past camps');
-        };
-        angular.element(document.querySelector( '#history' ) ).addClass('active');
-        angular.element(document.querySelector( '#camplist' ) ).addClass('active');
-    }, function errorCallback(response) {
-        console.log(`Error. Status: ${response.status}`);
-    }); */
 }]);

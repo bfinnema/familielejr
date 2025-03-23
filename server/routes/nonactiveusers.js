@@ -89,7 +89,8 @@ router.get('/:id', authenticate, (req, res) => {
     }
 
     Nauser.findOne({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((nonactiveuser) => {
         if (!nonactiveuser) {
             return res.status(404).send();
@@ -109,7 +110,8 @@ router.delete('/:id', authenticate, (req, res) => {
     }
 
     Nauser.findOneAndDelete({
-        _id: id
+        _id: id,
+        _tenant: req.user._tenant
     }).then((nonactiveuser) => {
         if (!nonactiveuser) {
             return res.status(404).send();
@@ -136,7 +138,7 @@ router.patch('/:id', authenticate, (req, res) => {
         return res.status(404).send();
     }
 
-    Nauser.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((nonactiveuser) => {
+    Nauser.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((nonactiveuser) => {
         if (!nonactiveuser) {
             return res.status(404).send();
         }

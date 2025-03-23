@@ -42,7 +42,8 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   Game.findOne({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((game) => {
     if (!game) {
       return res.status(404).send();
@@ -62,7 +63,8 @@ router.delete('/:id', authenticate, (req, res) => {
   }
 
   Game.findOneAndDelete({
-    _id: id
+    _id: id,
+    _tenant: req.user._tenant
   }).then((game) => {
     if (!game) {
       return res.status(404).send();
@@ -89,7 +91,7 @@ router.patch('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Game.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((game) => {
+  Game.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((game) => {
     if (!game) {
       return res.status(404).send();
     }

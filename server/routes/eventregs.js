@@ -63,7 +63,7 @@ router.patch('/:id', authenticate, (req, res) => {
     body.paymentRegisteredBy = null;
   }
 
-  Eventreg.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventreg) => {
+  Eventreg.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((eventreg) => {
     if (!eventreg) {
       return res.status(404).send();
     };
@@ -74,7 +74,6 @@ router.patch('/:id', authenticate, (req, res) => {
   })
 });
 
-// Change an Eventreg. Is used for registering that a participant has paid the camp fee.
 router.patch('/convertToEvents/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['participantCategory', 'arrivalOption', 'departureOption', '_event']);
@@ -88,7 +87,7 @@ router.patch('/convertToEvents/:id', authenticate, (req, res) => {
     return res.status(404).send();
   };
 
-  Eventreg.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((eventreg) => {
+  Eventreg.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: body}, {new: true}).then((eventreg) => {
     if (!eventreg) {
       return res.status(404).send();
     };
@@ -108,7 +107,7 @@ router.patch('/fee/:id', authenticate, (req, res) => {
       return res.status(404).send();
   };
 
-  Eventreg.findOneAndUpdate({_id: id}, {$set: {'fee': req.body.eventFee}}).then((eventreg) => {
+  Eventreg.findOneAndUpdate({_id: id, _tenant: req.user._tenant}, {$set: {'fee': req.body.eventFee}}).then((eventreg) => {
       if (!eventreg) {
           console.log(`Eventreg not found`);
           return res.status(404).send();
@@ -308,7 +307,8 @@ router.delete('/admin/:id', authenticate, (req, res) => {
 
   if (req.user.role < 2) {
     Eventreg.findOneAndDelete({
-      _id: id
+      _id: id,
+      _tenant: req.user._tenant
     }).then((eventreg) => {
       if (!eventreg) {
         return res.status(404).send();
