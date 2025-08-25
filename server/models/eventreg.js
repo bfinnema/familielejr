@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 var EventregSchema = new mongoose.Schema({
     _tenant: {
         type: mongoose.Schema.Types.ObjectId,
-        required: false
+        required: true
     },
     _event: {
         type: mongoose.Schema.Types.ObjectId,
@@ -12,10 +12,6 @@ var EventregSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
-    },
-    agegroup: {
-        type: String,
-        required: false
     },
     participantCategory: {
         type: String,
@@ -29,17 +25,11 @@ var EventregSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    arrivalday: {
-        type: String
-    },
     arrivalOption: {
         type: String
     },
     arrivaltime: {
         type: Date
-    },
-    departureday: {
-        type: String
     },
     departureOption: {
         type: String

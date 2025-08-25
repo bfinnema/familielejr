@@ -28,10 +28,10 @@
         <tbody>
             <tr ng-repeat="registration in registrations">
                 <td>{{ registration.name }}</td>
-                <td>{{ registration.agegroup }}</td>
-                <td ng-show="registration.willattend">{{ registration.arrivalday }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
-                <td ng-hide="registration.willattend" class="willnotattend">Deltager ikke</td>
-                <td>{{ registration.departureday }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
+                <td>{{ registration.participantCategory }}</td>
+                <td ng-show="registration.willattend">{{ registration.arrivalOption }} {{ registration.arrivaltime | date:'HH:mm' : 'CET' }}</td>
+                <td ng-show="!registration.willattend" class="willnotattend">Deltager ikke</td>
+                <td>{{ registration.departureOption }} {{ registration.departuretime | date:'HH:mm' : 'CET' }}</td>
                 <td>{{ registration.diet }}</td>
                 <td>{{ registration.registeree }}</td>
                 <td ng-show="role != 2" align="right" data-t="n">{{ registration.fee | number:0 }}</td>

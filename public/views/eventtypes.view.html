@@ -6,11 +6,12 @@
     <thead>
         <tr>
             <th width="12%">Navn</th>
-            <th width="25%">Beskrivelse</th>
+            <th width="30%">Beskrivelse</th>
             <th width="8%">Start år</th>
             <th width="10%">Tidsskema</th>
-            <th width="35%">Deltagerkategorier</th>
-            <th width="10%">Slet / Ændre</th>
+            <th width="15%">Deltagerkategorier</th>
+            <th width="15%">Dagsorden</th>
+            <th width="10%">Ændre / Slet</th>
         </tr>
     </thead>
     <tbody>
@@ -19,14 +20,16 @@
             <td>{{ eventtype.description }}</td>
             <td>{{ eventtype.startYear }}</td>
             <td>{{ eventtype.schedule }}</td>
-            <td>
+            <td>Åben detaljer</td>
+            <!-- <td>
                 <p ng-repeat="partCat in eventtype.participantCategories">
                     {{ partCat.name }}: <i ng-show="partCat.minAge>0">{{ partCat.minAge }} år - </i>
                     <i ng-show="partCat.maxAge>0 && partCat.maxAge<100">- {{ partCat.maxAge }} år</i>
                     <i ng-show="eventtype.charge">. Fuld pris: {{ partCat.priceFull }}</i>
                     <i ng-show="eventtype.charge">, Dagspris: {{ partCat.priceDay }} </i>
                 </p>
-            </td>
+            </td> -->
+            <td><span ng-if="eventtype.agendaOrNot">Åben detaljer</span><span ng-if="!eventtype.agendaOrNot">Ingen dagsorden</span></td>
             <td>
                 <a class="btn btn-primary" ng-click="editEventtypeToggle(eventtype)">
                     <i class="glyphicon glyphicon-edit"></i>
@@ -34,10 +37,66 @@
                 <a class="btn btn-primary" ng-click="removeEventtype(eventtype)">
                     <i class="glyphicon glyphicon-trash"></i>
                 </a>
+                <a class="btn btn-primary" ng-click="eventtypeDetailsToggle(eventtype)">
+                    <i class="glyphicon glyphicon-zoom-in"></i>
+                </a>
             </td>
         </tr>
     </tbody>
 </table>
+<div ng-show="showEventtypeDetails">
+    <h2>Navn: {{ etd.eventtypeName }}</h2>
+    <h3>Beskrivelse: {{ etd.description }}</h3>
+    <h4>Startår: {{ etd.startYear }}, Tidsskema: {{ etd.schedule }}</h4>
+    <h4>
+        <span ng-show="etd.charge">Der opkræves betaling for denne type begivenhed</span>
+        <span ng-show="!etd.charge">Der opkræves ikke betaling for denne type begivenhed</span>
+    </h4>
+    <div class="form-group col-md-6">
+        <h4>Deltagerkategorier</h4>
+        <table class="table table-striped">
+            <thead>
+                <th width="20%">Navn</th>
+                <th width="18%">Min alder</th>
+                <th width="18%">Max alder</th>
+                <th width="18%">Fuld pris</th>
+                <th width="18%">Dagspris</th>
+                <th width="8%">Aktiv</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="partCat in etd.participantCategories">
+                    <td>{{ partCat.name }}</td>
+                    <td><i ng-show="partCat.minAge>0">{{ partCat.minAge }} år</i></td>
+                    <td><i ng-show="partCat.maxAge>0 && partCat.maxAge<100">{{ partCat.maxAge }} år</i></td>
+                    <td><i ng-show="etd.charge">Fuld pris: {{ partCat.priceFull }}</i></td>
+                    <td><i ng-show="etd.charge">Dagspris: {{ partCat.priceDay }} </i></td>
+                    <td><i ng-if="partCat.active">Ja</i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group col-md-6">
+        <h4>Dagsorden</h4>
+        <table class="table table-striped" ng-show="etd.agendaOrNot">
+            <thead>
+                <th width="30%">Navn</th>
+                <th width="70%">Beskrivelse</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="agendaItem in etd.agenda">
+                    <td>{{ agendaItem.item }}</td>
+                    <td>{{ agendaItem.description }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p ng-show="!etd.agendaOrNot">Dagsorden er ikke oprettet for denne begivenhedstype.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <a class="btn btn-warning" ng-click="eventtypeDetailsToggle(etd)">Luk detaljer for {{etd.eventtypeName}}</a>
+        </div>
+    </div>
+</div>
 <hr>
 <div ng-show="newEventtype">
     <h2>Indtast en ny begivenhedskategori</h2>
@@ -102,20 +161,20 @@
                             <label for="maxAge">Maximum alder</label>
                             <input type="number" id="maxAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].maxAge" placeholder="Max Alder">
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2" ng-show="!freeEvent">
                             <label for="priceFull">Fuld Pris</label>
                             <input type="number" id="priceFull" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceFull" placeholder="Fuld pris">
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2" ng-show="!freeEvent">
                             <label for="priceDay">Pris en dag</label>
                             <input type="number" id="priceDay" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceDay" placeholder="Pris for en dag">
                         </div>
                     </div>
-                <hr>
+                <!-- <hr> -->
                 </div>
             </div>
         </div>
-        <br>
+        <!-- <br> -->
         <div class="row">
             <a class="btn btn-info" ng-show="partCatsBtnShow[1]" ng-click="showPartCat()">Tilføj kategori</a>
             <a class="btn btn-info" ng-show="partCatsBtnShow[2]" ng-click="showPartCat()">Tilføj kategori</a>
@@ -126,6 +185,56 @@
             <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
             <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
             <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+        </div>
+        <hr>
+        <div class="row">
+            <h3 class="form-signin-heading" >Har begivenheden en dagsorden? </h3>
+            <div class="form-group col-md-2">
+                <label for="noAgenda">NEJ </label>
+                <input type="checkbox" ng-model="noAgenda" id="noAgenda" ng-change="agendaNegative()">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="yesAgenda">JA </label>
+                <input type="checkbox" ng-model="yesAgenda" id="yesAgenda" ng-change="agendaPositive()">
+            </div>
+        </div>
+        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til 10</h3>
+        <div class="row" ng-show="yesAgenda">
+            <div ng-repeat="y in agendaItems" class="form-group">
+                <div ng-show="agendaItemShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Overskrift</label>
+                            <input type="text" class="form-control" ng-model="eventtypeToEdit.agenda[y].item" placeholder="Overskrift">
+                        </div>
+                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                            <label for="headline" style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="eventtypeToEdit.agenda[y].description" rows="2" placeholder="Beskrivelse...."></textarea>
+                        </div>
+                    </div>
+                <!-- <hr> -->
+                </div>
+            </div>
+        </div>
+        <!-- <br> -->
+        <div class="row" ng-show="yesAgenda">
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
         </div>
         <br>
         <div class="row">
@@ -225,6 +334,56 @@
             <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
             <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
             <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+        </div>
+        <hr>
+        <div class="row">
+            <h3 class="form-signin-heading" >Har begivenheden en dagsorden? </h3>
+            <div class="form-group col-md-2">
+                <label for="noAgenda">NEJ </label>
+                <input type="checkbox" ng-model="noAgenda" id="noAgenda" ng-change="agendaNegative()">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="yesAgenda">JA </label>
+                <input type="checkbox" ng-model="yesAgenda" id="yesAgenda" ng-change="agendaPositive()">
+            </div>
+        </div>
+        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til 10</h3>
+        <div class="row" ng-show="yesAgenda">
+            <div ng-repeat="y in agendaItems" class="form-group">
+                <div ng-show="agendaItemShow[y]">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Overskrift</label>
+                            <input type="text" class="form-control" ng-model="eventtypeToEdit.agenda[y].item" placeholder="Overskrift">
+                        </div>
+                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                            <label for="headline" style="color:white;">.</label>
+                            <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label>Beskrivelse</label>
+                            <textarea class="form-control" ng-model="eventtypeToEdit.agenda[y].description" rows="2" placeholder="Beskrivelse...."></textarea>
+                        </div>
+                    </div>
+                <!-- <hr> -->
+                </div>
+            </div>
+        </div>
+        <!-- <br> -->
+        <div class="row" ng-show="yesAgenda">
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
         </div>
         <br>
         <div class="row">

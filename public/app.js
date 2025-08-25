@@ -95,11 +95,6 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'eventregallCtrl',
             access: {restricted: true}
         }).
-        /* when('/eventinfo', {
-            templateUrl: 'views/eventinfo.view.html',
-            controller: 'eventinfoCtrl',
-            access: {restricted: true}
-        }). */
         when('/familytree/0/:_L0_family_id', {
             templateUrl: 'views/familytree.view.html',  // Handles level 0. There are up to six levels; 0, 1, 2, 3, 4, 5
             controller: 'familytreeCtrl',

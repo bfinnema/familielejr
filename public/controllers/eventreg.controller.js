@@ -16,10 +16,6 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
         angular.element(document.querySelector( '#eventreg' ) ).addClass('active');
     }, 1000);
 
-    // $scope.agegroups = EventregService.ageGroups();
-    // $scope.arrivaldays = EventregService.arrivalDays();
-    // $scope.departuredays = EventregService.departureDays();
-
     $scope.editRegistration = false;
     $scope.invitationExists = false;
     $scope.invitationSelected = false;
@@ -148,14 +144,11 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
         var eventreg = {
             name: $scope.regname,
             _event: $scope.selectedInvitation._id,
-            // agegroup: $scope.agegroup,
             participantCategory: partCat.name,
             year: year,
             willattend: willattend,
-            // arrivalday: $scope.arrivalday,
             arrivalOption: $scope.arrivalOption,
             arrivaltime: $scope.arrivaltime,
-            // departureday: $scope.departureday,
             departureOption: $scope.departureOption,
             departuretime: $scope.departuretime,
             fee: eventFee,
@@ -205,7 +198,6 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
             $scope.editRegistration = true;
         };
         $scope.editRegname = registration.name;
-        $scope.editAgegroup = registration.agegroup;
         $scope.editPartCat = registration.participantCategory;
         $scope.editYear = registration.year;
         $scope.willattend = registration.willattend;
@@ -247,7 +239,6 @@ function($scope, $http, $location, $route, $window, AuthService, EventregService
             } else {
                 eventFee = partCat.priceFull;
             };
-            // eventFee = EventPriceService.eventFee($scope.editArrivalday ,$scope.editDepartureday, $scope.editAgegroup, $scope.invitation.payment);
             // console.log(`Event Fee: ${eventFee}`);
         };
 
@@ -801,13 +792,10 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
         // console.log(`Payment status: ${registration.paid}`);
         var data = {
             name: registration.name,
-            // agegroup: registration.agegroup,
             participantCategory: registration.participantCategory,
             year: registration.year,
-            // arrivalday: registration.arrivalday,
             arrivalOption: registration.arrivalOption,
             arrivaltime: registration.arrivaltime,
-            // departureday: registration.departureday,
             departureOption: $scope.departureOption,
             departuretime: registration.departuretime,
             diet: registration.diet,
@@ -850,14 +838,12 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
         $scope.editYear = registration.year;
         $scope.willattend = registration.willattend;
         $scope.willnotattend = !registration.willattend;
-        // $scope.editArrivalday = registration.arrivalday;
         $scope.editArrivalOption = registration.arrivalOption;
         if (registration.arrivaltime == null) {
             $scope.editArrivaltime = null;
         } else {
             $scope.editArrivaltime = new Date(registration.arrivaltime);
         };
-        // $scope.editDepartureday = registration.departureday;
         $scope.editDepartureOption = registration.departureOption;
         if (registration.departuretime == null) {
             $scope.editDeparturetime = null;

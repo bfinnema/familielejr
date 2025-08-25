@@ -7,7 +7,7 @@ var {Eventtype} = require('../models/eventtype');
 var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', authenticate, (req, res) => {
-    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'participantCategories']);
+    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'agenda', 'agendaOrNot', 'participantCategories']);
     body._creator = req.user._id;
     body._tenant = req.user._tenant;
     var eventtype = new Eventtype(body);
@@ -85,8 +85,8 @@ router.delete('/:id', authenticate, (req, res) => {
 
 router.patch('/:id', authenticate, (req, res) => {
     var id = req.params.id;
-    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'participantCategories']);
-    console.log(`Patching Eventtype, Description: ${body.description}, Name: ${body.eventtypeName}`);
+    var body = _.pick(req.body, ['eventtypeName', 'description', 'startYear', 'schedule', 'charge', 'agenda', 'agendaOrNot', 'participantCategories']);
+    // console.log(`Patching Eventtype, Description: ${body.description}, Name: ${body.eventtypeName}`);
 
     body._creator = req.user._id;
 

@@ -72,6 +72,24 @@ angular.module('familielejr')
     };
     $scope.eventtypeToEdit.participantCategories = participantCategories;
 
+    $scope.agendaOrNot = false;
+    $scope.noAgenda = false;
+    $scope.yesAgenda = false;
+    $scope.agendaItems = [0,1,2,3,4,5,6,7,8,9];
+    $scope.agendaItemHeadline = ["","","","","","","","","",""];
+    $scope.agendaItemDescription = ["","","","","","","","","",""];
+    $scope.agendaItemsBtnShow = [false,false,false,false,false,false,false,false,false,false];
+    $scope.agendaItemShow = [false,false,false,false,false,false,false,false,false,false];
+    $scope.agendaItemsBtnShowSave = $scope.agendaItemsBtnShow;
+    $scope.agendaItemShowSave = $scope.agendaItemShow;
+    $scope.numAgendaItems = 0;
+    var numAgendaItems
+    var agenda = [];
+    for (i in $scope.agendaItems) {
+        agenda.push({item: $scope.agendaItemHeadline[i], description: $scope.agendaItemDescription[i]});
+    };
+    $scope.eventtypeToEdit.agenda = agenda;
+
     $scope.newEventtype = false;
     $scope.editEventtype = false;
 
@@ -122,6 +140,65 @@ angular.module('familielejr')
         $scope.eventtypeToEdit.participantCategories.pop();
     };
 
+    $scope.agendaNegative = function() {
+        console.log(`Entering agendaNegative. agendaOrNot: ${$scope.agendaOrNot}`);
+        $scope.yesAgenda = false;
+        $scope.agendaOrNot = false;
+        $scope.agendaItemsBtnShowSave = $scope.agendaItemsBtnShow;
+        $scope.agendaItemShowSave = $scope.agendaItemShow;
+        $scope.agendaItemsBtnShow = [false,false,false,false,false,false,false,false,false,false];
+        $scope.agendaItemShow = [false,false,false,false,false,false,false,false,false,false];
+    };
+
+    $scope.agendaPositive = function() {
+        console.log(`Entering agendaPositive. agendaOrNot: ${$scope.agendaOrNot}`);
+        $scope.noAgenda = false;
+        $scope.agendaOrNot = true;
+        if ($scope.numAgendaItems < 1) {
+            $scope.agendaItemsBtnShow = [false,true,false,false,false,false,false,false,false,false];
+            $scope.agendaItemShow = [true,false,false,false,false,false,false,false,false,false];
+        } else {
+            $scope.agendaItemsBtnShow = $scope.agendaItemsBtnShowSave;
+            $scope.agendaItemShow = $scope.agendaItemShowSave;
+        };
+    };
+
+    $scope.showAgendaItem = function() {
+        console.log("Entering showAgendaItem. numAgendaItems: "+$scope.numAgendaItems);
+        numAgendaItems = $scope.numAgendaItems;
+        if ($scope.eventtypeToEdit.agenda[numAgendaItems].item) {
+            console.log("numAgendaItems: "+numAgendaItems+", Agenda Item Headline: "+$scope.eventtypeToEdit.agenda[numAgendaItems].item);
+            numAgendaItems = numAgendaItems + 1;
+            $scope.numAgendaItems = numAgendaItems;
+            $scope.agendaItemShow[numAgendaItems] = true;
+            $scope.agendaItemsBtnShow[numAgendaItems] = false;
+            $scope.agendaItemsBtnShow[numAgendaItems+1] = true;
+        }
+        else {
+            $window.alert("Du skal udfylde det tomme felt.");
+        };
+    };
+    
+    $scope.removeAgendaItem = function(agendaNum) {
+        console.log("Entering removeAgendaItem. numAgendaItems: "+$scope.numAgendaItems);
+        numAgendaItems = $scope.numAgendaItems;
+        for (var i=agendaNum; i<numAgendaItems; i++) {
+            console.log(`Before removeal: ${i}. Item: ${$scope.eventtypeToEdit.agenda[i].item}, description: ${$scope.eventtypeToEdit.agenda[i].description}, id: ${$scope.eventtypeToEdit._id}`);
+            $scope.eventtypeToEdit.agenda[i].item = $scope.eventtypeToEdit.agenda[i+1].item;
+            $scope.eventtypeToEdit.agenda[i].description = $scope.eventtypeToEdit.agenda[i+1].description;
+            console.log(`AFTER removeal: ${i}. Item: ${$scope.eventtypeToEdit.agenda[i].item}, description: ${$scope.eventtypeToEdit.agenda[i].description}, id: ${$scope.eventtypeToEdit._id}`);
+        };
+        $scope.eventtypeToEdit.agenda[numAgendaItems].item = "";
+        $scope.eventtypeToEdit.agenda[numAgendaItems].description = "";
+        $scope.agendaItemShow[numAgendaItems] = false;
+        $scope.agendaItemsBtnShow[numAgendaItems] = true;
+        $scope.agendaItemsBtnShow[numAgendaItems+1] = false;
+        numAgendaItems -= 1;
+        $scope.numAgendaItems = numAgendaItems;
+        console.log("numAgendaItems: "+numAgendaItems);
+        $scope.eventtypeToEdit.agenda.pop();
+    };
+
     $scope.newEventtypeToggle = function() {
         if ($scope.newEventtype) {
             $scope.newEventtype = false;
@@ -132,8 +209,8 @@ angular.module('familielejr')
     };
 
     $scope.editEventtypeToggle = function(eventtypeToEdit) {
-        // console.log(`-------------------------------------------------`);
-        // console.log(`Entering editEventtypeToggle`);
+        console.log(`-------------------------------------------------`);
+        console.log(`Entering editEventtypeToggle`);
         if ($scope.editEventtype) {
             $scope.editEventtype = false;
         } else {
@@ -150,11 +227,31 @@ angular.module('familielejr')
             $scope.numPartCats = numPartCats;
             for (x=0; x<numPartCats; x++) {
                 $scope.partCatShow[x] = true;
-                // console.log(`numPartCats: ${numPartCats}`);
-                // console.log(`${x}. partCatsBtnShow: ${$scope.partCatsBtnShow[x]}, partCatShow: ${$scope.partCatShow[x]}`);
-                // console.log(`${x}. Name: ${eventtypeToEdit.participantCategories[x].name}, minAge: ${eventtypeToEdit.participantCategories[x].minAge}`);
+                console.log(`numPartCats: ${numPartCats}`);
+                console.log(`${x}. partCatsBtnShow: ${$scope.partCatsBtnShow[x]}, partCatShow: ${$scope.partCatShow[x]}`);
+                console.log(`${x}. Name: ${eventtypeToEdit.participantCategories[x].name}, minAge: ${eventtypeToEdit.participantCategories[x].minAge}`);
             };
             $scope.numPartCats = numPartCats-1;
+
+            console.log(`agendaOrNot in eventtypeToEdit: ${eventtypeToEdit.agendaOrNot}`);
+            $scope.agendaOrNot = eventtypeToEdit.agendaOrNot;
+            $scope.yesAgenda = eventtypeToEdit.agendaOrNot;
+            $scope.noAgenda = !eventtypeToEdit.agendaOrNot;
+            console.log(`yesAgenda: ${$scope.yesAgenda}, noAgenda: ${$scope.noAgenda}`);
+            $scope.agendaItemsBtnShow = [false,false,false,false,false,false,false,false,false,false];
+            $scope.agendaItemShow = [true,false,false,false,false,false,false,false,false,false];
+            numAgendaItems = eventtypeToEdit.agenda.length;
+            $scope.agendaItemsBtnShow[numAgendaItems] = true;
+            $scope.numAgendaItems = numAgendaItems;
+            console.log(`numAgendaItems: ${numAgendaItems}`);
+            for (x=0; x<numAgendaItems; x++) {
+                $scope.agendaItemShow[x] = true;
+                console.log(`${x}. agendaItemsBtnShow: ${$scope.agendaItemsBtnShow[x]}, agendaItemShow: ${$scope.agendaItemShow[x]}`);
+                console.log(`${x}. Item: ${eventtypeToEdit.agenda[x].item}, description: ${eventtypeToEdit.agenda[x].description}`);
+            };
+            if (numAgendaItems > 0) {$scope.numAgendaItems = numAgendaItems-1;};
+            $scope.agendaItemsBtnShowSave = $scope.agendaItemsBtnShow;
+            $scope.agendaItemShowSave = $scope.agendaItemShow;
         };
     }
 
@@ -177,13 +274,23 @@ angular.module('familielejr')
             };
         };
 
+        var agenda = [];
+        for (var i=0; i<$scope.numAgendaItems+1; i++) {
+            if ($scope.eventtypeToEdit.agenda[i].item != "") {
+                console.log(`${i}. Item: ${$scope.eventtypeToEdit.agenda[i].item}, description: ${$scope.eventtypeToEdit.agenda[i].description}, id: ${$scope.eventtypeToEdit._id}`);
+                agenda.push({item: $scope.eventtypeToEdit.agenda[i].item, description: $scope.eventtypeToEdit.agenda[i].description});
+            };
+        };
+
         var eventtype = {
             eventtypeName: $scope.eventtypeName,
             description: $scope.description,
             startYear: $scope.startYear || (new Date()).getFullYear(),
             schedule: $scope.schedule,
             charge: !$scope.freeEvent || false,
-            participantCategories: participantCategories
+            participantCategories: participantCategories,
+            agendaOrNot: $scope.agendaOrNot,
+            agenda: agenda
         };
 
         $http({
@@ -204,7 +311,10 @@ angular.module('familielejr')
     };
 
     $scope.eventtypeEdit = function() {
-        // console.log(`In eventtypeEdit. freeEvent: ${$scope.freeEvent}`);
+        console.log(`In eventtypeEdit. agendaOrNot: ${$scope.agendaOrNot}`);
+
+        var agenda = $scope.eventtypeToEdit.agenda;
+        if (!$scope.agendaOrNot) {agenda = [];};
 
         var eventtype = {
             eventtypeName: $scope.eventtypeToEdit.eventtypeName,
@@ -212,7 +322,9 @@ angular.module('familielejr')
             startYear: $scope.eventtypeToEdit.startYear || (new Date()).getFullYear(),
             schedule: $scope.eventtypeToEdit.schedule,
             charge: !$scope.editFreeEvent || false,
-            participantCategories: $scope.eventtypeToEdit.participantCategories
+            participantCategories: $scope.eventtypeToEdit.participantCategories,
+            agendaOrNot: $scope.agendaOrNot,
+            agenda: agenda
         };
 
         $http({
@@ -232,21 +344,47 @@ angular.module('familielejr')
     };
 
     $scope.removeEventtype = function(eventtype) {
-        if ($window.confirm('Bekræft venligst at du vil slette begivenhedskategorien')) {
-            $http({
-                method: 'DELETE',
-                url: 'eventtypes/'+eventtype._id,
-                headers: {
-                    'x-auth': localStorage.userToken
-                }
-            }).then(function(response) {
-                // console.log(`Status: ${response.status}`);
-                // console.log(response.data);
-                $location.path('/eventtypes');
-                $route.reload();
-            }, function errorCallback(response) {
-                console.log(`Status: ${response.status}`);
-            });
+        $http({
+            method: 'GET',
+            url: 'events/count/' + eventtype._id,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(response) {
+            console.log(`Status: ${response.status}`);
+            console.log(response.data);
+            console.log(`Count: ${response.data.count}`);
+            if (response.data.count < 1) {
+                if ($window.confirm('Bekræft venligst at du vil slette begivenhedskategorien')) {
+                    $http({
+                        method: 'DELETE',
+                        url: 'eventtypes/'+eventtype._id,
+                        headers: {
+                            'x-auth': localStorage.userToken
+                        }
+                    }).then(function(response) {
+                        console.log(`Status: ${response.status}`);
+                        // console.log(response.data);
+                        $location.path('/eventtypes');
+                        $route.reload();
+                    }, function errorCallback(response) {
+                        console.log(`Status: ${response.status}`);
+                    });
+                };
+            } else {
+                $window.alert('Begivenhedskategorien ' + eventtype.eventtypeName + ' kan ikke slettes, da der stadig er begivenheder baseret på denne begivenhedskategori.');
+            };
+        }, function errorCallback(response) {
+            console.log(`Error Status: ${response.status}`);
+        });
+    };
+
+    $scope.eventtypeDetailsToggle = function(eventtype) {
+        $scope.etd = eventtype;
+        if ($scope.showEventtypeDetails) {
+            $scope.showEventtypeDetails = false;
+        } else {
+            $scope.showEventtypeDetails = true;
         };
     };
 

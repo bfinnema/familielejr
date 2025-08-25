@@ -24,6 +24,15 @@ var EventtypeSchema = new mongoose.Schema({
     charge: {
         type: Boolean
     },
+    agendaOrNot: {
+        type: Boolean
+    },
+    agenda: [
+        {
+            item: {type: String},
+            description: {type: String}
+        }
+    ],
     participantCategories: [
         {
             name: {type: String},

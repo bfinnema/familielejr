@@ -150,6 +150,20 @@ router.get('/farevents', authenticate, (req, res) => {
   });
 });
 
+router.get('/count/:_eventtype', authenticate, (req, res) => {
+  var _eventtype = req.params._eventtype;
+  console.log(`Count events based on event with id ${_eventtype}, user: ${req.user._id}`);
+  Event.find({
+    _eventtype: _eventtype,
+    _tenant: req.user._tenant
+  }).countDocuments().then((count) => {
+    var result = {"_eventtype":_eventtype,"count":count};
+    res.json(result);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 router.get('/summaryadmin/:year/:month/:date', authenticate, (req, res) => {
   // console.log('Find by gt date and summary not written');
   var theDate = new Date(req.params.year, req.params.month, req.params.date);

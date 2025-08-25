@@ -105,6 +105,15 @@ var EventSchema = new mongoose.Schema({
             required: true
         }
     },
+    agendaOrNot: {
+        type: Boolean
+    },
+    agenda: [
+        {
+            item: {type: String},
+            description: {type: String}
+        }
+    ],
     summaryExist: {
         type: Boolean,
         required: true

@@ -570,14 +570,25 @@ function($scope, $http, $location, $route, $window, AuthService) {
             }
         });
     }).then(function(response) {
-        console.log(`Success. Status: ${response.status}`);
+        // console.log(`Success. Status: ${response.status}`);
 
         if (response.data) {
-            console.log(`Received the event`);
+            // console.log(`Received the event`);
             $scope.event = response.data.event;
         } else {
             console.log('Event not found');
         };
+        return $http({
+            method: 'GET',
+            url: 'eventtypes/' + $scope.event._eventtype,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(eventtype) {
+        // console.log(`Eventtype collected with Success. Status: ${eventtype.status}`);
+        $scope.eventtype = eventtype.data;
+        // console.log(`Eventtype Name: ${$scope.eventtype.eventtypeName}`);
         angular.element(document.querySelector( '#organizer' ) ).addClass('active');
         angular.element(document.querySelector( '#futureevents' ) ).addClass('active');
     }, function errorCallback(response) {
