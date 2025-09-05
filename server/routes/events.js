@@ -80,10 +80,11 @@ router.get('/future/:year', authenticate, (req, res) => {
 
 router.get('/futureevents', authenticate, (req, res) => {
   // console.log('This is the find by gt date section');
-  var thisMoment = new Date();
+  var thisDate = new Date();
+  var demarcationDate = thisDate.setDate(thisDate.getDate() -10);
   // console.log(`This Moment: ${thisMoment}`);
   Event.find({
-    startdate:{'$gt':thisMoment},
+    startdate:{'$gt':demarcationDate},
     _tenant: req.user._tenant
   }).then((events) => {
     res.json(events);
@@ -108,10 +109,11 @@ router.get('/pastevents', authenticate, (req, res) => {
 
 router.get('/futureactiveevents', authenticate, (req, res) => {
   // console.log('Find by gt date and active invitation.');
-  var thisMoment = new Date();
+  var thisDate = new Date();
+  var demarcationDate = thisDate.setDate(thisDate.getDate() -10);
   // console.log(`This Moment: ${thisMoment}`);
   Event.find({
-    startdate:{'$gt':thisMoment},
+    startdate:{'$gt':demarcationDate},
     "invitation.active": true,
     _tenant: req.user._tenant
   }).then((events) => {
