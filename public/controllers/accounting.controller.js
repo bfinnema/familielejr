@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('accountingCtrl', ['$scope', '$http', '$location', '$route', '$window', '$routeParams', 'AuthService', 'YearService', 
-function($scope, $http, $location, $route, $window, $routeParams, AuthService, YearService) {
+.controller('accountingCtrl', ['$scope', '$http', '$location', '$route', '$window', '$routeParams', 'AuthService', 
+function($scope, $http, $location, $route, $window, $routeParams, AuthService) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {

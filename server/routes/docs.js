@@ -79,10 +79,50 @@ router.get('/tenant/:_tenant_id', authenticate, (req, res) => {
   });
 });
 
-router.get('/sortcategory', authenticate, (req, res) => {
+router.get('/sort/category/:sortDirection', authenticate, (req, res) => {
+  // console.log(`sortItem: category, sortDirection: ${req.params.sortDirection}`);
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
   Doc.find({
     _tenant: req.user._tenant
-  }).sort({"category": 1, "year": 1, "eventName": 1}).then((docs) => {
+  }).sort({"category": sd, "year": sd, "eventName": sd}).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/sort/year/:sortDirection', authenticate, (req, res) => {
+  // console.log(`sortItem: year, sortDirection: ${req.params.sortDirection}`);
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
+  Doc.find({
+    _tenant: req.user._tenant
+  }).sort({"year": sd, "category": sd, "eventName": sd}).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/sort/eventName/:sortDirection', authenticate, (req, res) => {
+  // console.log(`sortItem: eventName, sortDirection: ${req.params.sortDirection}`);
+  var sd = 1;
+  if (req.params.sortDirection == "up") {sd = -1};
+  Doc.find({
+    _tenant: req.user._tenant
+  }).sort({"eventName": sd, "category": sd, "year": sd}).then((docs) => {
+    res.json(docs);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+router.get('/filter/category/:catName', authenticate, (req, res) => {
+  // console.log(`catName: ${req.params.catName}`);
+  Doc.find({
+    _tenant: req.user._tenant, category: req.params.catName
+  }).sort({"year": 1, "eventName": 1}).then((docs) => {
     res.json(docs);
   }, (e) => {
     res.status(400).send(e);

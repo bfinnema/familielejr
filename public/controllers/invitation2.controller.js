@@ -18,6 +18,7 @@ function($scope, $http, $location, $window, AuthService) {
 
     $scope.eventsExist = true;
     $scope.eventSelected = false;
+    futureeventsOffset = 0;
 
     $http({
         method: 'GET',
@@ -31,7 +32,7 @@ function($scope, $http, $location, $window, AuthService) {
         $scope.tenant = tenant.data;
         return $http({
             method: 'GET',
-            url: 'events/futureevents',
+            url: 'events/futureevents/' + futureeventsOffset,
             headers: {
                 'x-auth': localStorage.userToken
             }
@@ -190,6 +191,8 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
 
     $scope.eventsExist = true;
     $scope.eventSelected = false;
+    futureeventsOffset = 1;
+    // console.log(`In invitation2displayCtrl. futureeventsOffset: ${futureeventsOffset}`);
 
     $http({
         method: 'GET',
@@ -198,31 +201,31 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
             'x-auth': localStorage.userToken
         }
     }).then(function(tenant) {
-        console.log(`Tenant fetched. Status: ${tenant.status}`);
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
         $scope.tenantName = tenant.data.tenantName;
         $scope.tenant = tenant.data;
 
         if ($routeParams.id == 1000) {
             $http({
                 method: 'GET',
-                url: 'events/futureactiveevents',
+                url: 'events/futureactiveevents/' + futureeventsOffset,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
             }).then(function(faevents) {
-                console.log(`Future Events fetched. Status: ${faevents.status}`);
+                // console.log(`Future Events fetched. Status: ${faevents.status}`);
                 if (faevents.data.length > 0) {
                     console.log(`There are some future, active events. Name of first: ${faevents.data[0].eventName}`);
                     if (faevents.data.length == 1) {
                         $scope.event = faevents.data[0];
-                        console.log(`There is only one future event. name: ${$scope.event.eventName}`);
+                        // console.log(`There is only one future event. name: ${$scope.event.eventName}`);
                         $scope.eventSelected = true;
                         prepareInvitation();
                     } else {
                         $scope.faevents = faevents.data;
                     };
                 } else {
-                    console.log(`There are no future, active events at all.`);
+                    // console.log(`There are no future, active events at all.`);
                     $scope.eventsExist = false;
                 };
             }, function errorCallback(response) {
@@ -239,7 +242,7 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
                 console.log(`Future Event fetched. Status: ${event.status}`);
                 $scope.event = event.data.event;
                 $scope.eventSelected = true;
-                console.log(`eventtypeName: ${$scope.event.eventtypeName}, ${$scope.event.eventName}`);
+                // console.log(`eventtypeName: ${$scope.event.eventtypeName}, ${$scope.event.eventName}`);
                 prepareInvitation();
             }, function errorCallback(response) {
                 console.log(`Error! Status: ${response.status}`);

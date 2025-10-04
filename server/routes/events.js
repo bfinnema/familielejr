@@ -23,6 +23,8 @@ router.post('/', authenticate, (req, res) => {
     'organizers',
     'committees',
     'invitation',
+    'agendaOrNot',
+    'agenda',
     'summaryExist'
   ]);
   body._creator = req.user._id;
@@ -78,11 +80,11 @@ router.get('/future/:year', authenticate, (req, res) => {
   });
 });
 
-router.get('/futureevents', authenticate, (req, res) => {
-  // console.log('This is the find by gt date section');
+router.get('/futureevents/:offset', authenticate, (req, res) => {
+  // console.log(`This is the find by gt date section. offset: ${req.params.offset}`);
   var thisDate = new Date();
-  var demarcationDate = thisDate.setDate(thisDate.getDate() -10);
-  // console.log(`This Moment: ${thisMoment}`);
+  var demarcationDate = thisDate.setDate(thisDate.getDate() - req.params.offset);
+  // console.log(`demarcationDate: ${demarcationDate}`);
   Event.find({
     startdate:{'$gt':demarcationDate},
     _tenant: req.user._tenant
@@ -107,10 +109,10 @@ router.get('/pastevents', authenticate, (req, res) => {
   });
 });
 
-router.get('/futureactiveevents', authenticate, (req, res) => {
-  // console.log('Find by gt date and active invitation.');
+router.get('/futureactiveevents/:offset', authenticate, (req, res) => {
+  // console.log(`Find by gt date and active invitation. offset: ${req.params.offset}`);
   var thisDate = new Date();
-  var demarcationDate = thisDate.setDate(thisDate.getDate() -10);
+  var demarcationDate = thisDate.setDate(thisDate.getDate() - req.params.offset);
   // console.log(`This Moment: ${thisMoment}`);
   Event.find({
     startdate:{'$gt':demarcationDate},
@@ -154,7 +156,7 @@ router.get('/farevents', authenticate, (req, res) => {
 
 router.get('/count/:_eventtype', authenticate, (req, res) => {
   var _eventtype = req.params._eventtype;
-  console.log(`Count events based on event with id ${_eventtype}, user: ${req.user._id}`);
+  // console.log(`Count events based on event with id ${_eventtype}, user: ${req.user._id}`);
   Event.find({
     _eventtype: _eventtype,
     _tenant: req.user._tenant
@@ -290,7 +292,9 @@ router.patch('/:id', authenticate, (req, res) => {
     'enddate',
     'organizers',
     'committees',
-    'invitation'
+    'invitation',
+    'agendaOrNot',
+    'agenda'
   ]);
 
   if (!ObjectId.isValid(id)) {

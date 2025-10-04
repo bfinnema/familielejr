@@ -1,10 +1,10 @@
 <div ng-include="'navigation.html'"></div>
 
-<div class="form-group col-md-6" ng-show="!invitationSelected">
-    <label>{{ selectInvitationText }}</label>
-    <select class="form-control" ng-model="selEvent" name="selEvent" ng-change="selectInvitation()">
+<div class="form-group col-md-12" ng-show="!invitationSelected">
+    <h2>{{ selectInvitationText }}</h2>
+    <!-- <select class="form-control" ng-model="selEvent" name="selEvent" ng-change="selectInvitation()">
         <option ng-repeat="event in faevents" value="{{event}}">{{event.eventName}}</option>
-    </select>
+    </select> -->
 </div>
 
 <div class="row" ng-show="role != 2 && invitationSelected">
@@ -227,9 +227,9 @@
     </form>
 </div>
 <div class="row" ng-show="role != 2 && !fyLocked && !editRegistration && invitationSelected">
-    <div class="col-md-4">
+    <!-- <div class="col-md-4">
         <a class="btn btn-info btn-lg btn-block" ng-click="recalcFees()">Genudregn "Totalt indbetalt"</a>
-    </div>
+    </div> -->
     <div class="col-md-4">
         <a class="btn btn-success btn-lg btn-block" href="#!eventregistrationallprint/{{ invitationyear }}" target="_blank">Print- og Excel-venlig deltagerliste</a>
     </div>

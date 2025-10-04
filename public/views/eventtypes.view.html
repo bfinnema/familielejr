@@ -132,16 +132,16 @@
                 <i ng-show="newEventtypeForm.schedule.$error.required">*Skal udfyldes</i>
             </div>
         </div>
-        <h3 class="form-signin-heading">Deltager kategorier - op til 10</h3>
+        <h3 class="form-signin-heading">Deltager kategorier - op til {{partCatsStructure[0].length}}</h3>
         <div class="row">
-            <div ng-repeat="y in partCats">
-                <div ng-show="partCatShow[y]">
+            <div ng-repeat="y in partCatsStructure[0]">
+                <div ng-show="partCatsStructure[2][y]">
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label>Kategorinavn</label>
-                            <input type="text" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].name" placeholder="Navn">
+                            <input type="text" class="form-control" ng-model="partCatsStructure[3][0][y]" placeholder="Navn">
                         </div>
-                        <div ng-show="numPartCats > 0" class="col-md-2">
+                        <div ng-show="partCatsStructure[4] > 0" class="col-md-2">
                             <label style="color:white;">.</label>
                             <a class="btn btn-danger" ng-click="removePartCat(y)">
                                 <i class="glyphicon glyphicon-remove"></i>
@@ -151,23 +151,23 @@
                     <div class="row">
                         <div class="form-group col-md-2">
                             <label>Active? </label>
-                            <input type="checkbox" ng-model="eventtypeToEdit.participantCategories[y].active" id="babyActive">
+                            <input type="checkbox" ng-model="partCatsStructure[3][5][y]" id="babyActive">
                         </div>
                         <div class="form-group col-md-2">
                             <label for="minAge">Minimum alder</label>
-                            <input type="number" id="minAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].minAge" placeholder="Min. Alder">
+                            <input type="number" id="minAge" class="form-control" ng-model="partCatsStructure[3][1][y]" placeholder="Min. Alder">
                         </div>
                         <div class="form-group col-md-2">
                             <label for="maxAge">Maximum alder</label>
-                            <input type="number" id="maxAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].maxAge" placeholder="Max Alder">
+                            <input type="number" id="maxAge" class="form-control" ng-model="partCatsStructure[3][2][y]" placeholder="Max Alder">
                         </div>
                         <div class="form-group col-md-2" ng-show="!freeEvent">
                             <label for="priceFull">Fuld Pris</label>
-                            <input type="number" id="priceFull" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceFull" placeholder="Fuld pris">
+                            <input type="number" id="priceFull" class="form-control" ng-model="partCatsStructure[3][3][y]" placeholder="Fuld pris">
                         </div>
                         <div class="form-group col-md-2" ng-show="!freeEvent">
                             <label for="priceDay">Pris en dag</label>
-                            <input type="number" id="priceDay" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceDay" placeholder="Pris for en dag">
+                            <input type="number" id="priceDay" class="form-control" ng-model="partCatsStructure[3][4][y]" placeholder="Pris for en dag">
                         </div>
                     </div>
                 <!-- <hr> -->
@@ -176,15 +176,15 @@
         </div>
         <!-- <br> -->
         <div class="row">
-            <a class="btn btn-info" ng-show="partCatsBtnShow[1]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[2]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[3]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[4]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[5]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[6]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][1]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][2]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][3]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][4]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][5]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][6]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][7]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][8]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][9]" ng-click="showPartCat()">Tilføj kategori</a>
         </div>
         <hr>
         <div class="row">
@@ -198,16 +198,16 @@
                 <input type="checkbox" ng-model="yesAgenda" id="yesAgenda" ng-change="agendaPositive()">
             </div>
         </div>
-        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til 10</h3>
+        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til {{agendaStructure[0].length}}</h3>
         <div class="row" ng-show="yesAgenda">
-            <div ng-repeat="y in agendaItems" class="form-group">
-                <div ng-show="agendaItemShow[y]">
+            <div ng-repeat="y in agendaStructure[0]" class="form-group">
+                <div ng-show="agendaStructure[2][y]">
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label>Overskrift</label>
-                            <input type="text" class="form-control" ng-model="eventtypeToEdit.agenda[y].item" placeholder="Overskrift">
+                            <input type="text" class="form-control" ng-model="agendaStructure[3][0][y]" placeholder="Overskrift">
                         </div>
-                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                        <div ng-show="agendaStructure[4] > 0" class="col-md-2">
                             <label for="headline" style="color:white;">.</label>
                             <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
                                 <i class="glyphicon glyphicon-remove"></i>
@@ -217,7 +217,7 @@
                     <div class="row">
                         <div class="form-group col-md-8">
                             <label>Beskrivelse</label>
-                            <textarea class="form-control" ng-model="eventtypeToEdit.agenda[y].description" rows="2" placeholder="Beskrivelse...."></textarea>
+                            <textarea class="form-control" ng-model="agendaStructure[3][1][y]" rows="2" placeholder="Beskrivelse...."></textarea>
                         </div>
                     </div>
                 <!-- <hr> -->
@@ -226,15 +226,15 @@
         </div>
         <!-- <br> -->
         <div class="row" ng-show="yesAgenda">
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
         </div>
         <br>
         <div class="row">
@@ -281,16 +281,16 @@
                 <i ng-show="newEventtypeForm.schedule.$error.required">*Skal udfyldes</i>
             </div>
         </div>
-        <h3 class="form-signin-heading">Deltager kategorier - op til 10</h3>
+        <h3 class="form-signin-heading">Deltager kategorier - op til {{partCatsStructure[0].length}}</h3>
         <div class="row">
-            <div ng-repeat="y in partCats">
-                <div ng-show="partCatShow[y]">
+            <div ng-repeat="y in partCatsStructure[0]">
+                <div ng-show="partCatsStructure[2][y]">
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label>Kategorinavn</label>
-                            <input type="text" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].name" placeholder="Navn">
+                            <input type="text" class="form-control" ng-model="partCatsStructure[3][0][y]" placeholder="Navn">
                         </div>
-                        <div ng-show="numPartCats > 0" class="col-md-2">
+                        <div ng-show="partCatsStructure[4] > 0" class="col-md-2">
                             <label style="color:white;">.</label>
                             <a class="btn btn-danger" ng-click="removePartCat(y)">
                                 <i class="glyphicon glyphicon-remove"></i>
@@ -300,23 +300,23 @@
                     <div class="row">
                         <div class="form-group col-md-2">
                             <label>Active? </label>
-                            <input type="checkbox" ng-model="eventtypeToEdit.participantCategories[y].active" id="babyActive">
+                            <input type="checkbox" ng-model="partCatsStructure[3][5][y]" id="babyActive">
                         </div>
                         <div class="form-group col-md-2">
                             <label for="minAge">Minimum alder</label>
-                            <input type="number" id="minAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].minAge" placeholder="Min. Alder">
+                            <input type="number" id="minAge" class="form-control" ng-model="partCatsStructure[3][1][y]" placeholder="Min. Alder">
                         </div>
                         <div class="form-group col-md-2">
                             <label for="maxAge">Maximum alder</label>
-                            <input type="number" id="maxAge" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].maxAge" placeholder="Max Alder" ng-change="ageChanged('babyMax')">
+                            <input type="number" id="maxAge" class="form-control" ng-model="partCatsStructure[3][2][y]" placeholder="Max Alder" ng-change="ageChanged('babyMax')">
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2" ng-show="!editFreeEvent">
                             <label for="priceFull">Fuld Pris</label>
-                            <input type="number" id="priceFull" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceFull" placeholder="Fuld pris">
+                            <input type="number" id="priceFull" class="form-control" ng-model="partCatsStructure[3][3][y]" placeholder="Fuld pris">
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2" ng-show="!editFreeEvent">
                             <label for="priceDay">Pris en dag</label>
-                            <input type="number" id="priceDay" class="form-control" ng-model="eventtypeToEdit.participantCategories[y].priceDay" placeholder="Pris for en dag">
+                            <input type="number" id="priceDay" class="form-control" ng-model="partCatsStructure[3][4][y]" placeholder="Pris for en dag">
                         </div>
                     </div>
                 <hr>
@@ -325,15 +325,15 @@
         </div>
         <br>
         <div class="row">
-            <a class="btn btn-info" ng-show="partCatsBtnShow[1]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[2]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[3]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[4]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[5]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[6]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[7]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[8]" ng-click="showPartCat()">Tilføj kategori</a>
-            <a class="btn btn-info" ng-show="partCatsBtnShow[9]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][1]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][2]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][3]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][4]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][5]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][6]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][7]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][8]" ng-click="showPartCat()">Tilføj kategori</a>
+            <a class="btn btn-info" ng-show="partCatsStructure[1][9]" ng-click="showPartCat()">Tilføj kategori</a>
         </div>
         <hr>
         <div class="row">
@@ -347,16 +347,16 @@
                 <input type="checkbox" ng-model="yesAgenda" id="yesAgenda" ng-change="agendaPositive()">
             </div>
         </div>
-        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til 10</h3>
+        <h3 class="form-signin-heading" ng-show="yesAgenda">Punkter på dagsordenen - op til {{agendaStructure[0].length}}</h3>
         <div class="row" ng-show="yesAgenda">
-            <div ng-repeat="y in agendaItems" class="form-group">
-                <div ng-show="agendaItemShow[y]">
+            <div ng-repeat="y in agendaStructure[0]" class="form-group">
+                <div ng-show="agendaStructure[2][y]">
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label>Overskrift</label>
-                            <input type="text" class="form-control" ng-model="eventtypeToEdit.agenda[y].item" placeholder="Overskrift">
+                            <input type="text" class="form-control" ng-model="agendaStructure[3][0][y]" placeholder="Overskrift">
                         </div>
-                        <div ng-show="numAgendaItems > 0" class="col-md-2">
+                        <div ng-show="agendaStructure[4] > 0" class="col-md-2">
                             <label for="headline" style="color:white;">.</label>
                             <a class="btn btn-danger" ng-click="removeAgendaItem(y)">
                                 <i class="glyphicon glyphicon-remove"></i>
@@ -366,7 +366,7 @@
                     <div class="row">
                         <div class="form-group col-md-8">
                             <label>Beskrivelse</label>
-                            <textarea class="form-control" ng-model="eventtypeToEdit.agenda[y].description" rows="2" placeholder="Beskrivelse...."></textarea>
+                            <textarea class="form-control" ng-model="agendaStructure[3][1][y]" rows="2" placeholder="Beskrivelse...."></textarea>
                         </div>
                     </div>
                 <!-- <hr> -->
@@ -375,15 +375,15 @@
         </div>
         <!-- <br> -->
         <div class="row" ng-show="yesAgenda">
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
-            <a class="btn btn-info" ng-show="agendaItemsBtnShow[9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][1]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][2]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][3]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][4]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][5]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][6]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][7]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][8]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
+            <a class="btn btn-info" ng-show="agendaStructure[1][9]" ng-click="showAgendaItem()">Tilføj dagsordenspunkt</a>
         </div>
         <br>
         <div class="row">

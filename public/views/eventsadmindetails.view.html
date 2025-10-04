@@ -53,7 +53,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="form-group col-md-6" ng-show="eventtype.agendaOrNot">
+        <div class="form-group col-md-6" ng-show="event.agendaOrNot">
             <h4>Dagsorden</h4>
             <table class="table table-striped">
                 <thead>
@@ -61,7 +61,7 @@
                     <th width="70%">Beskrivelse</th>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="agendaItem in eventtype.agenda">
+                    <tr ng-repeat="agendaItem in event.agenda">
                         <td>{{ agendaItem.item }}</td>
                         <td>{{ agendaItem.description }}</td>
                     </tr>

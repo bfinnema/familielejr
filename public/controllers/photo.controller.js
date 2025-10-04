@@ -245,7 +245,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(tenant) {
-        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
         $scope.tenantName = tenant.data.tenantName;
         /* $scope.tenant = tenant.data;
         var currentyear = (new Date()).getFullYear();
@@ -273,7 +273,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
             $scope.imagesExist = true;
             // $scope.mainImage = $scope.images[0].path + $scope.images[0].filename;  // Old method
             $scope.mainImageObj = $scope.images[0];
-            console.log(`Name: ${$scope.mainImageObj.filename}, Filetype: ${$scope.mainImageObj.filetype}`);
+            // console.log(`Name: ${$scope.mainImageObj.filename}, Filetype: ${$scope.mainImageObj.filetype}`);
             getImage(0);
             
             for (x=0; x<$scope.images.length; x++) {
@@ -594,7 +594,7 @@ function ($scope, $http, $route, $window, $timeout, AuthService) {
     
     function detectClient() {
         $scope.userClientFullDesc = navigator.userAgent;
-        console.log(navigator.userAgent);
+        // console.log(navigator.userAgent);
         if (navigator.userAgent.match(/Android/i)) {
             $scope.userClient = "ANDROID";
         } else if (navigator.userAgent.match(/iPhone/i)) {
@@ -1220,7 +1220,7 @@ function($scope, $http, $routeParams, $window, $location, $route, AuthService) {
             'x-auth': localStorage.userToken
         }
     }).then(function(tenant){
-        console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
+        // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
         $scope.tenantName = tenant.data.tenantName;
         $scope.tenant = tenant.data;
 

@@ -62,6 +62,139 @@ function ($q, $timeout, $http) {
 
 }])
 
+.factory('listOfItemsML',[function() {
+    return({
+        prepareList: prepareList,
+        addItem: addItem,
+        removeItem: removeItem,
+        prepareEdit: prepareEdit
+    });
+
+    function prepareList(listName, numItems, numTextLines, numNumericLines) {
+        itemsL0 = [];
+        itemsL1 = [];
+        itemL1BtnShow = [];
+        itemL1Show = [];
+        itemL2BtnShow = [];
+        itemL2Show = [];
+        for (i=0; i<numItems[0]; i++) {
+            itemsL0.push(i+1);
+            if (numItems[1] > 0) {
+                itemsL10 = [];
+                for (j=0; j<numItems[1]; j++) {
+                    itemsL10.push(j+1);
+                }
+            }
+        }
+        return prepareList;
+    };
+
+    function addItem() {
+        return addItem;
+    };
+
+    function removeItem() {
+        return removeItem;
+    };
+
+    function prepareEdit() {
+        return prepareEdit;
+    };
+    
+}])
+
+.factory('listOfItemsSL',[function() {
+    return({
+        prepareList: prepareList,
+        addItem: addItem,
+        removeItem: removeItem,
+        prepareEdit: prepareEdit
+    });
+
+function prepareList(numItems, subjectStructure) {
+    // console.log(`numItems: ${numItems}, subjectStructure: ${subjectStructure}, length: ${subjectStructure.length}`);
+    var numItemsUsed = 0;
+    var itemsL0 = [];
+    var itemL0BtnShow = [];
+    var itemL0Show = [];
+    var subjects = []
+    for (var j=0; j<subjectStructure.length; j++) {
+        // console.log(`subject: ${subjectStructure[j]}`);
+        var sl = [];
+        for (var i=0; i<numItems[0]; i++) {
+            sl.push(subjectStructure[j]);
+        };
+        subjects.push(sl);
+        // console.log(`subjects in loop: ${subjects}`);
+    };
+    // console.log(`${subjects}`);
+    for (var i=0; i<numItems[0]; i++) {
+        itemsL0.push(i);
+        if (i == 0) {
+            itemL0BtnShow.push(false);
+            itemL0Show.push(true);
+        } else if (i == 1) {
+            itemL0BtnShow.push(true);
+            itemL0Show.push(false);
+        } else {
+            itemL0BtnShow.push(false);
+            itemL0Show.push(false);
+        };
+    };
+    // console.log(`itemsL0: ${itemsL0}`);
+    // console.log(`itemL0BtnShow: ${itemL0BtnShow}`);
+    // console.log(`itemL0Show: ${itemL0Show}`);
+    // console.log(`Subjects: ${subjects}`);
+    return [itemsL0, itemL0BtnShow, itemL0Show, subjects, numItemsUsed];
+
+};
+    function addItem(itemStructure) {
+        /* if (itemStructure[4] < 1) {
+            itemStructure[2][itemStructure[4]+1] = true;
+        }; */
+        itemStructure[2][itemStructure[4]+1] = true;
+        itemStructure[1][itemStructure[4]] = false;
+        if (itemStructure[4]+1 < itemStructure[0].length) {
+            itemStructure[1][itemStructure[4]+1] = true;
+        };
+        itemStructure[4] += 1;
+        return itemStructure;
+    };
+
+    function removeItem(numOrgToRemove, itemStructure) {
+        // console.log(`itemL0Text: ${itemStructure[3]}, itemL0Text0: ${itemStructure[3][0]}`);
+        for (var i=0; i<itemStructure[3].length; i++) {
+            for (var j=numOrgToRemove; j<itemStructure[3][i].length; j++) {
+                itemStructure[3][i][j] = itemStructure[3][i][j+1];
+            };
+            itemStructure[3][i][itemStructure[4]] = "";
+        };
+        // console.log(`itemL0Text: ${itemStructure[3]}, itemL0Text0: ${itemStructure[3][0]}`);
+        itemStructure[2][itemStructure[4]] = false;
+        itemStructure[1][itemStructure[4]] = true;
+        itemStructure[1][itemStructure[4]+1] = false;
+        itemStructure[4] = itemStructure[4] - 1;
+        // console.log(`Number of items: ${itemStructure[4]}`);
+        return itemStructure;
+    };
+
+    function prepareEdit(numItemsUsed, itemStructure) {
+        // console.log(`In Services. numItemsUsed: ${numItemsUsed}`);
+        // console.log(`texts: ${itemStructure[3]}`);
+        /* for (var i=0; i<itemStructure[3][0].length; i++) {
+            console.log(`ITEM: ${itemStructure[3][0][i]}`);
+        }; */
+        for (var i=0; i<numItemsUsed+1; i++) {
+            itemStructure[2][i] = true;
+            itemStructure[1][i] = false;
+            if (i<itemStructure[0].length-1) {itemStructure[1][i+1] = true;};
+        };
+        itemStructure[4] = numItemsUsed;
+        return itemStructure;
+    };
+    
+}])
+
 .factory('ProfileService',[function() {
     return({
         countries: countries,
@@ -146,39 +279,10 @@ function ($q, $timeout, $http) {
 
 .factory('EventregService',[function() {
     return({
-        // ageGroups: ageGroups,
-        // arrivalDays: arrivalDays,
-        // departureDays: departureDays,
         numDays: numDays,
         arrivalOptions: arrivalOptions,
         departureOptions: departureOptions
     });
-
-    /* function ageGroups() {
-        return [
-            {"agegroup": "Voksen"},
-            {"agegroup": "Barn under 12"},
-            {"agegroup": "Barn under 3"}
-        ];
-    };
-
-    function arrivalDays() {
-        return [
-            {"arrivalday": "Fredag"},
-            {"arrivalday": "Lørdag formiddag"},
-            {"arrivalday": "Lørdag eftermiddag"}
-        ];
-    };
-
-    function departureDays() {
-        return [
-            {"departureday": "Søndag"},
-            {"departureday": "Lørdag formiddag"},
-            {"departureday": "Lørdag eftermiddag"},
-            {"departureday": "Lørdag efter aftensmad"},
-            {"departureday": "Jeg tager aldrig hjem!!"}
-        ];
-    }; */
 
     function numDays(arrival, departure) {
         numDays = 1;
@@ -353,116 +457,6 @@ function ($q, $timeout, $http) {
         return year;
     };
 
-}])
-
-.factory('EventPriceService',[function() {
-    return({
-        numDays: numDays,
-        // eventFee: eventFee,
-        // eventFeeOld: eventFeeOld,
-        // eventPriceDefault: eventPriceDefault
-    });
-
-    function numDays(arrival, departure) {
-        numDays = 1;
-        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!" || departure == "Lørdag efter aftensmad") {
-            // "Søndag efter frokost" is the for historic reasons
-            if (arrival == "Fredag" || arrival == "Fredag eftermiddag") {
-                numDays = 2;
-            };
-            /* if (arrival == "Lørdag formiddag" && priceModelType == "old") {
-                numDays = 2;
-            }; */
-        } /* else if (departure == "Søndag efter morgenmad" || departure == "Lørdag efter aftensmad") {
-            // "Søndag efter morgenmad" is the for historic reasons
-            if (arrival == "Fredag") {
-                numDays = 2;
-            };
-        } */;
-        return numDays;
-    };
-
-    function eventFeeOld(numDays, agegroup, priceModel) {
-        if (agegroup == "Voksen") {
-            eventFee = priceModel.adult[numDays-1].price;
-        } else if (agegroup == "Barn under 12") {
-            eventFee = priceModel.child[numDays-1].price;
-        } else {
-            eventFee = priceModel.smallchild[numDays-1].price;
-        };
-        return eventFeeOld;
-    };
-
-    function eventFee(arrival, departure, agegroup, payment) {
-        // console.log(`SERVICES eventFee. agegroup ${agegroup}, adultFee: ${payment.adult}, childFee: ${payment.child}`);
-        var newPriceModel = eventPriceDefault();
-        var priceModelType = "old";
-        var adultFee = 180;
-        var childFee = 100;
-        var smallChildFee = 0;
-        if (payment.priceModel) {
-            priceModelType = payment.priceModel;
-        };
-        // console.log(`SERVICES. Pricemodel type: ${priceModelType}`);
-        // numDays = numDays(arrival, departure, priceModelType);
-
-        var numDays = 1;
-        if (departure == "Søndag" || departure == "Søndag efter frokost" || departure == "Jeg tager aldrig hjem!!") {
-            // "Søndag efter frokost" is the for historic reasons
-            if (arrival == "Fredag") {
-                numDays = 2;
-            };
-            if (arrival == "Lørdag formiddag" && priceModelType == "old") {
-                numDays = 2;
-            }
-        } else if (departure == "Søndag efter morgenmad" || departure == "Lørdag efter aftensmad") {
-            // "Søndag efter morgenmad" is the for historic reasons
-            if (arrival == "Fredag") {
-                numDays = 2;
-            };
-        };
-        // console.log(`SERVICES. NumDays: ${numDays}`);
-
-        if (priceModelType == "new") {
-            if (payment.newpricemodel) {
-                newPriceModel = payment.newpricemodel;
-            };
-            if (agegroup == "Voksen") {
-                eventFee = payment.newpricemodel.adult[numDays-1].price;
-            } else if (agegroup == "Barn under 12") {
-                eventFee = payment.newpricemodel.child[numDays-1].price;
-            } else {
-                eventFee = payment.newpricemodel.smallchild[numDays-1].price;
-            };
-            // console.log(`SERVICES. New pricemodel. eventFee: ${eventFee}`);
-        } else {
-            if (payment.adult) {adultFee = payment.adult};
-            if (payment.child) {childFee = payment.child};
-            // console.log(`SERVICES. Old pricemodel. agegroup ${agegroup}, adultFee: ${adultFee}, childFee: ${childFee}`);
-            if (agegroup == "Voksen") {
-                eventFee = adultFee * numDays;
-            } else if (agegroup == "Barn under 12") {
-                eventFee = childFee * numDays;
-            } else {
-                eventFee = smallChildFee * numDays;
-            };
-            // console.log(`SERVICES. Old pricemodel. eventFee: ${eventFee}`);
-        };
-        
-        return eventFee;
-    };
-
-    function eventPriceDefault() {
-        var eventPriceDefault = {adult:[], child:[], smallchild:[]};
-        eventPriceDefault.adult.push({"price": 270});
-        eventPriceDefault.adult.push({"price": 440});
-        eventPriceDefault.child.push({"price": 140});
-        eventPriceDefault.child.push({"price": 250});
-        eventPriceDefault.smallchild.push({"price": 0});
-        eventPriceDefault.smallchild.push({"price": 0});
-        // console.log(`In Services. Adult, one day: ${eventPriceDefault.adult[0].price}`);
-        return eventPriceDefault;
-    };
 }])
 
 .factory('ConfigService',

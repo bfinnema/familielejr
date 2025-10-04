@@ -13,6 +13,7 @@ function($scope, $http, AuthService) {
     
     $scope.invitationExists2 = false;  // New
     $scope.showCommittees = [];
+    futureeventsOffset = 1;
 
     $http({
         method: 'GET',
@@ -36,7 +37,7 @@ function($scope, $http, AuthService) {
         $scope.eventtypes = eventtypes.data;
         return $http({
             method: 'GET',
-            url: 'events/futureevents',
+            url: 'events/futureevents/' + futureeventsOffset,
             headers: {
                 'x-auth': localStorage.userToken
             }

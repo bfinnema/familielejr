@@ -325,6 +325,8 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
     $scope.registrationsExist = false;
     $scope.editRegistration = false;
     $scope.selectInvitationText = "Der er flere, aktive begivenheder. Vælg begivenhed:";
+    futureeventsOffset = 30;
+    // console.log(`In eventregallCtrl. futureeventsOffset: ${futureeventsOffset}`);
 
     $scope.searching = false;
     $scope.sorting = false;
@@ -366,7 +368,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             // console.log(`No specific event. _event_id: ${_event_id}`);
             $http({
                 method: 'GET',
-                url: 'events/futureactiveevents',
+                url: 'events/futureactiveevents/' + futureeventsOffset,
                 headers: {
                     'x-auth': localStorage.userToken
                 }
@@ -384,7 +386,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                         getInvitationData();
                     };
                 } else {
-                    $scope.selectInvitationText = "Der er ikke nogen aktiv begivenhed. Vil du se på en anden? Vælg her:"
+                    $scope.selectInvitationText = "Der er ikke nogen aktiv begivenhed. Vil du se på en anden?"
                     $scope.invitationExists = false;
                     if ($scope.arevents) {
                         $scope.faevents = $scope.arevents;
@@ -804,6 +806,12 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             paid: registration.paid
         };
 
+        if (registration.paid) {
+            $scope.feePaidSum += registration.fee;
+        } else {
+            $scope.feePaidSum -= registration.fee;
+        };
+
         $http({
             method: 'PATCH',
             url: '/eventregs/'+registration._id,
@@ -812,7 +820,9 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
             },
             data: data
         }).then(function(response) {
-            $location.path(`/eventregistrationall/${registration.year}`);
+            // console.log(`editEventregStatus: ${response.status}`);
+            // $location.path(`/eventregistrationall/${registration.year}`);
+            // $route.reload();
         }, function errorCallback(response) {
             console.log(`editEventregStatus: ${response.status}`);
         });
@@ -912,6 +922,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
         $scope.editRegistration = false;
     };
 
+    // This function is not used at the moment. Probably not needed.
     $scope.recalcFees = function() {
 
         // console.log(`In recalcfees: Adult, two days: ${priceModel.adult[1].price}`);
@@ -922,7 +933,7 @@ function($scope, $http, $window, $location, $route, $routeParams, AuthService, E
                 var numDays = EventregService.numDays($scope.registrations[i].arrivalOption, $scope.registrations[i].departureOption);
                 // console.log(`numDays: ${numDays}`);
                 var partCat = $scope.eventtype.participantCategories.filter(obj => {
-                    return obj.name == registrations[i].participantCategory
+                    return obj.name == $scope.registrations[i].participantCategory
                 })[0];
                 if (numDays == 1) {
                     eventFee = partCat.priceDay;

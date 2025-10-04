@@ -8,15 +8,59 @@
         tilladelse til pop-up's i din browser for denne hjemmeside.</p>
 </div>
 <div ng-show="!newCampEntry && docsExist">
-    <h2>Liste over dokumenter</h2>
+    <div class="col-md-4">
+        <h2>Liste over dokumenter</h2>
+    </div>
+    <div class="col-md-5">
+        <form name="formFilter" class="formSearchUser" id="formFilter" ng-submit="_filter()" novalidate>
+            <div class="form-group col-md-6">
+                <label>Kategori</label>
+                <select class="form-control" ng-model="docCategory" name="docCategory" required>
+                    <option ng-repeat="docCat in categories" value="{{docCat.category}}">{{docCat.category}}</option>
+                </select>
+                <!-- <i ng-show="formFilter.docCategory.$error.required">*Skal udfyldes</i> -->
+            </div>
+            <div class="form-group col-md-4">
+                <label>Filtrering</label>
+                <button ng-disabled="formFilter.$invalid" class="btn btn-primary" type="submit">Filtrer</button>
+            </div>
+        </form>
+    </div>
     <hr>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th width="14%">Begivenhed</th>
-                <th width="6%">År</th>
+                <th width="14%">Begivenhed
+                    <a ng-click="_sort('eventName', 'up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFn('event', 'up')" ng-mouseleave="hidePopoverSortFn('event', 'up')"></span>
+                        <div class="mypopover" ng-show="eventUpPopoverIsVisible">Sortere efter begivenhed, op</div>
+                    </a>
+                    <a ng-click="_sort('eventName', 'down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFn('event', 'down')" ng-mouseleave="hidePopoverSortFn('event', 'down')"></span>
+                        <div class="mypopover" ng-show="eventDnPopoverIsVisible">Sortere efter begivenhed, ned</div>
+                    </a>
+                </th>
+                <th width="6%">År
+                    <a ng-click="_sort('year', 'up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFn('year', 'up')" ng-mouseleave="hidePopoverSortFn('year', 'up')"></span>
+                        <div class="mypopover" ng-show="yearUpPopoverIsVisible">Sortere efter år, op</div>
+                    </a>
+                    <a ng-click="_sort('year', 'down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFn('year', 'down')" ng-mouseleave="hidePopoverSortFn('year', 'down')"></span>
+                        <div class="mypopover" ng-show="yearDnPopoverIsVisible">Sortere efter år, ned</div>
+                    </a>
+                </th>
                 <th width="40%">Beskrivelse</th>
-                <th width="13%">Kategori</th>
+                <th width="13%">Kategori
+                    <a ng-click="_sort('category', 'up')">
+                        <span class="glyphicon glyphicon-chevron-up" ng-mouseover="showPopoverSortFn('category', 'up')" ng-mouseleave="hidePopoverSortFn('category', 'up')"></span>
+                        <div class="mypopover" ng-show="catUpPopoverIsVisible">Sortere efter kategori, op</div>
+                    </a>
+                    <a ng-click="_sort('category', 'down')">
+                        <span class="glyphicon glyphicon-chevron-down" ng-mouseover="showPopoverSortFn('category', 'down')" ng-mouseleave="hidePopoverSortFn('category', 'down')"></span>
+                        <div class="mypopover" ng-show="catDnPopoverIsVisible">Sortere efter kategori, ned</div>
+                    </a>
+                </th>
                 <th width="13%">Lagt op af</th>
                 <th width="14%" ng-show="role==0">Ændre / Slette</th>
             </tr>

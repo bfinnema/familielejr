@@ -201,7 +201,7 @@ function($scope, $http, $window, $route, $location, AuthService) {
         $scope.tenantName = tenant.data.tenantName;
         return $http({
             method: 'GET',
-            url: '/docs/sortcategory',
+            url: '/docs/sort/category/up',
             headers: {
                 'x-auth': localStorage.userToken
             }
@@ -284,6 +284,75 @@ function($scope, $http, $window, $route, $location, AuthService) {
         } else {
             $location.path('/archive');
         };
+    };
+
+    $scope._sort = function(item, sortDirection) {
+        // console.log(`in _sort. item: ${item}`);
+        getDocs(item, true, sortDirection, false, false, "none");
+    };
+
+    $scope._filter = function() {
+        // console.log(`in _filter. docCategory: ${$scope.docCategory}`);
+        getDocs("category", false, "up", true, false, "none");
+    };
+
+    getDocs = function(item, sortOrNot, sortDirection, filterOrNot, searchOrNot, searchText) {
+        // console.log(`getDocs. filterOrNot: ${filterOrNot}`);
+        var url = "docs/";
+        if (sortOrNot) {
+            url = `${url}sort/${item}/${sortDirection}`;
+        } else if (filterOrNot) {
+            // console.log(`Filtering, filterOrNot: ${filterOrNot}`);
+            url = `${url}filter/${item}/${$scope.docCategory}`;
+        } else if (searchOrNot) {                            // Not used
+            url = `${url}search/${item}/${searchText}`;
+        } else {
+            url = `${url}sort/category/up`;
+        };
+        // console.log(`url: ${url}`);
+        $http({
+            method: 'GET',
+            url: url,
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        }).then(function(docs) {
+            // console.log(`Status: ${docs.status}`);
+            if (docs.data.length == 0) {
+                console.log('No Documents in db');
+                $scope.docsExist = false;
+            } else {
+                $scope.docsExist = true;
+                $scope.docs = docs.data;
+            };
+        }, function errorCallback(response) {
+            // console.log(`Status: ${response.status}`);
+        });
+    };
+
+    $scope.showPopoverSortFn = function(item, direction) {
+        if (item == "event" && direction == "up") {
+            $scope.eventUpPopoverIsVisible = true;
+        } else if (item == "event" && direction == "down") {
+            $scope.eventDnPopoverIsVisible = true;
+        } else if (item == "year" && direction == "up") {
+            $scope.yearUpPopoverIsVisible = true;
+        } else if (item == "year" && direction == "down") {
+            $scope.yearDnPopoverIsVisible = true;
+        } else if (item == "category" && direction == "up") {
+            $scope.catUpPopoverIsVisible = true;
+        } else if (item == "category" && direction == "down") {
+            $scope.catDnPopoverIsVisible = true;
+        };
+    };
+      
+    $scope.hidePopoverSortFn = function (item, direction) {
+        $scope.eventUpPopoverIsVisible = false;
+        $scope.eventDnPopoverIsVisible = false;
+        $scope.yearUpPopoverIsVisible = false;
+        $scope.yearDnPopoverIsVisible = false;
+        $scope.catUpPopoverIsVisible = false;
+        $scope.catDnPopoverIsVisible = false;
     };
 
 }])

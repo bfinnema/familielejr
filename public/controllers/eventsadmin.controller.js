@@ -1,7 +1,7 @@
 angular.module('familielejr')
 
-.controller('eventsadminCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 
-function($scope, $http, $location, $route, $window, AuthService) {
+.controller('eventsadminCtrl', ['$scope', '$http', '$location', '$route', '$window', 'AuthService', 'listOfItemsSL', 
+function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -10,6 +10,10 @@ function($scope, $http, $location, $route, $window, AuthService) {
             $scope.role = AuthService.userRole();
         };
     });
+
+    futureeventsOffset = 1;
+    // console.log(`In eventsadminCtrl. futureeventsOffset: ${futureeventsOffset}`);
+    $scope.agendaInEventtype = false;
 
     $http({
         method: 'GET',
@@ -23,7 +27,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
         $scope.tenant = tenant.data;
         return $http({
             method: 'GET',
-            url: '/events/futureevents/',
+            url: '/events/futureevents/' + futureeventsOffset,
             headers: {
                 'x-auth': localStorage.userToken
             }
@@ -56,13 +60,11 @@ function($scope, $http, $location, $route, $window, AuthService) {
         console.log(`Error. Status: ${response.status}`);
     });
 
+    $scope.organiserStructure = listOfItemsSL.prepareList([5,0], [""]);
+    // console.log(`New: ${$scope.organiserStructure}`);
+
     $scope.commArr = [0,1,2];
     $scope.commMemArr = [0,1,2,3,4];
-    $scope.organizers = ["","","","",""];
-    $scope.organizerBtnShow = [false,true,false,false,false];
-    $scope.organizerShow = [true,false,false,false,false];
-    var numOrgLines = 0;
-
     $scope.committeeName = ["","",""];
     $scope.committeeDesc = ["","",""];
     $scope.committeeMembers = [["","","","",""],["","","","",""],["","","","",""]];
@@ -70,6 +72,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
     $scope.committeeShow = [false,false,false];
     var numCommLines = 0;
     var initCommittees = false;
+
 /* 
     console.log(`----- committeeMembers -----`);
     for (var u=0; u<3; u++) {
@@ -78,37 +81,35 @@ function($scope, $http, $location, $route, $window, AuthService) {
         };
     };
  */
+
     $scope.commMemBtnShow = [[false,true,false,false,false],[false,true,false,false,false],[false,true,false,false,false]];
     $scope.commMemShow = [[true,false,false,false,false],[true,false,false,false,false],[true,false,false,false,false]];
     var numCommMemLines = [0,0,0];
     $scope.numCommMemLines = numCommMemLines;
 
+    $scope.agendaOrNot = false;
+    $scope.noAgenda = false;
+    $scope.yesAgenda = false;
+
     $scope.showOrgLine = function() {
-        // console.log("Entering showOrgline. numOrgLines: "+numOrgLines);
-        if ($scope.organizers[numOrgLines]) {
-            // console.log("numOrgLines: "+numOrgLines+", Organizer: "+$scope.organizers[numOrgLines]);
-            numOrgLines = numOrgLines + 1;
-            $scope.numOrgLines = numOrgLines;
-            $scope.organizerShow[numOrgLines] = true;
-            $scope.organizerBtnShow[numOrgLines] = false;
-            $scope.organizerBtnShow[numOrgLines+1] = true;
-        }
-        else {
+        // console.log("Entering showOrgline. numOrgLines: "+$scope.organiserStructure[4]);
+        // console.log(`---------- Entering showOrgLine ----------`);
+        // console.log(`itemNums: ${$scope.organiserStructure[0]}`);
+        // console.log(`btnShows: ${$scope.organiserStructure[1]}`);
+        // console.log(`itemShows: ${$scope.organiserStructure[2]}`);
+        // console.log(`Texts: ${$scope.organiserStructure[3][0]}`);
+        // console.log(`NumLinesUsed, organizers: ${$scope.organiserStructure[4]}`);
+        if ($scope.organiserStructure[3][0][$scope.organiserStructure[4]]) {
+            // console.log("YES. numOrgLines: "+$scope.organiserStructure[4]+", Organizer: "+$scope.organiserStructure[3][0][$scope.organiserStructure[4]]);
+            $scope.organiserStructure = listOfItemsSL.addItem($scope.organiserStructure);
+        } else {
             $window.alert("Du skal udfylde det tomme arrangør felt.");
         };
     };
     
     $scope.removeOrganizer = function(orgNum) {
-        console.log("Entering removeOrganizer. numOrgLines: "+numOrgLines);
-        for (var i=orgNum; i<numOrgLines; i++) {
-            $scope.organizers[i] = $scope.organizers[i+1];
-        };
-        $scope.organizers[numOrgLines] = "";
-        $scope.organizerShow[numOrgLines] = false;
-        $scope.organizerBtnShow[numOrgLines] = true;
-        $scope.organizerBtnShow[numOrgLines+1] = false;
-        numOrgLines -= 1;
-        $scope.numOrgLines = numOrgLines;
+        // console.log("Entering removeOrganizer. numOrgLines: "+$scope.numOrgLines);
+        $scope.organiserStructure = listOfItemsSL.removeItem(orgNum, $scope.organiserStructure);
     };
 
     $scope.showCommLine = function() {
@@ -154,7 +155,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
     };
 
     $scope.removeCommMem = function(numComm, commMemNum) {
-        console.log("Entering removeCommMem. numOrgLines: "+numCommMemLines[numComm]);
+        // console.log("Entering removeCommMem. numOrgLines: "+numCommMemLines[numComm]);
         for (var i=commMemNum; i<numCommMemLines[numComm]; i++) {
             $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
         };
@@ -166,11 +167,101 @@ function($scope, $http, $location, $route, $window, AuthService) {
         $scope.numCommMemLines[numComm] = numCommMemLines[numComm];
     };
     
+    $scope.agendaNegative = function() {
+        console.log(`Entering agendaNegative. agendaOrNot: ${$scope.agendaOrNot}`);
+        $scope.yesAgenda = false;
+        $scope.agendaOrNot = false;
+        /* $scope.agendaItemsBtnShowSave = $scope.agendaItemsBtnShow;
+        $scope.agendaItemShowSave = $scope.agendaItemShow;
+        $scope.agendaItemsBtnShow = [false,false,false,false,false,false,false,false,false,false];
+        $scope.agendaItemShow = [false,false,false,false,false,false,false,false,false,false]; */
+    };
+
+    $scope.agendaPositive = function() {
+        console.log(`Entering agendaPositive. agendaOrNot: ${$scope.agendaOrNot}`);
+        $scope.noAgenda = false;
+        $scope.agendaOrNot = true;
+        $scope,yesAgenda = true;
+        /* if ($scope.numAgendaItems < 1) {
+            $scope.agendaItemsBtnShow = [false,true,false,false,false,false,false,false,false,false];
+            $scope.agendaItemShow = [true,false,false,false,false,false,false,false,false,false];
+        } else {
+            $scope.agendaItemsBtnShow = $scope.agendaItemsBtnShowSave;
+            $scope.agendaItemShow = $scope.agendaItemShowSave;
+        }; */
+    };
+
+    $scope.showAgendaItem = function() {
+        // console.log("Entering showAgendaItem. numAgendaItems: "+$scope.agendaStructure[4]);
+        // console.log(`---------- Entering showAgendaItem ----------`);
+        // console.log(`itemNums: ${$scope.agendaStructure[0]}`);
+        // console.log(`btnShows: ${$scope.agendaStructure[1]}`);
+        // console.log(`itemShows: ${$scope.agendaStructure[2]}`);
+        // console.log(`Texts: ${$scope.agendaStructure[3][0]}`);
+        // console.log(`Nums: ${$scope.agendaStructure[4]}`);
+        // console.log(`NumLinesUsed: ${$scope.agendaStructure[4]}`);
+        if ($scope.agendaStructure[3][0][$scope.agendaStructure[4]]) {
+            // console.log("numLines: "+$scope.agendaStructure[4]+", Item: "+$scope.agendaStructure[3][0][$scope.agendaStructure[4]]);
+            $scope.agendaStructure = listOfItemsSL.addItem($scope.agendaStructure);
+        } else {
+            $window.alert("Du skal udfylde det tomme felt.");
+        };
+    };
+    
+    $scope.removeAgendaItem = function(agendaNum) {
+        // console.log("Entering removeAgendaItem. numAgendaItems: "+$scope.agendaStructure[4]);
+        $scope.agendaStructure = listOfItemsSL.removeItem(agendaNum, $scope.agendaStructure);
+    };
+
     $scope.newEventEntryToggle = function() {
         if ($scope.newEventEntry) {
             $scope.newEventEntry = false;
         } else {
             $scope.newEventEntry = true;
+        };
+    };
+
+    // Based on the eventtype selected, this function prepares which items must be added to the event, e.g. if agenda must be added.
+    $scope.eventtypeSelected = function() {
+        // console.log(`-------------------------------------------------`);
+        $scope.selectedEventtype = JSON.parse($scope.selectEventtype);
+        // console.log(`Eventtype has been selected. eventtypeName: ${$scope.selectedEventtype.eventtypeName}`);
+        if ($scope.selectedEventtype.agendaOrNot) {
+            $scope.agendaInEventtype = true;
+            // console.log(`agendaOrNot in selectedEventtype: ${$scope.selectedEventtype.agendaOrNot}`);
+            $scope.agendaOrNot = $scope.selectedEventtype.agendaOrNot;
+            $scope.yesAgenda = $scope.selectedEventtype.agendaOrNot;
+            $scope.noAgenda = !$scope.selectedEventtype.agendaOrNot;
+            // console.log(`yesAgenda: ${$scope.yesAgenda}, noAgenda: ${$scope.noAgenda}`);
+
+            $scope.agendaStructure = listOfItemsSL.prepareList([10,0], ["",""]);
+            var agenda = $scope.selectedEventtype.agenda;
+            // console.log(`agenda: ${JSON.stringify(agenda)}`);
+            for (var i=0; i<agenda.length; i++) {
+                $scope.agendaStructure[3][0][i] = agenda[i].item;
+                $scope.agendaStructure[3][1][i] = agenda[i].description;
+            };
+            $scope.agendaStructure = listOfItemsSL.prepareEdit(agenda.length-1, $scope.agendaStructure);
+            // console.log(`agendaStructure: ${$scope.agendaStructure}`);
+
+            /* $scope.agendaStructure = listOfItemsSL.prepareList([10,0], ["",""]);
+            var items = [];
+            var descriptions = [];
+            var texts = [];
+            for (var i=0; i<$scope.agendaStructure[3][0].length; i++) {
+                if (i<$scope.selectedEventtype.agenda.length) {
+                    items.push($scope.selectedEventtype.agenda[i].item);
+                    descriptions.push($scope.selectedEventtype.agenda[i].description);
+                } else {
+                    items.push("");
+                    descriptions.push("");
+                };
+                // console.log(`i: ${i}, items: ${items}, descriptions: ${descriptions}`);
+            };
+            texts.push(items);
+            texts.push(descriptions);
+            $scope.agendaStructure[3] = texts;
+            $scope.agendaStructure = listOfItemsSL.prepareEdit($scope.selectedEventtype.agenda.length-1, $scope.agendaStructure); */
         };
     };
 
@@ -181,9 +272,9 @@ function($scope, $http, $location, $route, $window, AuthService) {
         };
 
         var organizers = [];
-        for (var i=0; i<numOrgLines+1; i++) {
-            if ($scope.organizers[i] != "") {
-                organizers.push({orgname: $scope.organizers[i]});
+        for (var i=0; i<$scope.organiserStructure[4]+1; i++) {
+            if ($scope.organiserStructure[3][0][i] != "") {
+                organizers.push({orgname: $scope.organiserStructure[3][0][i]});
             };
         };
 
@@ -201,6 +292,15 @@ function($scope, $http, $location, $route, $window, AuthService) {
                 };
                 committees.push(committee);
             };
+        };
+
+        var agenda = [];
+        // console.log(`Number of agenda items: ${$scope.agendaStructure[4]}`);
+        if ($scope.yesAgenda) {
+            for (var i=0; i<$scope.agendaStructure[4]+1; i++) {
+                agenda.push({"item": $scope.agendaStructure[3][0][i], "description": $scope.agendaStructure[3][1][i]});
+            };
+            // console.log(`${JSON.stringify(agenda)}`);
         };
 
         var invitation = {
@@ -222,20 +322,10 @@ function($scope, $http, $location, $route, $window, AuthService) {
             active: false
         };
 
-        // console.log(`Selected id: ${$scope.selectEventtype}`);
-        var selectedEventtypeName = "NONE";
-        for (var j=0; j<$scope.eventtypes.length; j++) {
-            // console.log(`${j}. eventtypeName: ${$scope.eventtypes[j].eventtypeName}. id: ${$scope.eventtypes[j]._id}`);
-            if ($scope.selectEventtype == $scope.eventtypes[j]._id) {
-                selectedEventtypeName = $scope.eventtypes[j].eventtypeName;
-                console.log(`Found ${$scope.eventtypes[j].eventtypeName}.`);
-            };
-        };
-
         var data = {
             eventName: $scope.eventName,
-            _eventtype: $scope.selectEventtype,
-            eventtypeName: selectedEventtypeName,
+            _eventtype: $scope.selectedEventtype._id,
+            eventtypeName: $scope.selectedEventtype.eventtypeName,
             year: $scope.year || (new Date()).getFullYear(),
             venue: $scope.venue,
             address: addr,
@@ -243,11 +333,15 @@ function($scope, $http, $location, $route, $window, AuthService) {
             startdate: $scope.startdate,
             enddate: $scope.enddate,
             invitation: invitation,
+            agendaOrNot: $scope.yesAgenda,
+            agenda: agenda,
             summaryExist: false
         };
         
         if (organizers.length > 0) {data.organizers = organizers;};
         if (committees.length > 0) {data.committees = committees;};
+
+        // console.log(`${JSON.stringify(data)}`);
 
         $http({
             method: 'POST',
@@ -271,7 +365,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
 
 }])
 
-.controller('eventsadmineditCtrl', ['$scope', '$http', '$location', '$routeParams', '$window', 'AuthService', function($scope, $http, $location, $routeParams, $window, AuthService) {
+.controller('eventsadmineditCtrl', ['$scope', '$http', '$location', '$routeParams', '$window', 'AuthService', 'listOfItemsSL', function($scope, $http, $location, $routeParams, $window, AuthService, listOfItemsSL) {
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -299,30 +393,26 @@ function($scope, $http, $location, $route, $window, AuthService) {
             }
         });
     }).then(function(event) {
-        console.log(`Event collected with Success. Status: ${event.status}`);
+        // console.log(`Event collected with Success. Status: ${event.status}`);
 
         if (event.data) {
-            console.log(`Received the event`);
+            // console.log(`Received the event`);
             $scope.event = event.data.event;
-            console.log(`Event Name: ${$scope.event.eventName}.`);
+            // console.log(`Event Name: ${$scope.event.eventName}.`);
             $scope.selectEventtype = $scope.event._eventtype;
             $scope.startdateView = new Date($scope.event.startdate);
             $scope.enddateView = new Date($scope.event.enddate);
 
+            $scope.organiserStructure = listOfItemsSL.prepareList([5,0], [""]);
+            for (i=0; i<$scope.event.organizers.length; i++) {
+                $scope.organiserStructure[3][0][i] = $scope.event.organizers[i].orgname;
+                // console.log(`orgname: ${$scope.event.organizers[i].orgname}`);
+            };
+            $scope.organiserStructure = listOfItemsSL.prepareEdit($scope.event.organizers.length-1, $scope.organiserStructure);
+            // console.log(`NumLinesUsed, organizers: ${$scope.organiserStructure[4]}`);
+
             $scope.commArr = [0,1,2];
             $scope.commMemArr = [0,1,2,3,4];
-            $scope.organizers = ["","","","",""];
-            $scope.organizerBtnShow = [false,true,false,false,false];
-            $scope.organizerShow = [true,false,false,false,false];
-            $scope.numOrgLines = $scope.event.organizers.length;
-            // console.log(`numOrgLines: ${$scope.numOrgLines}`);
-            for (var i=0; i<$scope.numOrgLines; i++) {
-                $scope.organizerShow[i] = true;
-                $scope.organizerBtnShow[i] = false;
-                if (i<4) {$scope.organizerBtnShow[i+1] = true;};
-                $scope.organizers[i] = $scope.event.organizers[i].orgname;
-            };
-
             $scope.committeeName = ["","",""];
             $scope.committeeDesc = ["","",""];
             $scope.committeeMembers = [["","","","",""],["","","","",""],["","","","",""]];
@@ -361,6 +451,8 @@ function($scope, $http, $location, $route, $window, AuthService) {
             if ($scope.numCommLines > 0) {$scope.numCommLines -= 1;};
             if ($scope.numOrgLines > 0) {$scope.numOrgLines -= 1;};
 
+            prepareAgendaForEdit();
+
         } else {
             console.log('Event not found');
         };
@@ -374,7 +466,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
             }
         });
     }).then(function(eventtypes) {
-        console.log(`Eventtypes collected with Success. Status: ${eventtypes.status}`);
+        // console.log(`Eventtypes collected with Success. Status: ${eventtypes.status}`);
         if (eventtypes.data) {
             $scope.eventtypes = eventtypes.data;
         } else {
@@ -385,30 +477,18 @@ function($scope, $http, $location, $route, $window, AuthService) {
     });
 
     $scope.showOrgLine = function() {
-        // console.log("Entering showOrgline. numOrgLines: "+$scope.numOrgLines);
-        if ($scope.organizers[$scope.numOrgLines]) {
-            // console.log("numOrgLines: "+$scope.numOrgLines+", Organizer: "+$scope.organizers[$scope.numOrgLines]);
-            $scope.numOrgLines = $scope.numOrgLines + 1;
-            $scope.organizerShow[$scope.numOrgLines] = true;
-            $scope.organizerBtnShow[$scope.numOrgLines] = false;
-            $scope.organizerBtnShow[$scope.numOrgLines+1] = true;
-        }
-        else {
+        // console.log("Entering showOrgline. numOrgLines: "+$scope.organiserStructure[4]);
+        if ($scope.organiserStructure[3][0][$scope.organiserStructure[4]-1]) {
+            // console.log("numOrgLines: "+$scope.organiserStructure[4]+", Organizer: "+$scope.organiserStructure[3][0][$scope.organiserStructure[4]]);
+            $scope.organiserStructure = listOfItemsSL.addItem($scope.organiserStructure);
+        } else {
             $window.alert("Du skal udfylde det tomme arrangør felt.");
         };
     };
     
     $scope.removeOrganizer = function(orgNum) {
-        // console.log("Entering removeOrganizer. numOrgLines: "+$scope.numOrgLines);
-        for (var i=orgNum; i<$scope.numOrgLines; i++) {
-            $scope.organizers[i] = $scope.organizers[i+1];
-        };
-        $scope.organizers[$scope.numOrgLines] = "";
-        $scope.organizerShow[$scope.numOrgLines] = false;
-        $scope.organizerBtnShow[$scope.numOrgLines] = true;
-        $scope.organizerBtnShow[$scope.numOrgLines+1] = false;
-        $scope.numOrgLines -= 1;
-        numOrgLines = $scope.numOrgLines;
+        // console.log("Entering removeOrganizer. numOrgLines: "+$scope.organiserStructure[4]);
+        $scope.organiserStructure = listOfItemsSL.removeItem(orgNum, $scope.organiserStructure);
     };
 
     $scope.showCommLine = function() {
@@ -454,7 +534,7 @@ function($scope, $http, $location, $route, $window, AuthService) {
     
     $scope.removeCommMem = function(numComm, commMemNum) {
         numCommMemLines = $scope.numCommMemLines;
-        console.log("Entering removeCommMem. numOrgLines: "+$scope.numCommMemLines[numComm]);
+        // console.log("Entering removeCommMem. numOrgLines: "+$scope.numCommMemLines[numComm]);
         for (var i=commMemNum; i<$scope.numCommMemLines[numComm]; i++) {
             $scope.committeeMembers[numComm][i] = $scope.committeeMembers[numComm][i+1];
         };
@@ -466,6 +546,43 @@ function($scope, $http, $location, $route, $window, AuthService) {
         numCommMemLines[numComm] = $scope.numCommMemLines[numComm];
     };
     
+    prepareAgendaForEdit = function() {
+        // console.log(`---------------------- In prepareAgendaForEdit ---------------------------`);
+        if ($scope.event.agendaOrNot) {
+            $scope.agendaInEventtype = true;
+            // console.log(`agendaOrNot in selectedEventtype: ${$scope.selectedEventtype.agendaOrNot}`);
+            $scope.agendaOrNot = $scope.event.agendaOrNot;
+            $scope.yesAgenda = $scope.event.agendaOrNot;
+            $scope.noAgenda = !$scope.event.agendaOrNot;
+            // console.log(`yesAgenda: ${$scope.yesAgenda}, noAgenda: ${$scope.noAgenda}`);
+
+            $scope.agendaStructure = listOfItemsSL.prepareList([10,0], ["",""]);
+            var agenda = $scope.event.agenda;
+            // console.log(`agenda: ${JSON.stringify(agenda)}`);
+            for (var i=0; i<agenda.length; i++) {
+                $scope.agendaStructure[3][0][i] = agenda[i].item;
+                $scope.agendaStructure[3][1][i] = agenda[i].description;
+            };
+            $scope.agendaStructure = listOfItemsSL.prepareEdit(agenda.length-1, $scope.agendaStructure);
+            // console.log(`agendaStructure: ${$scope.agendaStructure}`);
+        };
+    };
+
+    $scope.showAgendaItem = function() {
+        // console.log("Entering showAgendaItem. numAgendaItems: "+$scope.agendaStructure[4]);
+        if ($scope.agendaStructure[3][0][$scope.agendaStructure[4]-1]) {
+            // console.log("numLines: "+$scope.agendaStructure[4]+", Item: "+$scope.agendaStructure[3][0][$scope.agendaStructure[4]]);
+            $scope.agendaStructure = listOfItemsSL.addItem($scope.agendaStructure);
+        } else {
+            $window.alert("Du skal udfylde det tomme felt.");
+        };
+    };
+    
+    $scope.removeAgendaItem = function(agendaNum) {
+        // console.log("Entering removeAgendaItem. numAgendaItems: "+$scope.agendaStructure[4]);
+        $scope.agendaStructure = listOfItemsSL.removeItem(agendaNum, $scope.agendaStructure);
+    };
+
     $scope.editEvent = function(id) {
 
         var addr = {
@@ -473,9 +590,10 @@ function($scope, $http, $location, $route, $window, AuthService) {
         };
 
         var organizers = [];
-        for (var i=0; i<$scope.numOrgLines+1; i++) {
-            if ($scope.organizers[i] != "") {
-                organizers.push({orgname: $scope.organizers[i]});
+        // console.log(`Number of organizers: ${$scope.organiserStructure[4]}`);
+        for (var i=0; i<$scope.organiserStructure[4]+1; i++) {
+            if ($scope.organiserStructure[3][0][i] != "") {
+                organizers.push({orgname: $scope.organiserStructure[3][0][i]});
             };
         };
 
@@ -494,21 +612,18 @@ function($scope, $http, $location, $route, $window, AuthService) {
                 committees.push(committee);
             };
         };
- 
-        console.log(`Selected id: ${$scope.selectEventtype}`);
-        var selectedEventtypeName = "NONE";
-        for (var j=0; j<$scope.eventtypes.length; j++) {
-            console.log(`${j}. eventtypeName: ${$scope.eventtypes[j].eventtypeName}. id: ${$scope.eventtypes[j]._id}`);
-            if ($scope.selectEventtype == $scope.eventtypes[j]._id) {
-                selectedEventtypeName = $scope.eventtypes[j].eventtypeName;
-                console.log(`Found ${$scope.eventtypes[j].eventtypeName}.`);
+
+        var agenda = [];
+        // console.log(`Number of agenda items: ${$scope.agendaStructure[4]}`);
+        if ($scope.yesAgenda) {
+            for (var i=0; i<$scope.agendaStructure[4]+1; i++) {
+                agenda.push({"item": $scope.agendaStructure[3][0][i], "description": $scope.agendaStructure[3][1][i]});
             };
+            // console.log(`${JSON.stringify(agenda)}`);
         };
 
         var data = {
             eventName: $scope.event.eventName,
-            _eventtype: $scope.selectEventtype,
-            eventtypeName: selectedEventtypeName,
             year: $scope.event.year,
             venue: $scope.event.venue,
 			address: addr,
@@ -516,6 +631,8 @@ function($scope, $http, $location, $route, $window, AuthService) {
             startdate: $scope.startdateView,
             enddate: $scope.enddateView,
             invitation: $scope.event.invitation,
+            agendaOrNot: $scope.agendaOrNot,
+            agenda: agenda,
             summaryExist: $scope.event.summaryExist
         };
         
