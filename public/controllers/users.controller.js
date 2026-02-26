@@ -108,8 +108,8 @@ function($scope, $http, $location, ProfileService) {
                 url: 'tenants/noauth',
                 data: tenant
             }).then(function(tenant_response) {
-                // console.log(`Tenant Status: ${tenant_response.status}`);
-                // console.log(`Tenant ID: ${tenant_response.data._id}`);
+                console.log(`Tenant Status: ${tenant_response.status}`);
+                console.log(`Tenant ID: ${tenant_response.data._id}`);
                 $scope._tenant = tenant_response.data._id;
                 about._tenant = $scope._tenant;
                 return $http({
@@ -118,9 +118,9 @@ function($scope, $http, $location, ProfileService) {
                     data: about
                 });
             }).then(function(about_response) {
-                // console.log(`About Status 1: ${about_response.status}`);
+                console.log(`About Status 1: ${about_response.status}`);
                 $scope.aboutID = about_response.data._id;
-                // console.log(`Tenant ID: ${$scope._tenant}`);
+                console.log(`Tenant ID: ${$scope._tenant}`);
                 tenantAdmin._tenant = $scope._tenant;
                 return $http({
                     method: 'POST',
@@ -128,7 +128,7 @@ function($scope, $http, $location, ProfileService) {
                     data: tenantAdmin
                 });
             }).then(function(user_response) {
-                // console.log(`User Status: ${user_response.status}`);
+                console.log(`User Status: ${user_response.status}`);
                 localStorage.userToken = user_response.headers()['x-auth'];
                 localStorage.familielejrUserId = user_response.data._id;
                 $scope.isLoggedIn = true;
@@ -138,14 +138,14 @@ function($scope, $http, $location, ProfileService) {
                 };
                 $scope._creator = user_response.data._id;
                 $scope._admin = user_response.data._id;
-                // console.log(`Now patching tenant with _creator ${tenant._creator} and _admin ${tenant._admin}`);
+                console.log(`Now patching tenant with _creator ${tenant._creator} and _admin ${tenant._admin}`);
                 return $http({
                     method: 'PATCH',
                     url: 'tenants/noauth/'+$scope._tenant,
                     data: tenant
                 });
             }).then(function(tenant2_response) {
-                // console.log(`Second Tenant Status: ${tenant2_response.status}`);
+                console.log(`Second Tenant Status: ${tenant2_response.status}`);
                 var about = {
                     _creator: $scope._creator
                 };
@@ -155,7 +155,7 @@ function($scope, $http, $location, ProfileService) {
                     data: about
                 });
             }).then(function(about2_response) {
-                // console.log(`About Status: ${about2_response.status}`);
+                console.log(`About Status: ${about2_response.status}`);
                 $location.path('/home');
             }, function errorCallback(response) {
                 console.log(`Error Status, new tenant and admin: ${response.status}`);
@@ -339,7 +339,7 @@ function($scope, $http, $location, $route, AuthService, ProfileService) {
         // console.log(`In tenantShift. ${$scope.selectTenant}`);
         $http({
             method: 'PATCH',
-            url: 'users/tenantshift/' + $scope.user._id,
+            url: `users/tenantshift/${$scope.user._id}`,
             headers: {
                 'x-auth': localStorage.userToken
             },

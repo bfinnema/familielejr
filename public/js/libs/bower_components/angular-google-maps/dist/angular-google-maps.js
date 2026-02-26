@@ -186,31 +186,44 @@ Nicholas McCready - https://twitter.com/nmccready
         }
         google.maps.InfoWindow.prototype._open = google.maps.InfoWindow.prototype.open;
         google.maps.InfoWindow.prototype._close = google.maps.InfoWindow.prototype.close;
-        google.maps.InfoWindow.prototype._isOpen = false;
+        try {
+          google.maps.InfoWindow.prototype._isOpen = false;
+        } catch (_error) {}
         google.maps.InfoWindow.prototype.open = function(map, anchor, recurse) {
           if (recurse != null) {
             return;
           }
-          this._isOpen = true;
+          try {
+            this._isOpen = true;
+          } catch (_error) {}
           this._open(map, anchor, true);
         };
         google.maps.InfoWindow.prototype.close = function(recurse) {
           if (recurse != null) {
             return;
           }
-          this._isOpen = false;
+          try {
+            this._isOpen = false;
+          } catch (_error) {}
           this._close(true);
         };
-        google.maps.InfoWindow.prototype.isOpen = function(val) {
-          if (val == null) {
-            val = void 0;
-          }
-          if (val == null) {
-            return this._isOpen;
-          } else {
-            return this._isOpen = val;
-          }
-        };
+        if (typeof google.maps.InfoWindow.prototype.isOpen !== 'function') {
+          try {
+            google.maps.InfoWindow.prototype.isOpen = function(val) {
+              if (val == null) {
+                val = void 0;
+              }
+              if (val == null) {
+                return this._isOpen;
+              } else {
+                try {
+                  this._isOpen = val;
+                } catch (_error) {}
+                return this._isOpen;
+              }
+            };
+          } catch (_error) {}
+        }
 
         /*
         Do the same for InfoBox

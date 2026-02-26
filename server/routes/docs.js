@@ -3,13 +3,14 @@ const _ = require('lodash');
 // const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
-const aws = require('aws-sdk');
+// const aws = require('aws-sdk');
+// const aws = require('@aws-sdk/client-s3');
 
 var {Doc} = require('../models/doc');
 var {authenticate} = require('../middleware/authenticate');
 
-aws.config.region = 'eu-west-2';
-const S3_BUCKET = process.env.S3_BUCKET;
+// aws.config.region = 'eu-west-2';
+// const S3_BUCKET = process.env.S3_BUCKET;
 
 router.post('/upload', authenticate, (req, res) => {
   // console.log(req.body.description);

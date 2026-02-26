@@ -3,13 +3,48 @@ const _ = require('lodash');
 // const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
-const aws = require('aws-sdk');
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand
+} = require("@aws-sdk/client-s3");
 
 var {Photo} = require('../models/photo');
 var {authenticate} = require('../middleware/authenticate');
 
-aws.config.region = 'eu-west-2';
 const S3_BUCKET = process.env.S3_BUCKET;
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'eu-west-2'
+});
+
+function getS3Command(operation, params) {
+  if (operation === 'putObject') {
+    return new PutObjectCommand({
+      Bucket: params.Bucket,
+      Key: params.Key,
+      ContentType: params.ContentType,
+      StorageClass: 'STANDARD_IA'
+    });
+  }
+
+  if (operation === 'getObject') {
+    return new GetObjectCommand({
+      Bucket: params.Bucket,
+      Key: params.Key
+    });
+  }
+
+  if (operation === 'deleteObject') {
+    return new DeleteObjectCommand({
+      Bucket: params.Bucket,
+      Key: params.Key
+    });
+  }
+
+  throw new Error(`Unsupported S3 operation: ${operation}`);
+}
 
 router.post('/upload', authenticate, (req, res) => {
   // console.log(req.body.text);
@@ -261,80 +296,71 @@ router.patch('/orientation/:id', authenticate, (req, res) => {
   });
 });
 
-router.get('/s3ops/sign-s3', authenticate, (req, res) => {
-  const s3 = new aws.S3();
+router.get('/s3ops/sign-s3', authenticate, async (req, res) => {
+  // console.log(`In sign-s3. fileName: ${req.query['file_name']}`);
   const fileName = req.query['file_name'];
   const fileType = req.query['file_type'];
   const folder = req.query['folder'];
   const operation = req.query['operation'];
   
   // console.log(`Folder: ${folder} File: ${fileName} ${fileType}, Operation: ${operation}`)
-  // console.log(process.env.AWS_ACCESS_KEY_ID);
-  // console.log(process.env.AWS_SECRET_ACCESS_KEY);
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: albumPhotosKey + fileName,
-    Expires: 60,
-    ContentType: fileType,
-    StorageClass: 'STANDARD_IA'
+    ContentType: fileType
   };
 
-  s3.getSignedUrl(operation, s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.end();
-    }
+  try {
+    const command = getS3Command(operation, s3Params);
+    const signedRequest = await getSignedUrl(s3Client, command, { expiresIn: 60 });
     const returnData = {
-      signedRequest: data,
+      signedRequest,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
     };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
+    res.json(returnData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
 });
 
-router.get('/s3ops/sign-s3-getimage', authenticate, (req, res) => {
+router.get('/s3ops/sign-s3-getimage', authenticate, async (req, res) => {
   // console.log(`In sign-s3-getimage. fileName: ${req.query['file_name']}`);
-  const s3 = new aws.S3();
   const fileName = req.query['file_name'];
-  const fileType = req.query['file_type'];
   const folder = req.query['folder'];
-  const operation = req.query['operation'];
+  const operation = 'getObject';
 
-  // console.log(`File name: ${fileName}, fileType: ${fileType}, folder: ${folder}, operation: ${operation}`);
+  // console.log(`File name: ${fileName}, folder: ${folder}, operation: ${operation}`);
   // console.log(`S3_BUCKET: ${S3_BUCKET}`);
   
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: albumPhotosKey + fileName,
-    Expires: 1800
+    Key: albumPhotosKey + fileName
   };
 
   // console.log(`Key in s3Params: ${s3Params.Key}`);
 
-  s3.getSignedUrl(operation, s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.end();
-    }
+  try {
+    const command = getS3Command(operation, s3Params);
+    const signedRequest = await getSignedUrl(s3Client, command, { expiresIn: 1800 });
     const returnData = {
-      signedRequest: data,
+      signedRequest,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
     };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
+    res.json(returnData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
 });
 
-router.get('/s3ops/sign-s3-deleteimage', authenticate, (req, res) => {
+router.get('/s3ops/sign-s3-deleteimage', authenticate, async (req, res) => {
   // console.log(`In sign-s3-deleteimage. fileName: ${req.query['file_name']}`);
-  const s3 = new aws.S3();
   const fileName = req.query['file_name'];
-  const fileType = req.query['file_type'];
   const folder = req.query['folder'];
-  const operation = req.query['operation'];
+  const operation = 'deleteObject';
 
   // console.log(`File name: ${fileName}, fileType: ${fileType}, folder: ${folder}, operation: ${operation}`);
   // console.log(`S3_BUCKET: ${S3_BUCKET}`);
@@ -342,24 +368,23 @@ router.get('/s3ops/sign-s3-deleteimage', authenticate, (req, res) => {
   const albumPhotosKey = encodeURIComponent(folder) + '/';
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: albumPhotosKey + fileName,
-    Expires: 60
+    Key: albumPhotosKey + fileName
   };
 
   // console.log(`Key in s3Params: ${s3Params.Key}`);
 
-  s3.getSignedUrl(operation, s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.end();
-    }
+  try {
+    const command = getS3Command(operation, s3Params);
+    const signedRequest = await getSignedUrl(s3Client, command, { expiresIn: 60 });
     const returnData = {
-      signedRequest: data,
+      signedRequest,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${folder}/${fileName}`
     };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
+    res.json(returnData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
 });
 
 module.exports = router;

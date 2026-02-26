@@ -226,7 +226,7 @@ function($scope, $http, $location, $routeParams, $route, $window, AuthService) {
     };
 
     $scope.removeTenant = function(tenant) {
-        if ($scope.tenantDeletable && $window.confirm('Bekræft venligst at du vil slette tenant '+tenant.tenantname)) {
+        if ($scope.tenantDeletable && $window.confirm('Bekræft venligst at du vil slette tenant '+tenant.tenantName)) {
             $http({
                 method: 'DELETE',
                 url: 'abouts/tenant/'+tenant._id,

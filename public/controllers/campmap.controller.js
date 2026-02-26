@@ -4,6 +4,10 @@ angular.module('familielejr')
 function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
 
     // console.log('This is the maps controller');
+    var mapInstance = null;
+    var infoWindow = null;
+    var advancedMarkers = [];
+    var AdvancedMarkerElementCtor = null;
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -17,6 +21,32 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
         angular.element(document.querySelector( '#history' ) ).addClass('active');
         angular.element(document.querySelector( '#campmap' ) ).addClass('active');
     }, 1000);
+
+    $scope.mapOptions = {
+        minZoom: 8,
+        zoomControl: false,
+        draggable: true,
+        navigationControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        disableDoubleClickZoom: false,
+        keyboardShortcuts: true,
+        mapId: 'DEMO_MAP_ID',
+        styles: [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{
+                visibility: "off"
+            }]
+        }, {
+            featureType: "transit",
+            elementType: "all",
+            stylers: [{
+                visibility: "off"
+            }]
+        }]
+    };
 
     uiGmapGoogleMapApi.then(function (maps) {
         // console.log('Google Maps loaded');
@@ -41,32 +71,75 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
         $scope.googlemap = {};
     });
 
-    $scope.windowOptions = {
-        show: true
-    };
-
     $scope.wincontent = "Hello";
     $scope.onClick = function (name, address, years, website) {
-        //$scope.windowOptions.show = !$scope.windowOptions.show;
-        $scope.windowOptions.show = true;
-        //console.log('$scope.windowOptions.show: ', $scope.windowOptions.show);
-        //console.log('Adressen er: ' + address +' Matrikel: ' + matrikel);
         $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
-        //console.log('wincontent: ' + $scope.wincontent);
     };
 
-    $scope.closeClick = function () {
-        $scope.windowOptions.show = true;
-    };
+    function clearAdvancedMarkers() {
+        angular.forEach(advancedMarkers, function(marker) {
+            marker.map = null;
+        });
+        advancedMarkers = [];
+    }
 
-    $scope.title = "Window Title!";
+    function getAdvancedMarkerCtor() {
+        if (AdvancedMarkerElementCtor) {
+            return Promise.resolve(AdvancedMarkerElementCtor);
+        }
+
+        return google.maps.importLibrary('marker').then(function(markerLib) {
+            AdvancedMarkerElementCtor = markerLib.AdvancedMarkerElement;
+            return AdvancedMarkerElementCtor;
+        });
+    }
+
+    function renderAdvancedMarkers() {
+        if (!mapInstance || !$scope.markers || $scope.markers.length === 0) {
+            return;
+        }
+
+        getAdvancedMarkerCtor().then(function(AdvancedMarkerElement) {
+            clearAdvancedMarkers();
+            if (!infoWindow) {
+                infoWindow = new google.maps.InfoWindow();
+            }
+
+            angular.forEach($scope.markers, function(value) {
+                var marker = new AdvancedMarkerElement({
+                    map: mapInstance,
+                    position: {
+                        lat: value.coords.latitude,
+                        lng: value.coords.longitude
+                    },
+                    title: value.name
+                });
+
+                marker.addListener('click', function() {
+                    var content = '<div><strong>' + value.name + '</strong><br>' +
+                        value.address + '<br>Var der: ' + value.years + '<br>' +
+                        value.website + '</div>';
+                    infoWindow.setContent(content);
+                    infoWindow.open({
+                        map: mapInstance,
+                        anchor: marker
+                    });
+                    $scope.$applyAsync(function() {
+                        $scope.onClick(value.name, value.address, value.years, value.website);
+                    });
+                });
+
+                advancedMarkers.push(marker);
+            });
+        }).catch(function(error) {
+            console.log('Unable to load marker library', error);
+        });
+    }
 
     uiGmapIsReady.promise() // if no value is put in promise() it defaults to promise(1)
     .then(function (instances) {
-        console.log(instances[0].map); // get the current map
-    })
-        .then(function () {
-        $scope.addMarkerClickFunction($scope.markers);
+        mapInstance = instances[0].map;
+        renderAdvancedMarkers();
     });
 /*
     $http.get('json/camps.json').then(function(data) {
@@ -149,7 +222,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Lærkereden",
             "address": "Slåenvej 6, 8500 Grenå",
-            "years": "2009, 2010",
+            "years": "2010",
             "website": "http://www.laerkereden.org/"
         },
         {
@@ -160,7 +233,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Bisseruplejren",
             "address": "Gammel Strandvej 135, 4243 Rude",
-            "years": "2015, 2017, 2019, 2021",
+            "years": "2015, 2017, 2019, 2021, 2025",
             "website": "http://www.bisseruplejren.dk/"
         },
         {
@@ -193,7 +266,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             },
             "name": "Torø",
             "address": "Torø 1, 5610 Assens",
-            "years": "2014",
+            "years": "2014, 2024",
             "website": "http://kolonierne.dk/koloni/skovhytten/"
         },
         {
@@ -250,45 +323,26 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             "address": "Frydenborgvej 40, 6092 Sønder Stenderup",
             "years": "2020",
             "website": "https://www.frydenborglejren.dk/"
+        },
+        {
+            "id": 16,
+            "coords": {
+                "latitude": 55.191249915574474,
+                "longitude": 11.5573923
+            },
+            "name": "Klintehytten",
+            "address": "Strandbakken 145, 4700 Næstved",
+            "years": "2023",
+            "website": "https://klintehytten.dk/"
         }
     ];
 
-    $scope.addMarkerClickFunction = function (markersArray) {
-        angular.forEach(markersArray, function (value, key) {
-            value.onClick = function () {
-                $scope.onClick(value.name, value.address, value.years, value.website);
-                $scope.MapOptions.markers.selected = value;
-            };
-        });
-    };
-
-    $scope.MapOptions = {
-        minZoom: 15,
-        zoomControl: false,
-        draggable: true,
-        navigationControl: false,
-        mapTypeControl: false,
-        scaleControl: false,
-        streetViewControl: false,
-        disableDoubleClickZoom: false,
-        keyboardShortcuts: true,
-        markers: {
-            selected: {}
-        },
-        styles: [{
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{
-                visibility: "off"
-            }]
-        }, {
-            featureType: "transit",
-            elementType: "all",
-            stylers: [{
-                visibility: "off"
-            }]
-        }],
-    };
+    $scope.$on('$destroy', function() {
+        clearAdvancedMarkers();
+        if (infoWindow) {
+            infoWindow.close();
+        }
+    });
 }])
 
 .controller('pasteventlistCtrl', ['$scope', '$http', 'AuthService', 

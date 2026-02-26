@@ -1,9 +1,11 @@
 var familielejr = angular.module('familielejr', ['ngRoute', 'uiGmapgoogle-maps', 'ngFileUpload']);
+var googleMapsKey = (window.__env && window.__env.GOOGLE_MAPS_KEY) || '';
 
+// nn https://angular-ui.github.io/angular-google-maps/#!/api/GoogleMapApi
 familielejr.config(['uiGmapGoogleMapApiProvider', function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
-        key: 'AIzaSyCaMYDW9iGzjm-30DhtenRYrJ_lTipnRzE',
-        v: '3', //defaults to latest 3.X anyhow
+        key: googleMapsKey,
+        v: 'weekly',
         libraries: 'geometry,visualization'
     });
 }]);

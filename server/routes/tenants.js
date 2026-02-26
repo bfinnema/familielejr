@@ -31,7 +31,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.post('/noauth', (req, res) => {
-  // console.log(`name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
+  console.log(`name: ${req.body.tenantName}, startYear: ${req.body.startYear}`);
   var tenant = new Tenant({
       tenantName: req.body.tenantName,
       description: req.body.description,

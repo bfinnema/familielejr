@@ -9,12 +9,12 @@ var {authenticate} = require('../middleware/authenticate');
 
 router.post('/', (req, res) => {
   var body = _.pick(req.body, ['email', 'password', 'confirmpwd', 'role', 'name', 'address', 'phone', 'secret', '_tenant', 'memberships']);
-  // console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
-  // console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
-  // console.log(`memberships: ${JSON.stringify(body.memberships)}`);
-  // console.log(`_tenant: ${body._tenant}, First memebership: ${body.memberships[0]._tenant}`);
+  console.log(`Email: ${body.email}, Name: ${body.name.firstname} ${body.name.middlename} ${body.name.surname}`);
+  console.log(`Secret and passwords: ${body.secret}, ${body.password}, ${body.confirmpwd}, ${body.role}`);
+  console.log(`memberships: ${JSON.stringify(body.memberships)}`);
+  console.log(`_tenant: ${body._tenant}, First memebership: ${body.memberships[0]._tenant}`);
   if (body.secret == process.env.REGISTRATION_SECRET && body.password == body.confirmpwd) {
-    // console.log('Secret approved and passwords equal.');
+    console.log('Secret approved and passwords equal.');
     var user = new User(body);
 
     user.save().then(() => {

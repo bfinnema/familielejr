@@ -30,12 +30,15 @@ router.post('/', authenticate, (req, res) => {
 });
 
 router.post('/noauth', (req, res) => {
-  // console.log(`In abouts. communityName: ${req.body.communityName}`);
+  console.log(`In abouts. communityName: ${req.body.communityName}`);
   var about = new About({
+    communityName: req.body.communityName,
     _tenant: req.body._tenant,
     metadata: req.body.metadata,
     textHeadlines: req.body.textHeadlines
   });
+  console.log(`about: ${JSON.stringify(about)}`);
+  console.log(`Raw about: ${about}`);
 
   about.save().then((doc) => {
     res.send(doc);

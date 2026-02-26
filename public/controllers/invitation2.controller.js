@@ -167,6 +167,10 @@ function($scope, $http, $location, $window, AuthService) {
 
 .controller('invitation2displayCtrl', ['$scope', '$http', '$routeParams', 'uiGmapGoogleMapApi', 'uiGmapIsReady', 'AuthService', 'ConfigService', 
 function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthService, ConfigService) {
+    var mapInstance = null;
+    var infoWindow = null;
+    var eventMarker = null;
+    var AdvancedMarkerElementCtor = null;
 
     $scope.isLoggedIn = false;
     AuthService.getUserStatus().then(function() {
@@ -188,6 +192,31 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
 
     var months = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
     var days = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
+    $scope.mapOptions = {
+        minZoom: 8,
+        zoomControl: false,
+        draggable: true,
+        navigationControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        disableDoubleClickZoom: false,
+        keyboardShortcuts: true,
+        mapId: 'DEMO_MAP_ID',
+        styles: [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{
+                visibility: "off"
+            }]
+        }, {
+            featureType: "transit",
+            elementType: "all",
+            stylers: [{
+                visibility: "off"
+            }]
+        }]
+    };
 
     $scope.eventsExist = true;
     $scope.eventSelected = false;
@@ -258,6 +287,59 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
         $scope.eventSelected = true;
         prepareInvitation();
     };
+
+    function getAdvancedMarkerCtor() {
+        if (AdvancedMarkerElementCtor) {
+            return Promise.resolve(AdvancedMarkerElementCtor);
+        }
+
+        return google.maps.importLibrary('marker').then(function(markerLib) {
+            AdvancedMarkerElementCtor = markerLib.AdvancedMarkerElement;
+            return AdvancedMarkerElementCtor;
+        });
+    }
+
+    function clearEventMarker() {
+        if (eventMarker) {
+            eventMarker.map = null;
+            eventMarker = null;
+        }
+    }
+
+    function renderEventMarker() {
+        if (!mapInstance || !$scope.latitude || !$scope.longitude) {
+            return;
+        }
+
+        getAdvancedMarkerCtor().then(function(AdvancedMarkerElement) {
+            clearEventMarker();
+            if (!infoWindow) {
+                infoWindow = new google.maps.InfoWindow();
+            }
+
+            eventMarker = new AdvancedMarkerElement({
+                map: mapInstance,
+                position: {
+                    lat: $scope.latitude,
+                    lng: $scope.longitude
+                },
+                title: $scope.event.venue
+            });
+
+            eventMarker.addListener('click', function() {
+                var content = '<div><strong>' + $scope.event.venue + '</strong><br>' +
+                    $scope.event.address.street + ', ' + $scope.event.address.zip + ' ' + $scope.event.address.town +
+                    '</div>';
+                infoWindow.setContent(content);
+                infoWindow.open({
+                    map: mapInstance,
+                    anchor: eventMarker
+                });
+            });
+        }).catch(function(error) {
+            console.log('Unable to load marker library', error);
+        });
+    }
 
     prepareInvitation = function() {
         $http({
@@ -330,77 +412,23 @@ function($scope, $http, $routeParams, uiGmapGoogleMapApi,uiGmapIsReady, AuthServ
                     $scope.googlemap = {};
                 });
 
-            });
-
-            $scope.windowOptions = {
-                show: true
-            };
-        
-            $scope.wincontent = "Hello";
-            $scope.onClick = function (name, address, years, website) {
-                $scope.windowOptions.show = true;
-                $scope.wincontent = name + ', ' + address + '.  Var der: ' + years + '. ' + website;
-            };
-        
-            $scope.closeClick = function () {
-                $scope.windowOptions.show = true;
-            };
-        
-            $scope.title = "Window Title!";
-        
-            uiGmapIsReady.promise() // if no value is put in promise() it defaults to promise(1)
-            .then(function (instances) {
-                console.log(instances[0].map); // get the current map
-            })
-                .then(function () {
-                $scope.addMarkerClickFunction($scope.markers);
-            });
-        
-            $scope.markers = [
-                
-            ];
-        
-            $scope.addMarkerClickFunction = function (markersArray) {
-                angular.forEach(markersArray, function (value, key) {
-                    value.onClick = function () {
-                        $scope.onClick(value.name, value.address, value.years, value.website);
-                        $scope.MapOptions.markers.selected = value;
-                    };
+                uiGmapIsReady.promise().then(function(instances) {
+                    mapInstance = instances[0].map;
+                    renderEventMarker();
                 });
-            };
-        
-            $scope.MapOptions = {
-                minZoom: 15,
-                zoomControl: false,
-                draggable: true,
-                navigationControl: false,
-                mapTypeControl: false,
-                scaleControl: false,
-                streetViewControl: false,
-                disableDoubleClickZoom: false,
-                keyboardShortcuts: true,
-                markers: {
-                    selected: {}
-                },
-                styles: [{
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{
-                        visibility: "off"
-                    }]
-                }, {
-                    featureType: "transit",
-                    elementType: "all",
-                    stylers: [{
-                        visibility: "off"
-                    }]
-                }],
-            };
+            });
         
         }, function errorCallback(response) {
             console.log(`Error! Status: ${response.status}`);
         });
     };
+
+    $scope.$on('$destroy', function() {
+        clearEventMarker();
+        if (infoWindow) {
+            infoWindow.close();
+        }
+    });
 
     /* $http({
         method: 'GET',
