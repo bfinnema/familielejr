@@ -37,6 +37,13 @@ const publicPath = path.join(__dirname, '../public');
 var app = express();
 const port = process.env.PORT;
 
+app.get('/env.js', (req, res) => {
+  const key = process.env.GOOGLE_MAPS_KEY || '';
+  res.type('application/javascript');
+  res.set('Cache-Control', 'no-store');
+  res.send(`window.__env = { GOOGLE_MAPS_KEY: ${JSON.stringify(key)} };`);
+});
+
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
