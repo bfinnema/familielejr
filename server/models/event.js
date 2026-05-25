@@ -13,6 +13,10 @@ var EventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    _place: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
     eventtypeName: {
         type: String,
         required: true

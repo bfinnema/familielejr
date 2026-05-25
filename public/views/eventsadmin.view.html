@@ -75,6 +75,13 @@
         <h3 class="form-signin-heading">Detaljer om stedet</h3>
         <div class="row">
             <div class="form-group col-md-4">
+                <label>Vælg sted</label>
+                <select class="form-control" ng-model="selectPlace" name="selectPlace" ng-change="placeSelected()" required>
+                    <option ng-repeat="place in places" value="{{place}}">{{place.placeName}}</option>
+                </select>
+                <i ng-show="formFutureEvent.selectPlace.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
                 <label>Navn</label>
                 <input type="text" id="venue" class="form-control" ng-model="venue" placeholder="Stedets navn">
             </div>

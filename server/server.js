@@ -4,10 +4,6 @@ const _ = require('lodash');
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-// const {ObjectId} = require('mongodb');
-// const fs = require('fs');
-// const aws = require('aws-sdk');
-// const S3 = require('aws-sdk/clients/s3');
 
 var {mongoose} = require('./db/mongoose');
 var {authenticate} = require('./middleware/authenticate');
@@ -29,9 +25,7 @@ var tenants = require('./routes/tenants');
 var abouts = require('./routes/abouts');
 var eventtypes = require('./routes/eventtypes');
 var events = require('./routes/events');
-
-// aws.config.region = 'eu-west-2';
-// const S3_BUCKET = process.env.S3_BUCKET;
+var places = require('./routes/places');
 
 const publicPath = path.join(__dirname, '../public');
 var app = express();
@@ -66,6 +60,7 @@ app.use('/tenants', tenants);
 app.use('/abouts', abouts);
 app.use('/eventtypes', eventtypes);
 app.use('/events', events);
+app.use('/places', places);
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

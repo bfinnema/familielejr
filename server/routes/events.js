@@ -29,6 +29,7 @@ router.post('/', authenticate, (req, res) => {
   ]);
   body._creator = req.user._id;
   body._tenant = req.user._tenant;
+  if (req.body._place) {body._place = req.body._place};
   var event = new Event(body);
 
   event.save().then((doc) => {
@@ -278,6 +279,7 @@ router.get('/year/:year', authenticate, (req, res) => {
 });
 
 router.patch('/:id', authenticate, (req, res) => {
+  // console.log(`Patching event ${req.body.eventName}`);
   var id = req.params.id;
   var body = _.pick(req.body, [
     'eventName',
@@ -296,6 +298,10 @@ router.patch('/:id', authenticate, (req, res) => {
     'agendaOrNot',
     'agenda'
   ]);
+  if (req.body._place) {
+    console.log(`_place: ${req.body._place}`);
+    body._place = req.body._place
+  };
 
   if (!ObjectId.isValid(id)) {
     console.log(`id is not valid`);

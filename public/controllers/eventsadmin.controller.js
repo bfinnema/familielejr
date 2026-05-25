@@ -218,6 +218,19 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
             $scope.newEventEntry = false;
         } else {
             $scope.newEventEntry = true;
+            $scope.isPlaceSelected = false;
+            $http({
+                method: 'GET',
+                url: 'places',
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(response) {
+                console.log(`placesStatus: ${response.status}`);
+                $scope.places = response.data;
+            }, function errorCallback(response) {
+                console.log(`placesStatus: ${response.status}`);
+            });
         };
     };
 
@@ -263,6 +276,16 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
             $scope.agendaStructure[3] = texts;
             $scope.agendaStructure = listOfItemsSL.prepareEdit($scope.selectedEventtype.agenda.length-1, $scope.agendaStructure); */
         };
+    };
+
+    $scope.placeSelected = function() {
+        $scope.selectedPlace = JSON.parse($scope.selectPlace);
+        $scope.venue = $scope.selectedPlace.placeName;
+        $scope.website = $scope.selectedPlace.website;
+        $scope.street = $scope.selectedPlace.address.street + " " + $scope.selectedPlace.address.houseno;
+        $scope.zip = $scope.selectedPlace.address.zip;
+        $scope.town = $scope.selectedPlace.address.town;
+        $scope.isPlaceSelected = true;
     };
 
     $scope.generateFutureEvent = function() {
@@ -340,6 +363,13 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         
         if (organizers.length > 0) {data.organizers = organizers;};
         if (committees.length > 0) {data.committees = committees;};
+        if ($scope.isPlaceSelected) {
+            data._place = $scope.selectedPlace._id
+            var placeData = {
+                eventName: $scope.eventName,
+                year: $scope.year || (new Date()).getFullYear()
+            };
+        };
 
         // console.log(`${JSON.stringify(data)}`);
 
@@ -351,6 +381,20 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
             },
             data: data
         }).then(function(response) {
+            // console.log(`Event POST Status: ${response.status}`);
+            // console.log(`EventName: ${response.data.eventName}`);
+            var storedEvent = response.data;
+            // console.log(`Event stored: ${JSON.stringify(storedEvent)}`);
+            return $http({
+                method: 'PATCH',
+                url: 'places/addevent/' + $scope.selectedPlace._id + '/' + storedEvent._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: placeData
+            });
+        }).then(function(response) {
+            // console.log(`Place PATCH Status: ${response.status}`);
             $location.path('/eventsadmin');
             $route.reload();
         }, function errorCallback(response) {
@@ -385,6 +429,16 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         // console.log(`Tenant fetched. Status: ${tenant.status}. Tenant name: ${tenant.data.tenantName}`);
         $scope.tenantName = tenant.data.tenantName;
         // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/places',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(places) {
+        // console.log(`placesStatus: ${places.status}`);
+        $scope.places = places.data;
         return $http({
             method: 'GET',
             url: '/events/' + $routeParams.id,
@@ -472,6 +526,22 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         } else {
             console.log('No eventtypes');
         };
+        if ($scope.event._place) {
+            // console.log(`There is a _place attached to the event.`);
+            $http({
+                method: 'GET',
+                url: '/places/' + $scope.event._place,
+                headers: {
+                    'x-auth': localStorage.userToken
+                }
+            }).then(function(place) {
+                // console.log(`Current place collected with Success. Status: ${place.status}`);
+                $scope.currentPlace = place.data;
+                $scope.currentPlaceChanged = false;
+            }, function errorCallback(response) {
+                console.log(`Error getting current place. Status: ${response.status}`);
+            })
+        }
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
     });
@@ -583,6 +653,61 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         $scope.agendaStructure = listOfItemsSL.removeItem(agendaNum, $scope.agendaStructure);
     };
 
+    $scope.placeSelected = function() {
+        $scope.selectedPlace = JSON.parse($scope.selectPlace);
+        $scope.event.venue = $scope.selectedPlace.placeName;
+        $scope.event.website = $scope.selectedPlace.website;
+        $scope.event.address.street = $scope.selectedPlace.address.street + " " + $scope.selectedPlace.address.houseno;
+        $scope.event.address.zip = $scope.selectedPlace.address.zip;
+        $scope.event.address.town = $scope.selectedPlace.address.town;
+        $scope.isPlaceSelected = true;
+        var placeData = {
+            eventName: $scope.event.eventName,
+            year: $scope.event.year || (new Date()).getFullYear()
+        };
+        if ($scope.event._place) {
+            if ($scope.event._place != $scope.selectedPlace._id) {
+                $http({
+                    method: 'PATCH',
+                    url: '/places/deleteevent/' + $scope.event._place + '/' + $scope.event._id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(response) {
+                    // console.log(`Success, event deleted from place: ${response.status}`);
+                    return $http({
+                        method: 'PATCH',
+                        url: '/places/addevent/' + $scope.selectedPlace._id + '/' + $scope.event._id,
+                        headers: {
+                            'x-auth': localStorage.userToken
+                        },
+                        data: placeData
+                    })
+                }).then(function(response) {
+                    // console.log(`Success, event added to place: ${response.status}`);
+                }, function errorCallback(response) {
+                    console.log(`Tried to delete event from original place and add to new place, Error Status: ${response.status}`);
+                });
+            } else {
+                console.log(`Selected place is the same as the _place attached to the event.`);
+            };
+        } else {
+            console.log(`There is no attached _place. Adding event to place`);
+            $http({
+                method: 'PATCH',
+                url: '/places/addevent/' + $scope.selectedPlace._id + '/' + $scope.event._id,
+                headers: {
+                    'x-auth': localStorage.userToken
+                },
+                data: placeData
+            }).then(function(response) {
+                console.log(`Success, event added to place: ${response.status}`);
+            }, function errorCallback(response) {
+                console.log(`Tried to add event to place, Error Status: ${response.status}`);
+            });
+        };
+    };
+
     $scope.editEvent = function(id) {
 
         var addr = {
@@ -638,6 +763,9 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         
         if (organizers.length > 0) {data.organizers = organizers;};
         if (committees.length > 0) {data.committees = committees;};
+        if ($scope.isPlaceSelected) {data._place = $scope.selectedPlace._id};
+
+        // console.log(`${JSON.stringify(data)}`);
 
         $http({
             method: 'PATCH',
@@ -714,24 +842,57 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
 
     $scope.removeEvent = function() {
         if ($window.confirm('Bekræft venligst at du vil slette begivenheden '+$scope.event.eventName)) {
-            $http({
-                method: 'DELETE',
-                url: 'events/'+$routeParams.id,
-                headers: {
-                    'x-auth': localStorage.userToken
-                }
-            }).then(function(response) {
-                console.log(`Status: ${response.status}`);
-                console.log(response.data._id);
-                $location.path('/eventsadmin');
-                $route.reload();
-            }, function errorCallback(response) {
-                console.log(`Status: ${response.status}`);
-                if (response.status == 404) {
-                    window-alert('Kun den, der har oprettet begivenheden, kan slette den.')
+            if ($scope.event._place) {
+                console.log(`There is a _place attached to this event, which is to be deleted.`);
+                $http({
+                    method: 'PATCH',
+                    url: 'places/deleteevent/'+$scope.event._place + '/' + $scope.event._id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(response) {
+                    console.log(`Status of PATCH place: ${response.status}`);
+                    console.log(response.data._id);
+                    return $http({
+                        method: 'DELETE',
+                        url: 'events/'+$scope.event._id,
+                        headers: {
+                            'x-auth': localStorage.userToken
+                        }
+                    });
+                }).then(function(response) {
+                    console.log(`Status of DELETE event: ${response.status}`);
+                    console.log(response.data._id);
                     $location.path('/eventsadmin');
-                };
-            });
+                    // $route.reload();
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                    if (response.status == 404) {
+                        window-alert('Kun den, der har oprettet begivenheden, kan slette den.')
+                        $location.path('/eventsadmin');
+                    };
+                });
+            } else {
+                console.log(`There is NOT a _place attached to this event, which is to be deleted.`);
+                $http({
+                    method: 'DELETE',
+                    url: 'events/'+$routeParams.id,
+                    headers: {
+                        'x-auth': localStorage.userToken
+                    }
+                }).then(function(response) {
+                    console.log(`Status of DELETE event: ${response.status}`);
+                    console.log(response.data._id);
+                    $location.path('/eventsadmin');
+                    // $route.reload();
+                }, function errorCallback(response) {
+                    console.log(`Status: ${response.status}`);
+                    if (response.status == 404) {
+                        window-alert('Kun den, der har oprettet begivenheden, kan slette den.')
+                        $location.path('/eventsadmin');
+                    };
+                });
+            };
         };
     };
 }])

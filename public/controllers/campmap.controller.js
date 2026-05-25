@@ -17,6 +17,57 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
         };
     });
 
+    $http({
+        method: 'GET',
+        url: 'tenants/mytenant',
+        headers: {
+            'x-auth': localStorage.userToken
+        }
+    }).then(function(tenant) {
+        // console.log(`Tenant fetched. Status: ${tenant.status}`);
+        $scope.tenantName = tenant.data.tenantName;
+        // $scope.tenant = tenant.data;
+        return $http({
+            method: 'GET',
+            url: '/places',
+            headers: {
+                'x-auth': localStorage.userToken
+            }
+        });
+    }).then(function(response) {
+        // console.log(`placesStatus: ${response.status}`);
+        $scope.places = response.data;
+        $scope.markers = [];
+        for (var i=0; i<$scope.places.length; i++) {
+            var years = "";
+            for (var j=0; j<$scope.places[i].events.length; j++) {
+                years = years + $scope.places[i].events[j].year;
+                if (j == $scope.places[i].events.length - 1) {
+                    years = years + ".";
+                } else {
+                    years = years + ", ";
+                };
+            };
+            // console.log(`Years: ${years}`);
+            var marker = {
+                "id": i,
+                "coords": {
+                    "latitude": $scope.places[i].coordinates.longitude,
+                    "longitude": $scope.places[i].coordinates.latitude
+                },
+                "name": $scope.places[i].placeName,
+                "address": $scope.places[i].address.street +' '+ $scope.places[i].address.houseno + ', ' + $scope.places[i].address.zip +' '+ $scope.places[i].address.town,
+                "years": years,
+                "website": $scope.places[i].website,
+            };
+            // console.log(`marker: ${JSON.stringify(marker)}`);
+            $scope.markers.push(marker);
+        };
+        // console.log(`Markers: ${JSON.stringify($scope.markers)}`);
+    }, function errorCallback(response) {
+        console.log(`placesStatus: ${response.status}`);
+    });
+
     setTimeout(function(){
         angular.element(document.querySelector( '#history' ) ).addClass('active');
         angular.element(document.querySelector( '#campmap' ) ).addClass('active');
@@ -141,13 +192,8 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
         mapInstance = instances[0].map;
         renderAdvancedMarkers();
     });
-/*
-    $http.get('json/camps.json').then(function(data) {
-        $scope.markers = data;
-        console.log($scope.markers);
-    });
-*/
-    $scope.markers = [
+
+    /* $scope.markers = [
         {
             "id": 0,
             "coords": {
@@ -168,6 +214,17 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             "name": "Lejrskolen Høve Strand",
             "address": "Asnæs Lyngvej 11, 4550 Asnæs",
             "years": "1996, 1999, 2001, 2003",
+            "website": "http://www.lejrskolen.dk",
+        },
+        {
+            "id": 17,
+            "coords": {
+                "latitude": 56.131615,
+                "longitude": 8.113345
+            },
+            "name": "Ringkøbing",
+            "address": "Sand Holms Vej 88, 6950 Ringkøbing",
+            "years": "2034",
             "website": "http://www.lejrskolen.dk",
         },
         {
@@ -335,7 +392,7 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             "years": "2023",
             "website": "https://klintehytten.dk/"
         }
-    ];
+    ]; */
 
     $scope.$on('$destroy', function() {
         clearAdvancedMarkers();

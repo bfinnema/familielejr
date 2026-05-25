@@ -191,6 +191,11 @@ familielejr.config(['$routeProvider', function($routeProvider){
             controller: 'invitation2displayCtrl',
             access: {restricted: true}
         }).
+        when('/placesadmin', {
+            templateUrl: 'views/placesadmin.view.html',
+            controller: 'placesadminCtrl',
+            access: {restricted: true}
+        }).
         when('/eventtypes', {
             templateUrl: 'views/eventtypes.view.html',
             controller: 'eventtypesCtrl',

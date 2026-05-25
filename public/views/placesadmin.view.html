@@ -1,0 +1,141 @@
+
+<div ng-include="'navigation.html'"></div>
+
+<div ng-show="!showEditForm">
+    <h2>Liste over Steder</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="10%">Navn</th>
+                <th width="20%">Beskrivelse</th>
+                <th width="20%">Adresse</th>
+                <th width="6%">År</th>
+                <th width="15%">Begivenheder</th>
+                <th width="15%">Koordinater</th>
+                <th width="14%">Ændre / Detaljer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="place in places">
+                <td><a href="{{place.website}}" target="_blank">{{ place.placeName }}</a></td>
+                <td>{{ place.description }}</td>
+                <td><a href="https://www.google.com/maps/search/{{place.address.street}}+{{place.address.houseno}}+{{place.address.zip}}+{{place.address.town}}" target="_blank">{{place.address.street}} {{place.address.houseno}}, {{place.address.zip}} {{place.address.town}}</a></td>
+                <td><span ng-repeat="event in place.events">{{event.year}}, </span></td>
+                <td><span ng-repeat="event in place.events">{{event.eventName}}, </span></td>
+                <td>Længdegrad: {{place.coordinates.longitude}}, Breddegrad: {{place.coordinates.latitude}} </td>
+                <td>
+                    <a class="btn btn-primary" ng-click="editItemToggle(place)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="deleteItem(place._id, place.placeName)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="places == false">
+    <tr>
+        <td></td><td>Der er ikke nogen steder endnu</td>
+    </tr>
+</div>
+<hr>
+<div ng-show="showEditForm">
+    <form name="formNewItem" ng-submit="itemSubmit()" novalidate>
+        <h2 class="form-signin-heading">Opret ny begivenhed</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <p>Her kan du som administrator oprette et nyt sted</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2" ng-show="newItemEntry">
+                <label>Type af sted</label>
+                <select class="form-control" ng-model="placetypeName" name="placetypeName" id="placetypeName" required>
+                    <option ng-repeat="placetype in placetypes" value="{{placetype.placetypeName}}">{{placetype.placetypeName}}</option>
+                </select>
+                <i ng-show="formFutureEvent.placetypeName.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-2" ng-show="editItemEntry">
+                <label>Type af sted</label>
+                <select class="form-control" ng-model="placetypeName" name="placetypeName" id="placetypeName" required>
+                    <option ng-repeat="placetype in placetypes" value="{{placetype.placetypeName}}">{{itemToEdit.placetypeName}}</option>
+                </select>
+                <i ng-show="formFutureEvent.selectPlacetype.$error.required">*Skal udfyldes</i>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Stedets navn</label>
+                <input type="text" id="placeName" class="form-control" ng-model="itemToEdit.placeName" placeholder="Stedets navn">
+                <i ng-show="formFutureEvent.placeName.$error.required">*Skal udfyldes</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Beskrivelse af stedet</label>
+                <input type="text" id="description" class="form-control" ng-model="itemToEdit.description" placeholder="Beskrivelse">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Adresse</h3>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Gade</label>
+                <input type="text" id="street" class="form-control" ng-model="itemToEdit.address.street" placeholder="Gadenavn">
+            </div>
+            <div class="form-group col-md-1">
+                <label>Husnummer</label>
+                <input type="text" id="houseno" class="form-control" ng-model="itemToEdit.address.houseno" placeholder="nr">
+            </div>
+            <div class="form-group col-md-2">
+                <label>Postnummer</label>
+                <input type="text" id="zip" class="form-control" ng-model="itemToEdit.address.zip" placeholder="Postnummer">
+            </div>
+            <div class="form-group col-md-3">
+                <label>By</label>
+                <input type="text" id="town" class="form-control" ng-model="itemToEdit.address.town" placeholder="By">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Hjemmeside</label>
+                <input type="text" id="website" class="form-control" ng-model="itemToEdit.website" placeholder="Hjemmeside">
+            </div>
+        </div>
+        <h3 class="form-signin-heading">Koordinater</h3>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Breddegrad</label>
+                <input type="number" step="0.0000001" lang="en" id="longitude" class="form-control" ng-model="itemToEdit.coordinates.longitude">
+            </div>
+            <div class="form-group col-md-3">
+                <label>Længdegrad</label>
+                <input type="number" step="0.0000001" lang="en" id="latitude" class="form-control" ng-model="itemToEdit.coordinates.latitude">
+            </div>
+        </div>
+        <!-- <h3 class="form-signin-heading">Begivenheder</h3>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Tilføj begivenhed</label>
+                <select class="form-control" ng-model="selectEvent" name="selectEvent" ng-change="eventSelectedToAdd(event)">
+                    <option ng-repeat="event in events" value="{{event}}">{{event.eventName}}</option>
+                </select>
+            </div>
+            <p>Tilføjede begivenheder: <span ng-repeat="eventItem in eventList">{{eventItem.eventName}}, </span> </p>
+        </div>
+        <br> -->
+        <div class="row">
+            <div class="form-group col-md-4">
+                <button ng-disabled="formFutureEvent.$invalid" class="btn btn-lg btn-primary btn-block" type="submit">{{submitButtonText}}</button>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-danger btn-lg btn-block" ng-click="cancelEntry()">Fortryd</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row actions" ng-show="!showEditForm">
+    <div class="col-md-4">
+        <a class="btn btn-info btn-lg btn-block" ng-click="newEntryToggle()">Indtast nyt sted</a>
+    </div>
+</div>
