@@ -217,17 +217,6 @@ function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady, AuthService) {
             "website": "http://www.lejrskolen.dk",
         },
         {
-            "id": 17,
-            "coords": {
-                "latitude": 56.131615,
-                "longitude": 8.113345
-            },
-            "name": "Ringkøbing",
-            "address": "Sand Holms Vej 88, 6950 Ringkøbing",
-            "years": "2034",
-            "website": "http://www.lejrskolen.dk",
-        },
-        {
             "id": 2,
             "coords": {
                 "latitude": 55.545347,

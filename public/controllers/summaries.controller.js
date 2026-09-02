@@ -40,6 +40,7 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         } else {
             console.log('No summaries');
         };
+        angular.element(document.querySelector( '#history' ) ).addClass('active');
         angular.element(document.querySelector( '#summaries' ) ).addClass('active');
     }, function errorCallback(response) {
         console.log(`Error. Status: ${response.status}`);
@@ -84,12 +85,12 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
                     'x-auth': localStorage.userToken
                 }
             }).then(function(events) {
-                console.log(`Events later than ${new Date(a.getFullYear(), a.getMonth(), a.getDate())} and summary does not exist fetched. Status: ${events.status}. # events: ${events.data.length}`);
+                // console.log(`Events later than ${new Date(a.getFullYear(), a.getMonth(), a.getDate())} and summary does not exist fetched. Status: ${events.status}. # events: ${events.data.length}`);
                 if (events.data.length > 0) {
-                    console.log(`There are some events without summary. Name of first: ${events.data[0].eventName}`);
+                    // console.log(`There are some events without summary. Name of first: ${events.data[0].eventName}`);
                     if (events.data.length == 1) {
                         $scope.event = events.data[0];
-                        console.log(`There is only one event without summary. name: ${$scope.event.eventName}`);
+                        // console.log(`There is only one event without summary. name: ${$scope.event.eventName}`);
                         $scope.eventSelected = true;
                         $scope.newSummaryEntry = true;
                         setSummaryData();
@@ -139,14 +140,14 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
 
             $scope.agendaStructure = listOfItemsSL.prepareList([10,0], ["","",""]);
             var agenda = $scope.editSummary.agenda;
-            console.log(`agenda: ${JSON.stringify(agenda)}`);
+            // console.log(`agenda: ${JSON.stringify(agenda)}`);
             for (var i=0; i<agenda.length; i++) {
                 $scope.agendaStructure[3][0][i] = agenda[i].item;
                 $scope.agendaStructure[3][1][i] = agenda[i].description;
                 $scope.agendaStructure[3][2][i] = agenda[i].decision;
             };
             $scope.agendaStructure = listOfItemsSL.prepareEdit(agenda.length-1, $scope.agendaStructure);
-            console.log(`agendaStructure: ${$scope.agendaStructure}`);
+            // console.log(`agendaStructure: ${$scope.agendaStructure}`);
         };
     };
 
@@ -176,6 +177,7 @@ function($scope, $http, $location, $route, $window, AuthService, listOfItemsSL) 
         
         if (agenda.length > 0) {data.agenda = agenda;};
 
+        // console.log(`${JSON.stringify(data)}`);
         $http({
             method: 'POST',
             url: '/summaries',

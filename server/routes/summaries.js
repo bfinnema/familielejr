@@ -19,8 +19,10 @@ router.post('/', authenticate, (req, res) => {
       _event: req.body._event
   });
 
-  summary.save().then((summary) => {
-      res.json(summary);
+  // console.log(`summary: ${JSON.stringify(summary)}`);
+
+  summary.save().then((doc) => {
+      res.json(doc);
   }, (e) => {
     // console.log(e);
     console.log(`Error code: ${e.code}`);
