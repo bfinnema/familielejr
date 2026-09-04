@@ -7,8 +7,7 @@ var SummarySchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     meetingdate: {
         type: Date,
